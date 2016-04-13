@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using WormsScheme.Model;
 
 namespace WormsScheme
 {
@@ -24,7 +23,7 @@ namespace WormsScheme
                 b.Write(model.DisplayTotalRoundTime);
                 b.Write(model.AutomaticReplays);
                 b.Write((byte)model.FallDamage);
-                b.Write(model.ArilleryMode);
+                b.Write(model.ArtilleryMode);
                 b.Write((byte)0);
                 b.Write(model.StockpilingMode);
                 b.Write(model.WormSelect);

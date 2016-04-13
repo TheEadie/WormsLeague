@@ -6,11 +6,14 @@ namespace WormsScheme
     {
         static void Main(string[] args)
         {
-            var deserialiser = new WscReader(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Schemes\{{01}} Beginner.wsc");
+            var deserialiser = new WscReader(@"F:\Steam\steamapps\common\Worms Armageddon\User\Schemes\{{01}} Beginner.wsc");
             var model = deserialiser.GetModel();
 
-            var wscCreator = new WscWriter(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Schemes\{{01}} Beginner2.wsc");
+            var wscCreator = new WscWriter(@"F:\Steam\steamapps\common\Worms Armageddon\User\Schemes\{{01}} Beginner2.wsc");
             wscCreator.WriteModel(model);
+
+            var textFileCreator = new TextFileWriter(@"F:\Steam\steamapps\common\Worms Armageddon\User\Schemes\Beginner2.txt");
+            textFileCreator.WriteModel(model);
 
             Console.WriteLine(model.Signature);
             Console.WriteLine(model.Version);

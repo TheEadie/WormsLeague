@@ -15,7 +15,7 @@ namespace WormsScheme
         public bool DisplayTotalRoundTime { get; }
         public bool AutomaticReplays { get; }
         public int FallDamage { get; }
-        public bool ArilleryMode { get; }
+        public bool ArtilleryMode { get; }
         public byte StockpilingMode { get; }
         public byte WormSelect { get; }
         public byte SuddenDeathEvent { get; }
@@ -48,7 +48,7 @@ namespace WormsScheme
         public IEnumerable<Weapon> Weapons { get; } 
 
         public Scheme(string signature, int version, byte hotSeatDelay, byte retreatTime, byte ropeRetreatTime,
-            bool displayTotalRoundTime, bool automaticReplays, int fallDamage, bool arilleryMode, byte stockpilingMode,
+            bool displayTotalRoundTime, bool automaticReplays, int fallDamage, bool artilleryMode, byte stockpilingMode,
             byte wormSelect, byte suddenDeathEvent, int waterRiseRate, int weaponCrateProbability, bool donorCards,
             int healthCrateProbability, int healthCrateEnergy, int utilityCrateProbability, int hazardObjectTypes,
             int mineDelay, bool dudMines, bool wormPlacement, int initialWormEnergy, int turnTime, int roundTime,
@@ -63,7 +63,7 @@ namespace WormsScheme
             DisplayTotalRoundTime = displayTotalRoundTime;
             AutomaticReplays = automaticReplays;
             FallDamage = fallDamage;
-            ArilleryMode = arilleryMode;
+            ArtilleryMode = artilleryMode;
             StockpilingMode = stockpilingMode;
             WormSelect = wormSelect;
             SuddenDeathEvent = suddenDeathEvent;
