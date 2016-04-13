@@ -47,7 +47,7 @@ namespace WormsScheme
 
         public IEnumerable<Weapon> Weapons { get; } 
 
-        public Scheme(string signature, int version, byte hotSeatDelay, byte retreatTime, byte ropeRetreatTime,
+        public Scheme(string signature, int version, int hotSeatDelay, int retreatTime, int ropeRetreatTime,
             bool displayTotalRoundTime, bool automaticReplays, int fallDamage, bool artilleryMode, byte stockpilingMode,
             byte wormSelect, byte suddenDeathEvent, int waterRiseRate, int weaponCrateProbability, bool donorCards,
             int healthCrateProbability, int healthCrateEnergy, int utilityCrateProbability, int hazardObjectTypes,
