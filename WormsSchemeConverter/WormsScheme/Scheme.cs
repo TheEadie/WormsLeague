@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace WormsScheme.Model
+namespace WormsScheme
 {
     /// <summary>
     /// See http://worms2d.info/Game_scheme_file
