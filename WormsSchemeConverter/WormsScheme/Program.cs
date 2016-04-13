@@ -14,6 +14,9 @@ namespace WormsScheme
             var deserialiser = new WscReader(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Schemes\{{01}} Beginner.wsc");
             var model = deserialiser.GetModel();
 
+            var wscCreator = new WscWriter(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Schemes\{{01}} Beginner2.wsc");
+            wscCreator.WriteModel(model);
+
             Console.WriteLine(model.Signature);
             Console.WriteLine(model.Version);
             Console.WriteLine(model.HotSeatDelay);
