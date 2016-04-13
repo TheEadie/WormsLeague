@@ -22,32 +22,32 @@ namespace WormsScheme
             using (var b = new BinaryWriter(File.Open(m_FilePath, FileMode.Create)))
             {
                 b.Write(model.Signature.ToCharArray(0,4));
-                b.Write(model.Version);
-                b.Write(model.HotSeatDelay);
-                b.Write(model.RetreatTime);
-                b.Write(model.RopeRetreatTime);
+                b.Write((byte)model.Version);
+                b.Write((byte)model.HotSeatDelay);
+                b.Write((byte)model.RetreatTime);
+                b.Write((byte)model.RopeRetreatTime);
                 b.Write(model.DisplayTotalRoundTime);
                 b.Write(model.AutomaticReplays);
-                b.Write(model.FallDamage);
+                b.Write((byte)model.FallDamage);
                 b.Write(model.ArilleryMode);
-                b.Write(0);
+                b.Write((byte)0);
                 b.Write(model.StockpilingMode);
                 b.Write(model.WormSelect);
                 b.Write(model.SuddenDeathEvent);
-                b.Write(model.WaterRiseRate);
-                b.Write(model.WeaponCrateProbability);
+                b.Write((byte)model.WaterRiseRate);
+                b.Write((byte)model.WeaponCrateProbability);
                 b.Write(model.DonorCards);
-                b.Write(model.HealthCrateProbability);
-                b.Write(model.HealthCrateEnergy);
-                b.Write(model.UtilityCrateProbability);
-                b.Write(model.HazardObjectTypes);
-                b.Write(model.MineDelay);
+                b.Write((byte)model.HealthCrateProbability);
+                b.Write((byte)model.HealthCrateEnergy);
+                b.Write((byte)model.UtilityCrateProbability);
+                b.Write((byte)model.HazardObjectTypes);
+                b.Write((byte)model.MineDelay);
                 b.Write(model.DudMines);
                 b.Write(model.WormPlacement);
-                b.Write(model.InitialWormEnergy);
-                b.Write(model.TurnTime);
-                b.Write(model.RoundTime);
-                b.Write(model.NumberOfRounds);
+                b.Write((byte)model.InitialWormEnergy);
+                b.Write((byte)model.TurnTime);
+                b.Write((byte)model.RoundTime);
+                b.Write((byte)model.NumberOfRounds);
                 b.Write(model.Blood);
                 b.Write(model.AquaSheep);
                 b.Write(model.SheepHeaven);
@@ -62,10 +62,10 @@ namespace WormsScheme
                 
                 foreach (var weapon in model.Weapons)
                 {
-                    b.Write(weapon.Ammo);
-                    b.Write(weapon.Power);
-                    b.Write(weapon.Delay);
-                    b.Write(weapon.CrateProbability);
+                    b.Write((byte)weapon.Ammo);
+                    b.Write((byte)weapon.Power);
+                    b.Write((byte)weapon.Delay);
+                    b.Write((byte)weapon.CrateProbability);
                 }
             }
         }
