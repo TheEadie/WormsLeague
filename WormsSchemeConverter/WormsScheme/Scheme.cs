@@ -49,13 +49,15 @@ namespace WormsScheme.Model
         public bool TeamWeapons { get; }
         public bool SuperWeapons { get; }
 
+        public IEnumerable<Weapon> Weapons { get; } 
+
         public Scheme(string signature, int version, byte hotSeatDelay, byte retreatTime, byte ropeRetreatTime,
             bool displayTotalRoundTime, bool automaticReplays, int fallDamage, bool arilleryMode, byte stockpilingMode,
             byte wormSelect, byte suddenDeathEvent, int waterRiseRate, int weaponCrateProbability, bool donorCards,
             int healthCrateProbability, int healthCrateEnergy, int utilityCrateProbability, int hazardObjectTypes,
             int mineDelay, bool dudMines, bool wormPlacement, int initialWormEnergy, int turnTime, int roundTime,
             int numberOfRounds, bool blood, bool aquaSheep, bool sheepHeaven, bool godWorms, bool indestructibleLand, bool upgradedGrenade,
-            bool upgradedShotgun, bool upgradedClusterBombs, bool upgradedLongbow, bool teamWeapons, bool superWeapons)
+            bool upgradedShotgun, bool upgradedClusterBombs, bool upgradedLongbow, bool teamWeapons, bool superWeapons, IEnumerable<Weapon> weapons)
         {
             Signature = signature;
             Version = version;
@@ -93,6 +95,7 @@ namespace WormsScheme.Model
             UpgradedLongbow = upgradedLongbow;
             TeamWeapons = teamWeapons;
             SuperWeapons = superWeapons;
+            Weapons = weapons;
             SheepHeaven = sheepHeaven;
         }
     }

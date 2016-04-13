@@ -48,6 +48,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextFileReader.cs" />
     <Compile Include="TextFileWriter.cs" />
+    <Compile Include="Weapon.cs" />
+    <Compile Include="Weapons.cs" />
     <Compile Include="WscReader.cs" />
     <Compile Include="WscWriter.cs" />
   </ItemGroup>

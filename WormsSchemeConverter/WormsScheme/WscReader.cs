@@ -60,13 +60,26 @@ namespace WormsScheme
                 var teamWeapons = b.ReadBoolean();
                 var superWeapons = b.ReadBoolean();
 
+                var weapons = new List<Weapon>();
+
+                foreach (var weaponName in Weapons.AllWeapons)
+                {
+                    var ammo = b.ReadByte();
+                    var power = b.ReadByte();
+                    var delay = b.ReadByte();
+                    var crateProb = b.ReadByte();
+
+                    weapons.Add(new Weapon(weaponName, ammo, power, delay, crateProb));
+                }
+
                 return new Scheme(new string(signature), version, hotSeatDelay, retreatTime, ropeRetreatTime,
                     displayTotalRoundTime,
                     automaticReplays, fallDamage, artilleryMode, stockpilingMode, wormSelect, suddenDeathEvent,
                     waterRiseRate, weaponCrateProb, donorCards, healthCrateProb, healthCrateEnergy, utilityCrateProb,
                     hazardObjects, mineDelay, dudMines, wormPlacement, initialWormEnergy, turnTime, roundTime,
                     numberOfRounds, blood, aquaSheep, sheepHeaven, godWorms, indestructibleLand, upgradedGrenade,
-                    upgradedShotgun, upgradedClusters, upgradedLongbow, teamWeapons, superWeapons);
+                    upgradedShotgun, upgradedClusters, upgradedLongbow, teamWeapons, superWeapons,
+                    weapons);
             }
         }
     }

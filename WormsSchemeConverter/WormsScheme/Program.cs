@@ -22,6 +22,15 @@ namespace WormsScheme
             Console.WriteLine(model.HealthCrateProbability);
             Console.WriteLine(model.SheepHeaven);
 
+            foreach (var weapon in model.Weapons)
+            {
+                Console.WriteLine(weapon.Name);
+                Console.WriteLine(weapon.Ammo);
+                Console.WriteLine(weapon.Power);
+                Console.WriteLine(weapon.Delay);
+                Console.WriteLine(weapon.CrateProbability);
+            }
+            
             Console.ReadKey();
         }
     }
