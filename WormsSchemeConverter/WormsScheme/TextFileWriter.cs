@@ -29,7 +29,7 @@ namespace WormsScheme
                 b.WriteLine("Rope retreat time: ".PadRight(40) + "[" + model.RopeRetreatTime + "]" + " (Seconds)");
                 b.WriteLine("Display total round time: ".PadRight(40) + "[" + model.DisplayTotalRoundTime + "]" + "");
                 b.WriteLine("Automatic replays: ".PadRight(40) + "[" + model.AutomaticReplays + "]" + "");
-                b.WriteLine("Fall damage: ".PadRight(40) + "[" + model.FallDamage + "]" + " (Damage caused when hitting the ground @ max velocity)");
+                b.WriteLine("Fall damage: ".PadRight(40) + "[" + model.FallDamage + "]" + "");
                 b.WriteLine("Artillery mode: ".PadRight(40) + "[" + model.ArtilleryMode + "]" + " (Worms can't move)");
                 b.WriteLine("Stockpiling mode: ".PadRight(40) + "[" + model.StockpilingMode + "]" + " (0 = Replenishing, 1 = Accumulating, 2 = Reducing)");
                 b.WriteLine("Worms select: ".PadRight(40) + "[" + model.WormSelect + "]" + " (0 = Off, 1 = On, 2 = Random)");
@@ -40,14 +40,14 @@ namespace WormsScheme
                 b.WriteLine("Utility crate probability: ".PadRight(40) + "[" + model.UtilityCrateProbability + "]" + " (0-100, See http://worms2d.info/Crate_probability)");
                 b.WriteLine("Health crate energy: ".PadRight(40) + "[" + model.HealthCrateEnergy + "]" + "");
                 b.WriteLine("Donor cards: ".PadRight(40) + "[" + model.DonorCards + "]" + "");
-                b.WriteLine("Hazard objects: ".PadRight(40) + "[" + model.HazardObjectTypes + "]" + " (Stores type and number See http://worms2d.info/Hazardous_Objects");
+                b.WriteLine("Hazard objects: ".PadRight(40) + "[" + model.HazardObjectTypes + "]" + " (Stores type and number See http://worms2d.info/Hazardous_Objects)");
                 b.WriteLine("Mine delay: ".PadRight(40) + "[" + model.MineDelay + "]" + "");
                 b.WriteLine("Dud mines: ".PadRight(40) + "[" + model.DudMines + "]" + "");
-                b.WriteLine("Worm placement: ".PadRight(40) + "[" + model.DudMines + "]" + " (0 = Auto, 1 = Manual");
+                b.WriteLine("Worm placement: ".PadRight(40) + "[" + model.DudMines + "]" + " (0 = Auto, 1 = Manual)");
                 b.WriteLine("Initial worm energy: ".PadRight(40) + "[" + model.InitialWormEnergy + "]" + "");
                 b.WriteLine("Turn time: ".PadRight(40) + "[" + model.TurnTime + "]" + " (Seconds, >180 = unlimited)");
                 b.WriteLine("Round time: ".PadRight(40) + "[" + model.RoundTime + "]" + " (Minutes, >180 = x-180 Seconds)");
-                b.WriteLine("Number of rounds: ".PadRight(40) + "[" + model.NumberOfRounds + "]" + " (Minutes, >180 = x-180 Seconds)");
+                b.WriteLine("Number of rounds: ".PadRight(40) + "[" + model.NumberOfRounds + "]" + "");
                 b.WriteLine("Blood: ".PadRight(40) + "[" + model.Blood + "]" + "");
                 b.WriteLine("Aqua sheep: ".PadRight(40) + "[" + model.AquaSheep + "]" + "");
                 b.WriteLine("Sheep heaven: ".PadRight(40) + "[" + model.SheepHeaven + "]" + " (Exploding sheep jump out of destroyed weapon crates)");
