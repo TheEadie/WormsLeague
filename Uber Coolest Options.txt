@@ -7,7 +7,7 @@ Retreat time:                           [3] (Seconds)
 Rope retreat time:                      [5] (Seconds)
 Display total round time:               [True]
 Automatic replays:                      [False]
-Fall damage:                            [1] (Damage caused when hitting the ground @ max velocity)
+Fall damage:                            [1]
 Artillery mode:                         [False] (Worms can't move)
 Stockpiling mode:                       [0] (0 = Replenishing, 1 = Accumulating, 2 = Reducing)
 Worms select:                           [0] (0 = Off, 1 = On, 2 = Random)
@@ -18,14 +18,14 @@ Health crate probability:               [20] (0-100, See http://worms2d.info/Cra
 Utility crate probability:              [20] (0-100, See http://worms2d.info/Crate_probability)
 Health crate energy:                    [50]
 Donor cards:                            [True]
-Hazard objects:                         [43] (Stores type and number See http://worms2d.info/Hazardous_Objects
+Hazard objects:                         [43] (Stores type and number See http://worms2d.info/Hazardous_Objects)
 Mine delay:                             [0]
 Dud mines:                              [False]
-Worm placement:                         [False] (0 = Auto, 1 = Manual
+Worm placement:                         [False] (0 = Auto, 1 = Manual)
 Initial worm energy:                    [100]
 Turn time:                              [45] (Seconds, >180 = unlimited)
 Round time:                             [10] (Minutes, >180 = x-180 Seconds)
-Number of rounds:                       [0] (Minutes, >180 = x-180 Seconds)
+Number of rounds:                       [0]
 Blood:                                  [False]
 Aqua sheep:                             [False]
 Sheep heaven:                           [False] (Exploding sheep jump out of destroyed weapon crates)
