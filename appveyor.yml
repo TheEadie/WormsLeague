@@ -18,3 +18,4 @@ deploy:
     description: ''
     on:
       branch: continuous-wormage
+      skip_tags: true
