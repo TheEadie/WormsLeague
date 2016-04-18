@@ -6,7 +6,9 @@ build:
 
 after_build:
   - cmd: WormsSchemeConverter\WormsScheme\bin\release\WormsScheme.exe "Uber Coolest Options.txt" "Uber Coolest Options.wsc"
+  - cmd: WormsSchemeConverter\WormsScheme\bin\release\WormsScheme.exe "Speed Worms.txt" "Speed Worms.wsc"
   - cmd: appveyor PushArtifact "Uber Coolest Options.wsc"
+  - cmd: appveyor PushArtifact "Speed Worms.wsc"
 
 deploy:
   - provider: GitHub
