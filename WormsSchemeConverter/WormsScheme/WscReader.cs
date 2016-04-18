@@ -57,7 +57,7 @@ namespace WormsScheme
 
                 var weapons = new List<Weapon>();
 
-                foreach (var weaponName in Weapons.AllWeapons)
+                foreach (var weaponName in new Weapons(version).AllWeapons)
                 {
                     var ammo = b.ReadByte();
                     var power = b.ReadByte();
