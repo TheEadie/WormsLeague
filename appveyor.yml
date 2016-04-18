@@ -18,6 +18,6 @@ deploy:
     draft: false
     prerelease: false
     description: ''
+    skip_tags: true
     on:
       branch: continuous-wormage
-      skip_tags: true
