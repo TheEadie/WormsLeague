@@ -17,7 +17,7 @@ namespace WormsScheme
             using (var b = new StreamReader(File.Open(m_FilePath, FileMode.Open)))
             {
                 const string signature = "SCHM";
-                const int version = 2;
+                var version = GetInt(b);
 
                 // Skip over some heading lines
                 b.ReadLine();
@@ -72,7 +72,7 @@ namespace WormsScheme
 
                 var weapons = new List<Weapon>();
 
-                foreach (var weaponName in Weapons.AllWeapons)
+                foreach (var weaponName in new Weapons(version).AllWeapons)
                 {
                     var values = GetInts(b);
                     var ammo = values[0];
