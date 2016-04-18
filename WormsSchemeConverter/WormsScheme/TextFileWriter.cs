@@ -20,7 +20,6 @@ namespace WormsScheme
         {
             using (var b = new StreamWriter(File.Open(m_FilePath, FileMode.Create)))
             {
-                b.WriteLine("WSC version [" + model.Version + "]");
                 b.WriteLine("///////////////////");
                 b.WriteLine("// GENERAL       //");
                 b.WriteLine("///////////////////");
