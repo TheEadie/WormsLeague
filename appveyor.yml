@@ -5,10 +5,10 @@ build:
   verbosity: minimal
 
 after_build:
-  - cmd: WormsSchemeConverter\WormsScheme\bin\release\WormsScheme.exe "Uber Coolest Options.txt" "Uber Coolest Options.wsc"
-  - cmd: WormsSchemeConverter\WormsScheme\bin\release\WormsScheme.exe "Speed Worms.txt" "Speed Worms.wsc"
-  - cmd: appveyor PushArtifact "Uber Coolest Options.wsc"
-  - cmd: appveyor PushArtifact "Speed Worms.wsc"
+  - cmd: WormsSchemeConverter\WormsScheme\bin\release\WormsScheme.exe "Uber Coolest Options.txt" "Uber Coolest Options %APPVEYOR_BUILD_VERSION%.wsc"
+  - cmd: WormsSchemeConverter\WormsScheme\bin\release\WormsScheme.exe "Speed Worms.txt" "Speed Worms %APPVEYOR_BUILD_VERSION%.wsc"
+  - cmd: appveyor PushArtifact "Uber Coolest Options %APPVEYOR_BUILD_VERSION%.wsc"
+  - cmd: appveyor PushArtifact "Speed Worms %APPVEYOR_BUILD_VERSION%.wsc"
 
 deploy:
   - provider: GitHub
