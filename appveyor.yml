@@ -1,0 +1,20 @@
+configuration: Release
+
+build:
+  project: WormsSchemeConverter\WormsScheme.sln
+  verbosity: minimal
+
+after_build:
+  - cmd: WormsSchemeConverter\WormsScheme\bin\release\WormsScheme.exe "Uber Coolest Options.txt" "Uber Coolest Options.wsc"
+  - cmd: appveyor PushArtifact "Uber Coolest Options.wsc"
+
+deploy:
+  - provider: GitHub
+    auth_token:
+      secure: A7+/5adwhz9NXkJeVJpckt7wIcfIOVr1M8KPMHrOD+TknNaV6CX2XrKR21+QS9ko
+    artifact: /.*\.wsc/
+    draft: false
+    prerelease: false
+    description: ''
+    on:
+      branch: continuous-wormage
