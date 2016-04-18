@@ -19,5 +19,5 @@ deploy:
     prerelease: false
     description: ''
     on:
-      branch: continuous-wormage
+      branch: master
       appveyor_repo_tag: false
