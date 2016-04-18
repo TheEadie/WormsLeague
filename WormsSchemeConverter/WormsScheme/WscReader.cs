@@ -59,11 +59,18 @@ namespace WormsScheme
 
                 foreach (var weaponName in Weapons.AllWeapons)
                 {
-                    var ammo = b.ReadByte();
-                    var power = b.ReadByte();
-                    var delay = b.ReadByte();
-                    var crateProb = b.ReadByte();
+                    var ammo = 0;
+                    var power = 0;
+                    var delay = 0;
+                    var crateProb = 0;
 
+                    if (b.BaseStream.Position != b.BaseStream.Length)
+                    {
+                        ammo = b.ReadByte();
+                        power = b.ReadByte();
+                        delay = b.ReadByte();
+                        crateProb = b.ReadByte();
+                    }
                     weapons.Add(new Weapon(weaponName, ammo, power, delay, crateProb));
                 }
 
