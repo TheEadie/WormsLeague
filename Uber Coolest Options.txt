@@ -28,7 +28,7 @@ Round time:                             [10] (Minutes, >180 = x-180 Seconds)
 Number of rounds:                       [0]
 Blood:                                  [False]
 Aqua sheep:                             [True]
-Sheep heaven:                           [True] (Exploding sheep jump out of destroyed weapon crates)
+Sheep heaven:                           [False] (Exploding sheep jump out of destroyed weapon crates)
 God worms:                              [False] (Worms can't lose health)
 Indestructible land:                    [False]
 Upgraded grenade:                       [False]
