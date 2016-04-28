@@ -67,7 +67,7 @@ Prod                          Ammo: [10]   Power: [2]    Delay: [0]    Crate pro
 Battle Axe                    Ammo: [0]    Power: [2]    Delay: [0]    Crate probability: [0]
 Blowtorch                     Ammo: [3]    Power: [2]    Delay: [0]    Crate probability: [0]
 Pneumatic Drill               Ammo: [3]    Power: [2]    Delay: [0]    Crate probability: [0]
-Girder                        Ammo: [3]    Power: [4]    Delay: [0]    Crate probability: [0]
+Girder                        Ammo: [1]    Power: [4]    Delay: [0]    Crate probability: [0]
 Ninja Rope                    Ammo: [3]    Power: [4]    Delay: [0]    Crate probability: [1]
 Parachute                     Ammo: [2]    Power: [0]    Delay: [0]    Crate probability: [0]
 Bungee                        Ammo: [2]    Power: [0]    Delay: [0]    Crate probability: [0]
