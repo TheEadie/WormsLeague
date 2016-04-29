@@ -21,7 +21,7 @@ Donor cards:                            [True]
 Hazard objects:                         [5] (Stores type and number See http://worms2d.info/Hazardous_Objects)
 Mine delay:                             [0]
 Dud mines:                              [False]
-Worm placement:                         [False] (0 = Auto, 1 = Manual)
+Worm placement:                         [True] (True = Auto, False = Manual)
 Initial worm energy:                    [51]
 Turn time:                              [30] (Seconds, >180 = unlimited)
 Round time:                             [0] (Minutes, >180 = x-180 Seconds)
