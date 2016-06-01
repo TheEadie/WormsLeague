@@ -5,8 +5,16 @@ $optionsRepoUrl = 'https://api.github.com/repos/TheEadie/WormsLeague/releases/la
 $installDirPath = 'C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\'
 $schemesDirPath = Join-Path $installDirPath '\User\Schemes\'
 
+#Gets the ip that'd actually be used rather than random virtual netadapters.
+function Get-Ip() {
+	$pingResponse = (ping -4 -n 1 $env:computername)[1]
+	$ipStart = $pingResponse.IndexOf("[") + 1 # Hopefully the machine name doesn't contain "[" or "]"
+	$ipLength = $pingResponse.IndexOf("]") - $ipStart
+	return $pingResponse.SubString($ipStart, $ipLength)
+}
+
 function Send-Slack() {
-	$ip = (ipconfig | grep "10.120" -m 1).Substring(39)
+	$ip = Get-Ip
 	$messageText = "Hosting at: $ip"
 	$message = @{token=$yourSecretSlackToken; channel=$channel; text=$messageText; as_user=$true}
 	Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body $message
