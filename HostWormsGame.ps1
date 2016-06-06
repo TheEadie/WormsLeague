@@ -7,12 +7,11 @@ $installDirPath = (Get-ItemProperty HKCU:\SOFTWARE\Team17SoftwareLTD\WormsArmage
 $wa = Join-Path $installDirPath 'WA.exe'
 $schemesDirPath = Join-Path $installDirPath '\User\Schemes\'
 
-#Gets the ip that'd actually be used rather than random virtual netadapters.
 function Get-Ip() {
-	$pingResponse = (ping -4 -n 1 $env:computername)[1]
-	$ipStart = $pingResponse.IndexOf("[") + 1 # Hopefully the machine name doesn't contain "[" or "]"
-	$ipLength = $pingResponse.IndexOf("]") - $ipStart
-	return $pingResponse.SubString($ipStart, $ipLength)
+	return Get-NetAdapter -Physical | 
+        where {$_.Name -notlike '*VMWare*'} | 
+        Get-NetIPAddress -AddressFamily IPv4 |
+        select -ExpandProperty IPAddress
 }
 
 function Send-Slack() {
