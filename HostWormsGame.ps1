@@ -18,16 +18,17 @@ function Send-Slack() {
 	$ip = Get-Ip
 	$messageText = "<!here> Hosting at: $ip"
 	$message = @{token=$yourSecretSlackToken; channel=$channel; text=$messageText; as_user=$true}
-	Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body $message
+    Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body $message
 }
 
 function Update-Options() {
-	$latestrelease = invoke-restmethod $optionsRepoUrl
-	$optionsFiles = $latestrelease.assets | Where-Object {$_.name -like "*.wsc"}
-	foreach ($file in $optionsFiles) { 
-		Write-Host $file.name
-		curl $file.browser_download_url -OutFile (Join-Path $schemesDirPath $file.name)
-	}
+	$latestrelease = Invoke-RestMethod $optionsRepoUrl
+	$latestrelease.assets | 
+        where {$_.name -like "*.wsc"} |
+	    foreach {
+		    Write-Host $_.name
+		    Invoke-WebRequest $_.browser_download_url -OutFile (Join-Path $schemesDirPath $_.name)
+	    }
 }
 
 function Start-Worms() {
