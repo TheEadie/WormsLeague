@@ -1,8 +1,10 @@
 $yourSecretSlackToken = 'ENTER YOUR SECRET SLACK TOKEN' # Get from https://api.slack.com/web#authentication
-
 $channel = '#games-worms'
+
 $optionsRepoUrl = 'https://api.github.com/repos/TheEadie/WormsLeague/releases/latest'
-$installDirPath = 'C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\'
+
+$installDirPath = (Get-ItemProperty HKCU:\SOFTWARE\Team17SoftwareLTD\WormsArmageddon).PATH
+$wa = Join-Path $installDirPath 'WA.exe'
 $schemesDirPath = Join-Path $installDirPath '\User\Schemes\'
 
 #Gets the ip that'd actually be used rather than random virtual netadapters.
