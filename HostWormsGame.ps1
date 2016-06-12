@@ -32,13 +32,7 @@ function Update-Options() {
 }
 
 function Start-Worms() {
-    # See http://worms2d.info/Command-line_options
-    #
-    # The scheme parameter is documented here:
-    # http://worms2d.info/WormNET_(Worms_Armageddon)#Channels
-    #
-    # 'We' means 4 worms per team (don't ask)
-    & $wa wa:host?scheme=We
+    & $wa /host
 }
 
 Send-Slack
