@@ -1,11 +1,8 @@
 $yourSecretSlackToken = 'ENTER YOUR SECRET SLACK TOKEN' # Get from https://api.slack.com/web#authentication
+
 $channel = '#games-worms'
-
 $optionsRepoUrl = 'https://api.github.com/repos/TheEadie/WormsLeague/releases/latest'
-
 $installDirPath = (Get-ItemProperty HKCU:\SOFTWARE\Team17SoftwareLTD\WormsArmageddon).PATH
-$wa = Join-Path $installDirPath 'WA.exe'
-$schemesDirPath = Join-Path $installDirPath '\User\Schemes\'
 
 function Get-Ip() {
     return Get-NetAdapter -Physical | 
@@ -22,6 +19,7 @@ function Send-Slack() {
 }
 
 function Update-Options() {
+    $schemesDirPath = Join-Path $installDirPath '\User\Schemes\'
     $latestrelease = Invoke-RestMethod $optionsRepoUrl
     $latestrelease.assets | 
         where {$_.name -like "*.wsc"} |
@@ -32,6 +30,7 @@ function Update-Options() {
 }
 
 function Start-Worms() {
+    $wa = Join-Path $installDirPath 'WA.exe'
     & $wa /host
 }
 
