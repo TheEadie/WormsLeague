@@ -1,7 +1,9 @@
-$yourSecretSlackToken = 'ENTER YOUR SECRET SLACK TOKEN' # Get from https://api.slack.com/web#authentication
+param(
+	$yourSecretSlackToken, # Get from https://api.slack.com/web#authentication
+	$channel, #E.g. '#games-worms'
+	$optionsRepoUrl = 'https://api.github.com/repos/TheEadie/WormsLeague/releases/latest'
+)
 
-$channel = '#games-worms'
-$optionsRepoUrl = 'https://api.github.com/repos/TheEadie/WormsLeague/releases/latest'
 $installDirPath = (Get-ItemProperty HKCU:\SOFTWARE\Team17SoftwareLTD\WormsArmageddon).PATH
 
 function Get-Ip() {
