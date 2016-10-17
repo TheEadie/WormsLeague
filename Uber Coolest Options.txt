@@ -83,7 +83,7 @@ Old Woman                     Ammo: [0]    Power: [2]    Delay: [5]    Crate pro
 Sheep Launcher                Ammo: [0]    Power: [2]    Delay: [5]    Crate probability: [1]
 Super Sheep                   Ammo: [0]    Power: [2]    Delay: [5]    Crate probability: [1]
 Mole Bomb                     Ammo: [0]    Power: [15]   Delay: [5]    Crate probability: [1]
-Jet Pack                      Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Jet Pack                      Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
 Low Gravity                   Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
 Laser Sight                   Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
 Fast Walk                     Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
