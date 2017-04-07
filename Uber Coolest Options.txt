@@ -51,7 +51,7 @@ Grenade                       Ammo: [10]   Power: [2]    Delay: [0]    Crate pro
 Cluster Bomb                  Ammo: [10]   Power: [4]    Delay: [0]    Crate probability: [0]
 Skunk                         Ammo: [1]    Power: [2]    Delay: [0]    Crate probability: [0]
 Petrol Bomb                   Ammo: [2]    Power: [2]    Delay: [0]    Crate probability: [0]
-Banana Bomb                   Ammo: [1]    Power: [2]    Delay: [4]    Crate probability: [1]
+Banana Bomb                   Ammo: [0]    Power: [2]    Delay: [3]    Crate probability: [1]
 Handgun                       Ammo: [10]   Power: [2]    Delay: [0]    Crate probability: [0]
 Shotgun                       Ammo: [2]    Power: [2]    Delay: [0]    Crate probability: [0]
 Uzi                           Ammo: [10]   Power: [2]    Delay: [0]    Crate probability: [0]
