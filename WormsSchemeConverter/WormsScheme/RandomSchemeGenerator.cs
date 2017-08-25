@@ -5,59 +5,61 @@ namespace WormsScheme
 {
     public class RandomSchemeGenerator
     {
-        public Scheme GetModel()
+        public Scheme GetModel(Scheme otherModel)
         {
             var random = new Random();
 
             const string signature = "SCHM";
             const int version = 2;
 
-            var hotSeatDelay = 5;
-            var retreatTime = 3;
-            var ropeRetreatTime = 5;
-            var showRoundTime = true;
-            var automaticReplays = false;
-            var fallDamage = 1;
-            var artilleryMode = false;
-            byte stockpilingMode = 0;
-            byte wormSelect = 0;
-            byte suddenDeathEvent = 3;
-            var waterRiseRate = 2;
-            var weaponCrateProbability = 80;
-            var donorCards = true;
-            var healthCrateProbability = 20;
-            var healthCrateEnergy = 50;
-            var utilityCrateProbability = 20;
-            var hazardObjectTypes = 43;
-            var mineDelay = 0;
-            var dudMines = false;
-            var wormPlacement = false;
-            var initialWormEnergy = 100;
-            var turnTime = 45;
-            var roundTime = 10;
-            var numberOfRounds = 1;
-            var blood = false;
-            var aquaSheep = true;
-            var sheepHeaven = false;
-            var godWorms = false;
-            var indestructibleLand = false;
-            var upgradedGrenade = false;
-            var upgradedShotgun = false;
-            var upgradedClusterBombs = false;
-            var upgradedLongbow = false;
-            var teamWeapons = false;
-            var superWeapons = false;
+            var hotSeatDelay = otherModel.HotSeatDelay;
+            var retreatTime = otherModel.RetreatTime;
+            var ropeRetreatTime = otherModel.RopeRetreatTime;
+            var showRoundTime = otherModel.DisplayTotalRoundTime;
+            var automaticReplays = otherModel.AutomaticReplays;
+            var fallDamage = otherModel.FallDamage;
+            var artilleryMode = otherModel.ArtilleryMode;
+            byte stockpilingMode = otherModel.StockpilingMode;
+            byte wormSelect = otherModel.WormSelect;
+            byte suddenDeathEvent = otherModel.SuddenDeathEvent;
+            var waterRiseRate = otherModel.WaterRiseRate;
+            var weaponCrateProbability = otherModel.WeaponCrateProbability;
+            var donorCards = otherModel.DonorCards;
+            var healthCrateProbability = otherModel.HealthCrateProbability;
+            var healthCrateEnergy = otherModel.HealthCrateEnergy;
+            var utilityCrateProbability = otherModel.UtilityCrateProbability;
+            var hazardObjectTypes = otherModel.HazardObjectTypes;
+            var mineDelay = otherModel.MineDelay;
+            var dudMines = otherModel.DudMines;
+            var wormPlacement = otherModel.WormPlacement;
+            var initialWormEnergy = otherModel.InitialWormEnergy;
+            var turnTime = otherModel.TurnTime;
+            var roundTime = otherModel.RoundTime;
+            var numberOfRounds = otherModel.NumberOfRounds;
+            var blood = otherModel.Blood;
+            var aquaSheep = otherModel.AquaSheep;
+            var sheepHeaven = otherModel.SheepHeaven;
+            var godWorms = otherModel.GodWorms;
+            var indestructibleLand = otherModel.IndestructibleLand;
+            var upgradedGrenade = otherModel.UpgradedGrenade;
+            var upgradedShotgun = otherModel.UpgradedShotgun;
+            var upgradedClusterBombs = otherModel.UpgradedClusterBombs;
+            var upgradedLongbow = otherModel.UpgradedLongbow;
+            var teamWeapons = otherModel.TeamWeapons;
+            var superWeapons = otherModel.SuperWeapons;
 
             var weapons = new List<Weapon>();
 
-            foreach (var weaponName in Weapons.AllWeapons)
+            foreach (var weapon in otherModel.Weapons)
             {
-                var ammo = random.NextBoundedInt(5, 0, 10, 1);
-                var power = random.NextBoundedInt(2, 1, 4, 0.5);
-                var delay = random.NextBoolean() ? 0 : random.NextBoundedInt(5, 1, 10, 1);
-                var crateProb = 1;
+                var ammo = random.NextBoundedInt(weapon.Ammo, 0, 10, 1);
+                var power = random.NextBoundedInt(weapon.Power, 1, 4, 0.5);
 
-                weapons.Add(new Weapon(weaponName, ammo, power, delay, crateProb));
+                // Only change wepaon delay if already set or 10% of the time
+                var delay = (weapon.Delay != 0 || random.NextDouble() > 0.9) ? random.NextBoundedInt(weapon.Delay, 1, 10, 1) : weapon.Delay;
+                var crateProb = weapon.CrateProbability;
+
+                weapons.Add(new Weapon(weapon.Name, ammo, power, delay, crateProb));
             }
 
             return new Scheme(
