@@ -52,11 +52,12 @@ namespace WormsScheme
 
             foreach (var weapon in otherModel.Weapons)
             {
-                var ammo = random.NextBoundedInt(weapon.Ammo, 0, 10, 1);
-                var power = random.NextBoundedInt(weapon.Power, 1, 4, 0.5);
+                // Only change wepaon ammo if not already unlimited or 10% of the time
+                var ammo = ((weapon.Ammo != 10 && weapon.Ammo != 0) || random.NextDouble() > 0.9) ? random.NextBoundedInt(weapon.Ammo, 0, 10, 0.5) : weapon.Ammo;
+                var power = random.NextBoundedInt(weapon.Power, 1, 4, 0.25);
 
                 // Only change wepaon delay if already set or 10% of the time
-                var delay = (weapon.Delay != 0 || random.NextDouble() > 0.9) ? random.NextBoundedInt(weapon.Delay, 1, 10, 1) : weapon.Delay;
+                var delay = (weapon.Delay != 0 || random.NextDouble() > 0.9) ? random.NextBoundedInt(weapon.Delay, 1, 10, 0.5) : weapon.Delay;
                 var crateProb = weapon.CrateProbability;
 
                 weapons.Add(new Weapon(weapon.Name, ammo, power, delay, crateProb));
