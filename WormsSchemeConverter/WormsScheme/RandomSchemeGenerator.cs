@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace WormsScheme
@@ -6,6 +7,8 @@ namespace WormsScheme
     {
         public Scheme GetModel()
         {
+            var random = new Random();
+
             const string signature = "SCHM";
             const int version = 2;
 
@@ -49,7 +52,7 @@ namespace WormsScheme
 
             foreach (var weaponName in Weapons.AllWeapons)
             {
-                var ammo = 0;
+                var ammo = random.NextBoundedInt(5, 0, 10, 0.5);
                 var power = 0;
                 var delay = 0;
                 var crateProb = 0;
