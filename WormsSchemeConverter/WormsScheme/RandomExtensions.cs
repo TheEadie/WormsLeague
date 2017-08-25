@@ -63,13 +63,19 @@ namespace WormsScheme
                                             double sigma = 1)
         {
             var randomInt = int.MinValue;
+            var numberOfTries = 0;
 
-            while (randomInt > upperBound || randomInt < lowerBound)
+
+            while (randomInt > upperBound || randomInt < lowerBound )
             {
                 randomInt = (int)Math.Round(r.NextGaussian(weightedValue, sigma));
+                numberOfTries++;
+
+                if (numberOfTries >= 10)
+                    break;
             }
             
-            return randomInt;
+            return numberOfTries == 10 ? weightedValue : randomInt;
         }
     }
 }
