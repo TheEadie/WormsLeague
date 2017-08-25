@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace WormsScheme
 {
@@ -8,6 +9,7 @@ namespace WormsScheme
         {
             var fileOne = args[0];
             var fileTwo = args[1];
+
             Scheme model;
             
             if (fileOne.EndsWith(".wsc"))
@@ -21,6 +23,12 @@ namespace WormsScheme
                 model = textFileReader.GetModel();
             }
 
+            if (args.Contains("/r"))
+            {
+                var randomChangesGenerator = new RandomSchemeGenerator();
+                model = randomChangesGenerator.GetModel(model);
+            }
+            
             if (fileTwo.EndsWith(".wsc"))
             {
                 var wscCreator = new WscWriter(fileTwo);
