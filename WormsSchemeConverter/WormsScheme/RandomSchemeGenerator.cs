@@ -52,10 +52,10 @@ namespace WormsScheme
 
             foreach (var weaponName in Weapons.AllWeapons)
             {
-                var ammo = random.NextBoundedInt(5, 0, 10, 0.5);
-                var power = 0;
-                var delay = 0;
-                var crateProb = 0;
+                var ammo = random.NextBoundedInt(5, 0, 10, 1);
+                var power = random.NextBoundedInt(2, 1, 4, 0.5);
+                var delay = random.NextBoolean() ? 0 : random.NextBoundedInt(5, 1, 10, 1);
+                var crateProb = 1;
 
                 weapons.Add(new Weapon(weaponName, ammo, power, delay, crateProb));
             }
