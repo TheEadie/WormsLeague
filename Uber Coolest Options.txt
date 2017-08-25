@@ -35,7 +35,7 @@ Upgraded grenade:                       [False]
 Upgraded shotgun:                       [False]
 Upgraded cluster bombs:                 [False]
 Upgraded longbow:                       [False]
-Team weapons:                           [True] (Teams will start the match with their preselected team weapon)
+Team weapons:                           [False] (Teams will start the match with their preselected team weapon)
 Super weapons:                          [True] (Super weapons may appear in crates)
 
 ///////////////////
