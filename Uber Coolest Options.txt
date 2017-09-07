@@ -35,7 +35,7 @@ Upgraded grenade:                       [False]
 Upgraded shotgun:                       [False]
 Upgraded cluster bombs:                 [False]
 Upgraded longbow:                       [False]
-Team weapons:                           [True] (Teams will start the match with their preselected team weapon)
+Team weapons:                           [False] (Teams will start the match with their preselected team weapon)
 Super weapons:                          [True] (Super weapons may appear in crates)
 
 ///////////////////
@@ -77,7 +77,7 @@ Sheep                         Ammo: [1]    Power: [2]    Delay: [0]    Crate pro
 Baseball Bat                  Ammo: [1]    Power: [2]    Delay: [5]    Crate probability: [1]
 Flame Thrower                 Ammo: [0]    Power: [2]    Delay: [5]    Crate probability: [1]
 Homing Pigeon                 Ammo: [0]    Power: [2]    Delay: [5]    Crate probability: [1]
-Mad Cow                       Ammo: [0]    Power: [2]    Delay: [5]    Crate probability: [1]
+Mad Cow                       Ammo: [2]    Power: [2]    Delay: [1]    Crate probability: [1]
 Holy Hand Grenade             Ammo: [0]    Power: [2]    Delay: [5]    Crate probability: [1]
 Old Woman                     Ammo: [0]    Power: [2]    Delay: [5]    Crate probability: [1]
 Sheep Launcher                Ammo: [0]    Power: [2]    Delay: [5]    Crate probability: [1]
