@@ -1,6 +1,6 @@
 param(
 	$yourSecretSlackToken, # Get from https://api.slack.com/web#authentication
-	$channel, #E.g. '#games-worms'
+	$channel = '#games-worms',
 	$optionsRepoUrl = 'https://api.github.com/repos/TheEadie/WormsLeague/releases/latest'
 )
 
