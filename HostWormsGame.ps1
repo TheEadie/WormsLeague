@@ -9,7 +9,7 @@ $installDirPath = (Get-ItemProperty HKCU:\SOFTWARE\Team17SoftwareLTD\WormsArmage
 function Get-Ip() {
     return Get-NetAdapter -Physical | 
         where -Property Status -EQ Up | 
-        Sort-Object -Property LinkSpeed |
+        Sort-Object -Property Speed -Descending |
         Get-NetIPAddress -AddressFamily IPv4 |
         select -ExpandProperty IPAddress -First 1 
 }
