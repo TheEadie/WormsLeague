@@ -8,9 +8,10 @@ $installDirPath = (Get-ItemProperty HKCU:\SOFTWARE\Team17SoftwareLTD\WormsArmage
 
 function Get-Ip() {
     return Get-NetAdapter -Physical | 
-        where {$_.Name -notlike '*VMWare*'} | 
+        where -Property Status -EQ Up | 
+        Sort-Object -Property LinkSpeed |
         Get-NetIPAddress -AddressFamily IPv4 |
-        select -ExpandProperty IPAddress
+        select -ExpandProperty IPAddress -First 1 
 }
 
 function Send-Slack() {
