@@ -1,6 +1,6 @@
 param(
 	$yourSecretSlackToken, # Get from https://api.slack.com/web#authentication
-	$channel, #E.g. '#games-worms'
+	$channel = '#games-worms',
 	$optionsRepoUrl = 'https://api.github.com/repos/TheEadie/WormsLeague/releases/latest'
 )
 
@@ -8,9 +8,10 @@ $installDirPath = (Get-ItemProperty HKCU:\SOFTWARE\Team17SoftwareLTD\WormsArmage
 
 function Get-Ip() {
     return Get-NetAdapter -Physical | 
-        where {$_.Name -notlike '*VMWare*'} | 
+        where -Property Status -EQ Up | 
+        Sort-Object -Property Speed -Descending |
         Get-NetIPAddress -AddressFamily IPv4 |
-        select -ExpandProperty IPAddress
+        select -ExpandProperty IPAddress -First 1 
 }
 
 function Send-Slack() {
