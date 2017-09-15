@@ -15,7 +15,7 @@ function Get-Ip() {
 
 function Send-Slack() {
     $ip = Get-Ip
-    $messageText = "<!here> Hosting at: $ip"
+    $messageText = "<!here> Hosting at: wa://$ip"
     $message = @{token=$yourSecretSlackToken; channel=$channel; text=$messageText; as_user=$true}
     Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body $message
 }
