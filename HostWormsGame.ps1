@@ -34,7 +34,7 @@ function Update-Options() {
 
 function Start-Worms() {
     $wa = Join-Path $installDirPath 'WA.exe'
-    & $wa /host
+    & $wa 'wa://'
 }
 
 Send-Slack
