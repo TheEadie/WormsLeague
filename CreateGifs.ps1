@@ -38,7 +38,7 @@ function dumplog($replayFile) {
 }
 
 function turngif($turn, $i, $outputDir, $startOffset = -1, $endOffset = 0) {
-    $turnName = "turn_$($i.ToString('000'))_$($turn.player)"
+    $turnName = "turn_$($i.ToString('000'))_$($turn.player)".Replace("?", "_")
     $turnDir = "$outputDir/$turnName"
     new-item -type directory $turnDir -force | out-null
     $startTime = $turn.weaponFired
