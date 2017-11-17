@@ -38,7 +38,10 @@ function dumplog($replayFile) {
 }
 
 function turngif($turn, $i, $outputDir, $startOffset = -1, $endOffset = 0) {
-    $turnName = "turn_$($i.ToString('000'))_$($turn.player)".Replace("?", "_")
+    $invalidFileNameChars = [System.IO.Path]::GetInvalidFileNameChars()
+    $regex = "[" + ([RegEx]::Escape(-join $invalidFileNameChars)) + "]"
+
+    $turnName = [Regex]::Replace("turn_$($i.ToString('000'))_$($turn.player)", $regex, "_")
     $turnDir = "$outputDir/$turnName"
     new-item -type directory $turnDir -force | out-null
     $startTime = $turn.weaponFired
