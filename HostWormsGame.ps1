@@ -28,6 +28,8 @@ function Update-Options() {
         where {$_.name -like "*.wsc"} |
         foreach {
             Write-Host $_.name
+            $AllProtocols = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
+            [System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
             Invoke-WebRequest $_.browser_download_url -OutFile (Join-Path $schemesDirPath $_.name)
         }
 }
