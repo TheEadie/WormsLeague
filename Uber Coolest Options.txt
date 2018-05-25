@@ -48,7 +48,7 @@ Bazooka                       Ammo: [10]   Power: [2]    Delay: [0]    Crate pro
 Homing Missile                Ammo: [1]    Power: [2]    Delay: [0]    Crate probability: [1]
 Mortar                        Ammo: [10]   Power: [4]    Delay: [0]    Crate probability: [0]
 Grenade                       Ammo: [10]   Power: [2]    Delay: [0]    Crate probability: [0]
-Cluster Bomb                  Ammo: [10]   Power: [4]    Delay: [0]    Crate probability: [0]
+Cluster Bomb                  Ammo: [10]   Power: [3]    Delay: [0]    Crate probability: [0]
 Skunk                         Ammo: [1]    Power: [2]    Delay: [0]    Crate probability: [0]
 Petrol Bomb                   Ammo: [2]    Power: [2]    Delay: [0]    Crate probability: [0]
 Banana Bomb                   Ammo: [1]    Power: [2]    Delay: [5]    Crate probability: [1]
