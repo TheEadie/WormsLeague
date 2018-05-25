@@ -82,7 +82,7 @@ Holy Hand Grenade             Ammo: [1]    Power: [2]    Delay: [5]    Crate pro
 Old Woman                     Ammo: [0]    Power: [2]    Delay: [5]    Crate probability: [1]
 Sheep Launcher                Ammo: [1]    Power: [2]    Delay: [2]    Crate probability: [1]
 Super Sheep                   Ammo: [0]    Power: [2]    Delay: [5]    Crate probability: [1]
-Mole Bomb                     Ammo: [1]    Power: [15]   Delay: [2]    Crate probability: [1]
+Mole Bomb                     Ammo: [1]    Power: [14]   Delay: [2]    Crate probability: [1]
 Jet Pack                      Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
 Low Gravity                   Ammo: [1]    Power: [0]    Delay: [0]    Crate probability: [0]
 Laser Sight                   Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
