@@ -23,13 +23,13 @@ function Send-Slack() {
 
 function Update-Options() {
     $schemesDirPath = Join-Path $installDirPath '\User\Schemes\'
+    $AllProtocols = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
+    [System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
     $latestrelease = Invoke-RestMethod $optionsRepoUrl
     $latestrelease.assets | 
         where {$_.name -like "*.wsc"} |
         foreach {
             Write-Host $_.name
-            $AllProtocols = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
-            [System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
             Invoke-WebRequest $_.browser_download_url -OutFile (Join-Path $schemesDirPath $_.name)
         }
 }
