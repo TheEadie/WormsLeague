@@ -1,0 +1,33 @@
+﻿<Window x:Class="GifTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GifTool"
+        xmlns:viewModel="clr-namespace:GifTool.ViewModel"
+        mc:Ignorable="d"
+        Title="Replay Tool"
+        Width="800"
+        Height="450" 
+        d:DataContext="{d:DesignInstance {x:Type viewModel:MainWindowViewModel}, d:IsDesignTimeCreatable=False}">
+
+    <Window.Resources>
+        <ResourceDictionary Source="Styles.xaml" />
+    </Window.Resources>
+
+    <DockPanel Style="{StaticResource MainBackgroundStyle}">
+        <ContentPresenter Content="{Binding CurrentPage}">
+            <ContentPresenter.Resources>
+                <DataTemplate DataType="{x:Type viewModel:SelectReplayViewModel}">
+                    <local:SelectReplayControl/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type viewModel:SelectTurnViewModel}">
+                    <local:SelectTurnControl/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type viewModel:CreateGifViewModel}">
+                    <local:CreateGifControl/>
+                </DataTemplate>
+            </ContentPresenter.Resources>
+        </ContentPresenter>
+    </DockPanel>
+</Window>

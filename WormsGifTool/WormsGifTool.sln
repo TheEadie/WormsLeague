@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GifTool", "GifTool\GifTool.csproj", "{FDCEEE1F-AC11-42E0-9E6E-08D4DF22D7E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GifTool.Tests", "GifTool.Tests\GifTool.Tests.csproj", "{A7E74298-C31B-4F97-A0CD-AA973FAA02DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDCEEE1F-AC11-42E0-9E6E-08D4DF22D7E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDCEEE1F-AC11-42E0-9E6E-08D4DF22D7E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDCEEE1F-AC11-42E0-9E6E-08D4DF22D7E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDCEEE1F-AC11-42E0-9E6E-08D4DF22D7E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7E74298-C31B-4F97-A0CD-AA973FAA02DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7E74298-C31B-4F97-A0CD-AA973FAA02DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7E74298-C31B-4F97-A0CD-AA973FAA02DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7E74298-C31B-4F97-A0CD-AA973FAA02DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9FCE0867-20E5-4BB3-A057-F70CCD742269}
+	EndGlobalSection
+EndGlobal
