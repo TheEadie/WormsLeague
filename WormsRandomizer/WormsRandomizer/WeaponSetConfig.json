@@ -1,0 +1,301 @@
+﻿{
+  "Weapons": [
+    {
+      "Name": "Bazooka",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Homing Missile",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Mortar",
+      "Power": [ 11, 6, 12, 19, 7, 1, 2, 3, 4, 5, 9, 14, 10, 15 ]
+    },
+    {
+      "Name": "Grenade",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Cluster Bomb",
+      "Power": [ 11, 6, 12, 19, 7, 1, 2, 3, 4, 5, 9, 14, 10, 15 ]
+    },
+    {
+      "Name": "Skunk",
+      "Power": [ 11, 12, 1, 13, 2, 19, 3, 14, 9, 4, 10, 5, 15 ]
+    },
+    {
+      "Name": "Petrol Bomb",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Banana Bomb",
+      "Power": [ 256, 11, 12, 19, 6, 7, 1, 2, 3, 4, 5, 9, 14, 10, 15 ]
+    },
+    {
+      "Name": "Handgun",
+      "Power": [ 11, 1, 3, 5, 14, 15 ]
+    },
+    {
+      "Name": "Shotgun",
+      "Power": [ 11, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Uzi",
+      "Power": [ 11, 1, 3, 5, 14, 15 ]
+    },
+    {
+      "Name": "Minigun",
+      "Power": [ 11, 1, 3, 5, 14, 15 ]
+    },
+    {
+      "Name": "Longbow",
+      "Power": [ 1, 2, 3, 4, 5 ]
+    },
+    {
+      "Name": "Airstrike",
+      "Power": [ 11, 6, 12, 7, 1, 2, 3, 4, 5, 9, 14, 10, 15 ]
+    },
+    {
+      "Name": "Napalm Strike",
+      "Power": [ 11, 6, 12, 7, 1, 2, 3, 4, 5, 9, 14, 10, 15 ]
+    },
+    {
+      "Name": "Mine",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Fire Punch",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Dragon Ball",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Kamikaze",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Prod",
+      "Power": [ 3 ]
+    },
+    {
+      "Name": "Battle Axe",
+      "Power": [ 1, 2, 3, 4, 5 ]
+    },
+    {
+      "Name": "Blowtorch",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Pneumatic Drill",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Girder",
+      "Power": [ 4 ]
+    },
+    {
+      "Name": "Ninja Rope",
+      "Power": [ 5 ]
+    },
+    {
+      "Name": "Parachute",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Bungee",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Teleport",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Dynamite",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Sheep",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Baseball Bat",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Flame Thrower",
+      "Power": [ 21, 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Homing Pigeon",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Mad Cow",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Holy Hand Grenade",
+      "Power": [256, 1, 2, 3, 4]
+    },
+    {
+      "Name": "Old Woman",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Sheep Launcher",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Super Sheep",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Mole Bomb",
+      "Power": [ 11, 12, 1, 2, 3, 4, 5, 19, 14, 15 ]
+    },
+    {
+      "Name": "Jet Pack",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Low Gravity",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Laser Sight",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Fast Walk",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Invisibility",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Damage x2",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Freeze",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Super Banana Bomb",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Mine Strike",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Girder Starter Pack",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Earthquake",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Scales Of Justice",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Ming Vase",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Mike's Carpet Bomb",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Patsy's Magic Bullet",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Indian Nuclear Test",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Select Worm",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Salvation Army",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Mole Squadron",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "MB Bomb",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Concrete Donkey",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Suicide Bomber",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Sheep Strike",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Mail Strike",
+      "Power": [ 1 ]
+    },
+    {
+      "Name": "Armageddon",
+      "Power": [ 1 ]
+    }
+  ],
+  "MovementWeapons": [
+    "Ninja Rope",
+    "Parachute",
+    "Bungee"
+  ],
+  "UtilityWeapons": [
+    "Prod",
+    "Girder",
+    "Teleport",
+    "Jet Pack",
+    "Low Gravity",
+    "Laser Sight",
+    "Fast Walk",
+    "Invisibility",
+    "Freeze",
+    "Select Worm"
+  ],
+  "SuperWeapons": [
+    "Damage x2",
+    "Super Banana Bomb",
+    "Mine Strike",
+    "Girder Starter Pack",
+    "Earthquake",
+    "Scales Of Justice",
+    "Ming Vase",
+    "Mike's Carpet Bomb",
+    "Patsy's Magic Bullet",
+    "Indian Nuclear Test",
+    "Select Worm",
+    "Salvation Army",
+    "Mole Squadron",
+    "MB Bomb",
+    "Concrete Donkey",
+    "Suicide Bomber",
+    "Sheep Strike",
+    "Mail Strike",
+    "Armageddon"
+  ],
+  "FloodSpeed": [
+    1, 19, 2, 55,
+  ]
+}
