@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="GifTool.SelectTurnControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModel="clr-namespace:GifTool.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignWidth="500"
+             d:DesignHeight="300"
+             d:DataContext="{d:DesignInstance {x:Type viewModel:SelectTurnViewModel}}">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="Styles.xaml" />
+    </UserControl.Resources>
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20px"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40px"/>
+        </Grid.RowDefinitions>
+        <TextBlock Style="{StaticResource LabelTextStyle}" Grid.Row="0" Margin="10 0 0 0" Visibility="{Binding TurnsOperation.IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Waiting for replay log...
+        </TextBlock>
+        <TextBlock Style="{StaticResource LabelTextStyle}" Grid.Row="0" Margin="10 0 0 0" Visibility="{Binding TurnsOperation.HasResult, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Select Turn
+        </TextBlock>
+        <TextBlock Style="{StaticResource LabelTextStyle}" Grid.Row="0" Margin="10 0 0 0" Visibility="{Binding TurnsOperation.HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Error reading replay log:
+        </TextBlock>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Style="{StaticResource ScrollViewerStyle}" Visibility="{Binding TurnsOperation.HasResult, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ListBox ItemsSource="{Binding TurnsOperation.Result}" SelectedIndex="{Binding SelectedTurn}" Style="{StaticResource ListBoxStyle}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Description}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+        <TextBlock Style="{StaticResource LabelTextStyle}" Grid.Row="1" Margin="10 10 0 0" Visibility="{Binding TurnsOperation.HasError, Converter={StaticResource BooleanToVisibilityConverter}}" Text="{Binding TurnsOperation.ErrorMessage}"/>
+
+        <Button Grid.Row="2" HorizontalAlignment="Left" Command="{Binding BackCommand}" Margin="0 5 0 0" Style="{StaticResource ButtonStyle}">
+            <TextBlock Text="Back"/>
+        </Button>
+        <Button Grid.Row="2" HorizontalAlignment="Right" Command="{Binding SelectTurnCommand}" Margin="5 5 0 0" Style="{StaticResource ButtonStyle}" Visibility="{Binding TurnsOperation.HasResult, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Select"/>
+        </Button>
+    </Grid>
+
+</UserControl>
