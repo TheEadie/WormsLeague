@@ -53,13 +53,22 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
+    - name: Checkout
+      uses: actions/checkout@v1
     - name: Download .wscs
       uses: actions/download-artifact@v1
       with:
         name: Schemes
+    - name: Push tag
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git tag -a $(date +'%Y%m%d')
+        git push
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
+        name: $(date +'%Y%m%d')
         files: "*.wsc"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
