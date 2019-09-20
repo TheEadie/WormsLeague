@@ -1,0 +1,66 @@
+name: Build SchemeConverter
+
+on: [push]
+
+jobs:
+  build-scheme-converter:
+    name: Build Scheme Converter
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2.108
+    - name: Build
+      run: cd WormsSchemeConverter && dotnet build --configuration Release
+    - name: Upload build
+      uses: actions/upload-artifact@master
+      with:
+        name: SchemeConverter
+        path: WormsSchemeConverter/WormsScheme/bin/Release/netcoreapp2.2/
+        
+  create-wscs:
+    name: Create .wsc files
+    needs: build-scheme-converter
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Create output directory
+      run: mkdir -p output
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2.108
+    - name: Download build
+      uses: actions/download-artifact@v1
+      with:
+        name: SchemeConverter
+    - name: Generate UberCoolestOptions.wsc
+      run: dotnet SchemeConverter/WormsSchemeConverter.dll "Uber Coolest Options.txt" "output/Uber Coolest Options $(date +'%Y%m%d').wsc"
+    - name: Generate Speed Worms.wsc
+      run: dotnet SchemeConverter/WormsSchemeConverter.dll "Speed Worms.txt" "output/Speed Worms $(date +'%Y%m%d').wsc"
+    - name: Upload .wsc files
+      uses: actions/upload-artifact@master
+      with:
+        name: Schemes
+        path: output/
+
+  release:
+    name: Create GitHub Release for .wsc files
+    needs: create-wscs
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - name: Download .wscs
+      uses: actions/download-artifact@v1
+      with:
+        name: Schemes
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: "*.wsc"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
