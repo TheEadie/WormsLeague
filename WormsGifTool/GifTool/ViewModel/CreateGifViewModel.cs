@@ -28,7 +28,7 @@ namespace GifTool.ViewModel
         public int Width { get; set; } = 640;
         public int Height { get; set; } = 480;
 
-        public bool CanCreateGif => _frames.Length > 0;
+        public bool CanCreateGif => _frames?.Length > 0;
 
         public string OperationStatus { get; private set; }
         public ObservableOperation<string> CurrentOperation { get; private set; }
