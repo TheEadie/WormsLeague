@@ -18,7 +18,7 @@ namespace GifTool.ViewModel
             public TurnViewModel(Turn turn)
             {
                 Model = turn;
-                Description = $"{turn.Team}: {string.Join(",", turn.WeaponActions.Last().Description)}";
+                Description = $"{turn.Team}: {turn.WeaponActions.LastOrDefault()?.Description ?? "No weapon used"}";
             }
         }
 

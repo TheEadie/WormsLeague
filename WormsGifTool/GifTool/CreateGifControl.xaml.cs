@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Controls;
-using System.Windows.Input;
+﻿using System.Windows.Controls;
 
 namespace GifTool
 {
@@ -12,11 +10,6 @@ namespace GifTool
         public CreateGifControl()
         {
             InitializeComponent();
-        }
-
-        private void ValidateNumeric(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = int.TryParse(e.Text, out _);
         }
     }
 }
