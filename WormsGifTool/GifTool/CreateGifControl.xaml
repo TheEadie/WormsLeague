@@ -38,9 +38,9 @@
             </StackPanel>
             <TextBlock Style="{StaticResource LabelTextStyle}" Text="Game Resolution"/>
             <StackPanel Orientation="Horizontal">
-                <TextBox Style="{StaticResource SmallTextBoxStyle}" Text="{Binding ResolutionX}" PreviewTextInput="ValidateNumeric"/>
+                <TextBox Style="{StaticResource SmallTextBoxStyle}" Text="{Binding ResolutionX}" />
                 <TextBlock Style="{StaticResource LabelTextStyle}" Text=" x " Margin="0 5 0 0"/>
-                <TextBox Style="{StaticResource SmallTextBoxStyle}" Text="{Binding ResolutionY}" PreviewTextInput="ValidateNumeric"/>
+                <TextBox Style="{StaticResource SmallTextBoxStyle}" Text="{Binding ResolutionY}" />
             </StackPanel>
             <Button Margin="0 10 0 0" Style="{StaticResource ButtonStyle}" Command="{Binding ExportFramesCommand}">
                 <TextBlock Text="Preview / Export Frames..."/>
@@ -50,9 +50,9 @@
             <StackPanel Margin="0 10 0 0 " Visibility="{Binding CanCreateGif, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock Style="{StaticResource LabelTextStyle}" Text="GIF Size"/>
                 <StackPanel Orientation="Horizontal">
-                    <TextBox Style="{StaticResource SmallTextBoxStyle}" Text="{Binding Width}" PreviewTextInput="ValidateNumeric"/>
+                    <TextBox Style="{StaticResource SmallTextBoxStyle}" Text="{Binding Width}" />
                     <TextBlock Style="{StaticResource LabelTextStyle}" Text=" x " Margin="0 5 0 0"/>
-                    <TextBox Style="{StaticResource SmallTextBoxStyle}" Text="{Binding Height}" PreviewTextInput="ValidateNumeric"/>
+                    <TextBox Style="{StaticResource SmallTextBoxStyle}" Text="{Binding Height}" />
                 </StackPanel>
 
                 <Button Margin="0 10 0 0" Style="{StaticResource ButtonStyle}" Command="{Binding CreateGifCommand}">
