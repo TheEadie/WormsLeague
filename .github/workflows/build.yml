@@ -60,5 +60,10 @@ jobs:
       with:
         name: Schemes
     - name: Release
-      run: . WormsSchemeConverter/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} $(date +'%Y%m%d') "" Schemes
-    
+      uses: TheEadie/GitHubReleaseAction@v1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        repo: ${{ github.repository }}
+        release-name: "$(date +'%Y%m%d')"
+        release-body: ''
+        release-artifacts-folder: 'Schemes'
