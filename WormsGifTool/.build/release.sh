@@ -28,5 +28,5 @@ for filename in $RELEASE_ASSETS_FOLDER/*; do
     --url $UPLOADURL \
     --header "authorization: Bearer $GITHUB_TOKEN" \
     --header "Content-Type: application/octet-stream" \
-    --data-binary "$filename"
+    --data-binary "@$filename"
 done

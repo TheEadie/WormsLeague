@@ -1,9 +1,6 @@
 name: Build Gif Tool
 
-on:
-  push:
-    paths:
-      - 'WormsGifTool/*'
+on: [push]
 
 jobs:
   build-gif-tool:
