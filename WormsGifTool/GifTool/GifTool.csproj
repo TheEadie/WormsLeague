@@ -10,9 +10,6 @@
     <Product>Worms Gif Tool</Product>
   </PropertyGroup>
   <ItemGroup>
-    
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -23,6 +20,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="7.10.2" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
 
