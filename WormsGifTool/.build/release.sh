@@ -11,7 +11,7 @@ CREATE_RELEASE_RESPONSE=$(curl --request POST \
     --data '{
                 "tag_name": "giftool/v'$VERSION'",
                 "target_commitish": "master",
-                "name": "GIF Tool V'$VERSION'",
+                "name": "GIF Tool v'$VERSION'",
                 "body": "",
                 "draft": false,
                 "prerelease": false }')
