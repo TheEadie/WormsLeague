@@ -1,0 +1,21 @@
+name: Build SchemeConverter
+
+on: [push]
+
+jobs:
+  build-gif-tool:
+    name: Build GIF tool
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+    - name: Build
+      run: cd WormsGifTool && ./.build/build.sh
+    - name: Upload build
+      uses: actions/upload-artifact@v1
+      with:
+        name: GifTool
+        path: WormsGifTool/release/
