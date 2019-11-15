@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.Text;
+using Autofac;
 using GifTool.Gif;
 using GifTool.ViewModel;
 using GifTool.Worms;
@@ -9,6 +10,8 @@ namespace GifTool
     {
         protected override void Load(ContainerBuilder builder)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             builder.RegisterType<SteamService>().As<ISteamService>().InstancePerLifetimeScope();
             builder.RegisterType<WormsLocator>().As<IWormsLocator>().InstancePerLifetimeScope();
             builder.RegisterType<WormsRunner>().As<IWormsRunner>().InstancePerLifetimeScope();

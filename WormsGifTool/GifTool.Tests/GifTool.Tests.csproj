@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>{A7E74298-C31B-4F97-A0CD-AA973FAA02DB}</ProjectGuid>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>GifTool.Tests</RootNamespace>
     <AssemblyName>GifTool.Tests</AssemblyName>
   </PropertyGroup>

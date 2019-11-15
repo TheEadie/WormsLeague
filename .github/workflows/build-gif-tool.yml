@@ -1,0 +1,36 @@
+name: Build Gif Tool
+
+on: [push]
+
+jobs:
+  build-gif-tool:
+    name: Build GIF tool
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+    - name: Build
+      run: cd WormsGifTool; ./.build/build.ps1
+    - name: Upload build
+      uses: actions/upload-artifact@v1
+      with:
+        name: GifTool
+        path: WormsGifTool/release/
+
+  release:
+    name: Create GitHub Release for gif tool
+    needs: build-gif-tool
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Download Gif Tool
+      uses: actions/download-artifact@v1
+      with:
+        name: GifTool
+    - name: Release
+      run: ./WormsGifTool/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} GifTool
