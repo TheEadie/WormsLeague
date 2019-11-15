@@ -1,4 +1,4 @@
-name: Build SchemeConverter
+name: Build Gif Tool
 
 on: [push]
 
@@ -19,3 +19,18 @@ jobs:
       with:
         name: GifTool
         path: WormsGifTool/release/
+
+  release:
+    name: Create GitHub Release for gif tool
+    needs: build-gif-tool
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Download Gif Tool
+      uses: actions/download-artifact@v1
+      with:
+        name: GifTool
+    - name: Release
+      run: ./WormsGifTool/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} GifTool

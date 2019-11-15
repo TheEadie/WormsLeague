@@ -1,19 +1,18 @@
 #!/bin/bash
 GITHUB_TOKEN=$1
 GITHUB_REPO=$2
-RELEASE_NAME=$3
-RELEASE_BODY=$4
-RELEASE_ASSETS_FOLDER=$5
+RELEASE_ASSETS_FOLDER=$3
+VERSION=$(cat $RELEASE_ASSETS_FOLDER/version.json | jq -r '.MajorMinorPatch')
 
 CREATE_RELEASE_RESPONSE=$(curl --request POST \
     --url "https://api.github.com/repos/$GITHUB_REPO/releases" \
     --header "authorization: Bearer $GITHUB_TOKEN" \
     --header "content-type: application/json" \
     --data '{
-                "tag_name": "'$RELEASE_NAME'",
+                "tag_name": "giftool/v'$VERSION'",
                 "target_commitish": "master",
-                "name": "'$RELEASE_NAME'",
-                "body": "'$RELEASE_BODY'",
+                "name": "GIF Tool V'$VERSION'",
+                "body": "",
                 "draft": false,
                 "prerelease": false }')
 
