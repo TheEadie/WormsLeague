@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build-gif-tool:
     name: Build GIF tool
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
@@ -13,7 +13,7 @@ jobs:
       with:
         dotnet-version: 3.0.100
     - name: Build
-      run: cd WormsGifTool && ./.build/build.sh
+      run: cd WormsGifTool; ./.build/build.ps1
     - name: Upload build
       uses: actions/upload-artifact@v1
       with:
