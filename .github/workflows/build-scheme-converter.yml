@@ -1,6 +1,9 @@
 name: Build SchemeConverter
 
-on: [push]
+on:
+  push:
+    paths:
+    - "WormsSchemeConverter/**"
 
 jobs:
   build-scheme-converter:
