@@ -37,6 +37,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.2.108
+    - name: Download build
+      uses: actions/download-artifact@v1
+      with:	
+        name: SchemeConverter
     - name: Build
       run: cd Schemes; ./.build/build.ps1
     - name: Upload .wsc files
