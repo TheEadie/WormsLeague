@@ -2,16 +2,16 @@
 GITHUB_TOKEN=$1
 GITHUB_REPO=$2
 RELEASE_ASSETS_FOLDER=$3
-VERSION=$(date +'%Y%m%d')
+VERSION=$(cat $RELEASE_ASSETS_FOLDER/version.json | jq -r '.MajorMinorPatch')
 
 CREATE_RELEASE_RESPONSE=$(curl --request POST \
     --url "https://api.github.com/repos/$GITHUB_REPO/releases" \
     --header "authorization: Bearer $GITHUB_TOKEN" \
     --header "content-type: application/json" \
     --data '{
-                "tag_name": "schemes/'$VERSION'",
+                "tag_name": "schemes/v'$VERSION'",
                 "target_commitish": "master",
-                "name": "Redgate Schemes '$VERSION'",
+                "name": "Redgate Schemes V'$VERSION'",
                 "body": "",
                 "draft": false,
                 "prerelease": false }')

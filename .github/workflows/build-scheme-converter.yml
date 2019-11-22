@@ -62,4 +62,4 @@ jobs:
       with:
         name: Schemes
     - name: Release
-      run: ./WormsSchemeConverter/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} Schemes
+      run: ./Schemes/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} Schemes
