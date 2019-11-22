@@ -4,6 +4,7 @@ on:
   push:
     paths:
     - "WormsSchemeConverter/**"
+    - "Schemes/**"
 
 jobs:
   build-scheme-converter:
@@ -41,9 +42,9 @@ jobs:
       with:
         name: SchemeConverter
     - name: Generate UberCoolestOptions.wsc
-      run: dotnet SchemeConverter/WormsSchemeConverter.dll "Uber Coolest Options.txt" "output/Uber.Coolest.Options.$(date +'%Y%m%d').wsc"
+      run: dotnet SchemeConverter/WormsSchemeConverter.dll "Schemes/Uber Coolest Options.txt" "output/Uber.Coolest.Options.$(date +'%Y%m%d').wsc"
     - name: Generate Speed Worms.wsc
-      run: dotnet SchemeConverter/WormsSchemeConverter.dll "Speed Worms.txt" "output/Speed.Worms.$(date +'%Y%m%d').wsc"
+      run: dotnet SchemeConverter/WormsSchemeConverter.dll "Schemes/Speed Worms.txt" "output/Speed.Worms.$(date +'%Y%m%d').wsc"
     - name: Upload .wsc files
       uses: actions/upload-artifact@master
       with:
