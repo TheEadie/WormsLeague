@@ -1,6 +1,10 @@
 name: Build SchemeConverter
 
-on: [push]
+on:
+  push:
+    paths:
+    - "WormsSchemeConverter/**"
+    - "Schemes/**"
 
 jobs:
   build-scheme-converter:
@@ -23,29 +27,27 @@ jobs:
   create-wscs:
     name: Create .wsc files
     needs: build-scheme-converter
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Create output directory
-      run: mkdir -p output
+      run: mkdir -p Schemes/release/
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.2.108
     - name: Download build
       uses: actions/download-artifact@v1
-      with:
+      with:	
         name: SchemeConverter
-    - name: Generate UberCoolestOptions.wsc
-      run: dotnet SchemeConverter/WormsSchemeConverter.dll "Uber Coolest Options.txt" "output/Uber.Coolest.Options.$(date +'%Y%m%d').wsc"
-    - name: Generate Speed Worms.wsc
-      run: dotnet SchemeConverter/WormsSchemeConverter.dll "Speed Worms.txt" "output/Speed.Worms.$(date +'%Y%m%d').wsc"
+    - name: Build
+      run: cd Schemes; ./.build/build.ps1
     - name: Upload .wsc files
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v1
       with:
         name: Schemes
-        path: output/
+        path: Schemes/release/
 
   release:
     name: Create GitHub Release for .wsc files
@@ -60,4 +62,4 @@ jobs:
       with:
         name: Schemes
     - name: Release
-      run: ./WormsSchemeConverter/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} Schemes
+      run: ./Schemes/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} Schemes
