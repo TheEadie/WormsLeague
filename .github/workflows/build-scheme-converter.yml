@@ -32,7 +32,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Create output directory
-      run: mkdir -p Scheme/release/
+      run: mkdir -p Schemes/release/
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
