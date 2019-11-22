@@ -1,0 +1,4 @@
+next-version: 2019.0
+mode: ContinuousDelivery
+tag-prefix: 'schemes/'
+branches: {}
