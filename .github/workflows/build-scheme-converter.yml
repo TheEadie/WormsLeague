@@ -46,7 +46,7 @@ jobs:
     - name: Upload .wsc files
       uses: actions/upload-artifact@v1
       with:
-        name: Schemes
+        name: RGSchemes
         path: Schemes/release/
 
   release:
@@ -60,6 +60,6 @@ jobs:
     - name: Download .wscs
       uses: actions/download-artifact@v1
       with:
-        name: Schemes
+        name: RGSchemes
     - name: Release
-      run: ./Schemes/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} Schemes
+      run: ./Schemes/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} RGSchemes
