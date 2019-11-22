@@ -1,0 +1,110 @@
+///////////////////
+// GENERAL       //
+///////////////////
+
+Hot seat delay:                         [5] (Seconds)
+Retreat time:                           [3] (Seconds)
+Rope retreat time:                      [5] (Seconds)
+Display total round time:               [True]
+Automatic replays:                      [False]
+Fall damage:                            [1]
+Artillery mode:                         [False] (Worms can't move)
+Stockpiling mode:                       [0] (0 = Replenishing, 1 = Accumulating, 2 = Reducing)
+Worms select:                           [0] (0 = Off, 1 = On, 2 = Random)
+Sudden death event:                     [3] (0 = Leader wins, 1 = Nuclear strike, 2 = HP reduced to 1, 3 = Nothing)
+Sudden death water rise rate:           [2] (See table on http://worms2d.info/Sudden_Death)
+Weapon crate probability:               [80] (0-100, See http://worms2d.info/Crate_probability)
+Health crate probability:               [20] (0-100, See http://worms2d.info/Crate_probability)
+Utility crate probability:              [20] (0-100, See http://worms2d.info/Crate_probability)
+Health crate energy:                    [50]
+Donor cards:                            [True]
+Hazard objects:                         [43] (Stores type and number See http://worms2d.info/Hazardous_Objects)
+Mine delay:                             [0]
+Dud mines:                              [False]
+Worm placement:                         [True] (0 = Auto, 1 = Manual)
+Initial worm energy:                    [100]
+Turn time:                              [45] (Seconds, >180 = unlimited)
+Round time:                             [10] (Minutes, >180 = x-180 Seconds)
+Number of rounds:                       [0]
+Blood:                                  [False]
+Aqua sheep:                             [True]
+Sheep heaven:                           [False] (Exploding sheep jump out of destroyed weapon crates)
+God worms:                              [False] (Worms can't lose health)
+Indestructible land:                    [False]
+Upgraded grenade:                       [False]
+Upgraded shotgun:                       [False]
+Upgraded cluster bombs:                 [False]
+Upgraded longbow:                       [False]
+Team weapons:                           [False] (Teams will start the match with their preselected team weapon)
+Super weapons:                          [True] (Super weapons may appear in crates)
+
+///////////////////
+// WEAPONS       //
+///////////////////
+
+(See http://worms2d.info/Weapons for what various power settings will do)
+
+Bazooka                       Ammo: [10]   Power: [2]    Delay: [0]    Crate probability: [0]
+Homing Missile                Ammo: [1]    Power: [2]    Delay: [0]    Crate probability: [1]
+Mortar                        Ammo: [10]   Power: [4]    Delay: [0]    Crate probability: [0]
+Grenade                       Ammo: [10]   Power: [2]    Delay: [0]    Crate probability: [0]
+Cluster Bomb                  Ammo: [10]   Power: [2]    Delay: [0]    Crate probability: [0]
+Skunk                         Ammo: [1]    Power: [2]    Delay: [0]    Crate probability: [0]
+Petrol Bomb                   Ammo: [2]    Power: [3]    Delay: [0]    Crate probability: [0]
+Banana Bomb                   Ammo: [1]    Power: [2]    Delay: [5]    Crate probability: [1]
+Handgun                       Ammo: [10]   Power: [2]    Delay: [0]    Crate probability: [0]
+Shotgun                       Ammo: [1]    Power: [2]    Delay: [0]    Crate probability: [0]
+Uzi                           Ammo: [10]   Power: [2]    Delay: [0]    Crate probability: [0]
+Minigun                       Ammo: [0]    Power: [2]    Delay: [0]    Crate probability: [1]
+Longbow                       Ammo: [1]    Power: [2]    Delay: [1]    Crate probability: [0]
+Airstrike                     Ammo: [1]    Power: [2]    Delay: [4]    Crate probability: [1]
+Napalm Strike                 Ammo: [1]    Power: [2]    Delay: [5]    Crate probability: [1]
+Mine                          Ammo: [2]    Power: [2]    Delay: [0]    Crate probability: [0]
+Fire Punch                    Ammo: [1]    Power: [2]    Delay: [0]    Crate probability: [0]
+Dragon Ball                   Ammo: [1]    Power: [2]    Delay: [0]    Crate probability: [0]
+Kamikaze                      Ammo: [10]   Power: [2]    Delay: [0]    Crate probability: [0]
+Prod                          Ammo: [10]   Power: [2]    Delay: [0]    Crate probability: [0]
+Battle Axe                    Ammo: [1]    Power: [2]    Delay: [2]    Crate probability: [0]
+Blowtorch                     Ammo: [3]    Power: [2]    Delay: [0]    Crate probability: [0]
+Pneumatic Drill               Ammo: [3]    Power: [2]    Delay: [0]    Crate probability: [0]
+Girder                        Ammo: [1]    Power: [4]    Delay: [0]    Crate probability: [0]
+Ninja Rope                    Ammo: [3]    Power: [4]    Delay: [0]    Crate probability: [1]
+Parachute                     Ammo: [2]    Power: [0]    Delay: [0]    Crate probability: [0]
+Bungee                        Ammo: [2]    Power: [0]    Delay: [0]    Crate probability: [0]
+Teleport                      Ammo: [1]    Power: [0]    Delay: [1]    Crate probability: [1]
+Dynamite                      Ammo: [1]    Power: [2]    Delay: [2]    Crate probability: [1]
+Sheep                         Ammo: [1]    Power: [2]    Delay: [2]    Crate probability: [1]
+Baseball Bat                  Ammo: [0]    Power: [2]    Delay: [0]    Crate probability: [1]
+Flame Thrower                 Ammo: [1]    Power: [2]    Delay: [4]    Crate probability: [1]
+Homing Pigeon                 Ammo: [1]    Power: [2]    Delay: [4]    Crate probability: [1]
+Mad Cow                       Ammo: [2]    Power: [2]    Delay: [4]    Crate probability: [1]
+Holy Hand Grenade             Ammo: [1]    Power: [2]    Delay: [4]    Crate probability: [1]
+Old Woman                     Ammo: [0]    Power: [2]    Delay: [0]    Crate probability: [1]
+Sheep Launcher                Ammo: [1]    Power: [2]    Delay: [2]    Crate probability: [1]
+Super Sheep                   Ammo: [0]    Power: [2]    Delay: [0]    Crate probability: [1]
+Mole Bomb                     Ammo: [2]    Power: [14]   Delay: [2]    Crate probability: [1]
+Jet Pack                      Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
+Low Gravity                   Ammo: [1]    Power: [0]    Delay: [0]    Crate probability: [0]
+Laser Sight                   Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
+Fast Walk                     Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
+Invisibility                  Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
+Damage x2                     Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
+Freeze                        Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Super Banana Bomb             Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Mine Strike                   Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Girder Starter Pack           Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Earthquake                    Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Scales Of Justice             Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Ming Vase                     Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Mike's Carpet Bomb            Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Patsy's Magic Bullet          Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Indian Nuclear Test           Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Select Worm                   Ammo: [1]    Power: [0]    Delay: [0]    Crate probability: [1]
+Salvation Army                Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Mole Squadron                 Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+MB Bomb                       Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Concrete Donkey               Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Suicide Bomber                Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Sheep Strike                  Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Mail Strike                   Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
+Armageddon                    Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [1]
