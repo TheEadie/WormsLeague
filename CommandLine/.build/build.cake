@@ -1,24 +1,28 @@
 #tool "nuget:?package=GitVersion.CommandLine&version=5.1.3"
 
+// Constants
 const string projectPath = "../src/worms.csproj";
 const string artifactPath = "../.artifacts/";
 
-var target = Argument("target", "Build");
+// Command line arguments
+var target = Argument("target", "Publish");
 
-Task("Build")
+// State
+var versionInfo = new GitVersion();
+
+Task("CalculateVersion")
   .Does(() =>
 {
-    DotNetCoreBuild(projectPath);
+    versionInfo = GitVersion();
+
+    Information($"Version - {version}");
 });
 
 Task("Publish")
+  .IsDependentOn("CalculateVersion")
   .Does(() =>
 {
-    CleanDirectory(artifactPath);
-    var versionInfo = GitVersion();
-
     var version = versionInfo.MajorMinorPatch;
-
     Information($"Publishing version - {version}");
 
     var winSettings = new DotNetCorePublishSettings
@@ -39,6 +43,7 @@ Task("Publish")
         ArgumentCustomization = args=>args.Append($"/p:PublishSingleFile=true /p:Version={version}")
     };
 
+    CleanDirectory(artifactPath);
     DotNetCorePublish(projectPath, winSettings);
     DotNetCorePublish(projectPath, linuxSettings);
 });
