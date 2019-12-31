@@ -1,4 +1,8 @@
-#tool "nuget:?package=GitVersion.CommandLine&version=5.1.3"
+#module nuget:?package=Cake.DotNetTool.Module&Version=0.4.0
+#tool dotnet:?package=GitVersion.Tool&Version=5.1.3
+#addin nuget:?package=Newtonsoft.Json&version=12.0.3
+
+using Newtonsoft.Json;
 
 // Constants
 const string projectPath = "../src/worms.csproj";
@@ -13,9 +17,9 @@ var versionInfo = new GitVersion();
 Task("CalculateVersion")
   .Does(() =>
 {
-    versionInfo = GitVersion();
+    versionInfo = GitVersion( new GitVersionSettings { WorkingDirectory = "../", ToolPath = Context.Tools.Resolve("dotnet-gitversion") } );
 
-    Information($"Version - {version}");
+    Information($"Version - {versionInfo.MajorMinorPatch}");
 });
 
 Task("Publish")
@@ -44,6 +48,11 @@ Task("Publish")
     };
 
     CleanDirectory(artifactPath);
+
+    var versionInfoFilePath = System.IO.Path.Combine(artifactPath, "version.json");
+    var versionJson = JsonConvert.SerializeObject(versionInfo, Formatting.Indented);
+    System.IO.File.WriteAllText(versionInfoFilePath, versionJson);
+
     DotNetCorePublish(projectPath, winSettings);
     DotNetCorePublish(projectPath, linuxSettings);
 });
