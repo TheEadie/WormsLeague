@@ -1,4 +1,6 @@
 ﻿using System;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Commands;
 
@@ -10,7 +12,7 @@ namespace Worms
         {
             var console = new PhysicalConsole();
             var app = new CommandLineApplication<Root>(console, Environment.CurrentDirectory, true);
-            app.Conventions.UseDefaultConventions();
+            app.Conventions.UseDefaultConventions().UseConstructorInjection(SetUpDi());
             ConfigureHelp(app);
 
             try
@@ -34,6 +36,17 @@ namespace Worms
             {
                 ConfigureHelp(subcmd);
             }
+        }
+
+        private static IServiceProvider SetUpDi()
+        {
+            var builder = new ContainerBuilder();
+
+            builder.RegisterModule<CliModule>();
+
+            var container = builder.Build();
+
+            return new AutofacServiceProvider(container);
         }
     }
 }
