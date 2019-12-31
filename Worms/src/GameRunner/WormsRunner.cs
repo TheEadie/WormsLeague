@@ -19,8 +19,10 @@ namespace Worms.GameRunner
         {
             return Task.Factory.StartNew(() =>
             {
+                var gameInfo = _wormsLocator.Find();
+
                 var args = string.Join(" ", wormsArgs);
-                using (var process = Process.Start(_wormsLocator.ExeLocation, args))
+                using (var process = Process.Start(gameInfo.ExeLocation, args))
                 {
                     if (process == null) { return; }
 
@@ -30,7 +32,7 @@ namespace Worms.GameRunner
 
                 _steamService.WaitForSteamPrompt();
 
-                var wormsProcess = Process.GetProcessesByName(_wormsLocator.ProcessName).FirstOrDefault();
+                var wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
                 wormsProcess?.WaitForExit();
 
                 return;

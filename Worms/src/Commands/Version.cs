@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -21,7 +20,8 @@ namespace Worms.Commands
             var cliVersion = Assembly.GetEntryAssembly().GetName().Version.ToString(3);
             console.WriteLine($"Worms CLI: {cliVersion}");
 
-            var gameVersion = FileVersionInfo.GetVersionInfo(_wormsLocator.ExeLocation).ProductVersion;
+            var gameInfo = _wormsLocator.Find();
+            var gameVersion = gameInfo.IsInstalled ? gameInfo.Version.ToString(3) : "Not Installed";
             console.WriteLine($"Worms Armageddon: {gameVersion}");
             return Task.FromResult(0);
         }

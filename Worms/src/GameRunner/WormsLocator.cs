@@ -1,21 +1,30 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using Microsoft.Win32;
 
 namespace Worms.GameRunner
 {
     internal class WormsLocator : IWormsLocator
     {
-        public string VideoLocation => Path.Combine(_rootLocation, "User/Capture");
-        public string GamesLocation => Path.Combine(_rootLocation, "User/Games");
-        public string ExeLocation => Path.Combine(_rootLocation, ProcessName + ".exe");
-        public string ProcessName => "WA";
-
-        private readonly string _rootLocation;
-
-        public WormsLocator()
+        public GameInfo Find()
         {
+            const string processName = "WA";
+
             var location = Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Team17SoftwareLTD\WormsArmageddon", "Path", null);
-            _rootLocation = location as string ?? Directory.GetCurrentDirectory();
+
+            if (location is null)
+            {
+                return new GameInfo(false, string.Empty, string.Empty, new Version(0, 0, 0, 0));
+            }
+
+            var rootLocation = location as string;
+            var exeLocation = Path.Combine(rootLocation, processName + ".exe");
+
+            var versionInfo = FileVersionInfo.GetVersionInfo(exeLocation);
+            var version = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart, versionInfo.ProductPrivatePart);
+
+            return new GameInfo(true, exeLocation, processName, version);
         }
     }
 }
