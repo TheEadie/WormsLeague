@@ -35,7 +35,7 @@ Task("Publish")
         OutputDirectory = artifactPath,
         Runtime = "win-x64",
         SelfContained = true,
-        ArgumentCustomization = args=>args.Append($"/p:PublishSingleFile=true /p:Version={version}")
+        ArgumentCustomization = args=>args.Append($"/p:PublishSingleFile=true /p:Version={version} /p:PublishTrimmed=true")
     };
 
     var linuxSettings = new DotNetCorePublishSettings
@@ -44,7 +44,7 @@ Task("Publish")
         OutputDirectory = artifactPath,
         Runtime = "linux-x64",
         SelfContained = true,
-        ArgumentCustomization = args=>args.Append($"/p:PublishSingleFile=true /p:Version={version}")
+        ArgumentCustomization = args=>args.Append($"/p:PublishSingleFile=true /p:Version={version} /p:PublishTrimmed=true")
     };
 
     CleanDirectory(artifactPath);
