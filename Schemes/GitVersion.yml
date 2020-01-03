@@ -1,4 +1,4 @@
-next-version: 2019.0
+next-version: 2020.0
 mode: ContinuousDelivery
 tag-prefix: 'schemes/v'
 branches: {}
