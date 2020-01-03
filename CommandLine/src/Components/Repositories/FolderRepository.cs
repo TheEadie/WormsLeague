@@ -37,7 +37,7 @@ namespace Worms.Components.Repositories
             return Task.FromResult(versions as IEnumerable<Version>);
         }
 
-        public void DownloadVersion(string id, Version version, string downloadToFolderPath)
+        public Task DownloadVersion(string id, Version version, string downloadToFolderPath)
         {
             var componentPath = GetComponentFolder(id);
             var componentVersionPath = _fileSystem.Path.Combine(componentPath, version.ToString(3));
@@ -50,6 +50,8 @@ namespace Worms.Components.Repositories
                 var destFile = _fileSystem.Path.Combine(downloadToFolderPath, fileName);
                 _fileSystem.File.Copy(file, destFile, true);
             }
+
+            return Task.CompletedTask;
         }
 
         private string GetComponentFolder(string id)

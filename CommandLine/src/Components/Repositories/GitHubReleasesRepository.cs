@@ -25,14 +25,25 @@ namespace Worms.Components.Repositories
         public async Task<IEnumerable<Version>> GetAvailibleVersions(string id)
         {
             var releases = await _gitHubClient.Repository.Release.GetAll(_repoOwner, _repoName);
-            
-            return new List<Version>();
+            var matching = releases.Where(x => x.TagName.StartsWith(_tagPrefix));
+            var tagVersions = matching.Select(x => x.TagName.Replace(_tagPrefix, string.Empty));
 
+            var versions = new List<Version>();
+            foreach (var tagVersion in tagVersions)
+            {
+                if (Version.TryParse(tagVersion, out var version))
+                {
+                    versions.Add(version);
+                }
+            }
+            return versions;
         }
 
-        public void DownloadVersion(string id, Version version, string downloadToFolderPath)
+        public async Task DownloadVersion(string id, Version version, string downloadToFolderPath)
         {
-            
+            var releases = await _gitHubClient.Repository.Release.GetAll(_repoOwner, _repoName);
+            var matching = releases.Single(x => x.TagName == _tagPrefix + version.ToString(3));
+            var files = await _gitHubClient.Repository.Release.GetAllAssets(_repoOwner, _repoName, matching.Id);
         }
     }
 }

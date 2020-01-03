@@ -37,7 +37,7 @@ namespace Worms.Components
             return (await _updateRepository.GetAvailibleVersions(Name)).ToList();
         }
 
-        public void Install(Version version)
+        public async Task Install(Version version)
         {
             var tempPath = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), Guid.NewGuid().ToString());
 
@@ -47,7 +47,7 @@ namespace Worms.Components
             }
             _fileSystem.Directory.CreateDirectory(tempPath);
 
-            _updateRepository.DownloadVersion(Name, version, tempPath);
+            await _updateRepository.DownloadVersion(Name, version, tempPath);
             _componentUpdater.Install(tempPath, ComponentPath);
 
             _fileSystem.Directory.Delete(tempPath, true);

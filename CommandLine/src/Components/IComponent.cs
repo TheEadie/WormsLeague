@@ -11,6 +11,6 @@ namespace Worms.Components
         string ComponentPath { get; }
 
         Task<IReadOnlyCollection<Version>> GetAvailiableVersions();
-        void Install(Version version);
+        Task Install(Version version);
     }
 }

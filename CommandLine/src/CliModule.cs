@@ -21,7 +21,12 @@ namespace Worms
             builder.RegisterType<Game>().As<IComponent>();
 
             // Updates
-            builder.Register(c => new FolderRepository(@"D:\WormsRepo", c.Resolve<IFileSystem>())).As<IUpdateRepository>();
+            //builder.Register(c => new FolderRepository(@"D:\WormsRepo", c.Resolve<IFileSystem>())).As<IUpdateRepository>();
+
+            var repo = new GitHubReleaseRepository();
+            repo.Connect("TheEadie", "WormsLeague", "giftool/v");
+
+            builder.RegisterInstance(repo).As<IUpdateRepository>();
             builder.RegisterType<ComponentUpdater>().As<IComponentUpdater>();
             builder.RegisterType<FileSystem>().As<IFileSystem>();
         }

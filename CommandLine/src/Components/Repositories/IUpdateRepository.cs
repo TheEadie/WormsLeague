@@ -7,6 +7,6 @@ namespace Worms.Components.Repositories
     public interface IUpdateRepository
     {
         Task<IEnumerable<Version>> GetAvailibleVersions(string id);
-        void DownloadVersion(string id, Version version, string downloadToFolderPath);
+        Task DownloadVersion(string id, Version version, string downloadToFolderPath);
     }
 }

@@ -28,7 +28,7 @@ namespace Worms.Commands
                     break;
                 }
 
-                component.Install(latestVersion);
+                await component.Install(latestVersion);
                 console.WriteLine($"Updated {component.Name} to {latestVersion}");
             }
 

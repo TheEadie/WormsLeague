@@ -34,9 +34,10 @@ namespace Worms.Components
             return Task.FromResult(knownVersions as IReadOnlyCollection<Version>);
         }
 
-        public void Install(Version version)
+        public Task Install(Version version)
         {
             // Use Steam
+            return Task.CompletedTask;
         }
     }
 }
