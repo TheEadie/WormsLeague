@@ -5,6 +5,7 @@ namespace Worms.Commands
 {
     [Command("worms", Description = "Worms CLI"),
         Subcommand(typeof(Version)),
+        Subcommand(typeof(Update)),
         Subcommand(typeof(Host)),
     ]
     public class Root
