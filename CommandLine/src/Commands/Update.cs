@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Components;
-using Worms.Components.Updates;
 
 namespace Worms.Commands
 {
@@ -24,6 +23,7 @@ namespace Worms.Commands
                 var latestVersion = component.GetAvailiableVersions().OrderByDescending(x => x).First();
                 if (component.InstalledVersion > latestVersion)
                 {
+                    console.WriteLine($"{component.Name} is up to date: {latestVersion}");
                     break;
                 }
 

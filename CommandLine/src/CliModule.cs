@@ -18,6 +18,7 @@ namespace Worms
 
             // Components
             builder.RegisterType<Cli>().As<IComponent>();
+            builder.RegisterType<Game>().As<IComponent>();
 
             // Updates
             builder.Register(c => new FolderRepository(@"D:\WormsRepo", c.Resolve<IFileSystem>())).As<IUpdateRepository>();
