@@ -16,11 +16,12 @@ namespace Worms.Commands
             _components = components;
         }
 
-        public Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync(IConsole console)
         {
             foreach(var component in _components)
             {
-                var latestVersion = component.GetAvailiableVersions().OrderByDescending(x => x).First();
+                var versions = await component.GetAvailiableVersions();
+                var latestVersion = versions.OrderByDescending(x => x).First();
                 if (component.InstalledVersion > latestVersion)
                 {
                     console.WriteLine($"{component.Name} is up to date: {latestVersion}");
@@ -31,7 +32,7 @@ namespace Worms.Commands
                 console.WriteLine($"Updated {component.Name} to {latestVersion}");
             }
 
-            return Task.FromResult(0);
+            return 0;
         }
     }
 }

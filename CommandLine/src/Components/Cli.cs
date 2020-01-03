@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Worms.Components.Repositories;
 using Worms.Components.Updates;
 
@@ -31,9 +32,9 @@ namespace Worms.Components
             ComponentPath = _fileSystem.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         }
 
-        public IReadOnlyCollection<Version> GetAvailiableVersions()
+        public async Task<IReadOnlyCollection<Version>> GetAvailiableVersions()
         {
-            return _updateRepository.GetAvailibleVersions(Name).ToList();
+            return (await _updateRepository.GetAvailibleVersions(Name)).ToList();
         }
 
         public void Install(Version version)

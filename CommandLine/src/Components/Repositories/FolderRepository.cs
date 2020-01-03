@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Worms.Components.Repositories
 {
@@ -17,7 +18,7 @@ namespace Worms.Components.Repositories
             _fileSystem = fileSystem;
         }
 
-        public IEnumerable<Version> GetAvailibleVersions(string id)
+        public Task<IEnumerable<Version>> GetAvailibleVersions(string id)
         {
             string componentFolder = GetComponentFolder(id);
 
@@ -33,7 +34,7 @@ namespace Worms.Components.Repositories
                 }
             }
 
-            return versions;
+            return Task.FromResult(versions as IEnumerable<Version>);
         }
 
         public void DownloadVersion(string id, Version version, string downloadToFolderPath)

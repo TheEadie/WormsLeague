@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Worms.Components
 {
@@ -9,7 +10,7 @@ namespace Worms.Components
         Version InstalledVersion { get; }
         string ComponentPath { get; }
 
-        IReadOnlyCollection<Version> GetAvailiableVersions();
+        Task<IReadOnlyCollection<Version>> GetAvailiableVersions();
         void Install(Version version);
     }
 }

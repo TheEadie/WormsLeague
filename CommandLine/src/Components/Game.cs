@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Worms.Components.Repositories;
 using Worms.Components.Updates;
 using Worms.GameRunner;
@@ -26,10 +27,11 @@ namespace Worms.Components
             Name = "Worms Armaggedon";
         }
 
-        public IReadOnlyCollection<Version> GetAvailiableVersions()
+        public Task<IReadOnlyCollection<Version>> GetAvailiableVersions()
         {
             // https://worms2d.info/List_of_Worms_Armageddon_logic_versions
-            return new List<Version> { new Version(3,7,2,1) };
+            var knownVersions = new List<Version> { new Version(3, 7, 2, 1) };
+            return Task.FromResult(knownVersions as IReadOnlyCollection<Version>);
         }
 
         public void Install(Version version)

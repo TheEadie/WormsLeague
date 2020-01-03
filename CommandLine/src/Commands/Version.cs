@@ -21,7 +21,7 @@ namespace Worms.Commands
             console.WriteLine($"Worms CLI: {cliVersion}");
 
             var gameInfo = _wormsLocator.Find();
-            var gameVersion = gameInfo.IsInstalled ? gameInfo.Version.ToString(3) : "Not Installed";
+            var gameVersion = gameInfo.IsInstalled ? gameInfo.Version.ToString(4) : "Not Installed";
             console.WriteLine($"Worms Armageddon: {gameVersion}");
             return Task.FromResult(0);
         }
