@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -44,6 +45,12 @@ namespace Worms.Components.Repositories
             var releases = await _gitHubClient.Repository.Release.GetAll(_repoOwner, _repoName);
             var matching = releases.Single(x => x.TagName == _tagPrefix + version.ToString(3));
             var files = await _gitHubClient.Repository.Release.GetAllAssets(_repoOwner, _repoName, matching.Id);
+
+            foreach(var file in files)
+            {
+                var raw = await _gitHubClient.Connection.Get<Byte[]>(new Uri(file.Url), new Dictionary<string, string>(), "application/octet-stream");
+                await File.WriteAllBytesAsync(Path.Combine(downloadToFolderPath, file.Name), raw.Body);
+            }
         }
     }
 }
