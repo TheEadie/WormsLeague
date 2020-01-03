@@ -26,7 +26,11 @@ namespace Worms.Components.Updates
         private void BackupCurrentVersion(string componentPath)
         {
             var backupFolder = _fileSystem.Path.Combine(componentPath, ".backup");
-            _fileSystem.Directory.Delete(backupFolder, true);
+
+            if (_fileSystem.Directory.Exists(backupFolder))
+                {
+                _fileSystem.Directory.Delete(backupFolder, true);
+            }
             _fileSystem.Directory.CreateDirectory(backupFolder);
 
             MoveFilesInFolder(componentPath, backupFolder);

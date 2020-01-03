@@ -39,12 +39,6 @@ namespace Worms.Components.Repositories
 
         public void DownloadVersion(string id, Version version, string downloadToFolderPath)
         {
-            if (_fileSystem.Directory.Exists(downloadToFolderPath))
-            {
-                _fileSystem.Directory.Delete(downloadToFolderPath, true);
-            }
-            _fileSystem.Directory.CreateDirectory(downloadToFolderPath);
-
             var componentPath = GetComponentFolder(id);
             var componentVersionPath = _fileSystem.Path.Combine(componentPath, version.ToString(3));
 

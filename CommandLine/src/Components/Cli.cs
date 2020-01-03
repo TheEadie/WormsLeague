@@ -41,6 +41,12 @@ namespace Worms.Components
         {
             var tempPath = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), Guid.NewGuid().ToString());
 
+            if (_fileSystem.Directory.Exists(tempPath))
+            {
+                _fileSystem.Directory.Delete(tempPath, true);
+            }
+            _fileSystem.Directory.CreateDirectory(tempPath);
+
             _updateRepository.DownloadVersion(Name, version, tempPath);
             _componentUpdater.Install(tempPath, ComponentPath);
 
