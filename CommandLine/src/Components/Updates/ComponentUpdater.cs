@@ -1,6 +1,4 @@
-using System;
 using System.IO.Abstractions;
-using System.Reflection;
 
 namespace Worms.Components.Updates
 {

@@ -1,5 +1,3 @@
-using System;
-
 namespace Worms.Components.Updates
 {
     public interface IComponentUpdater
