@@ -9,10 +9,14 @@ namespace Worms.Commands
     [Command("update", Description = "Update worms CLI")]
     public class Update
     {
-        private readonly IEnumerable<IComponent> _components;
+        private readonly ComponentOperations _componentOperations;
+        private readonly IEnumerable<Component> _components;
 
-        public Update(IEnumerable<IComponent> components)
+        public Update(
+            ComponentOperations componentOperations,
+            IEnumerable<Component> components)
         {
+            _componentOperations = componentOperations;
             _components = components;
         }
 
@@ -20,7 +24,7 @@ namespace Worms.Commands
         {
             foreach(var component in _components)
             {
-                var versions = await component.GetAvailiableVersions();
+                var versions = await _componentOperations.GetAvailiableVersions(component);
                 var latestVersion = versions.OrderByDescending(x => x).First();
                 if (component.InstalledVersion > latestVersion)
                 {
@@ -28,7 +32,7 @@ namespace Worms.Commands
                     break;
                 }
 
-                await component.Install(latestVersion);
+                await _componentOperations.Install(component, latestVersion);
                 console.WriteLine($"Updated {component.Name} to {latestVersion}");
             }
 

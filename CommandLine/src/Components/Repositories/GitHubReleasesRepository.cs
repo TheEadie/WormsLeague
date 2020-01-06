@@ -14,12 +14,12 @@ namespace Worms.Components.Repositories
         private string _repoName;
         private string _tagPrefix;
 
-        public void Connect(string owner, string repo, string tagPrefix)
+        public void Connect(GitHubReleaseUpdateConfig config)
         {
             _gitHubClient = new GitHubClient(new ProductHeaderValue("worms-cli"));
-            _repoOwner = owner;
-            _repoName = repo;
-            _tagPrefix = tagPrefix;
+            _repoOwner = config.RepoOwner;
+            _repoName = config.RepoName;
+            _tagPrefix = config.TagPrefix;
         }
 
         public async Task<IEnumerable<Version>> GetAvailibleVersions(string id)
