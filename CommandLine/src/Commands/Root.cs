@@ -8,7 +8,7 @@ namespace Worms.Commands
         Subcommand(typeof(Update)),
         Subcommand(typeof(Host)),
     ]
-    public class Root
+    public class Root : CommandBase
     {
         public Task<int> OnExecuteAsync(CommandLineApplication app)
         {

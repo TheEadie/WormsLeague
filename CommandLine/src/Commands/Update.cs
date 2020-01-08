@@ -6,7 +6,7 @@ using Worms.Components;
 namespace Worms.Commands
 {
     [Command("update", Description = "Update worms CLI")]
-    public class Update
+    public class Update : CommandBase
     {
         private readonly ComponentOperations _componentOperations;
         private readonly ComponentsRepository _componentsRepository;

@@ -6,7 +6,7 @@ using Worms.GameRunner;
 namespace Worms.Commands
 {
     [Command("version", Description = "Get the current version of the worms CLI")]
-    public class Version
+    public class Version : CommandBase
     {
         private readonly IWormsLocator _wormsLocator;
 
