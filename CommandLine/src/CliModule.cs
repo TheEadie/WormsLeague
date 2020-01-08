@@ -2,6 +2,7 @@
 using System.IO.Abstractions;
 using Autofac;
 using Worms.Components;
+using Worms.Components.Updaters;
 using Worms.Components.Updaters.GitHubReleaseUpdater;
 using Worms.Components.Updaters.OutsideOfToolUpdater;
 using Worms.GameRunner;
@@ -22,8 +23,8 @@ namespace Worms
             builder.RegisterType<WormsRunner>().As<IWormsRunner>();
 
             // Components
-            builder.RegisterType<OutsideOfToolUpdater>();
-            builder.RegisterType<GitHubReleaseUpdater>();
+            builder.RegisterType<OutsideOfToolUpdater>().As<IUpdater<OutsideOfToolUpdateConfig>>();
+            builder.RegisterType<GitHubReleaseUpdater>().As<IUpdater<GitHubReleaseUpdateConfig>>();
 
             // Updates
             builder.RegisterType<FileCopierInstaller>().As<IFileCopierInstaller>();

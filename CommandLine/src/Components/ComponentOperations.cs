@@ -9,10 +9,10 @@ namespace Worms.Components
 {
     public class ComponentOperations
     {
-        private readonly OutsideOfToolUpdater _outsideOfToolUpdater;
-        private readonly GitHubReleaseUpdater _gitHubReleaseUpdater;
+        private readonly IUpdater<OutsideOfToolUpdateConfig> _outsideOfToolUpdater;
+        private readonly IUpdater<GitHubReleaseUpdateConfig> _gitHubReleaseUpdater;
 
-        public ComponentOperations(OutsideOfToolUpdater outsideOfToolUpdater, GitHubReleaseUpdater gitHubReleaseUpdater)
+        public ComponentOperations(IUpdater<OutsideOfToolUpdateConfig> outsideOfToolUpdater, IUpdater<GitHubReleaseUpdateConfig> gitHubReleaseUpdater)
         {
             _outsideOfToolUpdater = outsideOfToolUpdater;
             _gitHubReleaseUpdater = gitHubReleaseUpdater;
