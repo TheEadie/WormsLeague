@@ -8,18 +8,27 @@ using Worms.GameRunner;
 
 namespace Worms.Components
 {
-    public class ComponentFactory
+    public class ComponentsRepository
     {
         private readonly IFileSystem _fileSystem;
         private readonly IWormsLocator _wormsLocator;
 
-        public ComponentFactory(IFileSystem fileSystem, IWormsLocator wormsLocator)
+        public ComponentsRepository(IFileSystem fileSystem, IWormsLocator wormsLocator)
         {
             _fileSystem = fileSystem;
             _wormsLocator = wormsLocator;
         }
 
-        public Component CreateCli()
+        public IEnumerable<Component> GetAll()
+        {
+            return new List<Component>
+            {
+                CreateCli(),
+                CreateGame()
+            };
+        }
+
+        private Component CreateCli()
         {
             var assembly = Assembly.GetEntryAssembly();
             return new Component(
@@ -29,7 +38,7 @@ namespace Worms.Components
                 new GitHubReleaseUpdateConfig("TheEadie", "WormsLeague", "giftool/v"));
         }
 
-        public Component CreateGame()
+        private Component CreateGame()
         {
             var gameInfo = _wormsLocator.Find();
             

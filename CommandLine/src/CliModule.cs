@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using Autofac;
 using Worms.Components;
 using Worms.Components.Updaters;
@@ -23,22 +22,14 @@ namespace Worms
             builder.RegisterType<WormsRunner>().As<IWormsRunner>();
 
             // Components
+            builder.RegisterType<ComponentsRepository>();
+            builder.RegisterType<ComponentOperations>();
             builder.RegisterType<OutsideOfToolUpdater>().As<IUpdater<OutsideOfToolUpdateConfig>>();
             builder.RegisterType<GitHubReleaseUpdater>().As<IUpdater<GitHubReleaseUpdateConfig>>();
 
             // Updates
             builder.RegisterType<FileCopierInstaller>().As<IFileCopierInstaller>();
             builder.RegisterType<GitHubReleaseRepository>();
-            builder.RegisterType<ComponentFactory>();
-            builder.RegisterType<ComponentOperations>();
-
-            builder.Register(c => 
-                {
-                    var factory = c.Resolve<ComponentFactory>();
-                    var components = new List<Component> { factory.CreateCli(), factory.CreateGame() };
-                    return components;
-                }
-            ).As<IEnumerable<Component>>();
         }
     }
 }

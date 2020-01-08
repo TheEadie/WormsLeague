@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -10,19 +9,21 @@ namespace Worms.Commands
     public class Update
     {
         private readonly ComponentOperations _componentOperations;
-        private readonly IEnumerable<Component> _components;
+        private readonly ComponentsRepository _componentsRepository;
 
         public Update(
             ComponentOperations componentOperations,
-            IEnumerable<Component> components)
+            ComponentsRepository componentsRepository)
         {
             _componentOperations = componentOperations;
-            _components = components;
+            _componentsRepository = componentsRepository;
         }
 
         public async Task<int> OnExecuteAsync(IConsole console)
         {
-            foreach(var component in _components)
+            var components = _componentsRepository.GetAll();
+
+            foreach(var component in components)
             {
                 var versions = await _componentOperations.GetAvailableVersions(component);
                 var latestVersion = versions.OrderByDescending(x => x).First();
