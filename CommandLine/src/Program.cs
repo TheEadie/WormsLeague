@@ -6,7 +6,7 @@ using Worms.Commands;
 
 namespace Worms
 {
-    class Program
+    internal class Program
     {
         public static int Main(string[] args)
         {
@@ -32,9 +32,9 @@ namespace Worms
         {
             cmd.UsePagerForHelpText = false;
 
-            foreach (var subcmd in cmd.Commands)
+            foreach (var subCmd in cmd.Commands)
             {
-                ConfigureHelp(subcmd);
+                ConfigureHelp(subCmd);
             }
         }
 

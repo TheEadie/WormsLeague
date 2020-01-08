@@ -1,11 +1,11 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Octokit;
 
-namespace Worms.Updates.Repositories
+namespace Worms.Updates.PackageManagers
 {
     public class GitHubReleaseRepository : IUpdateRepository
     {
@@ -22,7 +22,7 @@ namespace Worms.Updates.Repositories
             _tagPrefix = tagPrefix;
         }
 
-        public async Task<IEnumerable<Version>> GetAvailibleVersions(string id)
+        public async Task<IEnumerable<Version>> GetAvailableVersions(string id)
         {
             var releases = await _gitHubClient.Repository.Release.GetAll(_repoOwner, _repoName);
             var matching = releases.Where(x => x.TagName.StartsWith(_tagPrefix));

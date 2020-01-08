@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Worms.Components
+namespace Worms.Components.Updaters.OutsideOfToolUpdater
 {
     public class OutsideOfToolUpdateConfig : UpdateConfig
 

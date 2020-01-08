@@ -1,4 +1,5 @@
 using System;
+using Worms.Components.Updaters;
 
 namespace Worms.Components
 {

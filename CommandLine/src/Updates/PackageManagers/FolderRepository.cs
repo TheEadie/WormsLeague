@@ -4,7 +4,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Worms.Updates.Repositories
+namespace Worms.Updates.PackageManagers
 {
     public class FolderRepository : IUpdateRepository
     {
@@ -18,9 +18,9 @@ namespace Worms.Updates.Repositories
             _fileSystem = fileSystem;
         }
 
-        public Task<IEnumerable<Version>> GetAvailibleVersions(string id)
+        public Task<IEnumerable<Version>> GetAvailableVersions(string id)
         {
-            string componentFolder = GetComponentFolder(id);
+            var componentFolder = GetComponentFolder(id);
 
             var folders = _fileSystem.Directory.GetDirectories(componentFolder);
             var folderNames = folders.Select(x => _fileSystem.Path.GetFileName(x));
@@ -34,7 +34,7 @@ namespace Worms.Updates.Repositories
                 }
             }
 
-            return Task.FromResult(versions as IEnumerable<Version>);
+            return Task.FromResult((IEnumerable<Version>) versions);
         }
 
         public Task DownloadVersion(string id, Version version, string downloadToFolderPath)

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Worms.Components.Updaters;
+using Worms.Components.Updaters.GitHubReleaseUpdater;
+using Worms.Components.Updaters.OutsideOfToolUpdater;
 
 namespace Worms.Components
 {
@@ -16,14 +18,14 @@ namespace Worms.Components
             _gitHubReleaseUpdater = gitHubReleaseUpdater;
         }
 
-        public async Task<IReadOnlyCollection<Version>> GetAvailiableVersions(Component component)
+        public async Task<IReadOnlyCollection<Version>> GetAvailableVersions(Component component)
         {
             switch(component.UpdateConfig)
             {
                 case OutsideOfToolUpdateConfig config:
-                    return await _outsideOfToolUpdater.GetAvailiableVersions(component, config);
+                    return await _outsideOfToolUpdater.GetAvailableVersions(component, config);
                 case GitHubReleaseUpdateConfig config:
-                    return await _gitHubReleaseUpdater.GetAvailiableVersions(component, config);
+                    return await _gitHubReleaseUpdater.GetAvailableVersions(component, config);
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown UpdateConfig {typeof(UpdateConfig)}");
             }

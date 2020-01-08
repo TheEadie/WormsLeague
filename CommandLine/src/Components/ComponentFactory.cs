@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Reflection;
+using Worms.Components.Updaters.GitHubReleaseUpdater;
+using Worms.Components.Updaters.OutsideOfToolUpdater;
 using Worms.GameRunner;
 
 namespace Worms.Components
@@ -35,7 +37,7 @@ namespace Worms.Components
             var knownVersions = new List<Version> { new Version(3, 7, 2, 1) };
             
             return new Component(
-                "Worms Armaggedon",
+                "Worms Armageddon",
                 gameInfo.Version,
                 gameInfo.ExeLocation,
                 new OutsideOfToolUpdateConfig(knownVersions));

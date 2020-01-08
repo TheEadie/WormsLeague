@@ -1,4 +1,4 @@
-namespace Worms.Components
+namespace Worms.Components.Updaters.GitHubReleaseUpdater
 {
     public class GitHubReleaseUpdateConfig : UpdateConfig
     {

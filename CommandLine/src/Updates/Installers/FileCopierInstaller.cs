@@ -26,7 +26,7 @@ namespace Worms.Updates.Installers
             var backupFolder = _fileSystem.Path.Combine(componentPath, ".backup");
 
             if (_fileSystem.Directory.Exists(backupFolder))
-                {
+            {
                 _fileSystem.Directory.Delete(backupFolder, true);
             }
             _fileSystem.Directory.CreateDirectory(backupFolder);

@@ -2,11 +2,11 @@
 using System.IO.Abstractions;
 using Autofac;
 using Worms.Components;
-using Worms.Components.Updaters;
+using Worms.Components.Updaters.GitHubReleaseUpdater;
+using Worms.Components.Updaters.OutsideOfToolUpdater;
 using Worms.GameRunner;
-using Worms.Updates;
 using Worms.Updates.Installers;
-using Worms.Updates.Repositories;
+using Worms.Updates.PackageManagers;
 
 namespace Worms
 {

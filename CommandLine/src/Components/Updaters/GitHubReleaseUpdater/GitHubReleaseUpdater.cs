@@ -4,9 +4,9 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using Worms.Updates.Installers;
-using Worms.Updates.Repositories;
+using Worms.Updates.PackageManagers;
 
-namespace Worms.Components.Updaters
+namespace Worms.Components.Updaters.GitHubReleaseUpdater
 {
     public class GitHubReleaseUpdater : IUpdater<GitHubReleaseUpdateConfig>
     {
@@ -21,10 +21,10 @@ namespace Worms.Components.Updaters
             _componentUpdater = componentUpdater;
         }
 
-        public async Task<IReadOnlyCollection<Version>> GetAvailiableVersions(Component component, GitHubReleaseUpdateConfig config)
+        public async Task<IReadOnlyCollection<Version>> GetAvailableVersions(Component component, GitHubReleaseUpdateConfig config)
         {
             _gitHubReleaseRepository.Connect(config.RepoOwner, config.RepoName, config.TagPrefix);
-            return (await _gitHubReleaseRepository.GetAvailibleVersions(component.Name)).ToList();
+            return (await _gitHubReleaseRepository.GetAvailableVersions(component.Name)).ToList();
         }
 
         public async Task Install(Component component, Version version, GitHubReleaseUpdateConfig config)

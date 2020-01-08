@@ -24,7 +24,7 @@ namespace Worms.Commands
         {
             foreach(var component in _components)
             {
-                var versions = await _componentOperations.GetAvailiableVersions(component);
+                var versions = await _componentOperations.GetAvailableVersions(component);
                 var latestVersion = versions.OrderByDescending(x => x).First();
                 if (component.InstalledVersion > latestVersion)
                 {
