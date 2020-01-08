@@ -1,12 +1,12 @@
 using System.IO.Abstractions;
 
-namespace Worms.Components.Updates
+namespace Worms.Updates.Installers
 {
-    public class ComponentUpdater : IComponentUpdater
+    public class FileCopierInstaller : IFileCopierInstaller
     {
         private readonly IFileSystem _fileSystem;
 
-        public ComponentUpdater(IFileSystem fileSystem)
+        public FileCopierInstaller(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
         }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Octokit;
 
-namespace Worms.Components.Repositories
+namespace Worms.Updates.Repositories
 {
     public class GitHubReleaseRepository : IUpdateRepository
     {
@@ -14,12 +14,12 @@ namespace Worms.Components.Repositories
         private string _repoName;
         private string _tagPrefix;
 
-        public void Connect(GitHubReleaseUpdateConfig config)
+        public void Connect(string repoOwner, string repoName, string tagPrefix)
         {
             _gitHubClient = new GitHubClient(new ProductHeaderValue("worms-cli"));
-            _repoOwner = config.RepoOwner;
-            _repoName = config.RepoName;
-            _tagPrefix = config.TagPrefix;
+            _repoOwner = repoOwner;
+            _repoName = repoName;
+            _tagPrefix = tagPrefix;
         }
 
         public async Task<IEnumerable<Version>> GetAvailibleVersions(string id)

@@ -1,24 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.IO.Abstractions;
-using System.Linq;
 using System.Threading.Tasks;
-using Worms.Components.Repositories;
-using Worms.Components.Updates;
+using Worms.Components.Updaters;
 
 namespace Worms.Components
 {
     public class ComponentOperations
     {
-        private readonly IFileSystem _fileSystem;
-        private readonly GitHubReleaseRepository _gitHubReleaseRepository;
-        private readonly IComponentUpdater _componentUpdater;
+        private readonly OutsideOfToolUpdater _outsideOfToolUpdater;
+        private readonly GitHubReleaseUpdater _gitHubReleaseUpdater;
 
-        public ComponentOperations(IFileSystem fileSystem, GitHubReleaseRepository gitHubReleaseRepository, IComponentUpdater componentUpdater)
+        public ComponentOperations(OutsideOfToolUpdater outsideOfToolUpdater, GitHubReleaseUpdater gitHubReleaseUpdater)
         {
-            _fileSystem = fileSystem;
-            _gitHubReleaseRepository = gitHubReleaseRepository;
-            _componentUpdater = componentUpdater;
+            _outsideOfToolUpdater = outsideOfToolUpdater;
+            _gitHubReleaseUpdater = gitHubReleaseUpdater;
         }
 
         public async Task<IReadOnlyCollection<Version>> GetAvailiableVersions(Component component)
@@ -26,37 +21,22 @@ namespace Worms.Components
             switch(component.UpdateConfig)
             {
                 case OutsideOfToolUpdateConfig config:
-                    return config.PossibleVersions;
+                    return await _outsideOfToolUpdater.GetAvailiableVersions(component, config);
                 case GitHubReleaseUpdateConfig config:
-                    _gitHubReleaseRepository.Connect(config);
-                    return (await _gitHubReleaseRepository.GetAvailibleVersions(component.Name)).ToList();
+                    return await _gitHubReleaseUpdater.GetAvailiableVersions(component, config);
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown UpdateConfig {typeof(UpdateConfig)}");
             }
         }
 
-        public async Task Install(Component component, Version version)
+        public Task Install(Component component, Version version)
         {
             switch(component.UpdateConfig)
             {
-                case OutsideOfToolUpdateConfig _:
-                    return;
+                case OutsideOfToolUpdateConfig config:
+                    return _outsideOfToolUpdater.Install(component, version, config);
                 case GitHubReleaseUpdateConfig config:
-                    _gitHubReleaseRepository.Connect(config);
-
-                    var tempPath = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), Guid.NewGuid().ToString());
-
-                    if (_fileSystem.Directory.Exists(tempPath))
-                    {
-                        _fileSystem.Directory.Delete(tempPath, true);
-                    }
-                    _fileSystem.Directory.CreateDirectory(tempPath);
-
-                    await _gitHubReleaseRepository.DownloadVersion(component.Name, version, tempPath);
-                    _componentUpdater.Install(tempPath, component.ComponentPath);
-
-                    _fileSystem.Directory.Delete(tempPath, true);
-                    return;
+                    return _gitHubReleaseUpdater.Install(component, version, config);
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown UpdateConfig {typeof(UpdateConfig)}");
             }

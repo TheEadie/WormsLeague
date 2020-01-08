@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Worms.Components.Repositories
+namespace Worms.Updates.Repositories
 {
     public interface IUpdateRepository
     {
