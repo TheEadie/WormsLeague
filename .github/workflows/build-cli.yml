@@ -1,0 +1,39 @@
+name: Build Command Line
+
+on:
+  push:
+    paths:
+    - "CommandLine/**"
+
+jobs:
+  build-cli:
+    name: Build Command Line
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: Build
+      run: cd CommandLine; ./.build/build.sh --bootstrap; ./.build/build.sh
+    - name: Upload build
+      uses: actions/upload-artifact@v1
+      with:
+        name: Cli
+        path: CommandLine/.artifacts/
+
+  release:
+    name: Create GitHub Release for command line
+    needs: build-cli
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Download Gif Tool
+      uses: actions/download-artifact@v1
+      with:
+        name: Cli
+    - name: Release
+      run: ./CommandLine/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} Cli
