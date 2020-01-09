@@ -26,7 +26,7 @@ namespace Worms.Commands
             foreach(var component in components)
             {
                 var versions = await _componentOperations.GetAvailableVersions(component);
-                var latestVersion = versions.OrderByDescending(x => x).First();
+                var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
                 if (component.InstalledVersion > latestVersion)
                 {
                     console.WriteLine($"{component.Name} is up to date: {latestVersion}");
