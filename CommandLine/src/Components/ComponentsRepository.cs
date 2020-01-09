@@ -35,7 +35,7 @@ namespace Worms.Components
                 "CLI",
                 assembly.GetName().Version,
                 _fileSystem.Path.GetDirectoryName(assembly.Location),
-                new GitHubReleaseUpdateConfig("TheEadie", "WormsLeague", "giftool/v"));
+                new GitHubReleaseUpdateConfig("TheEadie", "WormsLeague", "cli/v"));
         }
 
         private Component CreateGame()
