@@ -23,13 +23,13 @@ namespace Worms.Components.Updaters.GitHubReleaseUpdater
 
         public async Task<IReadOnlyCollection<Version>> GetAvailableVersions(Component component, GitHubReleaseUpdateConfig config)
         {
-            _gitHubReleaseRepository.Connect(config.RepoOwner, config.RepoName, config.TagPrefix);
+            _gitHubReleaseRepository.Connect(config.RepoOwner, config.RepoName, config.TagPrefix, config.PersonalAccessToken);
             return (await _gitHubReleaseRepository.GetAvailableVersions(component.Name)).ToList();
         }
 
         public async Task Install(Component component, Version version, GitHubReleaseUpdateConfig config)
         {
-            _gitHubReleaseRepository.Connect(config.RepoOwner, config.RepoName, config.TagPrefix);
+            _gitHubReleaseRepository.Connect(config.RepoOwner, config.RepoName, config.TagPrefix, config.PersonalAccessToken);
 
             var tempPath = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), Guid.NewGuid().ToString());
 

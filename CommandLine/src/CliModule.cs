@@ -4,6 +4,8 @@ using Worms.Components;
 using Worms.Components.Updaters;
 using Worms.Components.Updaters.GitHubReleaseUpdater;
 using Worms.Components.Updaters.OutsideOfToolUpdater;
+using worms.Configuration;
+using worms.Configuration.SecureStorage;
 using Worms.GameRunner;
 using Worms.Updates.Installers;
 using Worms.Updates.PackageManagers;
@@ -15,6 +17,10 @@ namespace Worms
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<FileSystem>().As<IFileSystem>();
+
+            // Config
+            builder.RegisterType<WindowsCredentialStorage>().As<ICredentialStorage>();
+            builder.RegisterType<ConfigManager>();
 
             // GameRunner
             builder.RegisterType<SteamService>().As<ISteamService>();

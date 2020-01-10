@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Octokit;
+using Octokit.Internal;
 
 namespace Worms.Updates.PackageManagers
 {
@@ -14,9 +15,18 @@ namespace Worms.Updates.PackageManagers
         private string _repoName;
         private string _tagPrefix;
 
-        public void Connect(string repoOwner, string repoName, string tagPrefix)
+        public void Connect(string repoOwner, string repoName, string tagPrefix, string accessToken)
         {
-            _gitHubClient = new GitHubClient(new ProductHeaderValue("worms-cli"));
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                _gitHubClient = new GitHubClient(new ProductHeaderValue("worms-cli"));
+            }
+            else
+            {
+                _gitHubClient = new GitHubClient(new ProductHeaderValue("worms-cli"),
+                    new InMemoryCredentialStore(new Credentials(accessToken)));
+            }
+
             _repoOwner = repoOwner;
             _repoName = repoName;
             _tagPrefix = tagPrefix;

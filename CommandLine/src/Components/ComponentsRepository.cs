@@ -4,6 +4,7 @@ using System.IO.Abstractions;
 using System.Reflection;
 using Worms.Components.Updaters.GitHubReleaseUpdater;
 using Worms.Components.Updaters.OutsideOfToolUpdater;
+using worms.Configuration;
 using Worms.GameRunner;
 
 namespace Worms.Components
@@ -12,30 +13,34 @@ namespace Worms.Components
     {
         private readonly IFileSystem _fileSystem;
         private readonly IWormsLocator _wormsLocator;
+        private readonly ConfigManager _configManager;
 
-        public ComponentsRepository(IFileSystem fileSystem, IWormsLocator wormsLocator)
+        public ComponentsRepository(IFileSystem fileSystem, IWormsLocator wormsLocator, ConfigManager configManager)
         {
             _fileSystem = fileSystem;
             _wormsLocator = wormsLocator;
+            _configManager = configManager;
         }
 
         public IEnumerable<Component> GetAll()
         {
+            var config = _configManager.Load();
+
             return new List<Component>
             {
-                CreateCli(),
+                CreateCli(config),
                 CreateGame()
             };
         }
 
-        private Component CreateCli()
+        private Component CreateCli(Config config)
         {
             var assembly = Assembly.GetEntryAssembly();
             return new Component(
                 "CLI",
                 assembly.GetName().Version,
                 _fileSystem.Path.GetDirectoryName(assembly.Location),
-                new GitHubReleaseUpdateConfig("TheEadie", "WormsLeague", "cli/v"));
+                new GitHubReleaseUpdateConfig("TheEadie", "WormsLeague", "cli/v", config.GitHubPersonalAccessToken));
         }
 
         private Component CreateGame()

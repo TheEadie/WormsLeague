@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Octokit;
 using Worms.Components;
 
 namespace Worms.Commands
@@ -19,25 +20,38 @@ namespace Worms.Commands
             _componentsRepository = componentsRepository;
         }
 
-        public async Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync()
         {
             var components = _componentsRepository.GetAll();
 
             foreach(var component in components)
             {
-                var versions = await _componentOperations.GetAvailableVersions(component);
-                var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
-                if (component.InstalledVersion > latestVersion)
+                try
                 {
-                    console.WriteLine($"{component.Name} is up to date: {latestVersion}");
-                    break;
+                    await UpdateComponent(component);
                 }
-
-                await _componentOperations.Install(component, latestVersion);
-                console.WriteLine($"Updated {component.Name} to {latestVersion}");
+                catch (RateLimitExceededException)
+                {
+                    Logger.Error($"Could not update {component.Name}: GitHub API rate limit has been exceeded. Please run 'worms setup' and provide a personal access token.");
+                    return 1;
+                }
             }
 
             return 0;
+        }
+
+        private async Task UpdateComponent(Component component)
+        {
+            var versions = await _componentOperations.GetAvailableVersions(component);
+            var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
+            if (component.InstalledVersion > latestVersion)
+            {
+                Logger.Information($"{component.Name} is up to date: {latestVersion}");
+                return;
+            }
+
+            await _componentOperations.Install(component, latestVersion);
+            Logger.Information($"Updated {component.Name} to {latestVersion}");
         }
     }
 }
