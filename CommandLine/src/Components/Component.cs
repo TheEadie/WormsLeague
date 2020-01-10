@@ -21,5 +21,14 @@ namespace Worms.Components
             ComponentPath = componentPath;
             UpdateConfig = updateConfig;
         }
+
+        public override string ToString()
+        {
+            return "Component: {" +
+                   $"Name: {Name}, " +
+                   $"Version: {InstalledVersion}, " +
+                   $"Path: {ComponentPath}" +
+                   "}";
+        }
     }
 }

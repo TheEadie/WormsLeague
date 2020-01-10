@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -42,14 +43,23 @@ namespace Worms.Commands
 
         private async Task UpdateComponent(Component component)
         {
+            Logger.Verbose("Starting update");
+            Logger.Verbose(component.ToString());
+
             var versions = await _componentOperations.GetAvailableVersions(component);
+
+            Logger.Verbose($"Available versions: {string.Join(", ", versions)}");
+
             var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
+            Logger.Verbose($"Latest version: {latestVersion}");
+
             if (component.InstalledVersion > latestVersion)
             {
-                Logger.Information($"{component.Name} is up to date: {latestVersion}");
+                Logger.Information($"{component.Name} is up to date: {component.InstalledVersion}");
                 return;
             }
 
+            Logger.Information($"Updating {component.Name} from {component.InstalledVersion} to {latestVersion}");
             await _componentOperations.Install(component, latestVersion);
             Logger.Information($"Updated {component.Name} to {latestVersion}");
         }
