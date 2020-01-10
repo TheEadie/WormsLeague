@@ -20,7 +20,7 @@ namespace Worms.Commands
             _componentsRepository = componentsRepository;
         }
 
-        public async Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync()
         {
             var components = _componentsRepository.GetAll();
 
@@ -28,7 +28,7 @@ namespace Worms.Commands
             {
                 try
                 {
-                    await UpdateComponent(component, console);
+                    await UpdateComponent(component);
                 }
                 catch (RateLimitExceededException)
                 {
@@ -40,18 +40,18 @@ namespace Worms.Commands
             return 0;
         }
 
-        private async Task UpdateComponent(Component component, IConsole console)
+        private async Task UpdateComponent(Component component)
         {
             var versions = await _componentOperations.GetAvailableVersions(component);
             var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
             if (component.InstalledVersion > latestVersion)
             {
-                console.WriteLine($"{component.Name} is up to date: {latestVersion}");
+                Logger.Information($"{component.Name} is up to date: {latestVersion}");
                 return;
             }
 
             await _componentOperations.Install(component, latestVersion);
-            console.WriteLine($"Updated {component.Name} to {latestVersion}");
+            Logger.Information($"Updated {component.Name} to {latestVersion}");
         }
     }
 }
