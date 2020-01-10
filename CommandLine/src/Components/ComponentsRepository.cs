@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Abstractions;
 using System.Reflection;
 using Worms.Components.Updaters.GitHubReleaseUpdater;
@@ -39,7 +40,7 @@ namespace Worms.Components
             return new Component(
                 "CLI",
                 assembly.GetName().Version,
-                _fileSystem.Path.GetDirectoryName(assembly.Location),
+                _fileSystem.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName),
                 new GitHubReleaseUpdateConfig("TheEadie", "WormsLeague", "cli/v", config.GitHubPersonalAccessToken));
         }
 
