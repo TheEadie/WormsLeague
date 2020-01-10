@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Octokit;
 using Worms.Components;
 
 namespace Worms.Commands
@@ -25,19 +26,32 @@ namespace Worms.Commands
 
             foreach(var component in components)
             {
-                var versions = await _componentOperations.GetAvailableVersions(component);
-                var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
-                if (component.InstalledVersion > latestVersion)
+                try
                 {
-                    console.WriteLine($"{component.Name} is up to date: {latestVersion}");
-                    continue;
+                    await UpdateComponent(component, console);
                 }
-
-                await _componentOperations.Install(component, latestVersion);
-                console.WriteLine($"Updated {component.Name} to {latestVersion}");
+                catch (RateLimitExceededException)
+                {
+                    Logger.Error($"Could not update {component.Name}: GitHub API rate limit has been exceeded. Please run 'worms setup' and provide a personal access token.");
+                    return 1;
+                }
             }
 
             return 0;
+        }
+
+        private async Task UpdateComponent(Component component, IConsole console)
+        {
+            var versions = await _componentOperations.GetAvailableVersions(component);
+            var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
+            if (component.InstalledVersion > latestVersion)
+            {
+                console.WriteLine($"{component.Name} is up to date: {latestVersion}");
+                return;
+            }
+
+            await _componentOperations.Install(component, latestVersion);
+            console.WriteLine($"Updated {component.Name} to {latestVersion}");
         }
     }
 }
