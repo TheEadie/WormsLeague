@@ -42,6 +42,9 @@ namespace Worms.Commands
 
         private async Task UpdateComponent(Component component)
         {
+            Logger.Verbose("Starting update");
+            Logger.Verbose(component.ToString());
+
             var versions = await _componentOperations.GetAvailableVersions(component);
             var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
             if (component.InstalledVersion > latestVersion)
