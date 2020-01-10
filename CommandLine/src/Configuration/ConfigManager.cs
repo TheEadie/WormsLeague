@@ -18,8 +18,8 @@ namespace worms.Configuration
 
         public void Save(Config config)
         {
-            _credentialStorage.Store("Worms.GitHub.AccessToken", config.GitHubPersonalAccessToken);
-            _credentialStorage.Store("Worms.Slack.AccessToken", config.SlackAccessToken);
+            if (!string.IsNullOrWhiteSpace(config.GitHubPersonalAccessToken)) _credentialStorage.Store("Worms.GitHub.AccessToken", config.GitHubPersonalAccessToken);
+            if (!string.IsNullOrWhiteSpace(config.SlackAccessToken)) _credentialStorage.Store("Worms.Slack.AccessToken", config.SlackAccessToken);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Worms.Commands
         Subcommand(typeof(Version)),
         Subcommand(typeof(Update)),
         Subcommand(typeof(Host)),
+        Subcommand(typeof(Setup)),
     ]
     public class Root : CommandBase
     {
