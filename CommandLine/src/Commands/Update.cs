@@ -30,7 +30,7 @@ namespace Worms.Commands
                 if (component.InstalledVersion > latestVersion)
                 {
                     console.WriteLine($"{component.Name} is up to date: {latestVersion}");
-                    break;
+                    continue;
                 }
 
                 await _componentOperations.Install(component, latestVersion);
