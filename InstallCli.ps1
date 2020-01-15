@@ -21,6 +21,7 @@ function Install-Cli() {
 
 function Update-Path() {
     $env:Path += ";$installDirPath"
+    [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine) + ";$installDirPath", [EnvironmentVariableTarget]::User)
 }
 
 Install-Cli
