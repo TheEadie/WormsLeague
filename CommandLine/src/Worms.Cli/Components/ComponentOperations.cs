@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Worms.Components.Updaters;
 using Worms.Components.Updaters.GitHubReleaseUpdater;
-using Worms.Components.Updaters.OutsideOfToolUpdater;
 
 namespace Worms.Components
 {
     public class ComponentOperations
     {
-        private readonly IUpdater<OutsideOfToolUpdateConfig> _outsideOfToolUpdater;
         private readonly IUpdater<GitHubReleaseUpdateConfig> _gitHubReleaseUpdater;
 
-        public ComponentOperations(IUpdater<OutsideOfToolUpdateConfig> outsideOfToolUpdater, IUpdater<GitHubReleaseUpdateConfig> gitHubReleaseUpdater)
+        public ComponentOperations(IUpdater<GitHubReleaseUpdateConfig> gitHubReleaseUpdater)
         {
-            _outsideOfToolUpdater = outsideOfToolUpdater;
             _gitHubReleaseUpdater = gitHubReleaseUpdater;
         }
 
@@ -22,8 +19,6 @@ namespace Worms.Components
         {
             switch(component.UpdateConfig)
             {
-                case OutsideOfToolUpdateConfig config:
-                    return await _outsideOfToolUpdater.GetAvailableVersions(component, config);
                 case GitHubReleaseUpdateConfig config:
                     return await _gitHubReleaseUpdater.GetAvailableVersions(component, config);
                 default:
@@ -35,8 +30,6 @@ namespace Worms.Components
         {
             switch(component.UpdateConfig)
             {
-                case OutsideOfToolUpdateConfig config:
-                    return _outsideOfToolUpdater.Install(component, version, config);
                 case GitHubReleaseUpdateConfig config:
                     return _gitHubReleaseUpdater.Install(component, version, config);
                 default:

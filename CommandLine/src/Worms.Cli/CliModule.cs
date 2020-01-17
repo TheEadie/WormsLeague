@@ -3,7 +3,6 @@ using Autofac;
 using Worms.Components;
 using Worms.Components.Updaters;
 using Worms.Components.Updaters.GitHubReleaseUpdater;
-using Worms.Components.Updaters.OutsideOfToolUpdater;
 using worms.Configuration;
 using worms.Configuration.SecureStorage;
 using Worms.GameRunner;
@@ -30,7 +29,6 @@ namespace Worms
             // Components
             builder.RegisterType<ComponentsRepository>();
             builder.RegisterType<ComponentOperations>();
-            builder.RegisterType<OutsideOfToolUpdater>().As<IUpdater<OutsideOfToolUpdateConfig>>();
             builder.RegisterType<GitHubReleaseUpdater>().As<IUpdater<GitHubReleaseUpdateConfig>>();
 
             // Updates
