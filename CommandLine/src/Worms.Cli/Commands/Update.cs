@@ -59,7 +59,7 @@ namespace Worms.Commands
                 return;
             }
 
-            Logger.Information($"Updating {component.Name} from {component.InstalledVersion} to {latestVersion}");
+            Logger.Information($"Updating {component.Name} from {component.InstalledVersion.ToString(3)} to {latestVersion}");
             await _componentOperations.Install(component, latestVersion);
         }
     }
