@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -61,7 +62,9 @@ namespace Worms.Commands
 
             Logger.Information($"Updating {component.Name} from {component.InstalledVersion} to {latestVersion}");
             await _componentOperations.Install(component, latestVersion);
-            Logger.Information($"Updated {component.Name} to {latestVersion}");
+
+            Process.Start("update.exe");
+            Process.GetCurrentProcess().Kill();
         }
     }
 }

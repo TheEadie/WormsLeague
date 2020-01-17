@@ -31,7 +31,7 @@ namespace Worms.Components.Updaters.GitHubReleaseUpdater
         {
             _gitHubReleaseRepository.Connect(config.RepoOwner, config.RepoName, config.TagPrefix, config.PersonalAccessToken);
 
-            var tempPath = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), Guid.NewGuid().ToString());
+            var tempPath = _fileSystem.Path.Combine(component.ComponentPath, ".update");
 
             if (_fileSystem.Directory.Exists(tempPath))
             {
@@ -40,9 +40,6 @@ namespace Worms.Components.Updaters.GitHubReleaseUpdater
             _fileSystem.Directory.CreateDirectory(tempPath);
 
             await _gitHubReleaseRepository.DownloadVersion(component.Name, version, tempPath);
-            _componentUpdater.Install(tempPath, component.ComponentPath);
-
-            _fileSystem.Directory.Delete(tempPath, true);
         }
     }
 }
