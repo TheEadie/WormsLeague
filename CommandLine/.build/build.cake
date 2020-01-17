@@ -5,7 +5,7 @@
 using Newtonsoft.Json;
 
 // Constants
-const string projectPath = "../src/worms.csproj";
+const string projectPath = "../src/Worms.Cli/worms.csproj";
 const string artifactPath = "../.artifacts/";
 
 // Command line arguments
