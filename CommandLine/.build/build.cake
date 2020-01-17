@@ -5,7 +5,8 @@
 using Newtonsoft.Json;
 
 // Constants
-const string projectPath = "../src/Worms.Cli/worms.csproj";
+const string wormsCliPath = "../src/Worms.Cli/worms.csproj";
+const string updateCliPath = "../src/Update.Cli/update.csproj";
 const string artifactPath = "../.artifacts/";
 
 // Command line arguments
@@ -53,8 +54,10 @@ Task("Publish")
     var versionJson = JsonConvert.SerializeObject(versionInfo, Formatting.Indented);
     System.IO.File.WriteAllText(versionInfoFilePath, versionJson);
 
-    DotNetCorePublish(projectPath, winSettings);
-    DotNetCorePublish(projectPath, linuxSettings);
+    DotNetCorePublish(wormsCliPath, winSettings);
+    DotNetCorePublish(updateCliPath, winSettings);
+    DotNetCorePublish(wormsCliPath, linuxSettings);
+    DotNetCorePublish(updateCliPath, linuxSettings);
 });
 
 RunTarget(target);
