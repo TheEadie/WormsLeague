@@ -1,8 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading;
 
 namespace Update.Cli
 {
@@ -10,14 +7,6 @@ namespace Update.Cli
     {
         public static void Main()
         {
-            // Make sure worms CLI has exited
-            while(Process.GetProcessesByName("worms").Length > 0)
-            {
-                Console.WriteLine("Waiting");
-                Thread.Sleep(500);
-            }
-            Thread.Sleep(500);
-
             var runningDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName);
             var updateFolder = Path.Combine(runningDirectory, ".update");
 
