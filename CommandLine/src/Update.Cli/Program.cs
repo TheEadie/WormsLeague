@@ -16,6 +16,7 @@ namespace Update.Cli
                 Console.WriteLine("Waiting");
                 Thread.Sleep(500);
             }
+            Thread.Sleep(500);
 
             var runningDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName);
             var updateFolder = Path.Combine(runningDirectory, ".update");

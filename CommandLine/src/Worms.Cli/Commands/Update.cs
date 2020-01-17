@@ -24,9 +24,7 @@ namespace Worms.Commands
 
         public async Task<int> OnExecuteAsync()
         {
-            var components = _componentsRepository.GetAll();
-
-            foreach(var component in components)
+            foreach(var component in _componentsRepository.GetAll())
             {
                 try
                 {
@@ -39,6 +37,7 @@ namespace Worms.Commands
                 }
             }
 
+            Process.Start("update.exe");
             return 0;
         }
 
@@ -62,9 +61,6 @@ namespace Worms.Commands
 
             Logger.Information($"Updating {component.Name} from {component.InstalledVersion} to {latestVersion}");
             await _componentOperations.Install(component, latestVersion);
-
-            Process.Start("update.exe");
-            Process.GetCurrentProcess().Kill();
         }
     }
 }
