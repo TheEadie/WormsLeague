@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms", "src\worms.csproj", "{DF42A167-014E-4028-8E3A-12D76A211AB5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B561664B-BEE0-41D1-819B-339EF6AE0049}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "update", "src\Update.Cli\update.csproj", "{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,20 @@ Global
 		{DF42A167-014E-4028-8E3A-12D76A211AB5}.Release|x64.Build.0 = Release|Any CPU
 		{DF42A167-014E-4028-8E3A-12D76A211AB5}.Release|x86.ActiveCfg = Release|Any CPU
 		{DF42A167-014E-4028-8E3A-12D76A211AB5}.Release|x86.Build.0 = Release|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Debug|x64.Build.0 = Debug|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Debug|x86.Build.0 = Debug|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Release|x64.ActiveCfg = Release|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Release|x64.Build.0 = Release|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Release|x86.ActiveCfg = Release|Any CPU
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{075D8154-1707-4CD9-BD53-B9A05DE8D1F7} = {B561664B-BEE0-41D1-819B-339EF6AE0049}
 	EndGlobalSection
 EndGlobal
