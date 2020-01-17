@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -24,7 +22,7 @@ namespace Worms.Commands
 
         public async Task<int> OnExecuteAsync()
         {
-            foreach(var component in _componentsRepository.GetAll())
+            foreach (var component in _componentsRepository.GetAll())
             {
                 try
                 {
@@ -37,13 +35,12 @@ namespace Worms.Commands
                 }
             }
 
-            Process.Start("update.exe");
             return 0;
         }
 
         private async Task UpdateComponent(Component component)
         {
-            Logger.Verbose("Starting update");
+            Logger.Verbose("Checking for updates");
             Logger.Verbose(component.ToString());
 
             var versions = await _componentOperations.GetAvailableVersions(component);
@@ -51,6 +48,7 @@ namespace Worms.Commands
             Logger.Verbose($"Available versions: {string.Join(", ", versions)}");
 
             var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
+            Logger.Verbose($"Current version: {component.InstalledVersion}");
             Logger.Verbose($"Latest version: {latestVersion}");
 
             if (component.InstalledVersion > latestVersion)
@@ -59,8 +57,9 @@ namespace Worms.Commands
                 return;
             }
 
-            Logger.Information($"Updating {component.Name} from {component.InstalledVersion.ToString(3)} to {latestVersion}");
+            Logger.Information($"An update is availible. Downloading {component.Name} {latestVersion}");
             await _componentOperations.Install(component, latestVersion);
+            Logger.Information($"{component.Name} {latestVersion} has been downloaded. Run `worms-update` to install.");
         }
     }
 }
