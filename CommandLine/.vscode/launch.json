@@ -23,7 +23,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/Update.Cli/bin/Debug/netcoreapp3.1/update.dll",
+            "program": "${workspaceFolder}/src/Update.Cli/bin/Debug/netcoreapp3.1/worms-update.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Update.Cli",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
