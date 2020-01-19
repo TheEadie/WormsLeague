@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 // Constants
 const string projectPath = "../src/worms.csproj";
+const string solutionPath = "../";
 const string artifactPath = "../.artifacts/";
 
 // Command line arguments
@@ -55,6 +56,8 @@ Task("Publish")
 
     DotNetCorePublish(projectPath, winSettings);
     DotNetCorePublish(projectPath, linuxSettings);
+
+    CopyFiles($"{solutionPath}*.ps1", artifactPath);
 });
 
 RunTarget(target);
