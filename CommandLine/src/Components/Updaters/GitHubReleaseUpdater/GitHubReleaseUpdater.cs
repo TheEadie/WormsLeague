@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
-using Worms.Updates.Installers;
 using Worms.Updates.PackageManagers;
 
 namespace Worms.Components.Updaters.GitHubReleaseUpdater
@@ -12,13 +11,11 @@ namespace Worms.Components.Updaters.GitHubReleaseUpdater
     {
         private readonly GitHubReleaseRepository _gitHubReleaseRepository;
         private readonly IFileSystem _fileSystem;
-        private readonly IFileCopierInstaller _componentUpdater;
 
-        public GitHubReleaseUpdater(GitHubReleaseRepository gitHubReleaseRepository, IFileSystem fileSystem, IFileCopierInstaller componentUpdater)
+        public GitHubReleaseUpdater(GitHubReleaseRepository gitHubReleaseRepository, IFileSystem fileSystem)
         {
             _gitHubReleaseRepository = gitHubReleaseRepository;
             _fileSystem = fileSystem;
-            _componentUpdater = componentUpdater;
         }
 
         public async Task<IReadOnlyCollection<Version>> GetAvailableVersions(Component component, GitHubReleaseUpdateConfig config)
@@ -31,18 +28,15 @@ namespace Worms.Components.Updaters.GitHubReleaseUpdater
         {
             _gitHubReleaseRepository.Connect(config.RepoOwner, config.RepoName, config.TagPrefix, config.PersonalAccessToken);
 
-            var tempPath = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), Guid.NewGuid().ToString());
+            var updateFolder = _fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Worms", ".update");
 
-            if (_fileSystem.Directory.Exists(tempPath))
+            if (_fileSystem.Directory.Exists(updateFolder))
             {
-                _fileSystem.Directory.Delete(tempPath, true);
+                _fileSystem.Directory.Delete(updateFolder, true);
             }
-            _fileSystem.Directory.CreateDirectory(tempPath);
+            _fileSystem.Directory.CreateDirectory(updateFolder);
 
-            await _gitHubReleaseRepository.DownloadVersion(component.Name, version, tempPath);
-            _componentUpdater.Install(tempPath, component.ComponentPath);
-
-            _fileSystem.Directory.Delete(tempPath, true);
+            await _gitHubReleaseRepository.DownloadVersion(component.Name, version, updateFolder);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -12,13 +13,16 @@ namespace Worms.Commands
     {
         private readonly ComponentOperations _componentOperations;
         private readonly ComponentsRepository _componentsRepository;
+        private readonly IFileSystem _fileSystem;
 
         public Update(
             ComponentOperations componentOperations,
-            ComponentsRepository componentsRepository)
+            ComponentsRepository componentsRepository,
+            IFileSystem fileSystem)
         {
             _componentOperations = componentOperations;
             _componentsRepository = componentsRepository;
+            _fileSystem = fileSystem;
         }
 
         public async Task<int> OnExecuteAsync()
@@ -59,9 +63,13 @@ namespace Worms.Commands
                 return;
             }
 
-            Logger.Information($"Updating {component.Name} from {component.InstalledVersion} to {latestVersion}");
+            Logger.Information($"Downloading {component.Name} {latestVersion}");
             await _componentOperations.Install(component, latestVersion);
-            Logger.Information($"Updated {component.Name} to {latestVersion}");
+
+            // TODO introduce class to hold this location per operating system
+            var updateFolder = _fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Worms", ".update");
+            var updateScriptLocation = _fileSystem.Path.Combine(updateFolder, "UpdateCli.ps1");
+            Logger.Information($"To install {component.Name} {latestVersion} run {updateScriptLocation}");
         }
     }
 }
