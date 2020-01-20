@@ -1,5 +1,6 @@
 $installDirPath = Join-Path $env:LOCALAPPDATA '\Programs\Worms\'
 $updateDirPath = $PSScriptRoot + '\*'
+$wormsUpdateScriptPath = Join-Path $env:LOCALAPPDATA '\Programs\Worms\.update\Install.ps1'
 
 function Install-Cli() {
     if(!(test-path $installDirPath))
@@ -26,8 +27,8 @@ function Update-PsProfile() {
 
     if ($null -eq (Select-String -Path $profile -Pattern "Install-WormsCli"))
     {
-        $wormsUpdateScriptPath = Join-Path $env:LOCALAPPDATA '\Programs\Worms\.update\Install.ps1'
         Add-Content -Path $profile -Value "Set-Alias -Name Install-WormsCli -Value $wormsUpdateScriptPath"
+        Set-Alias -Name Install-WormsCli -Value $wormsUpdateScriptPath -Scope Global
     }
 }
 
