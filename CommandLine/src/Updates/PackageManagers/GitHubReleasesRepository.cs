@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Octokit;
 using Octokit.Internal;
@@ -49,7 +50,7 @@ namespace Worms.Updates.PackageManagers
             return versions;
         }
 
-        public async Task DownloadVersion(string id, Version version, string downloadToFolderPath)
+        public async Task DownloadVersion(string id, Version version, string downloadToFolderPath, Regex filesToDownload)
         {
             _gitHubClient.SetRequestTimeout(TimeSpan.FromMinutes(10));
 
@@ -57,7 +58,7 @@ namespace Worms.Updates.PackageManagers
             var matching = releases.Single(x => x.TagName == _tagPrefix + version.ToString(3));
             var files = await _gitHubClient.Repository.Release.GetAllAssets(_repoOwner, _repoName, matching.Id);
 
-            foreach(var file in files)
+            foreach(var file in files.Where(x => filesToDownload.IsMatch(x.Name)))
             {
                 var raw = await _gitHubClient.Connection.Get<byte[]>(new Uri(file.Url), new Dictionary<string, string>(), "application/octet-stream");
                 await File.WriteAllBytesAsync(Path.Combine(downloadToFolderPath, file.Name), raw.Body);

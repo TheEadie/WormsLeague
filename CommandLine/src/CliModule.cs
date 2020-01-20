@@ -9,6 +9,8 @@ using worms.Configuration.SecureStorage;
 using Worms.GameRunner;
 using Worms.Updates.Installers;
 using Worms.Updates.PackageManagers;
+using Worms.Platforms;
+using System.Runtime.InteropServices;
 
 namespace Worms
 {
@@ -17,6 +19,9 @@ namespace Worms
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<FileSystem>().As<IFileSystem>();
+
+            // Platform specific
+            RegisterPlatformSpecific(builder);
 
             // Config
             builder.RegisterType<WindowsCredentialStorage>().As<ICredentialStorage>();
@@ -36,6 +41,19 @@ namespace Worms
             // Updates
             builder.RegisterType<FileCopierInstaller>().As<IFileCopierInstaller>();
             builder.RegisterType<GitHubReleaseRepository>();
+        }
+
+        private static void RegisterPlatformSpecific(ContainerBuilder builder)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                builder.RegisterType<WindowsSettings>().As<IPlatformSettings>();
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                builder.RegisterType<LinuxSettings>().As<IPlatformSettings>();
+            }
         }
     }
 }

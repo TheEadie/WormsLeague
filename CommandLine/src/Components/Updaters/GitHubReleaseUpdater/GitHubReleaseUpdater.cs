@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Worms.Platforms;
 using Worms.Updates.PackageManagers;
 
 namespace Worms.Components.Updaters.GitHubReleaseUpdater
@@ -11,11 +13,13 @@ namespace Worms.Components.Updaters.GitHubReleaseUpdater
     {
         private readonly GitHubReleaseRepository _gitHubReleaseRepository;
         private readonly IFileSystem _fileSystem;
+        private readonly IPlatformSettings _platformSettings;
 
-        public GitHubReleaseUpdater(GitHubReleaseRepository gitHubReleaseRepository, IFileSystem fileSystem)
+        public GitHubReleaseUpdater(GitHubReleaseRepository gitHubReleaseRepository, IFileSystem fileSystem, IPlatformSettings platformSettings)
         {
             _gitHubReleaseRepository = gitHubReleaseRepository;
             _fileSystem = fileSystem;
+            _platformSettings = platformSettings;
         }
 
         public async Task<IReadOnlyCollection<Version>> GetAvailableVersions(Component component, GitHubReleaseUpdateConfig config)
@@ -36,7 +40,8 @@ namespace Worms.Components.Updaters.GitHubReleaseUpdater
             }
             _fileSystem.Directory.CreateDirectory(updateFolder);
 
-            await _gitHubReleaseRepository.DownloadVersion(component.Name, version, updateFolder);
+            var filesToDownload = new Regex($"^{_platformSettings.Identifier}.*$");
+            await _gitHubReleaseRepository.DownloadVersion(component.Name, version, updateFolder, filesToDownload);
         }
     }
 }
