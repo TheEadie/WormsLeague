@@ -1,7 +1,7 @@
 $installDirPath = Join-Path $env:LOCALAPPDATA '\Programs\Worms\'
 $updateDirPath = $PSScriptRoot + '\*'
 
-function Update-Cli() {
+function Install-Cli() {
     if(!(test-path $installDirPath))
     {
         New-Item -ItemType Directory -Force -Path $installDirPath | Out-Null
@@ -11,4 +11,4 @@ function Update-Cli() {
 
 }
 
-Update-Cli
+Install-Cli
