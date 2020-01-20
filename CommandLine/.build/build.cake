@@ -23,41 +23,56 @@ Task("CalculateVersion")
     Information($"Version - {versionInfo.MajorMinorPatch}");
 });
 
-Task("Publish")
+Task("Publish-Windows")
   .IsDependentOn("CalculateVersion")
   .Does(() =>
 {
+    var runtime = "win-x64";
+
     var version = versionInfo.MajorMinorPatch;
-    Information($"Publishing version - {version}");
+    Information($"Publishing version - {version}-{runtime}");
+    Publish(runtime);
 
-    var winSettings = new DotNetCorePublishSettings
+    // Windows install scripts
+    var runtimeArtifactPath = System.IO.Path.Combine(artifactPath, runtime);
+    CopyFiles($"{solutionPath}*.ps1", runtimeArtifactPath);
+});
+
+Task("Publish-Linux")
+  .IsDependentOn("CalculateVersion")
+  .Does(() =>
+{
+    var runtime = "linux-x64";
+
+    var version = versionInfo.MajorMinorPatch;
+    Information($"Publishing version - {version}-{runtime}");
+    Publish(runtime);
+});
+
+Task("Publish")
+  .IsDependentOn("Publish-Windows")
+  .IsDependentOn("Publish-Linux");
+
+public void Publish(string runtime)
+{
+    var runtimeArtifactPath = System.IO.Path.Combine(artifactPath, runtime);
+
+    var settings = new DotNetCorePublishSettings
     {
         Configuration = "Release",
-        OutputDirectory = artifactPath,
-        Runtime = "win-x64",
+        OutputDirectory = runtimeArtifactPath,
+        Runtime = runtime,
         SelfContained = true,
-        ArgumentCustomization = args=>args.Append($"/p:PublishSingleFile=true /p:Version={version} /p:PublishTrimmed=true")
+        ArgumentCustomization = args=>args.Append($"/p:PublishSingleFile=true /p:Version={versionInfo.MajorMinorPatch} /p:PublishTrimmed=true")
     };
 
-    var linuxSettings = new DotNetCorePublishSettings
-    {
-        Configuration = "Release",
-        OutputDirectory = artifactPath,
-        Runtime = "linux-x64",
-        SelfContained = true,
-        ArgumentCustomization = args=>args.Append($"/p:PublishSingleFile=true /p:Version={version} /p:PublishTrimmed=true")
-    };
+    CleanDirectory(runtimeArtifactPath);
 
-    CleanDirectory(artifactPath);
-
-    var versionInfoFilePath = System.IO.Path.Combine(artifactPath, "version.json");
+    var versionInfoFilePath = System.IO.Path.Combine(runtimeArtifactPath, "version.json");
     var versionJson = JsonConvert.SerializeObject(versionInfo, Formatting.Indented);
     System.IO.File.WriteAllText(versionInfoFilePath, versionJson);
 
-    DotNetCorePublish(projectPath, winSettings);
-    DotNetCorePublish(projectPath, linuxSettings);
-
-    CopyFiles($"{solutionPath}*.ps1", artifactPath);
-});
+    DotNetCorePublish(projectPath, settings);
+}
 
 RunTarget(target);
