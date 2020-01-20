@@ -63,7 +63,7 @@ namespace Worms.Commands
             Logger.Information($"Downloading {component.Name} {latestVersion}");
             await _componentOperations.Install(component, latestVersion);
 
-            var updateScriptLocation = "update-worms";
+            var updateScriptLocation = "Install-WormsCli";
             Logger.Information($"To install {component.Name} {latestVersion} run {updateScriptLocation}");
         }
     }
