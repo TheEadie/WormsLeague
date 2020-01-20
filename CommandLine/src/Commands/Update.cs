@@ -13,16 +13,13 @@ namespace Worms.Commands
     {
         private readonly ComponentOperations _componentOperations;
         private readonly ComponentsRepository _componentsRepository;
-        private readonly IFileSystem _fileSystem;
 
         public Update(
             ComponentOperations componentOperations,
-            ComponentsRepository componentsRepository,
-            IFileSystem fileSystem)
+            ComponentsRepository componentsRepository)
         {
             _componentOperations = componentOperations;
             _componentsRepository = componentsRepository;
-            _fileSystem = fileSystem;
         }
 
         public async Task<int> OnExecuteAsync()
@@ -66,9 +63,7 @@ namespace Worms.Commands
             Logger.Information($"Downloading {component.Name} {latestVersion}");
             await _componentOperations.Install(component, latestVersion);
 
-            // TODO introduce class to hold this location per operating system
-            var updateFolder = _fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Worms", ".update");
-            var updateScriptLocation = _fileSystem.Path.Combine(updateFolder, "UpdateCli.ps1");
+            var updateScriptLocation = "update-worms";
             Logger.Information($"To install {component.Name} {latestVersion} run {updateScriptLocation}");
         }
     }
