@@ -1,4 +1,5 @@
 using System;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -59,9 +60,11 @@ namespace Worms.Commands
                 return;
             }
 
-            Logger.Information($"Updating {component.Name} from {component.InstalledVersion} to {latestVersion}");
+            Logger.Information($"Downloading {component.Name} {latestVersion}");
             await _componentOperations.Install(component, latestVersion);
-            Logger.Information($"Updated {component.Name} to {latestVersion}");
+
+            var updateScriptLocation = "Install-WormsCli";
+            Logger.Information($"To install {component.Name} {latestVersion} run {updateScriptLocation}");
         }
     }
 }
