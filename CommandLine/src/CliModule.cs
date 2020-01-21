@@ -7,7 +7,6 @@ using Worms.Components.Updaters.OutsideOfToolUpdater;
 using worms.Configuration;
 using worms.Configuration.SecureStorage;
 using Worms.GameRunner;
-using Worms.Updates.Installers;
 using Worms.Updates.PackageManagers;
 
 namespace Worms
@@ -34,7 +33,6 @@ namespace Worms
             builder.RegisterType<GitHubReleaseUpdater>().As<IUpdater<GitHubReleaseUpdateConfig>>();
 
             // Updates
-            builder.RegisterType<FileCopierInstaller>().As<IFileCopierInstaller>();
             builder.RegisterType<GitHubReleaseRepository>();
         }
     }
