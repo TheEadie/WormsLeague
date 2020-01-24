@@ -8,7 +8,7 @@ using Octokit.Internal;
 
 namespace Worms.Updates.PackageManagers
 {
-    public class GitHubReleaseRepository : IUpdateRepository
+    public class GitHubReleasePackageManager
     {
         private GitHubClient _gitHubClient;
         private string _repoOwner;
@@ -32,7 +32,7 @@ namespace Worms.Updates.PackageManagers
             _tagPrefix = tagPrefix;
         }
 
-        public async Task<IEnumerable<Version>> GetAvailableVersions(string id)
+        public async Task<IEnumerable<Version>> GetAvailableVersions()
         {
             var releases = await _gitHubClient.Repository.Release.GetAll(_repoOwner, _repoName);
             var matching = releases.Where(x => x.TagName.StartsWith(_tagPrefix));
@@ -49,7 +49,7 @@ namespace Worms.Updates.PackageManagers
             return versions;
         }
 
-        public async Task DownloadVersion(string id, Version version, string downloadToFolderPath)
+        public async Task DownloadVersion(Version version, string downloadToFolderPath)
         {
             _gitHubClient.SetRequestTimeout(TimeSpan.FromMinutes(10));
 

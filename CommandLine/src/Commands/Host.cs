@@ -5,7 +5,7 @@ using Worms.GameRunner;
 namespace Worms.Commands
 {
     [Command("host", Description="Host a game of worms using the latest options")]
-    public class Host : CommandBase
+    internal class Host : CommandBase
     {
         private readonly IWormsRunner _wormsRunner;
 
