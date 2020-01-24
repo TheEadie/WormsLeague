@@ -7,8 +7,8 @@ namespace Worms.GameRunner
 {
     internal class SteamService : ISteamService
     {
-        private const string ProcessName = "Steam";
-        private static readonly Regex LaunchGamePromptRegex = new Regex("Allow game launch\\?", RegexOptions.IgnoreCase);
+        private const string _processName = "Steam";
+        private static readonly Regex _launchGamePromptRegex = new Regex("Allow game launch\\?", RegexOptions.IgnoreCase);
 
         public void WaitForSteamPrompt()
         {
@@ -25,8 +25,8 @@ namespace Worms.GameRunner
 
         private static IntPtr GetSteamPromptWindow()
         {
-            var windows = WindowTools.GetWindowsWithTitleMatching(LaunchGamePromptRegex);
-            return windows.FirstOrDefault(w => WindowTools.GetProcessForWindow(w).ProcessName == ProcessName);
+            var windows = WindowTools.GetWindowsWithTitleMatching(_launchGamePromptRegex);
+            return Array.Find(windows, w => WindowTools.GetProcessForWindow(w).ProcessName == _processName);
         }
     }
 }

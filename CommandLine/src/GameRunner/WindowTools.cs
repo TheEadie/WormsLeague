@@ -37,7 +37,6 @@ namespace Worms.GameRunner
             if (hWnd == IntPtr.Zero) return null;
             GetWindowThreadProcessId(hWnd, out var processId);
             return Process.GetProcessById((int)processId);
-
         }
 
         public static void FocusWindow(IntPtr hWnd)
@@ -61,9 +60,9 @@ namespace Worms.GameRunner
         private static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern IntPtr SetFocus(IntPtr hWnd);
+        private static extern IntPtr SetFocus(IntPtr hWnd);
     }
 }

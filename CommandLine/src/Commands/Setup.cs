@@ -17,7 +17,7 @@ namespace Worms.Commands
 
         public Setup(ConfigManager configManager) => _configManager = configManager;
 
-        public Task<int> OnExecuteAsync(IConsole console)
+        public Task<int> OnExecuteAsync()
         {
             if (string.IsNullOrWhiteSpace(GitHubToken))
             {
