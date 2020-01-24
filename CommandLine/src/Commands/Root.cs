@@ -9,7 +9,7 @@ namespace Worms.Commands
         Subcommand(typeof(Host)),
         Subcommand(typeof(Setup)),
     ]
-    public class Root : CommandBase
+    internal class Root : CommandBase
     {
         public Task<int> OnExecuteAsync(CommandLineApplication app)
         {

@@ -5,7 +5,7 @@ using worms.Configuration;
 namespace Worms.Commands
 {
     [Command("setup", Description = "Interactively set up worms CLI")]
-    public class Setup : CommandBase
+    internal class Setup : CommandBase
     {
         private readonly ConfigManager _configManager;
 

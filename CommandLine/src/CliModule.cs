@@ -1,13 +1,9 @@
 ﻿using System.IO.Abstractions;
 using Autofac;
-using Worms.Components;
-using Worms.Components.Updaters;
-using Worms.Components.Updaters.GitHubReleaseUpdater;
-using Worms.Components.Updaters.OutsideOfToolUpdater;
 using worms.Configuration;
 using worms.Configuration.SecureStorage;
+using Worms.Cli;
 using Worms.GameRunner;
-using Worms.Updates.Installers;
 using Worms.Updates.PackageManagers;
 
 namespace Worms
@@ -27,15 +23,10 @@ namespace Worms
             builder.RegisterType<WormsLocator>().As<IWormsLocator>();
             builder.RegisterType<WormsRunner>().As<IWormsRunner>();
 
-            // Components
-            builder.RegisterType<ComponentsRepository>();
-            builder.RegisterType<ComponentOperations>();
-            builder.RegisterType<OutsideOfToolUpdater>().As<IUpdater<OutsideOfToolUpdateConfig>>();
-            builder.RegisterType<GitHubReleaseUpdater>().As<IUpdater<GitHubReleaseUpdateConfig>>();
-
-            // Updates
-            builder.RegisterType<FileCopierInstaller>().As<IFileCopierInstaller>();
-            builder.RegisterType<GitHubReleaseRepository>();
+            // CLI
+            builder.RegisterType<GitHubReleasePackageManager>();
+            builder.RegisterType<CliUpdater>();
+            builder.RegisterType<CliInfoRetriever>();
         }
     }
 }

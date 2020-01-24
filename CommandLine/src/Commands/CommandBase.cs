@@ -6,7 +6,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Worms.Commands
 {
-    public abstract class CommandBase
+    internal abstract class CommandBase
     {
         [Option(ShortName = "v", Description = "Show more information about the process")]
         public bool Verbose { get; set; }
