@@ -27,6 +27,8 @@ namespace Worms.Updates.PackageManagers
                     new InMemoryCredentialStore(new Credentials(accessToken)));
             }
 
+            _gitHubClient.SetRequestTimeout(TimeSpan.FromMinutes(10));
+
             _repoOwner = repoOwner;
             _repoName = repoName;
             _tagPrefix = tagPrefix;
@@ -51,8 +53,6 @@ namespace Worms.Updates.PackageManagers
 
         public async Task DownloadVersion(Version version, string downloadToFolderPath)
         {
-            _gitHubClient.SetRequestTimeout(TimeSpan.FromMinutes(10));
-
             var releases = await _gitHubClient.Repository.Release.GetAll(_repoOwner, _repoName);
             var matching = releases.Single(x => x.TagName == _tagPrefix + version.ToString(3));
             var files = await _gitHubClient.Repository.Release.GetAllAssets(_repoOwner, _repoName, matching.Id);
