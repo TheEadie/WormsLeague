@@ -27,7 +27,7 @@ function Update-PsProfile() {
 
     if ($null -eq (Select-String -Path $profile -Pattern "Install-WormsCli"))
     {
-        Add-Content -Path $profile -Value "Set-Alias -Name Install-WormsCli -Value $wormsUpdateScriptPath"
+        Add-Content -Path $profile -Value "`r`nSet-Alias -Name Install-WormsCli -Value $wormsUpdateScriptPath"
         Set-Alias -Name Install-WormsCli -Value $wormsUpdateScriptPath -Scope Global
     }
 }
