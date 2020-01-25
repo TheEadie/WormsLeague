@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@ namespace Worms.GameRunner
 {
     public static class WindowTools
     {
+        [SuppressMessage("FalsePositive", "RCS1163", Justification = "Unused params are needed by the win32.dll code")]
         public static IntPtr[] GetWindowsWithTitleMatching(Regex pattern)
         {
             var results = new List<IntPtr>();
