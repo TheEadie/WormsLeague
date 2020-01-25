@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@ namespace Worms.GameRunner
 {
     public static class WindowTools
     {
+        [SuppressMessage("FalsePositive", "RCS1163", Justification = "Unused params are needed by the win32.dll code")]
         public static IntPtr[] GetWindowsWithTitleMatching(Regex pattern)
         {
             var results = new List<IntPtr>();
@@ -37,7 +39,6 @@ namespace Worms.GameRunner
             if (hWnd == IntPtr.Zero) return null;
             GetWindowThreadProcessId(hWnd, out var processId);
             return Process.GetProcessById((int)processId);
-
         }
 
         public static void FocusWindow(IntPtr hWnd)
@@ -61,9 +62,9 @@ namespace Worms.GameRunner
         private static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern IntPtr SetFocus(IntPtr hWnd);
+        private static extern IntPtr SetFocus(IntPtr hWnd);
     }
 }

@@ -6,7 +6,7 @@ using Worms.Commands;
 
 namespace Worms
 {
-    internal class Program
+    internal static class Program
     {
         public static int Main(string[] args)
         {

@@ -16,7 +16,7 @@ namespace Worms.Commands
 
         public async Task<int> OnExecuteAsync()
         {
-            await _wormsRunner.RunWorms("wa://");
+            await _wormsRunner.RunWorms("wa://").ConfigureAwait(false);
             return 0;
         }
     }
