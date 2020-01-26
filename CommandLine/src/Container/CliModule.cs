@@ -3,10 +3,9 @@ using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Cli;
 using Worms.Configuration;
-using Worms.Configuration.SecureStorage;
 using Worms.Updates.PackageManagers;
 
-namespace Worms
+namespace Worms.Container
 {
     public class CliModule : Module
     {

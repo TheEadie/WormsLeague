@@ -3,7 +3,7 @@ using Worms.Configuration.SecureStorage;
 using Worms.WormsArmageddon;
 using Worms.WormsArmageddon.Linux;
 
-namespace Worms
+namespace Worms.Container
 {
     public class LinuxCliModule : Module
     {
