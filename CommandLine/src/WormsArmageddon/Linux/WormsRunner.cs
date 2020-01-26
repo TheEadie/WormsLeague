@@ -7,7 +7,7 @@ namespace Worms.WormsArmageddon.Linux
     {
         public Task RunWorms(params string[] wormsArgs)
         {
-            return Task.Factory.StartNew(() => throw new PlatformNotSupportedException());
+            return Task.Factory.StartNew(() => throw new PlatformNotSupportedException("Running Worm Armageddon on Linux is not currently supported"));
         }
     }
 }
