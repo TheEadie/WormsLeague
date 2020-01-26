@@ -2,6 +2,7 @@
 using Autofac;
 using worms.Configuration;
 using worms.Configuration.SecureStorage;
+using worms.GameRunner.Windows;
 using Worms.Cli;
 using Worms.GameRunner;
 using Worms.Updates.PackageManagers;

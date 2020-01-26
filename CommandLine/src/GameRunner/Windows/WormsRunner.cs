@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Worms.GameRunner;
 
-namespace Worms.GameRunner
+namespace worms.GameRunner.Windows
 {
     internal class WormsRunner : IWormsRunner
     {
