@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Worms.GameRunner;
 
-namespace worms.GameRunner.Linux
+namespace Worms.GameRunner.Linux
 {
     internal class WormsRunner : IWormsRunner
     {

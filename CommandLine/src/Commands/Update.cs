@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Octokit;
-using worms.Configuration;
 using Worms.Cli;
+using Worms.Configuration;
 
 namespace Worms.Commands
 {

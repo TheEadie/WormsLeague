@@ -1,4 +1,4 @@
-﻿namespace worms.GameRunner.Windows
+﻿namespace Worms.GameRunner.Windows
 {
     public interface ISteamService
     {

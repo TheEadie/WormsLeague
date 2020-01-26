@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
-
-namespace worms.Configuration.SecureStorage
+﻿namespace Worms.Configuration.SecureStorage
 {
     public interface ICredentialStorage
     {

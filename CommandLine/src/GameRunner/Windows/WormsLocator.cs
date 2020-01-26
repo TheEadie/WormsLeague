@@ -2,9 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using Microsoft.Win32;
-using Worms.GameRunner;
 
-namespace worms.GameRunner.Windows
+namespace Worms.GameRunner.Windows
 {
     internal class WormsLocator : IWormsLocator
     {

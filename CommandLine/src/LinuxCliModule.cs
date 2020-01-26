@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Worms.GameRunner;
-using worms.GameRunner.Linux;
+using Worms.GameRunner.Linux;
 
 namespace Worms
 {

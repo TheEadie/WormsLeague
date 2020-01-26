@@ -1,9 +1,9 @@
 ﻿using System.IO.Abstractions;
 using System.Runtime.InteropServices;
 using Autofac;
-using worms.Configuration;
-using worms.Configuration.SecureStorage;
 using Worms.Cli;
+using Worms.Configuration;
+using Worms.Configuration.SecureStorage;
 using Worms.Updates.PackageManagers;
 
 namespace Worms

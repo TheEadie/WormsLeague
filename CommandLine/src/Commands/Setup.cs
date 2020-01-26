@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using worms.Configuration;
+using Worms.Configuration;
 
 namespace Worms.Commands
 {

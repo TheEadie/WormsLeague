@@ -1,6 +1,6 @@
-﻿using worms.Configuration.SecureStorage;
+﻿using Worms.Configuration.SecureStorage;
 
-namespace worms.Configuration
+namespace Worms.Configuration
 {
     public class ConfigManager
     {
