@@ -18,7 +18,6 @@ namespace Worms
             builder.RegisterType<FileSystem>().As<IFileSystem>();
 
             // Config
-            builder.RegisterType<WindowsCredentialStorage>().As<ICredentialStorage>();
             builder.RegisterType<ConfigManager>().As<IConfigManager>();
 
             // CLI
