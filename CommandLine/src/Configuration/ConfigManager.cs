@@ -2,7 +2,7 @@
 
 namespace Worms.Configuration
 {
-    public class ConfigManager
+    public class ConfigManager : IConfigManager
     {
         private readonly ICredentialStorage _credentialStorage;
 

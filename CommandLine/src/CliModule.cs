@@ -19,7 +19,7 @@ namespace Worms
 
             // Config
             builder.RegisterType<WindowsCredentialStorage>().As<ICredentialStorage>();
-            builder.RegisterType<ConfigManager>();
+            builder.RegisterType<ConfigManager>().As<IConfigManager>();
 
             // CLI
             builder.RegisterType<GitHubReleasePackageManager>();
