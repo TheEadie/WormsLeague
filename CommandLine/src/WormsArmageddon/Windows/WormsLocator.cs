@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Win32;
 
-namespace Worms.GameRunner.Windows
+namespace Worms.WormsArmageddon.Windows
 {
     internal class WormsLocator : IWormsLocator
     {

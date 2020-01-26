@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Worms.GameRunner.Linux
+namespace Worms.WormsArmageddon.Linux
 {
     internal class WormsLocator : IWormsLocator
     {

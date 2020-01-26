@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.GameRunner;
+using Worms.WormsArmageddon;
 
 namespace Worms.Commands
 {

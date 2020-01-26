@@ -1,6 +1,6 @@
 ﻿using Autofac;
-using Worms.GameRunner;
-using Worms.GameRunner.Windows;
+using Worms.WormsArmageddon;
+using Worms.WormsArmageddon.Windows;
 
 namespace Worms
 {

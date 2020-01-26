@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Worms.GameRunner
+namespace Worms.WormsArmageddon
 {
     public interface IWormsRunner
     {
