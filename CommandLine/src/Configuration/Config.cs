@@ -1,4 +1,4 @@
-﻿namespace worms.Configuration
+﻿namespace Worms.Configuration
 {
     public class Config
     {

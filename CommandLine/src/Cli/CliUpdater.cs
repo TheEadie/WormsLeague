@@ -3,7 +3,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
-using worms.Configuration;
+using Worms.Configuration;
 using Worms.Updates.PackageManagers;
 
 namespace Worms.Cli

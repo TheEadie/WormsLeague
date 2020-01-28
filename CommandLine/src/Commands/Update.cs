@@ -1,18 +1,18 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Octokit;
-using worms.Configuration;
 using Worms.Cli;
+using Worms.Configuration;
 
 namespace Worms.Commands
 {
     [Command("update", Description = "Update worms CLI")]
     internal class Update : CommandBase
     {
-        private readonly ConfigManager _configManager;
+        private readonly IConfigManager _configManager;
         private readonly CliUpdater _cliUpdater;
 
-        public Update(ConfigManager configManager, CliUpdater cliUpdater)
+        public Update(IConfigManager configManager, CliUpdater cliUpdater)
         {
             _configManager = configManager;
             _cliUpdater = cliUpdater;

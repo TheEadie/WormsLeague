@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Worms.GameRunner
+namespace Worms.WormsArmageddon.Windows
 {
     internal class WormsRunner : IWormsRunner
     {

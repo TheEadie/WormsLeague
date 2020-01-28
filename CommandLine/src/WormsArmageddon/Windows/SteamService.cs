@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Worms.GameRunner
+namespace Worms.WormsArmageddon.Windows
 {
     internal class SteamService : ISteamService
     {

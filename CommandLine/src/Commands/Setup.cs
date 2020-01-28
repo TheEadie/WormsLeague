@@ -1,13 +1,13 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using worms.Configuration;
+using Worms.Configuration;
 
 namespace Worms.Commands
 {
     [Command("setup", Description = "Interactively set up worms CLI")]
     internal class Setup : CommandBase
     {
-        private readonly ConfigManager _configManager;
+        private readonly IConfigManager _configManager;
 
         [Option(Description = "A GitHub personal access token. Used to increase the number of API calls available", ShortName = "gt")]
         public string GitHubToken { get; private set; }
@@ -15,7 +15,7 @@ namespace Worms.Commands
         [Option(Description = "A Slack access token. Used to announce games to Slack when hosting", ShortName = "st")]
         public string SlackToken { get; private set; }
 
-        public Setup(ConfigManager configManager) => _configManager = configManager;
+        public Setup(IConfigManager configManager) => _configManager = configManager;
 
         public Task<int> OnExecuteAsync()
         {
