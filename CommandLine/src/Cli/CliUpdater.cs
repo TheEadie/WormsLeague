@@ -60,7 +60,7 @@ namespace Worms.Cli
             EnsureFolderExistsAndIsEmpty(updateFolder);
 
             await _packageManager.DownloadVersion(latestVersion, updateFolder).ConfigureAwait(false);
-            logger.Information("To install Worms CLI run Install-WormsCli");
+            logger.Warning("Update available - To install the update run Install-WormsCli");
         }
 
         private void EnsureFolderExistsAndIsEmpty(string updateFolder)

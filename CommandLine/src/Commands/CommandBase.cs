@@ -3,6 +3,7 @@ using McMaster.Extensions.CommandLineUtils;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+using Worms.Logging;
 
 namespace Worms.Commands
 {
@@ -28,7 +29,7 @@ namespace Worms.Commands
             var logEventLevel = GetLogEventLevel();
             return new LoggerConfiguration()
                 .MinimumLevel.Is(logEventLevel)
-                .WriteTo.Console(theme: AnsiConsoleTheme.Code, standardErrorFromLevel: LogEventLevel.Error)
+                .WriteTo.ColoredConsole()
                 .CreateLogger();
         }
 
