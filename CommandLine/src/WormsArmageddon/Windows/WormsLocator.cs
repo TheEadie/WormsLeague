@@ -15,16 +15,17 @@ namespace Worms.WormsArmageddon.Windows
 
             if (location is null)
             {
-                return new GameInfo(false, string.Empty, string.Empty, new Version(0, 0, 0, 0));
+                return new GameInfo(false, string.Empty, string.Empty, new Version(0, 0, 0, 0), string.Empty);
             }
 
             var rootLocation = location as string;
             var exeLocation = Path.Combine(rootLocation, processName + ".exe");
+            var schemesFolder = Path.Combine(rootLocation, "User", "Schemes");
 
             var versionInfo = FileVersionInfo.GetVersionInfo(exeLocation);
             var version = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart, versionInfo.ProductPrivatePart);
 
-            return new GameInfo(true, exeLocation, processName, version);
+            return new GameInfo(true, exeLocation, processName, version, schemesFolder);
         }
     }
 }
