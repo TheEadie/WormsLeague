@@ -15,14 +15,14 @@ namespace Worms.Commands
             _wormsLocator = wormsLocator;
         }
 
-        public Task<int> OnExecuteAsync(IConsole console)
+        public Task<int> OnExecuteAsync()
         {
             var cliVersion = Assembly.GetEntryAssembly().GetName().Version.ToString(3);
-            console.WriteLine($"Worms CLI: {cliVersion}");
+            Logger.Information($"Worms CLI: {cliVersion}");
 
             var gameInfo = _wormsLocator.Find();
             var gameVersion = gameInfo.IsInstalled ? gameInfo.Version.ToString(4) : "Not Installed";
-            console.WriteLine($"Worms Armageddon: {gameVersion}");
+            Logger.Information($"Worms Armageddon: {gameVersion}");
             return Task.FromResult(0);
         }
     }
