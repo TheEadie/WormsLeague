@@ -1,6 +1,6 @@
 {
-    "FormattingOptions": {
-      "WrappingPreserveSingleLine": false,
-      "WrappingKeepStatementsOnSingleLine": true
-    }
+  "FormattingOptions": {
+    "WrappingPreserveSingleLine": true,
+    "WrappingKeepStatementsOnSingleLine": true
   }
+}

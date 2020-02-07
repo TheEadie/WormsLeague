@@ -9,6 +9,12 @@ $script = Invoke-WebRequest https://raw.githubusercontent.com/TheEadie/WormsLeag
 Invoke-Expression $($script.content)
 ```
 
+## First time setup
+
+```
+worms setup
+```
+
 ## Hosting a game
 
 ```
