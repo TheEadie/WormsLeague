@@ -5,6 +5,6 @@ namespace Worms.Slack
 {
     internal interface ISlackAnnouncer
     {
-        Task AnnounceGameStarting(string hostName, string accessToken, string channelName, ILogger log);
+        Task AnnounceGameStarting(string hostName, string webHookUrl, ILogger log);
     }
 }

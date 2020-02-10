@@ -9,14 +9,11 @@ namespace Worms.Commands
     {
         private readonly IConfigManager _configManager;
 
-        [Option(Description = "A GitHub personal access token. Used to increase the number of API calls available", ShortName = "gt")]
+        [Option(Description = "A GitHub personal access token. Used to increase the number of API calls available", ShortName = "gh")]
         public string GitHubToken { get; }
 
-        [Option(Description = "A Slack access token. Used to announce games to Slack when hosting", ShortName = "st")]
-        public string SlackToken { get; }
-
-        [Option(Description = "A Slack channel name. Used to announce games to Slack when hosting", ShortName = "sc")]
-        public string SlackChannel { get; }
+        [Option(Description = "A Slack web hook. Used to announce games to Slack when hosting", ShortName = "s")]
+        public string SlackWebHook { get; }
 
         public Setup(IConfigManager configManager) => _configManager = configManager;
 
@@ -25,8 +22,7 @@ namespace Worms.Commands
             var config = _configManager.Load();
 
             config.GitHubPersonalAccessToken = string.IsNullOrWhiteSpace(GitHubToken) ? Prompt.GetPassword("GitHub Personal Access Token (https://github.com/settings/tokens):") : GitHubToken;
-            config.SlackAccessToken = string.IsNullOrWhiteSpace(SlackToken) ? Prompt.GetPassword("Slack Access Token (https://api.slack.com/custom-integrations/legacy-tokens):") : SlackToken;
-            config.SlackChannel = string.IsNullOrWhiteSpace(SlackChannel) ? Prompt.GetString("Slack Channel to announce games:") : SlackChannel;
+            config.SlackWebHook = string.IsNullOrWhiteSpace(SlackWebHook) ? Prompt.GetString("Slack Web Hook to announce games (Ask the team):") : SlackWebHook;
 
             _configManager.Save(config);
             return Task.FromResult(0);
