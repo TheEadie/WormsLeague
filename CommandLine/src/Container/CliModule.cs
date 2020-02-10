@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Cli;
 using Worms.Configuration;
+using Worms.League;
 using Worms.Slack;
 using Worms.Updates.PackageManagers;
 
@@ -27,6 +28,9 @@ namespace Worms.Container
 
             // Annoucer
             builder.RegisterType<SlackAnnouncer>().As<ISlackAnnouncer>();
+
+            // League
+            builder.RegisterType<LeagueUpdater>();
         }
 
         private static void RegisterOSModules(ContainerBuilder builder)
