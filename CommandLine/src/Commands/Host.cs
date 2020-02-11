@@ -45,9 +45,9 @@ namespace Worms.Commands
             Logger.Information("Starting Worms Armageddon");
             var runGame = _wormsRunner.RunWorms("wa://").ConfigureAwait(false);
 
-            Logger.Information($"Announcing game on Slack {config.SlackChannel}");
+            Logger.Information("Announcing game on Slack");
             Logger.Verbose($"Host name: {hostName}");
-            await _slackAnnouncer.AnnounceGameStarting(hostName, config.SlackAccessToken, config.SlackChannel, Logger).ConfigureAwait(false);
+            await _slackAnnouncer.AnnounceGameStarting(hostName, config.SlackWebHook, Logger).ConfigureAwait(false);
 
             await runGame;
             return 0;

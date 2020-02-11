@@ -28,7 +28,6 @@ namespace Worms.Configuration
             var localConfig = LoadConfigFromFile(_localConfigPath);
 
             localConfig.GitHubPersonalAccessToken = _credentialStorage.Load("Worms.GitHub.AccessToken");
-            localConfig.SlackAccessToken = _credentialStorage.Load("Worms.Slack.AccessToken");
 
             return localConfig;
         }
@@ -49,13 +48,11 @@ namespace Worms.Configuration
         public void Save(Config config)
         {
             _credentialStorage.Store("Worms.GitHub.AccessToken", config.GitHubPersonalAccessToken);
-            _credentialStorage.Store("Worms.Slack.AccessToken", config.SlackAccessToken);
 
             var localConfig = new Config
             {
                 GitHubPersonalAccessToken = "***",
-                SlackAccessToken = "***",
-                SlackChannel = config.SlackChannel
+                SlackWebHook = config.SlackWebHook
             };
 
             _fileSystem.File.WriteAllText(_localConfigPath, JsonConvert.SerializeObject(localConfig));

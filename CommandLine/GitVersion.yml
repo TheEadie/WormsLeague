@@ -1,4 +1,4 @@
-next-version: 0.5
+next-version: 0.6
 mode: ContinuousDelivery
 tag-prefix: 'cli/v'
 branches: {}

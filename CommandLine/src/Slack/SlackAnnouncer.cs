@@ -9,30 +9,22 @@ namespace Worms.Slack
 {
     internal class SlackAnnouncer : ISlackAnnouncer
     {
-        public async Task AnnounceGameStarting(string hostName, string accessToken, string channelName, ILogger log)
+        public async Task AnnounceGameStarting(string hostName, string webHookUrl, ILogger log)
         {
-            if (string.IsNullOrWhiteSpace(accessToken))
+            if (string.IsNullOrWhiteSpace(webHookUrl))
             {
-                log.Warning("A Slack token must be configured to announce a game");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(channelName))
-            {
-                log.Warning("A Slack channel must be configured to announce a game");
+                log.Warning("A Slack web hook must be configured to announce a game");
                 return;
             }
 
             var slackMessage = new SlackMessage
             {
-                Channel = channelName,
                 Text = $"<!here> Hosting at: wa://{hostName}"
             };
 
             using (HttpClient client = new HttpClient())
             {
-                var slackUrl = new System.Uri("https://slack.com/api/chat.postMessage");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var slackUrl = new System.Uri(webHookUrl);
                 var body = JsonConvert.SerializeObject(slackMessage);
                 var content = new StringContent(body, Encoding.UTF8, "application/json");
 
