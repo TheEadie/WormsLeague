@@ -21,7 +21,7 @@ namespace Worms.Commands
         {
             var config = _configManager.Load();
 
-            config.GitHubPersonalAccessToken = string.IsNullOrWhiteSpace(GitHubToken) ? Prompt.GetPassword("GitHub Personal Access Token (https://github.com/settings/tokens):") : GitHubToken;
+            config.GitHubPersonalAccessToken = string.IsNullOrWhiteSpace(GitHubToken) ? Prompt.GetPassword("GitHub Personal Access Token (Scopes: 'public_repo' only) (https://github.com/settings/tokens):") : GitHubToken;
             config.SlackWebHook = string.IsNullOrWhiteSpace(SlackWebHook) ? Prompt.GetString("Slack Web Hook to announce games (Ask the team):") : SlackWebHook;
 
             _configManager.Save(config);
