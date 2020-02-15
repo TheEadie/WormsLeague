@@ -22,5 +22,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Run bootstrap to install modules and tools from nuget
+dotnet tool run dotnet-cake "$SCRIPT" "--bootstrap"
+
 # Start Cake
 dotnet tool run dotnet-cake "$SCRIPT" "${CAKE_ARGUMENTS[@]}"

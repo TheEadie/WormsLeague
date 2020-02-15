@@ -1,0 +1,4 @@
+next-version: 0.1
+mode: ContinuousDelivery
+tag-prefix: 'server/v'
+branches: {}
