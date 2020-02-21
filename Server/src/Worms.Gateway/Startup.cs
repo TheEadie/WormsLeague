@@ -1,5 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using AspNet.Security.OAuth.GitHub;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -30,8 +36,19 @@ namespace Worms.Gateway
             .AddCookie()
             .AddGitHub(options =>
             {
-                options.ClientId = "";
-                options.ClientSecret = "";
+                options.ClientId = Configuration["GitHub:ClientId"];
+                options.ClientSecret = Configuration["GitHub:ClientSecret"];
+                options.Scope.Add("public_repo");
+                options.SaveTokens = true;
+                options.Events.OnCreatingTicket = ctx =>
+                {
+                    List<AuthenticationToken> tokens = ctx.Properties.GetTokens().ToList();
+                    var claims = new List<Claim> { new Claim("access-token", tokens.SingleOrDefault(x => x.Name == "access_token").Value) };
+                    var newIdentity = new ClaimsIdentity(claims);
+                    ctx.Principal.AddIdentity(newIdentity);
+
+                    return Task.CompletedTask;
+                };
             });
         }
 
