@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Worms.Gateway.Controllers
 {
-    [ApiVersion("1.0")]
-    [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    [Authorize("AllowedUsers")]
-    public class WeatherForecastController : ControllerBase
+    public class WeatherForecastController : V1ApiController
     {
         private static readonly string[] _summaries = new[]
         {
