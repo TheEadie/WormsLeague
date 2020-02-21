@@ -6,10 +6,16 @@ namespace Worms.Gateway.Controllers
 {
     public class AuthenticationController : Controller
     {
-        [HttpGet("~/signout"), HttpPost("~/signout")]
-        public async Task<IActionResult> SignOut()
+        [HttpGet("~/login"), HttpPost("~/login")]
+        public IActionResult LogIn()
         {
-            await HttpContext.SignOutAsync();
+            return Ok();
+        }
+
+        [HttpGet("~/logout"), HttpPost("~/logout")]
+        public async Task<IActionResult> LogOut()
+        {
+            await HttpContext.SignOutAsync().ConfigureAwait(false);
             return Ok();
         }
     }
