@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Worms.Gateway.Controllers
 {
+    [Authorize]
     public class AuthenticationController : ControllerBase
     {
         [HttpGet("~/login"), HttpPost("~/login")]
