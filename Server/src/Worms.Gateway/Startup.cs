@@ -1,16 +1,13 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNet.Security.OAuth.GitHub;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Text.Json;
 
 namespace Worms.Gateway
 {
@@ -40,12 +37,13 @@ namespace Worms.Gateway
                 options.ClientSecret = Configuration["GitHub:ClientSecret"];
                 options.Scope.Add("public_repo");
                 options.SaveTokens = true;
+                options.ClaimActions.MapJsonKey("urn:github:token", "access-token");
+                options.ClaimActions.MapJsonKey("urn:github:login", "login");
+                options.ClaimActions.MapJsonKey("urn:github:avatar", "avatar_url");
                 options.Events.OnCreatingTicket = ctx =>
                 {
-                    List<AuthenticationToken> tokens = ctx.Properties.GetTokens().ToList();
-                    var claims = new List<Claim> { new Claim("access-token", tokens.SingleOrDefault(x => x.Name == "access_token").Value) };
-                    var newIdentity = new ClaimsIdentity(claims);
-                    ctx.Principal.AddIdentity(newIdentity);
+                    var user = JsonDocument.Parse($"{{ \"access-token\" : \"{ctx.AccessToken}\"  }}");
+                    ctx.RunClaimActions(user.RootElement);
 
                     return Task.CompletedTask;
                 };
