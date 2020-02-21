@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Text.Json;
+using System.Net;
 
 namespace Worms.Gateway
 {
@@ -30,7 +31,14 @@ namespace Worms.Gateway
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = GitHubAuthenticationDefaults.AuthenticationScheme;
             })
-            .AddCookie()
+            .AddCookie(options =>
+            {
+                options.Events.OnRedirectToAccessDenied = ctx =>
+                {
+                    ctx.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    return Task.CompletedTask;
+                };
+            })
             .AddGitHub(options =>
             {
                 options.ClientId = Configuration["GitHub:ClientId"];
@@ -48,6 +56,12 @@ namespace Worms.Gateway
                     return Task.CompletedTask;
                 };
             });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AllowedUsers",
+                policy => policy.RequireClaim("urn:github:login", "TheEadie"));
+            }
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

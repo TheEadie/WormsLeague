@@ -9,7 +9,7 @@ namespace Worms.Gateway.Controllers
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [Authorize]
+    [Authorize("AllowedUsers")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] _summaries = new[]
