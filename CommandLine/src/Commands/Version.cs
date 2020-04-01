@@ -17,7 +17,7 @@ namespace Worms.Commands
 
         public Task<int> OnExecuteAsync()
         {
-            var cliVersion = Assembly.GetEntryAssembly().GetName().Version.ToString(3);
+            var cliVersion = Assembly.GetEntryAssembly()?.GetName().Version.ToString(3);
             Logger.Information($"Worms CLI: {cliVersion}");
 
             var gameInfo = _wormsLocator.Find();

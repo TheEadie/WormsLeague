@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
+using Worms.Cli.PackageManagers;
 using Worms.Configuration;
-using Worms.Updates.PackageManagers;
 using Worms.WormsArmageddon;
 
 namespace Worms.League

@@ -10,10 +10,10 @@ namespace Worms.Commands
         private readonly IConfigManager _configManager;
 
         [Option(Description = "A GitHub personal access token. Used to increase the number of API calls available", ShortName = "gh")]
-        public string GitHubToken { get; }
+        public string GitHubToken { get; set; }
 
         [Option(Description = "A Slack web hook. Used to announce games to Slack when hosting", ShortName = "s")]
-        public string SlackWebHook { get; }
+        public string SlackWebHook { get; set;  }
 
         public Setup(IConfigManager configManager) => _configManager = configManager;
 

@@ -34,8 +34,6 @@ namespace Worms.WormsArmageddon.Windows
 
                 var wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
                 wormsProcess?.WaitForExit();
-
-                return;
             });
         }
     }

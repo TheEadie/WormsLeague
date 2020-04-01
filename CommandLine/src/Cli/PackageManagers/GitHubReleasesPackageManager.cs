@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Octokit;
 using Octokit.Internal;
 
-namespace Worms.Updates.PackageManagers
+namespace Worms.Cli.PackageManagers
 {
     public class GitHubReleasePackageManager
     {

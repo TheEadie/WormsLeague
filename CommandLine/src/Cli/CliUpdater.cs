@@ -3,8 +3,8 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
+using Worms.Cli.PackageManagers;
 using Worms.Configuration;
-using Worms.Updates.PackageManagers;
 
 namespace Worms.Cli
 {
@@ -37,8 +37,8 @@ namespace Worms.Cli
                 "cli/v",
                 config.GitHubPersonalAccessToken);
 
-            var versions = await _packageManager.GetAvailableVersions().ConfigureAwait(false);
-            logger.Verbose($"Availible versions: {string.Join(", ", versions)}");
+            var versions = (await _packageManager.GetAvailableVersions().ConfigureAwait(false)).ToList();
+            logger.Verbose($"Available versions: {string.Join(", ", versions)}");
 
             var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
             logger.Verbose($"Latest version: {latestVersion}");

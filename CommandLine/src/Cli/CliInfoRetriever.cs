@@ -14,7 +14,7 @@ namespace Worms.Cli
         {
             var assembly = Assembly.GetEntryAssembly();
             return new CliInfo(
-                assembly.GetName().Version,
+                assembly?.GetName().Version,
                 _fileSystem.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName));
         }
     }

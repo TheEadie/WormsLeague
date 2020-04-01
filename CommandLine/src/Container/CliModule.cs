@@ -2,12 +2,12 @@
 using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Cli;
+using Worms.Cli.PackageManagers;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Logging;
 using Worms.Resources.Schemes;
 using Worms.Slack;
-using Worms.Updates.PackageManagers;
 using Worms.WormsArmageddon.Schemes.WscFiles;
 
 namespace Worms.Container
