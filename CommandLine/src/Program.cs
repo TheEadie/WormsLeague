@@ -11,8 +11,8 @@ namespace Worms
     {
         public static int Main(string[] args)
         {
-            var console = new PhysicalConsole();
-            var app = new CommandLineApplication<Root>(console, Environment.CurrentDirectory, true);
+            var console = PhysicalConsole.Singleton;
+            var app = new CommandLineApplication<Root>(console, Environment.CurrentDirectory);
             app.Conventions.UseDefaultConventions().UseConstructorInjection(SetUpDi());
             ConfigureHelp(app);
 
