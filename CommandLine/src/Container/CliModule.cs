@@ -4,6 +4,7 @@ using Autofac;
 using Worms.Cli;
 using Worms.Configuration;
 using Worms.League;
+using Worms.Resources.Schemes;
 using Worms.Slack;
 using Worms.Updates.PackageManagers;
 
@@ -31,6 +32,9 @@ namespace Worms.Container
 
             // League
             builder.RegisterType<LeagueUpdater>();
+
+            // Schemes
+            builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
         }
 
         private static void RegisterOSModules(ContainerBuilder builder)

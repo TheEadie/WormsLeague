@@ -3,17 +3,15 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Worms.Commands
 {
-    [Command("worms", Description = "Worms CLI"),
-        Subcommand(typeof(Get)),
-        Subcommand(typeof(Version)),
-        Subcommand(typeof(Update)),
-        Subcommand(typeof(Host)),
-        Subcommand(typeof(Setup)),
+    [Command("get", Description = "Get a list of resources"),
+        Subcommand(typeof(GetScheme)),
     ]
-    internal class Root : CommandBase
+    internal class Get : CommandBase
     {
         public Task<int> OnExecuteAsync(CommandLineApplication app)
         {
+            Logger.Error("No resource type specified");
+            Logger.Information("");
             app.ShowHelp();
             return Task.FromResult(1);
         }
