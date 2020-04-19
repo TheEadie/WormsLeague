@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using Worms.WormsArmageddon;
+using Worms.WormsArmageddon.Schemes.WscFiles;
 
 namespace Worms.Resources.Schemes
 {
@@ -8,11 +9,13 @@ namespace Worms.Resources.Schemes
     {
         private readonly IWormsLocator _wormsLocator;
         private readonly IFileSystem _fileSystem;
+        private readonly WscReader _wscReader;
 
-        public LocalSchemesRetriever(IWormsLocator wormsLocator, IFileSystem fileSystem)
+        public LocalSchemesRetriever(IWormsLocator wormsLocator, IFileSystem fileSystem, WscReader wscReader)
         {
             _wormsLocator = wormsLocator;
             _fileSystem = fileSystem;
+            _wscReader = wscReader;
         }
 
         public IReadOnlyCollection<SchemeResource> Get()
@@ -24,7 +27,8 @@ namespace Worms.Resources.Schemes
             foreach(var scheme in _fileSystem.Directory.GetFiles(schemeFolder, "*.wsc"))
             {
                 var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);
-                schemes.Add(new SchemeResource(fileName, "local"));
+                var details = _wscReader.GetModel(scheme);
+                schemes.Add(new SchemeResource(fileName, "local", details));
             }
 
             return schemes;

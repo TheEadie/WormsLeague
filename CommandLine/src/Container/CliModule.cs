@@ -8,6 +8,7 @@ using Worms.Logging;
 using Worms.Resources.Schemes;
 using Worms.Slack;
 using Worms.Updates.PackageManagers;
+using Worms.WormsArmageddon.Schemes.WscFiles;
 
 namespace Worms.Container
 {
@@ -39,6 +40,7 @@ namespace Worms.Container
 
             // Schemes
             builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
+            builder.RegisterType<WscReader>();
         }
 
         private static void RegisterOSModules(ContainerBuilder builder)

@@ -1,14 +1,18 @@
+using Worms.WormsArmageddon.Schemes;
+
 namespace Worms.Resources.Schemes
 {
     public class SchemeResource
     {
         public string Name { get; }
         public string Context { get; }
+        public Scheme Details { get; }
 
-        public SchemeResource(string name, string context)
+        public SchemeResource(string name, string context, Scheme details)
         {
             Name = name;
             Context = context;
+            Details = details;
         }
     }
 }
