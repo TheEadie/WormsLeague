@@ -4,6 +4,7 @@ using Autofac;
 using Worms.Cli;
 using Worms.Configuration;
 using Worms.League;
+using Worms.Logging;
 using Worms.Resources.Schemes;
 using Worms.Slack;
 using Worms.Updates.PackageManagers;
@@ -26,6 +27,9 @@ namespace Worms.Container
             builder.RegisterType<GitHubReleasePackageManager>();
             builder.RegisterType<CliUpdater>();
             builder.RegisterType<CliInfoRetriever>();
+
+            // Printing
+            builder.RegisterType<TablePrinter>();
 
             // Annoucer
             builder.RegisterType<SlackAnnouncer>().As<ISlackAnnouncer>();

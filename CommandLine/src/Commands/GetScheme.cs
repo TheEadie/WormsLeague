@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Worms.Logging;
 using Worms.Resources.Schemes;
 
 namespace Worms.Commands
@@ -8,18 +9,17 @@ namespace Worms.Commands
     internal class GetScheme : CommandBase
     {
         private readonly ISchemesRetriever _schemesRetreiver;
+        private readonly TablePrinter _tablePrinter;
 
-        public GetScheme(ISchemesRetriever schemesRetreiver)
+        public GetScheme(ISchemesRetriever schemesRetreiver, TablePrinter tablePrinter)
         {
             _schemesRetreiver = schemesRetreiver;
+            _tablePrinter = tablePrinter;
         }
 
         public Task<int> OnExecuteAsync()
         {
-            foreach(var scheme in _schemesRetreiver.Get())
-            {
-                Logger.Information($"Name {scheme.Name}");
-            }
+            _tablePrinter.Print(Logger, _schemesRetreiver.Get());
 
             return Task.FromResult(0);
         }
