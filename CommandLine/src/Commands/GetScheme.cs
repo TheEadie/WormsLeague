@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Logging;
@@ -42,13 +43,28 @@ namespace Worms.Commands
 
         private void PrintScheme(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            var requestForAll = string.IsNullOrWhiteSpace(name);
+            var userSpecifiedName = !requestForAll && !name.Contains('*');
+            var matches = requestForAll ? _schemesRetreiver.Get("*") : _schemesRetreiver.Get(name);
+
+            if (userSpecifiedName)
             {
-                _tablePrinter.Print(Logger, _schemesRetreiver.Get());
+                if (matches.Count == 0)
+                {
+                    Logger.Error($"Can not find scheme: {name}");
+                }
+                else if (matches.Count == 1)
+                {
+                    _textPrinter.Print(Logger, matches.Single());
+                }
+                else
+                {
+                    _tablePrinter.Print(Logger, matches);
+                }
             }
             else
             {
-                _textPrinter.Print(Logger, _schemesRetreiver.Get(name));
+                _tablePrinter.Print(Logger, matches);
             }
         }
     }

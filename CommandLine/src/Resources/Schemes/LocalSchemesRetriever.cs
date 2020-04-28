@@ -19,13 +19,18 @@ namespace Worms.Resources.Schemes
             _wscReader = wscReader;
         }
 
-        public IReadOnlyCollection<SchemeResource> Get()
+        public IReadOnlyCollection<SchemeResource> Get(string pattern = "*")
         {
-            var schemeFolder = _wormsLocator.Find().SchemesFolder;
+            var gameInfo = _wormsLocator.Find();
+
+            if (!gameInfo.IsInstalled)
+            {
+                return new List<SchemeResource>(0);
+            }
 
             var schemes = new List<SchemeResource>();
 
-            foreach(var scheme in _fileSystem.Directory.GetFiles(schemeFolder, "*.wsc"))
+            foreach(var scheme in _fileSystem.Directory.GetFiles(gameInfo.SchemesFolder, $"{pattern}.wsc"))
             {
                 var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);
                 var details = _wscReader.GetModel(scheme);
@@ -34,21 +39,5 @@ namespace Worms.Resources.Schemes
 
             return schemes;
         }
-
-        public SchemeResource Get(string name)
-        {
-            var schemeFolder = _wormsLocator.Find().SchemesFolder;
-
-            var scheme = _fileSystem.Path.Combine(schemeFolder, $"{name}.wsc");
-
-            if (!_fileSystem.File.Exists(scheme))
-            {
-                throw new ArgumentException($"Can not find scheme: '{name}'");
-            }
-
-            var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);
-            var details = _wscReader.GetModel(scheme);
-            return new SchemeResource(fileName, "local", details);
-        }
-    }
+   }
 }
