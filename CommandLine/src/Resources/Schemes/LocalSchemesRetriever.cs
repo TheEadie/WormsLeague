@@ -43,7 +43,7 @@ namespace Worms.Resources.Schemes
 
             if (!_fileSystem.File.Exists(scheme))
             {
-                throw new ArgumentException($"Can not find resource: Scheme {name}");
+                throw new ArgumentException($"Can not find scheme: '{name}'");
             }
 
             var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);

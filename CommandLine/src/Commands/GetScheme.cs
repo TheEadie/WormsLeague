@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Logging;
@@ -27,16 +28,28 @@ namespace Worms.Commands
 
         public Task<int> OnExecuteAsync()
         {
-            if (string.IsNullOrWhiteSpace(Name))
+            try
+            {
+                PrintScheme(Name);
+                return Task.FromResult(0);
+            }
+            catch (ArgumentException exception)
+            {
+                Logger.Error(exception.Message);
+                return Task.FromResult(1);
+            }
+        }
+
+        private void PrintScheme(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
             {
                 _tablePrinter.Print(Logger, _schemesRetreiver.Get());
             }
             else
             {
-                _textPrinter.Print(Logger, _schemesRetreiver.Get(Name));
+                _textPrinter.Print(Logger, _schemesRetreiver.Get(name));
             }
-
-            return Task.FromResult(0);
         }
     }
 }
