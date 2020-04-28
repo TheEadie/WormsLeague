@@ -10,16 +10,31 @@ namespace Worms.Commands
     {
         private readonly ISchemesRetriever _schemesRetreiver;
         private readonly TablePrinter _tablePrinter;
+        private readonly TextPrinter _textPrinter;
 
-        public GetScheme(ISchemesRetriever schemesRetreiver, TablePrinter tablePrinter)
+        [Argument(0)]
+        public string Name { get; }
+
+        public GetScheme(
+            ISchemesRetriever schemesRetreiver,
+            TablePrinter tablePrinter,
+            TextPrinter textPrinter)
         {
             _schemesRetreiver = schemesRetreiver;
             _tablePrinter = tablePrinter;
+            _textPrinter = textPrinter;
         }
 
         public Task<int> OnExecuteAsync()
         {
-            _tablePrinter.Print(Logger, _schemesRetreiver.Get());
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                _tablePrinter.Print(Logger, _schemesRetreiver.Get());
+            }
+            else
+            {
+                _textPrinter.Print(Logger, _schemesRetreiver.Get(Name));
+            }
 
             return Task.FromResult(0);
         }

@@ -31,6 +31,7 @@ namespace Worms.Container
 
             // Printing
             builder.RegisterType<TablePrinter>();
+            builder.RegisterType<TextPrinter>();
 
             // Annoucer
             builder.RegisterType<SlackAnnouncer>().As<ISlackAnnouncer>();

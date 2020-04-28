@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using Worms.WormsArmageddon;
@@ -32,6 +33,22 @@ namespace Worms.Resources.Schemes
             }
 
             return schemes;
+        }
+
+        public SchemeResource Get(string name)
+        {
+            var schemeFolder = _wormsLocator.Find().SchemesFolder;
+
+            var scheme = _fileSystem.Path.Combine(schemeFolder, $"{name}.wsc");
+
+            if (!_fileSystem.File.Exists(scheme))
+            {
+                throw new ArgumentException($"Can not find resource: Scheme {name}");
+            }
+
+            var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);
+            var details = _wscReader.GetModel(scheme);
+            return new SchemeResource(fileName, "local", details);
         }
     }
 }
