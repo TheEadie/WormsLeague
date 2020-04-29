@@ -4,8 +4,11 @@ using Autofac;
 using Worms.Cli;
 using Worms.Configuration;
 using Worms.League;
+using Worms.Logging;
+using Worms.Resources.Schemes;
 using Worms.Slack;
 using Worms.Updates.PackageManagers;
+using Worms.WormsArmageddon.Schemes.WscFiles;
 
 namespace Worms.Container
 {
@@ -31,6 +34,11 @@ namespace Worms.Container
 
             // League
             builder.RegisterType<LeagueUpdater>();
+
+            // Schemes
+            builder.RegisterType<DefaultSchemesPrinter>().As<IResourcePrinter<SchemeResource>>();
+            builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
+            builder.RegisterType<WscReader>();
         }
 
         private static void RegisterOSModules(ContainerBuilder builder)
