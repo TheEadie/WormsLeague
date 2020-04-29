@@ -9,8 +9,9 @@ namespace Worms.Logging
     {
         public void Print(ILogger logger, IEnumerable<SchemeResource> items)
         {
-            var longestName = items.Max(x => x.Name.Length) + 3;
-            var longestContext = items.Max(x => x.Context.Length) + 3;
+            bool anyResourcesToPrint = items.Any();
+            var longestName = anyResourcesToPrint ? items.Max(x => x.Name.Length) + 3 : 7;
+            var longestContext = anyResourcesToPrint ? items.Max(x => x.Context.Length) + 3 : 10;
 
             logger.Information("NAME".PadRight(longestName) + "CONTEXT".PadRight(longestContext));
 
