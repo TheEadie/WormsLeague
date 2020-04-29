@@ -7,22 +7,22 @@ using Worms.Resources.Schemes;
 
 namespace Worms.Commands
 {
-    [Command("scheme", "schemes", Description = "List all Schemes known to Worms CLI")]
+    [Command("scheme", "schemes", Description = "Retrieves information for Worms Schemes (.wsc files)")]
     internal class GetScheme : CommandBase
     {
-        private readonly ISchemesRetriever _schemesRetreiver;
+        private readonly ISchemesRetriever _schemesRetriever;
         private readonly TablePrinter _tablePrinter;
         private readonly TextPrinter _textPrinter;
 
-        [Argument(0)]
+        [Argument(0, Description = "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported", Name="name")]
         public string Name { get; }
 
         public GetScheme(
-            ISchemesRetriever schemesRetreiver,
+            ISchemesRetriever schemesRetriever,
             TablePrinter tablePrinter,
             TextPrinter textPrinter)
         {
-            _schemesRetreiver = schemesRetreiver;
+            _schemesRetriever = schemesRetriever;
             _tablePrinter = tablePrinter;
             _textPrinter = textPrinter;
         }
@@ -45,7 +45,7 @@ namespace Worms.Commands
         {
             var requestForAll = string.IsNullOrWhiteSpace(name);
             var userSpecifiedName = !requestForAll && !name.Contains('*');
-            var matches = requestForAll ? _schemesRetreiver.Get("*") : _schemesRetreiver.Get(name);
+            var matches = requestForAll ? _schemesRetriever.Get("*") : _schemesRetriever.Get(name);
 
             if (userSpecifiedName)
             {
