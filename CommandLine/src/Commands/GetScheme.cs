@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Logging;
 using Worms.Resources.Schemes;
+// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
+// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
+// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
 namespace Worms.Commands
 {
@@ -43,21 +46,21 @@ namespace Worms.Commands
         {
             var requestForAll = string.IsNullOrWhiteSpace(name);
             var userSpecifiedName = !requestForAll && !name.Contains('*');
-            var matches = requestForAll ? _schemesRetriever.Get("*") : _schemesRetriever.Get(name);
+            var matches = requestForAll ? _schemesRetriever.Get() : _schemesRetriever.Get(name);
 
             if (userSpecifiedName)
             {
-                if (matches.Count == 0)
+                switch (matches.Count)
                 {
-                    Logger.Error($"No Scheme found with name: {name}");
-                }
-                else if (matches.Count == 1)
-                {
-                    _printer.Print(writer, matches.Single());
-                }
-                else
-                {
-                    _printer.Print(writer, matches);
+                    case 0:
+                        Logger.Error($"No Scheme found with name: {name}");
+                        break;
+                    case 1:
+                        _printer.Print(writer, matches.Single());
+                        break;
+                    default:
+                        _printer.Print(writer, matches);
+                        break;
                 }
             }
             else
