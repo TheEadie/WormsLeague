@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -27,11 +28,11 @@ namespace Worms.Commands
             _textPrinter = textPrinter;
         }
 
-        public Task<int> OnExecuteAsync()
+        public Task<int> OnExecuteAsync(IConsole console)
         {
             try
             {
-                PrintScheme(Name);
+                PrintScheme(Name, console.Out);
                 return Task.FromResult(0);
             }
             catch (ArgumentException exception)
@@ -41,7 +42,7 @@ namespace Worms.Commands
             }
         }
 
-        private void PrintScheme(string name)
+        private void PrintScheme(string name, TextWriter writer)
         {
             var requestForAll = string.IsNullOrWhiteSpace(name);
             var userSpecifiedName = !requestForAll && !name.Contains('*');
@@ -51,20 +52,20 @@ namespace Worms.Commands
             {
                 if (matches.Count == 0)
                 {
-                    Logger.Error($"Can not find scheme: {name}");
+                    Logger.Error($"No Scheme found with name: {name}");
                 }
                 else if (matches.Count == 1)
                 {
-                    _textPrinter.Print(Logger, matches.Single());
+                    _textPrinter.Print(writer, matches.Single());
                 }
                 else
                 {
-                    _tablePrinter.Print(Logger, matches);
+                    _tablePrinter.Print(writer, matches);
                 }
             }
             else
             {
-                _tablePrinter.Print(Logger, matches);
+                _tablePrinter.Print(writer, matches);
             }
         }
     }

@@ -1,63 +1,63 @@
-using Serilog;
+using System.IO;
 using Worms.Resources.Schemes;
 
 namespace Worms.Logging
 {
     internal class TextPrinter
     {
-        public void Print(ILogger logger, SchemeResource item)
+        public void Print(TextWriter writer, SchemeResource item)
         {
-            WriteHeader(logger, "GENERAL");
-            WriteItem(logger, "Name", item.Name);
-            WriteItem(logger, "Context", item.Context);
-            logger.Information("");
-            WriteItem(logger, "Hot seat delay", item.Details.HotSeatDelay);
-            WriteItem(logger, "Retreat time", item.Details.RetreatTime, "Seconds");
-            WriteItem(logger, "Rope retreat time", item.Details.RopeRetreatTime, "Seconds");
-            WriteItem(logger, "Display total round time", item.Details.DisplayTotalRoundTime);
-            WriteItem(logger, "Automatic replays", item.Details.AutomaticReplays);
-            WriteItem(logger, "Fall damage", item.Details.FallDamage);
-            WriteItem(logger, "Artillery mode", item.Details.ArtilleryMode, "Worms can't move");
-            WriteItem(logger, "Stockpiling mode", item.Details.StockpilingMode, "0 = Replenishing, 1 = Accumulating, 2 = Reducing");
-            WriteItem(logger, "Worms select", item.Details.WormSelect, "0 = Off, 1 = On, 2 = Random");
-            WriteItem(logger, "Sudden death event", item.Details.SuddenDeathEvent, "0 = Leader wins, 1 = Nuclear strike, 2 = HP reduced to 1, 3 = Nothing");
-            WriteItem(logger, "Sudden death water rise rate", item.Details.WaterRiseRate, "See table on http://worms2d.info/Sudden_Death");
-            WriteItem(logger, "Weapon crate probability", item.Details.WeaponCrateProbability, "0-100, See http://worms2d.info/Crate_probability");
-            WriteItem(logger, "Health crate probability", item.Details.HealthCrateProbability, "0-100, See http://worms2d.info/Crate_probability");
-            WriteItem(logger, "Utility crate probability", item.Details.UtilityCrateProbability, "0-100, See http://worms2d.info/Crate_probability");
-            WriteItem(logger, "Health crate energy", item.Details.HealthCrateEnergy);
-            WriteItem(logger, "Donor cards", item.Details.DonorCards);
-            WriteItem(logger, "Hazard objects", item.Details.HazardObjectTypes, "Stores type and number See http://worms2d.info/Hazardous_Objects");
-            WriteItem(logger, "Mine delay", item.Details.MineDelay);
-            WriteItem(logger, "Dud mines", item.Details.DudMines);
-            WriteItem(logger, "Worm placement", item.Details.DudMines, "0 = Auto, 1 = Manual");
-            WriteItem(logger, "Initial worm energy", item.Details.InitialWormEnergy);
-            WriteItem(logger, "Turn time", item.Details.TurnTime, "Seconds, >180 = unlimited");
-            WriteItem(logger, "Round time", item.Details.RoundTime, "Minutes, >180 = x-180 Seconds");
-            WriteItem(logger, "Number of rounds", item.Details.NumberOfRounds);
-            WriteItem(logger, "Blood", item.Details.Blood);
-            WriteItem(logger, "Aqua sheep", item.Details.AquaSheep);
-            WriteItem(logger, "Sheep heaven", item.Details.SheepHeaven, "Exploding sheep jump out of destroyed weapon crates");
-            WriteItem(logger, "God worms", item.Details.GodWorms, "Worms can't lose health");
-            WriteItem(logger, "Indestructible land", item.Details.IndestructibleLand);
-            WriteItem(logger, "Upgraded grenade", item.Details.UpgradedGrenade);
-            WriteItem(logger, "Upgraded shotgun", item.Details.UpgradedShotgun);
-            WriteItem(logger, "Upgraded cluster bombs", item.Details.UpgradedClusterBombs);
-            WriteItem(logger, "Upgraded longbow", item.Details.UpgradedLongbow);
-            WriteItem(logger, "Team weapons", item.Details.TeamWeapons, "Teams will start the match with their preselected team weapon");
-            WriteItem(logger, "Super weapons", item.Details.SuperWeapons, "Super weapons may appear in crates");
-            logger.Information("");
+            WriteHeader(writer, "GENERAL");
+            WriteItem(writer, "Name", item.Name);
+            WriteItem(writer, "Context", item.Context);
+            writer.WriteLine();
+            WriteItem(writer, "Hot seat delay", item.Details.HotSeatDelay);
+            WriteItem(writer, "Retreat time", item.Details.RetreatTime, "Seconds");
+            WriteItem(writer, "Rope retreat time", item.Details.RopeRetreatTime, "Seconds");
+            WriteItem(writer, "Display total round time", item.Details.DisplayTotalRoundTime);
+            WriteItem(writer, "Automatic replays", item.Details.AutomaticReplays);
+            WriteItem(writer, "Fall damage", item.Details.FallDamage);
+            WriteItem(writer, "Artillery mode", item.Details.ArtilleryMode, "Worms can't move");
+            WriteItem(writer, "Stockpiling mode", item.Details.StockpilingMode, "0 = Replenishing, 1 = Accumulating, 2 = Reducing");
+            WriteItem(writer, "Worms select", item.Details.WormSelect, "0 = Off, 1 = On, 2 = Random");
+            WriteItem(writer, "Sudden death event", item.Details.SuddenDeathEvent, "0 = Leader wins, 1 = Nuclear strike, 2 = HP reduced to 1, 3 = Nothing");
+            WriteItem(writer, "Sudden death water rise rate", item.Details.WaterRiseRate, "See table on http://worms2d.info/Sudden_Death");
+            WriteItem(writer, "Weapon crate probability", item.Details.WeaponCrateProbability, "0-100, See http://worms2d.info/Crate_probability");
+            WriteItem(writer, "Health crate probability", item.Details.HealthCrateProbability, "0-100, See http://worms2d.info/Crate_probability");
+            WriteItem(writer, "Utility crate probability", item.Details.UtilityCrateProbability, "0-100, See http://worms2d.info/Crate_probability");
+            WriteItem(writer, "Health crate energy", item.Details.HealthCrateEnergy);
+            WriteItem(writer, "Donor cards", item.Details.DonorCards);
+            WriteItem(writer, "Hazard objects", item.Details.HazardObjectTypes, "Stores type and number See http://worms2d.info/Hazardous_Objects");
+            WriteItem(writer, "Mine delay", item.Details.MineDelay);
+            WriteItem(writer, "Dud mines", item.Details.DudMines);
+            WriteItem(writer, "Worm placement", item.Details.DudMines, "0 = Auto, 1 = Manual");
+            WriteItem(writer, "Initial worm energy", item.Details.InitialWormEnergy);
+            WriteItem(writer, "Turn time", item.Details.TurnTime, "Seconds, >180 = unlimited");
+            WriteItem(writer, "Round time", item.Details.RoundTime, "Minutes, >180 = x-180 Seconds");
+            WriteItem(writer, "Number of rounds", item.Details.NumberOfRounds);
+            WriteItem(writer, "Blood", item.Details.Blood);
+            WriteItem(writer, "Aqua sheep", item.Details.AquaSheep);
+            WriteItem(writer, "Sheep heaven", item.Details.SheepHeaven, "Exploding sheep jump out of destroyed weapon crates");
+            WriteItem(writer, "God worms", item.Details.GodWorms, "Worms can't lose health");
+            WriteItem(writer, "Indestructible land", item.Details.IndestructibleLand);
+            WriteItem(writer, "Upgraded grenade", item.Details.UpgradedGrenade);
+            WriteItem(writer, "Upgraded shotgun", item.Details.UpgradedShotgun);
+            WriteItem(writer, "Upgraded cluster bombs", item.Details.UpgradedClusterBombs);
+            WriteItem(writer, "Upgraded longbow", item.Details.UpgradedLongbow);
+            WriteItem(writer, "Team weapons", item.Details.TeamWeapons, "Teams will start the match with their preselected team weapon");
+            WriteItem(writer, "Super weapons", item.Details.SuperWeapons, "Super weapons may appear in crates");
+            writer.WriteLine();
 
-            WriteHeader(logger, "WEAPONS");
-            logger.Information("(See http://worms2d.info/Weapons for what various power settings will do)");
-            logger.Information("");
+            WriteHeader(writer, "WEAPONS");
+            writer.WriteLine("(See http://worms2d.info/Weapons for what various power settings will do)");
+            writer.WriteLine();
 
             foreach (var weapon in item.Details.Weapons)
             {
                 var ammoPadding = weapon.Ammo > 9 ? "   " : "    ";
                 var powerPadding = weapon.Power > 9 ? "   " : "    ";
                 var delayPadding = weapon.Delay > 9 ? "   " : "    ";
-                logger.Information(weapon.Name.PadRight(30) +
+                writer.WriteLine(weapon.Name.PadRight(30) +
                     "Ammo: [" + weapon.Ammo + "]" + ammoPadding +
                     "Power: [" + weapon.Power + "]" + powerPadding +
                     "Delay: [" + weapon.Delay + "]" + delayPadding +
@@ -65,31 +65,24 @@ namespace Worms.Logging
             }
         }
 
-        private void WriteItem(ILogger logger, string description, object value, string comment = null)
+        private void WriteItem(TextWriter writer, string description, object value, string comment = null)
         {
-            var output = $"{description}: ".PadRight(40) + "[" + SeriiLogEscape(value.ToString()) + "]";
+            var output = $"{description}: ".PadRight(40) + "[" + value + "]";
 
             if (comment != null)
             {
                 output += $" ({comment})";
             }
 
-            logger.Information(output);
+            writer.WriteLine(output);
         }
 
-        private void WriteHeader(ILogger logger, string heading)
+        private void WriteHeader(TextWriter writer, string heading)
         {
-            logger.Information("///////////////////");
-            logger.Information($"// {heading}".PadRight(17) + "//");
-            logger.Information("///////////////////");
-            logger.Information("");
-        }
-
-        private string SeriiLogEscape(string input)
-        {
-            // Special case for text like {{01}} which appears in the default schipped worms scheme names
-            // This needs a more general fix to tell seriilog not to treat anything as a special char
-            return input.Replace("{{", "{{{").Replace("}}", "}}}");
+            writer.WriteLine("///////////////////");
+            writer.WriteLine($"// {heading}".PadRight(17) + "//");
+            writer.WriteLine("///////////////////");
+            writer.WriteLine("");
         }
     }
 }
