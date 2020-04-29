@@ -12,20 +12,17 @@ namespace Worms.Commands
     internal class GetScheme : CommandBase
     {
         private readonly ISchemesRetriever _schemesRetriever;
-        private readonly TablePrinter _tablePrinter;
-        private readonly TextPrinter _textPrinter;
+        private readonly IResourcePrinter<SchemeResource> _printer;
 
         [Argument(0, Description = "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported", Name="name")]
         public string Name { get; }
 
         public GetScheme(
             ISchemesRetriever schemesRetriever,
-            TablePrinter tablePrinter,
-            TextPrinter textPrinter)
+            IResourcePrinter<SchemeResource> printer)
         {
             _schemesRetriever = schemesRetriever;
-            _tablePrinter = tablePrinter;
-            _textPrinter = textPrinter;
+            _printer = printer;
         }
 
         public Task<int> OnExecuteAsync(IConsole console)
@@ -56,16 +53,16 @@ namespace Worms.Commands
                 }
                 else if (matches.Count == 1)
                 {
-                    _textPrinter.Print(writer, matches.Single());
+                    _printer.Print(writer, matches.Single());
                 }
                 else
                 {
-                    _tablePrinter.Print(writer, matches);
+                    _printer.Print(writer, matches);
                 }
             }
             else
             {
-                _tablePrinter.Print(writer, matches);
+                _printer.Print(writer, matches);
             }
         }
     }

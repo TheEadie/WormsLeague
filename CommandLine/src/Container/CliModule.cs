@@ -29,10 +29,6 @@ namespace Worms.Container
             builder.RegisterType<CliUpdater>();
             builder.RegisterType<CliInfoRetriever>();
 
-            // Printing
-            builder.RegisterType<TablePrinter>();
-            builder.RegisterType<TextPrinter>();
-
             // Annoucer
             builder.RegisterType<SlackAnnouncer>().As<ISlackAnnouncer>();
 
@@ -40,6 +36,7 @@ namespace Worms.Container
             builder.RegisterType<LeagueUpdater>();
 
             // Schemes
+            builder.RegisterType<DefaultSchemesPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
             builder.RegisterType<WscReader>();
         }

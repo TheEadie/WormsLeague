@@ -1,10 +1,26 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Worms.Resources.Schemes;
 
 namespace Worms.Logging
 {
-    internal class TextPrinter
+    internal class DefaultSchemesPrinter : IResourcePrinter<SchemeResource>
     {
+        public void Print(TextWriter writer, IReadOnlyCollection<SchemeResource> items)
+        {
+            var anyResourcesToPrint = items.Any();
+            var longestName = anyResourcesToPrint ? items.Max(x => x.Name.Length) + 3 : 7;
+            var longestContext = anyResourcesToPrint ? items.Max(x => x.Context.Length) + 3 : 10;
+
+            writer.WriteLine("NAME".PadRight(longestName) + "CONTEXT".PadRight(longestContext));
+
+            foreach(var item in items)
+            {
+                writer.WriteLine(item.Name.PadRight(longestName) + item.Context.PadRight(longestContext));
+            }
+        }
+
         public void Print(TextWriter writer, SchemeResource item)
         {
             WriteHeader(writer, "GENERAL");
@@ -65,7 +81,7 @@ namespace Worms.Logging
             }
         }
 
-        private void WriteItem(TextWriter writer, string description, object value, string comment = null)
+        private static void WriteItem(TextWriter writer, string description, object value, string comment = null)
         {
             var output = $"{description}: ".PadRight(40) + "[" + value + "]";
 
@@ -77,7 +93,7 @@ namespace Worms.Logging
             writer.WriteLine(output);
         }
 
-        private void WriteHeader(TextWriter writer, string heading)
+        private static void WriteHeader(TextWriter writer, string heading)
         {
             writer.WriteLine("///////////////////");
             writer.WriteLine($"// {heading}".PadRight(17) + "//");
