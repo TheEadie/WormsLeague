@@ -17,6 +17,7 @@ namespace Worms.Commands
     [Subcommand(typeof(Update))]
     [Subcommand(typeof(Host))]
     [Subcommand(typeof(Setup))]
+    [Subcommand(typeof(Login))]
     internal class Root : CommandBase
     {
         public Task<int> OnExecuteAsync(CommandLineApplication app)

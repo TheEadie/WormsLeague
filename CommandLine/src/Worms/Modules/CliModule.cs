@@ -12,6 +12,9 @@ using Worms.League;
 using Worms.Resources;
 using Worms.Resources.Replays;
 using Worms.Resources.Schemes;
+using Worms.Resources.Schemes.Binary;
+using Worms.Resources.Schemes.Text;
+using Worms.Server.Auth;
 using Worms.Slack;
 
 namespace Worms.Modules
@@ -55,6 +58,9 @@ namespace Worms.Modules
             builder.RegisterModule<ArmageddonGameModule>();
             builder.RegisterModule<ArmageddonResourcesModule>();
 
+
+            // Login
+            builder.RegisterType<LoginService>().As<ILoginService>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)
