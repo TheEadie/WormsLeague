@@ -9,57 +9,33 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Text.Json;
 using System.Net;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Worms.Gateway
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddApiVersioning();
+
             services.AddAuthentication(options =>
             {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = GitHubAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddCookie(options =>
+            .AddJwtBearer(options =>
             {
-                options.Events.OnRedirectToAccessDenied = ctx =>
-                {
-                    ctx.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    return Task.CompletedTask;
-                };
-            })
-            .AddGitHub(options =>
-            {
-                options.ClientId = Configuration["GitHub:ClientId"];
-                options.ClientSecret = Configuration["GitHub:ClientSecret"];
-                options.Scope.Add("public_repo");
-                options.SaveTokens = true;
-                options.ClaimActions.MapJsonKey("urn:github:token", "access-token");
-                options.ClaimActions.MapJsonKey("urn:github:login", "login");
-                options.ClaimActions.MapJsonKey("urn:github:avatar", "avatar_url");
-                options.Events.OnCreatingTicket = ctx =>
-                {
-                    var user = JsonDocument.Parse($"{{ \"access-token\" : \"{ctx.AccessToken}\"  }}");
-                    ctx.RunClaimActions(user.RootElement);
-
-                    return Task.CompletedTask;
-                };
+                options.Authority = "https://eadie.eu.auth0.com/";
+                options.Audience = "worms.davideadie.dev";
             });
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("AllowedUsers",
-                policy => policy.RequireClaim("urn:github:login", "TheEadie"));
+                policy => policy.RequireClaim("https://davideadie.dev/username", "TheEadie"));
             }
             );
         }
