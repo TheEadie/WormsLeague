@@ -19,7 +19,7 @@ namespace Worms.WormsArmageddon
             SchemesFolder = schemesFolder;
         }
 
-        public static GameInfo NotInstalled = new GameInfo(
+        public static readonly GameInfo NotInstalled = new GameInfo(
             false,
             string.Empty,
             string.Empty,
