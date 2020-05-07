@@ -18,5 +18,12 @@ namespace Worms.WormsArmageddon
             Version = version;
             SchemesFolder = schemesFolder;
         }
+
+        public static GameInfo NotInstalled = new GameInfo(
+            false,
+            string.Empty,
+            string.Empty,
+            new Version(0, 0),
+            string.Empty);
     }
 }

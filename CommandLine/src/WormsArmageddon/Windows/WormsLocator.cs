@@ -16,12 +16,11 @@ namespace Worms.WormsArmageddon.Windows
                 "Path",
                 null);
 
-            if (location is null)
+            if (location is null || !(location is string rootLocation))
             {
-                return new GameInfo(false, string.Empty, string.Empty, new Version(0, 0, 0, 0), string.Empty);
+                return GameInfo.NotInstalled;
             }
 
-            var rootLocation = location as string;
             var exeLocation = Path.Combine(rootLocation, processName + ".exe");
             var schemesFolder = Path.Combine(rootLocation, "User", "Schemes");
 

@@ -10,6 +10,12 @@ namespace Worms.WormsArmageddon.Linux
         {
             const string processName = "WA";
             var userHomeDirectory = Environment.GetEnvironmentVariable("HOME");
+
+            if (string.IsNullOrEmpty(userHomeDirectory))
+            {
+                return GameInfo.NotInstalled;
+            }
+
             var rootLocation = Path.Combine(userHomeDirectory, "games", "worms");
             var exeLocation = Path.Combine(rootLocation, processName + ".exe");
             var schemesFolder = Path.Combine(rootLocation, "User", "Schemes");
