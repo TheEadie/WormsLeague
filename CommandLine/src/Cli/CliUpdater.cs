@@ -31,11 +31,7 @@ namespace Worms.Cli
             var cliInfo = _cliInfoRetriever.Get();
             logger.Verbose(cliInfo.ToString());
 
-            _packageManager.Connect(
-                "TheEadie",
-                "WormsLeague",
-                "cli/v",
-                config.GitHubPersonalAccessToken);
+            _packageManager.Connect("TheEadie", "WormsLeague", "cli/v", config.GitHubPersonalAccessToken);
 
             var versions = (await _packageManager.GetAvailableVersions().ConfigureAwait(false)).ToList();
             logger.Verbose($"Available versions: {string.Join(", ", versions)}");
@@ -69,6 +65,7 @@ namespace Worms.Cli
             {
                 _fileSystem.Directory.Delete(updateFolder, true);
             }
+
             _fileSystem.Directory.CreateDirectory(updateFolder);
         }
     }

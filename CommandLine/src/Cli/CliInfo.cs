@@ -13,12 +13,6 @@ namespace Worms.Cli
             Path = path;
         }
 
-        public override string ToString()
-        {
-            return "Worms CLI: {" +
-                   $"Version: {Version}, " +
-                   $"Path: {Path}" +
-                   "}";
-        }
+        public override string ToString() => "Worms CLI: {" + $"Version: {Version}, " + $"Path: {Path}" + "}";
     }
 }

@@ -3,13 +3,12 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Worms.Commands
 {
-    [Command("worms", Description = "Worms CLI"),
-        Subcommand(typeof(Get)),
-        Subcommand(typeof(Version)),
-        Subcommand(typeof(Update)),
-        Subcommand(typeof(Host)),
-        Subcommand(typeof(Setup)),
-    ]
+    [Command("worms", Description = "Worms CLI")]
+    [Subcommand(typeof(Get))]
+    [Subcommand(typeof(Version))]
+    [Subcommand(typeof(Update))]
+    [Subcommand(typeof(Host))]
+    [Subcommand(typeof(Setup))]
     internal class Root : CommandBase
     {
         public Task<int> OnExecuteAsync(CommandLineApplication app)

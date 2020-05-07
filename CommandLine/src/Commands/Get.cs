@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
 namespace Worms.Commands
 {
-    [Command("get", Description = "Get a list of resources"),
-        Subcommand(typeof(GetScheme)),
-    ]
+    [Command("get", Description = "Get a list of resources")]
+    [Subcommand(typeof(GetScheme))]
     internal class Get : CommandBase
     {
         public Task<int> OnExecuteAsync(CommandLineApplication app)

@@ -26,7 +26,8 @@ namespace Worms.Commands
             }
             catch (RateLimitExceededException)
             {
-                Logger.Error("Could not check for updates: GitHub API rate limit has been exceeded. Please run 'worms setup' and provide a personal access token.");
+                Logger.Error(
+                    "Could not check for updates: GitHub API rate limit has been exceeded. Please run 'worms setup' and provide a personal access token.");
                 return 1;
             }
 

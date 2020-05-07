@@ -15,7 +15,11 @@ namespace Worms.WormsArmageddon.Linux
             var schemesFolder = Path.Combine(rootLocation, "User", "Schemes");
 
             var versionInfo = FileVersionInfo.GetVersionInfo(exeLocation);
-            var version = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart, versionInfo.ProductPrivatePart);
+            var version = new Version(
+                versionInfo.ProductMajorPart,
+                versionInfo.ProductMinorPart,
+                versionInfo.ProductBuildPart,
+                versionInfo.ProductPrivatePart);
 
             return new GameInfo(true, exeLocation, processName, version, schemesFolder);
         }

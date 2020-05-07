@@ -26,10 +26,7 @@ namespace Worms.Commands
         private ILogger CreateLogger()
         {
             var logEventLevel = GetLogEventLevel();
-            return new LoggerConfiguration()
-                .MinimumLevel.Is(logEventLevel)
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
+            return new LoggerConfiguration().MinimumLevel.Is(logEventLevel).WriteTo.ColoredConsole().CreateLogger();
         }
 
         private LogEventLevel GetLogEventLevel()

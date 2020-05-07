@@ -17,24 +17,31 @@ namespace Worms.WormsArmageddon.Windows
 
         public Task RunWorms(params string[] wormsArgs)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                var gameInfo = _wormsLocator.Find();
+            return Task.Factory.StartNew(
+                () =>
+                    {
+                        var gameInfo = _wormsLocator.Find();
 
-                var args = string.Join(" ", wormsArgs);
-                using (var process = Process.Start(gameInfo.ExeLocation, args))
-                {
-                    if (process == null) { return; }
+                        var args = string.Join(" ", wormsArgs);
+                        using (var process = Process.Start(gameInfo.ExeLocation, args))
+                        {
+                            if (process == null)
+                            {
+                                return;
+                            }
 
-                    process.WaitForExit();
-                    if (process.ExitCode == 0) { return; }
-                }
+                            process.WaitForExit();
+                            if (process.ExitCode == 0)
+                            {
+                                return;
+                            }
+                        }
 
-                _steamService.WaitForSteamPrompt();
+                        _steamService.WaitForSteamPrompt();
 
-                var wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
-                wormsProcess?.WaitForExit();
-            });
+                        var wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
+                        wormsProcess?.WaitForExit();
+                    });
         }
     }
 }

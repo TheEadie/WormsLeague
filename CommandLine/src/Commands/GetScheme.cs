@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Logging;
 using Worms.Resources.Schemes;
+
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
@@ -17,12 +18,14 @@ namespace Worms.Commands
         private readonly ISchemesRetriever _schemesRetriever;
         private readonly IResourcePrinter<SchemeResource> _printer;
 
-        [Argument(0, Description = "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported", Name="name")]
+        [Argument(
+            0,
+            Description =
+                "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported",
+            Name = "name")]
         public string Name { get; }
 
-        public GetScheme(
-            ISchemesRetriever schemesRetriever,
-            IResourcePrinter<SchemeResource> printer)
+        public GetScheme(ISchemesRetriever schemesRetriever, IResourcePrinter<SchemeResource> printer)
         {
             _schemesRetriever = schemesRetriever;
             _printer = printer;

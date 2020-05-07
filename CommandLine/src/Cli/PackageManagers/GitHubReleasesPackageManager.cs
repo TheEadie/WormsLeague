@@ -23,7 +23,8 @@ namespace Worms.Cli.PackageManagers
             }
             else
             {
-                _gitHubClient = new GitHubClient(new ProductHeaderValue("worms-cli"),
+                _gitHubClient = new GitHubClient(
+                    new ProductHeaderValue("worms-cli"),
                     new InMemoryCredentialStore(new Credentials(accessToken)));
             }
 
@@ -48,6 +49,7 @@ namespace Worms.Cli.PackageManagers
                     versions.Add(version);
                 }
             }
+
             return versions;
         }
 
@@ -55,12 +57,18 @@ namespace Worms.Cli.PackageManagers
         {
             var releases = await _gitHubClient.Repository.Release.GetAll(_repoOwner, _repoName).ConfigureAwait(false);
             var matching = releases.Single(x => x.TagName == _tagPrefix + version.ToString(3));
-            var files = await _gitHubClient.Repository.Release.GetAllAssets(_repoOwner, _repoName, matching.Id).ConfigureAwait(false);
+            var files = await _gitHubClient.Repository.Release.GetAllAssets(_repoOwner, _repoName, matching.Id)
+                .ConfigureAwait(false);
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
-                var raw = await _gitHubClient.Connection.Get<byte[]>(new Uri(file.Url), new Dictionary<string, string>(), "application/octet-stream").ConfigureAwait(false);
-                await File.WriteAllBytesAsync(Path.Combine(downloadToFolderPath, file.Name), raw.Body).ConfigureAwait(false);
+                var raw = await _gitHubClient.Connection.Get<byte[]>(
+                        new Uri(file.Url),
+                        new Dictionary<string, string>(),
+                        "application/octet-stream")
+                    .ConfigureAwait(false);
+                await File.WriteAllBytesAsync(Path.Combine(downloadToFolderPath, file.Name), raw.Body)
+                    .ConfigureAwait(false);
             }
         }
     }

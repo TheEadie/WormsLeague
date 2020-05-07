@@ -7,7 +7,7 @@ namespace Worms.WormsArmageddon.Schemes.WscFiles
     {
         public Scheme GetModel(string filePath)
         {
-            using (BinaryReader b = new BinaryReader(File.Open(filePath, FileMode.Open)))
+            using (var b = new BinaryReader(File.Open(filePath, FileMode.Open)))
             {
                 var signature = b.ReadChars(4);
                 var version = b.ReadByte();
@@ -64,16 +64,48 @@ namespace Worms.WormsArmageddon.Schemes.WscFiles
                         delay = b.ReadByte();
                         crateProb = b.ReadByte();
                     }
+
                     weapons.Add(new Weapon(weaponName, ammo, power, delay, crateProb));
                 }
 
-                return new Scheme(new string(signature), version, hotSeatDelay, retreatTime, ropeRetreatTime,
+                return new Scheme(
+                    new string(signature),
+                    version,
+                    hotSeatDelay,
+                    retreatTime,
+                    ropeRetreatTime,
                     displayTotalRoundTime,
-                    automaticReplays, fallDamage, artilleryMode, stockpilingMode, wormSelect, suddenDeathEvent,
-                    waterRiseRate, weaponCrateProb, donorCards, healthCrateProb, healthCrateEnergy, utilityCrateProb,
-                    hazardObjects, mineDelay, dudMines, wormPlacement, initialWormEnergy, turnTime, roundTime,
-                    numberOfRounds, blood, aquaSheep, sheepHeaven, godWorms, indestructibleLand, upgradedGrenade,
-                    upgradedShotgun, upgradedClusters, upgradedLongbow, teamWeapons, superWeapons,
+                    automaticReplays,
+                    fallDamage,
+                    artilleryMode,
+                    stockpilingMode,
+                    wormSelect,
+                    suddenDeathEvent,
+                    waterRiseRate,
+                    weaponCrateProb,
+                    donorCards,
+                    healthCrateProb,
+                    healthCrateEnergy,
+                    utilityCrateProb,
+                    hazardObjects,
+                    mineDelay,
+                    dudMines,
+                    wormPlacement,
+                    initialWormEnergy,
+                    turnTime,
+                    roundTime,
+                    numberOfRounds,
+                    blood,
+                    aquaSheep,
+                    sheepHeaven,
+                    godWorms,
+                    indestructibleLand,
+                    upgradedGrenade,
+                    upgradedShotgun,
+                    upgradedClusters,
+                    upgradedLongbow,
+                    teamWeapons,
+                    superWeapons,
                     weapons);
             }
         }

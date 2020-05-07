@@ -58,9 +58,9 @@ namespace Worms.Logging
             this LoggerSinkConfiguration loggerConfiguration,
             LogEventLevel minimumLevel = LogEventLevel.Verbose,
             string outputTemplate = "{Message:lj}{NewLine}{Exception}",
-            IFormatProvider formatProvider = null)
-        {
-            return loggerConfiguration.Sink(new ColoredConsoleSink(new MessageTemplateTextFormatter(outputTemplate, formatProvider)), minimumLevel);
-        }
+            IFormatProvider formatProvider = null) =>
+            loggerConfiguration.Sink(
+                new ColoredConsoleSink(new MessageTemplateTextFormatter(outputTemplate, formatProvider)),
+                minimumLevel);
     }
 }

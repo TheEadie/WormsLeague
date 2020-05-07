@@ -8,7 +8,10 @@ namespace Worms.Cli
     {
         private readonly IFileSystem _fileSystem;
 
-        public CliInfoRetriever(IFileSystem fileSystem) => _fileSystem = fileSystem;
+        public CliInfoRetriever(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
 
         public CliInfo Get()
         {

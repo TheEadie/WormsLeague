@@ -16,10 +16,7 @@ namespace Worms.Slack
                 return;
             }
 
-            var slackMessage = new SlackMessage
-            {
-                Text = $"<!here> Hosting at: wa://{hostName}"
-            };
+            var slackMessage = new SlackMessage { Text = $"<!here> Hosting at: wa://{hostName}" };
 
             using var client = new HttpClient();
             var slackUrl = new System.Uri(webHookUrl);

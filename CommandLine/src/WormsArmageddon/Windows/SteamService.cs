@@ -7,7 +7,10 @@ namespace Worms.WormsArmageddon.Windows
     internal class SteamService : ISteamService
     {
         private const string _processName = "Steam";
-        private static readonly Regex _launchGamePromptRegex = new Regex("Allow game launch\\?", RegexOptions.IgnoreCase);
+
+        private static readonly Regex _launchGamePromptRegex = new Regex(
+            "Allow game launch\\?",
+            RegexOptions.IgnoreCase);
 
         public void WaitForSteamPrompt()
         {

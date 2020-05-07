@@ -9,11 +9,13 @@ namespace Worms.Commands
     {
         private readonly IConfigManager _configManager;
 
-        [Option(Description = "A GitHub personal access token. Used to increase the number of API calls available", ShortName = "gh")]
+        [Option(
+            Description = "A GitHub personal access token. Used to increase the number of API calls available",
+            ShortName = "gh")]
         public string GitHubToken { get; set; }
 
         [Option(Description = "A Slack web hook. Used to announce games to Slack when hosting", ShortName = "s")]
-        public string SlackWebHook { get; set;  }
+        public string SlackWebHook { get; set; }
 
         public Setup(IConfigManager configManager) => _configManager = configManager;
 
@@ -21,8 +23,13 @@ namespace Worms.Commands
         {
             var config = _configManager.Load();
 
-            config.GitHubPersonalAccessToken = string.IsNullOrWhiteSpace(GitHubToken) ? Prompt.GetPassword("GitHub Personal Access Token (Scopes: 'public_repo' only) (https://github.com/settings/tokens):") : GitHubToken;
-            config.SlackWebHook = string.IsNullOrWhiteSpace(SlackWebHook) ? Prompt.GetString("Slack Web Hook to announce games (Ask the team):") : SlackWebHook;
+            config.GitHubPersonalAccessToken = string.IsNullOrWhiteSpace(GitHubToken)
+                ? Prompt.GetPassword(
+                    "GitHub Personal Access Token (Scopes: 'public_repo' only) (https://github.com/settings/tokens):")
+                : GitHubToken;
+            config.SlackWebHook = string.IsNullOrWhiteSpace(SlackWebHook)
+                ? Prompt.GetString("Slack Web Hook to announce games (Ask the team):")
+                : SlackWebHook;
 
             _configManager.Save(config);
             return Task.FromResult(0);

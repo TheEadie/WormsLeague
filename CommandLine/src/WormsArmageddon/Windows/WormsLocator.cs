@@ -11,7 +11,10 @@ namespace Worms.WormsArmageddon.Windows
         {
             const string processName = "WA";
 
-            var location = Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Team17SoftwareLTD\WormsArmageddon", "Path", null);
+            var location = Registry.GetValue(
+                @"HKEY_CURRENT_USER\SOFTWARE\Team17SoftwareLTD\WormsArmageddon",
+                "Path",
+                null);
 
             if (location is null)
             {
@@ -23,7 +26,11 @@ namespace Worms.WormsArmageddon.Windows
             var schemesFolder = Path.Combine(rootLocation, "User", "Schemes");
 
             var versionInfo = FileVersionInfo.GetVersionInfo(exeLocation);
-            var version = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart, versionInfo.ProductPrivatePart);
+            var version = new Version(
+                versionInfo.ProductMajorPart,
+                versionInfo.ProductMinorPart,
+                versionInfo.ProductBuildPart,
+                versionInfo.ProductPrivatePart);
 
             return new GameInfo(true, exeLocation, processName, version, schemesFolder);
         }
