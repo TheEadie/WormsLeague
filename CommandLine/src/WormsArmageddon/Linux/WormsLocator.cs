@@ -20,6 +20,11 @@ namespace Worms.WormsArmageddon.Linux
             var exeLocation = Path.Combine(rootLocation, processName + ".exe");
             var schemesFolder = Path.Combine(rootLocation, "User", "Schemes");
 
+            if (!File.Exists(exeLocation))
+            {
+                return GameInfo.NotInstalled;
+            }
+
             var versionInfo = FileVersionInfo.GetVersionInfo(exeLocation);
             var version = new Version(
                 versionInfo.ProductMajorPart,
