@@ -17,47 +17,47 @@ namespace Worms.Server.Auth
 
         public LoopbackHttpListener(string redirectUri)
         {
-            _host = new WebHostBuilder()
-                .UseKestrel()
-                .UseUrls(redirectUri)
-                .Configure(Configure)
-                .Build();
+            _host = new WebHostBuilder().UseKestrel().UseUrls(redirectUri).Configure(Configure).Build();
             _host.Start();
         }
 
         public void Dispose()
         {
-            Task.Run(async () =>
-            {
-                await Task.Delay(500);
-                _host.Dispose();
-            });
+            Task.Run(
+                async () =>
+                    {
+                        await Task.Delay(500);
+                        _host.Dispose();
+                    });
         }
 
         private void Configure(IApplicationBuilder app)
         {
-            app.Run(async ctx =>
-            {
-                switch (ctx.Request.Method)
-                {
-                    case "GET":
-                        SetResult(ctx.Request.QueryString.Value, ctx);
-                        break;
-                    case "POST" when !ctx.Request.ContentType.Equals("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase):
-                        ctx.Response.StatusCode = 415;
-                        break;
-                    case "POST":
+            app.Run(
+                async ctx =>
                     {
-                        using var sr = new StreamReader(ctx.Request.Body, Encoding.UTF8);
-                        var body = await sr.ReadToEndAsync();
-                        SetResult(body, ctx);
-                        break;
-                    }
-                    default:
-                        ctx.Response.StatusCode = 405;
-                        break;
-                }
-            });
+                        switch (ctx.Request.Method)
+                        {
+                            case "GET":
+                                SetResult(ctx.Request.QueryString.Value, ctx);
+                                break;
+                            case "POST" when !ctx.Request.ContentType.Equals(
+                                "application/x-www-form-urlencoded",
+                                StringComparison.OrdinalIgnoreCase):
+                                ctx.Response.StatusCode = 415;
+                                break;
+                            case "POST":
+                            {
+                                using var sr = new StreamReader(ctx.Request.Body, Encoding.UTF8);
+                                var body = await sr.ReadToEndAsync();
+                                SetResult(body, ctx);
+                                break;
+                            }
+                            default:
+                                ctx.Response.StatusCode = 405;
+                                break;
+                        }
+                    });
         }
 
         private void SetResult(string value, HttpContext ctx)
@@ -82,11 +82,12 @@ namespace Worms.Server.Auth
 
         public Task<string> WaitForCallbackAsync(int timeoutInSeconds = _defaultTimeout)
         {
-            Task.Run(async () =>
-            {
-                await Task.Delay(timeoutInSeconds * 1000);
-                _source.TrySetCanceled();
-            });
+            Task.Run(
+                async () =>
+                    {
+                        await Task.Delay(timeoutInSeconds * 1000);
+                        _source.TrySetCanceled();
+                    });
 
             return _source.Task;
         }

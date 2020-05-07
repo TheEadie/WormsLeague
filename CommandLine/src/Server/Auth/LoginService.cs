@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using IdentityModel.OidcClient;
@@ -21,10 +20,7 @@ namespace Worms.Server.Auth
                 ResponseMode = OidcClientOptions.AuthorizeResponseMode.Redirect
             };
 
-            var extraParameters = new Dictionary<string, string>
-            {
-                { "audience", "worms.davideadie.dev" }
-            };
+            var extraParameters = new Dictionary<string, string> { { "audience", "worms.davideadie.dev" } };
 
             var oidcClient = new OidcClient(options);
             var browser = new SystemBrowser(9005);
@@ -34,7 +30,8 @@ namespace Worms.Server.Auth
 
             var request = new LoginRequest()
             {
-                FrontChannelExtraParameters = extraParameters   // To ensure access tokens are for a specific resource, and therefore come as jwt's
+                // To ensure access tokens are for a specific resource, and therefore come as JWTs
+                FrontChannelExtraParameters = extraParameters
             };
             var result = await oidcClient.LoginAsync(request, cancellationToken);
 
@@ -49,6 +46,7 @@ namespace Worms.Server.Auth
                 {
                     logger.Verbose($"{claim.Type}: {claim.Value}");
                 }
+
                 logger.Verbose("");
 
                 logger.Verbose($"Identity token: {result.IdentityToken}");
