@@ -4,6 +4,8 @@ using Octokit;
 using Worms.Cli;
 using Worms.Configuration;
 
+// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
+
 namespace Worms.Commands
 {
     [Command("update", Description = "Update worms CLI")]

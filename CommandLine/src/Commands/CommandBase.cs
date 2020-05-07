@@ -4,15 +4,19 @@ using Serilog;
 using Serilog.Events;
 using Worms.Logging;
 
+// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
+// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
+// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
+
 namespace Worms.Commands
 {
     internal abstract class CommandBase
     {
         [Option(ShortName = "v", Description = "Show more information about the process")]
-        public bool Verbose { get; set; }
+        public bool Verbose { get; }
 
         [Option(ShortName = "q", Description = "Only show errors")]
-        public bool Quiet { get; set; }
+        public bool Quiet { get; }
 
         protected ILogger Logger => _logger.Value;
 

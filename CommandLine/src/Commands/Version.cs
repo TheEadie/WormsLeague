@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.WormsArmageddon;
 
+// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
+
 namespace Worms.Commands
 {
     [Command("version", Description = "Get the current version of the worms CLI")]

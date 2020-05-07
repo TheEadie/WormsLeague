@@ -16,7 +16,7 @@ namespace Worms.Container
     {
         protected override void Load(ContainerBuilder builder)
         {
-            RegisterOSModules(builder);
+            RegisterOsModules(builder);
 
             // FileSystem
             builder.RegisterType<FileSystem>().As<IFileSystem>();
@@ -29,7 +29,7 @@ namespace Worms.Container
             builder.RegisterType<CliUpdater>();
             builder.RegisterType<CliInfoRetriever>();
 
-            // Annoucer
+            // Announcer
             builder.RegisterType<SlackAnnouncer>().As<ISlackAnnouncer>();
 
             // League
@@ -41,7 +41,7 @@ namespace Worms.Container
             builder.RegisterType<WscReader>();
         }
 
-        private static void RegisterOSModules(ContainerBuilder builder)
+        private static void RegisterOsModules(ContainerBuilder builder)
         {
             // Windows
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

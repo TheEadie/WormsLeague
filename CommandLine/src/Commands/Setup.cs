@@ -2,6 +2,10 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Configuration;
 
+// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
+// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
+// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
+
 namespace Worms.Commands
 {
     [Command("setup", Description = "Interactively set up worms CLI")]
@@ -12,12 +16,15 @@ namespace Worms.Commands
         [Option(
             Description = "A GitHub personal access token. Used to increase the number of API calls available",
             ShortName = "gh")]
-        public string GitHubToken { get; set; }
+        public string GitHubToken { get; }
 
         [Option(Description = "A Slack web hook. Used to announce games to Slack when hosting", ShortName = "s")]
-        public string SlackWebHook { get; set; }
+        public string SlackWebHook { get; }
 
-        public Setup(IConfigManager configManager) => _configManager = configManager;
+        public Setup(IConfigManager configManager)
+        {
+            _configManager = configManager;
+        }
 
         public Task<int> OnExecuteAsync()
         {
