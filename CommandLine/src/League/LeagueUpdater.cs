@@ -22,8 +22,8 @@ namespace Worms.League
         {
             _packageManager.Connect("TheEadie", "WormsLeague", "schemes/v", config.GitHubPersonalAccessToken);
 
-            var versions = await _packageManager.GetAvailableVersions().ConfigureAwait(false);
-            logger.Verbose($"Availible versions: {string.Join(", ", versions)}");
+            var versions = (await _packageManager.GetAvailableVersions().ConfigureAwait(false)).ToList();
+            logger.Verbose($"Available versions: {string.Join(", ", versions)}");
 
             var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
             logger.Verbose($"Latest version: {latestVersion}");
