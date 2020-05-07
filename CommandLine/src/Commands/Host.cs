@@ -6,6 +6,8 @@ using Worms.League;
 using Worms.Slack;
 using Worms.WormsArmageddon;
 
+// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
+
 namespace Worms.Commands
 {
     [Command("host", Description = "Host a game of worms using the latest options")]
@@ -17,7 +19,12 @@ namespace Worms.Commands
         private readonly IWormsLocator _wormsLocator;
         private readonly LeagueUpdater _leagueUpdater;
 
-        public Host(IWormsLocator wormsLocator, IWormsRunner wormsRunner, ISlackAnnouncer slackAnnouncer, IConfigManager configManager, LeagueUpdater leagueUpdater)
+        public Host(
+            IWormsLocator wormsLocator,
+            IWormsRunner wormsRunner,
+            ISlackAnnouncer slackAnnouncer,
+            IConfigManager configManager,
+            LeagueUpdater leagueUpdater)
         {
             _wormsRunner = wormsRunner;
             _slackAnnouncer = slackAnnouncer;

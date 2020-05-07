@@ -3,8 +3,8 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
+using Worms.Cli.PackageManagers;
 using Worms.Configuration;
-using Worms.Updates.PackageManagers;
 
 namespace Worms.Cli
 {
@@ -31,14 +31,10 @@ namespace Worms.Cli
             var cliInfo = _cliInfoRetriever.Get();
             logger.Verbose(cliInfo.ToString());
 
-            _packageManager.Connect(
-                "TheEadie",
-                "WormsLeague",
-                "cli/v",
-                config.GitHubPersonalAccessToken);
+            _packageManager.Connect("TheEadie", "WormsLeague", "cli/v", config.GitHubPersonalAccessToken);
 
-            var versions = await _packageManager.GetAvailableVersions().ConfigureAwait(false);
-            logger.Verbose($"Availible versions: {string.Join(", ", versions)}");
+            var versions = (await _packageManager.GetAvailableVersions().ConfigureAwait(false)).ToList();
+            logger.Verbose($"Available versions: {string.Join(", ", versions)}");
 
             var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
             logger.Verbose($"Latest version: {latestVersion}");
@@ -69,6 +65,7 @@ namespace Worms.Cli
             {
                 _fileSystem.Directory.Delete(updateFolder, true);
             }
+
             _fileSystem.Directory.CreateDirectory(updateFolder);
         }
     }

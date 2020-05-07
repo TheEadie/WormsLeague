@@ -47,13 +47,45 @@ namespace Worms.WormsArmageddon.Schemes
 
         public IReadOnlyCollection<Weapon> Weapons { get; }
 
-        public Scheme(string signature, int version, int hotSeatDelay, int retreatTime, int ropeRetreatTime,
-            bool displayTotalRoundTime, bool automaticReplays, int fallDamage, bool artilleryMode, byte stockpilingMode,
-            byte wormSelect, byte suddenDeathEvent, int waterRiseRate, int weaponCrateProbability, bool donorCards,
-            int healthCrateProbability, int healthCrateEnergy, int utilityCrateProbability, int hazardObjectTypes,
-            int mineDelay, bool dudMines, bool wormPlacement, int initialWormEnergy, int turnTime, int roundTime,
-            int numberOfRounds, bool blood, bool aquaSheep, bool sheepHeaven, bool godWorms, bool indestructibleLand, bool upgradedGrenade,
-            bool upgradedShotgun, bool upgradedClusterBombs, bool upgradedLongbow, bool teamWeapons, bool superWeapons, IReadOnlyCollection<Weapon> weapons)
+        public Scheme(
+            string signature,
+            int version,
+            int hotSeatDelay,
+            int retreatTime,
+            int ropeRetreatTime,
+            bool displayTotalRoundTime,
+            bool automaticReplays,
+            int fallDamage,
+            bool artilleryMode,
+            byte stockpilingMode,
+            byte wormSelect,
+            byte suddenDeathEvent,
+            int waterRiseRate,
+            int weaponCrateProbability,
+            bool donorCards,
+            int healthCrateProbability,
+            int healthCrateEnergy,
+            int utilityCrateProbability,
+            int hazardObjectTypes,
+            int mineDelay,
+            bool dudMines,
+            bool wormPlacement,
+            int initialWormEnergy,
+            int turnTime,
+            int roundTime,
+            int numberOfRounds,
+            bool blood,
+            bool aquaSheep,
+            bool sheepHeaven,
+            bool godWorms,
+            bool indestructibleLand,
+            bool upgradedGrenade,
+            bool upgradedShotgun,
+            bool upgradedClusterBombs,
+            bool upgradedLongbow,
+            bool teamWeapons,
+            bool superWeapons,
+            IReadOnlyCollection<Weapon> weapons)
         {
             Signature = signature;
             Version = version;

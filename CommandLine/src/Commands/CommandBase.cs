@@ -2,18 +2,21 @@
 using McMaster.Extensions.CommandLineUtils;
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.SystemConsole.Themes;
 using Worms.Logging;
+
+// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
+// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
+// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
 namespace Worms.Commands
 {
     internal abstract class CommandBase
     {
         [Option(ShortName = "v", Description = "Show more information about the process")]
-        public bool Verbose { get; set; }
+        public bool Verbose { get; }
 
         [Option(ShortName = "q", Description = "Only show errors")]
-        public bool Quiet { get; set; }
+        public bool Quiet { get; }
 
         protected ILogger Logger => _logger.Value;
 
@@ -27,10 +30,7 @@ namespace Worms.Commands
         private ILogger CreateLogger()
         {
             var logEventLevel = GetLogEventLevel();
-            return new LoggerConfiguration()
-                .MinimumLevel.Is(logEventLevel)
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
+            return new LoggerConfiguration().MinimumLevel.Is(logEventLevel).WriteTo.ColoredConsole().CreateLogger();
         }
 
         private LogEventLevel GetLogEventLevel()

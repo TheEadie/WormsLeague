@@ -12,7 +12,12 @@ namespace Worms.Configuration.SecureStorage
 
         public void Store(string key, string value)
         {
-            var credentialManager = new Credential { Target = key, Password = value, PersistanceType = PersistanceType.LocalComputer };
+            var credentialManager = new Credential
+            {
+                Target = key,
+                Password = value,
+                PersistanceType = PersistanceType.LocalComputer
+            };
             credentialManager.Save();
         }
     }

@@ -4,6 +4,8 @@ using Octokit;
 using Worms.Cli;
 using Worms.Configuration;
 
+// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
+
 namespace Worms.Commands
 {
     [Command("update", Description = "Update worms CLI")]
@@ -26,7 +28,8 @@ namespace Worms.Commands
             }
             catch (RateLimitExceededException)
             {
-                Logger.Error("Could not check for updates: GitHub API rate limit has been exceeded. Please run 'worms setup' and provide a personal access token.");
+                Logger.Error(
+                    "Could not check for updates: GitHub API rate limit has been exceeded. Please run 'worms setup' and provide a personal access token.");
                 return 1;
             }
 

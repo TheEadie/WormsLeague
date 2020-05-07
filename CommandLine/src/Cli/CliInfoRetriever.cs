@@ -8,13 +8,16 @@ namespace Worms.Cli
     {
         private readonly IFileSystem _fileSystem;
 
-        public CliInfoRetriever(IFileSystem fileSystem) => _fileSystem = fileSystem;
+        public CliInfoRetriever(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
 
         public CliInfo Get()
         {
             var assembly = Assembly.GetEntryAssembly();
             return new CliInfo(
-                assembly.GetName().Version,
+                assembly?.GetName().Version,
                 _fileSystem.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName));
         }
     }

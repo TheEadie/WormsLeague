@@ -29,7 +29,7 @@ namespace Worms.Resources.Schemes
 
             var schemes = new List<SchemeResource>();
 
-            foreach(var scheme in _fileSystem.Directory.GetFiles(gameInfo.SchemesFolder, $"{pattern}.wsc"))
+            foreach (var scheme in _fileSystem.Directory.GetFiles(gameInfo.SchemesFolder, $"{pattern}.wsc"))
             {
                 var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);
                 var details = _wscReader.GetModel(scheme);
@@ -38,5 +38,5 @@ namespace Worms.Resources.Schemes
 
             return schemes;
         }
-   }
+    }
 }

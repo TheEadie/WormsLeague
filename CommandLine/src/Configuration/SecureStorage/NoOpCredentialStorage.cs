@@ -2,13 +2,8 @@
 {
     internal class NoOpCredentialStorage : ICredentialStorage
     {
-        public string Load(string key)
-        {
-            return null;
-        }
+        public string Load(string key) => null;
 
-        public void Store(string key, string value)
-        {
-        }
+        public void Store(string key, string value) {}
     }
 }

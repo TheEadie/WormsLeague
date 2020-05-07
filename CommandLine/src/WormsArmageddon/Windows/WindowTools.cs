@@ -18,7 +18,10 @@ namespace Worms.WormsArmageddon.Windows
             bool VisitWindow(IntPtr hWnd, IntPtr lParam)
             {
                 var length = GetWindowTextLength(hWnd);
-                if (length == 0) return true;
+                if (length == 0)
+                {
+                    return true;
+                }
 
                 var builder = new StringBuilder(length + 1);
                 GetWindowText(hWnd, builder, builder.Capacity);
@@ -29,6 +32,7 @@ namespace Worms.WormsArmageddon.Windows
 
                 return true;
             }
+
             EnumWindows(VisitWindow, IntPtr.Zero);
 
             return results.ToArray();
@@ -36,9 +40,13 @@ namespace Worms.WormsArmageddon.Windows
 
         public static Process GetProcessForWindow(IntPtr hWnd)
         {
-            if (hWnd == IntPtr.Zero) return null;
+            if (hWnd == IntPtr.Zero)
+            {
+                return null;
+            }
+
             GetWindowThreadProcessId(hWnd, out var processId);
-            return Process.GetProcessById((int)processId);
+            return Process.GetProcessById((int) processId);
         }
 
         public static void FocusWindow(IntPtr hWnd)
