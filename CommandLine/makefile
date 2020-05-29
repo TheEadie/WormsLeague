@@ -4,13 +4,16 @@ default: all
 OutputDir = .artifacts
 UseDocker = true
 
-all: | windows linux
+all: | windows linux alpine
 
 windows:
 	@.build/publish.sh $(UseDocker) $(OutputDir) "win-x64"
 
 linux:
 	@.build/publish.sh $(UseDocker) $(OutputDir) "linux-x64"
+
+alpine:
+	@.build/publish.sh $(UseDocker) $(OutputDir) "linux-musl-x64"
 
 get-version:
 	@.build/get-version.sh $(UseDocker)
@@ -21,6 +24,11 @@ clean:
 build:
 	@dotnet build
 
+docker: | alpine docker-build
+
+docker-build:
+	@docker build -t theeadie/worms-cli:latest -f .build/dockerfile .
+
 help:
 	@echo "Worm CLI"
 	@echo ""
@@ -28,6 +36,7 @@ help:
 	@echo "make              - Build and publish the CLI for all platforms"
 	@echo "make windows      - Build and publish the CLI for windows"
 	@echo "make linux        - Build and publish the CLI for linux"
+	@echo "make docker       - Package the linux build into a docker container"
 	@echo "make get-version  - Calculate the next version of the CLI"
 	@echo "make build        - Build the CLI for the local platform"
 	@echo "make clean        - Clean the local bin directories"

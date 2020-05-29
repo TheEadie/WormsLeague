@@ -1,0 +1,4 @@
+FROM mcr.microsoft.com/dotnet/core/runtime-deps:3.1-alpine
+WORKDIR /app
+COPY ./.artifacts/linux-musl-x64/worms ./
+ENTRYPOINT ["./worms"]
