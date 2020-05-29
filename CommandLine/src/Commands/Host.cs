@@ -1,4 +1,6 @@
-using System.Net;
+using System;
+using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Configuration;
@@ -37,7 +39,19 @@ namespace Worms.Commands
         {
             Logger.Verbose("Loading configuration");
             var config = _configManager.Load();
-            var hostName = Dns.GetHostName();
+
+            string hostIp;
+            try
+            {
+                const string domain = "red-gate.com";
+                hostIp = GetIpAddress(domain);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"IP address could not be found. {e.Message}");
+                return 1;
+            }
+
             var gameInfo = _wormsLocator.Find();
 
             if (!gameInfo.IsInstalled)
@@ -53,11 +67,31 @@ namespace Worms.Commands
             var runGame = _wormsRunner.RunWorms("wa://").ConfigureAwait(false);
 
             Logger.Information("Announcing game on Slack");
-            Logger.Verbose($"Host name: {hostName}");
-            await _slackAnnouncer.AnnounceGameStarting(hostName, config.SlackWebHook, Logger).ConfigureAwait(false);
+            Logger.Verbose($"Host name: {hostIp}");
+            await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, Logger).ConfigureAwait(false);
 
             await runGame;
             return 0;
+        }
+
+        private static string GetIpAddress(string domain)
+        {
+            var adapters = NetworkInterface.GetAllNetworkInterfaces();
+            var leagueNetworkAdapter = adapters.SingleOrDefault(x => x.GetIPProperties().DnsSuffix == domain);
+
+            if (leagueNetworkAdapter is null)
+            {
+                throw new Exception("No network adapter for domain: {domain}");
+            }
+
+            var hostIp = leagueNetworkAdapter.GetIPProperties().UnicastAddresses.FirstOrDefault()?.Address.ToString();
+
+            if (hostIp is null)
+            {
+                throw new Exception("No IP address found for network adapter: {leagueNetworkAdapter.Name}");
+            }
+
+            return hostIp;
         }
     }
 }
