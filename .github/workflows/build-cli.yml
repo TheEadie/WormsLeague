@@ -10,13 +10,10 @@ jobs:
     name: Build Command Line
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.100
+    - name: Checkout
+      uses: actions/checkout@v1
     - name: Build
-      run: cd CommandLine; ./.build/build.sh --bootstrap; ./.build/build.sh
+      run: cd CommandLine; make
     - name: Upload build
       uses: actions/upload-artifact@v1
       with:
