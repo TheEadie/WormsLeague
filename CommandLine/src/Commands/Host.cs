@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Configuration;
@@ -84,11 +85,13 @@ namespace Worms.Commands
                 throw new Exception("No network adapter for domain: {domain}");
             }
 
-            var hostIp = leagueNetworkAdapter.GetIPProperties().UnicastAddresses.FirstOrDefault()?.Address.ToString();
+            var hostIp = leagueNetworkAdapter.GetIPProperties()
+                .UnicastAddresses.FirstOrDefault(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
+                ?.Address.ToString();
 
             if (hostIp is null)
             {
-                throw new Exception("No IP address found for network adapter: {leagueNetworkAdapter.Name}");
+                throw new Exception("No IPv4 address found for network adapter: {leagueNetworkAdapter.Name}");
             }
 
             return hostIp;
