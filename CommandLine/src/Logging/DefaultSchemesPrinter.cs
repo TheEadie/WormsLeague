@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,16 +10,32 @@ namespace Worms.Logging
     {
         public void Print(TextWriter writer, IReadOnlyCollection<SchemeResource> items)
         {
-            var anyResourcesToPrint = items.Any();
-            var longestName = anyResourcesToPrint ? items.Max(x => x.Name.Length) + 3 : 7;
-            var longestContext = anyResourcesToPrint ? items.Max(x => x.Context.Length) + 3 : 10;
+            var longestName = GetWidth("NAME", items.Select(x => x.Name));
+            var longestContext = GetWidth("CONTEXT", items.Select(x => x.Context));
+            var longestHealth = GetWidth("HEALTH", items.Select(x => x.Details.InitialWormEnergy.ToString()));
 
-            writer.WriteLine("NAME".PadRight(longestName) + "CONTEXT".PadRight(longestContext));
+            writer.WriteLine("NAME".PadRight(longestName) + "CONTEXT".PadRight(longestContext) + "HEALTH".PadRight(longestHealth) + "WEAPONS");
 
             foreach (var item in items)
             {
-                writer.WriteLine(item.Name.PadRight(longestName) + item.Context.PadRight(longestContext));
+                var weapons = string.Join(", ", item.Details.Weapons.Where(x => x.Ammo > 0).Select(x => x.Name.Substring(0,2) + " (" + x.Ammo + ")"));
+                var remainingWidth = Console.WindowWidth - (longestName + longestContext + longestHealth);
+                var weaponsOutput = (weapons.Length > remainingWidth) ? weapons.Substring(0, remainingWidth - 3) + "..." : weapons;
+
+                writer.WriteLine(item.Name.PadRight(longestName) +
+                 item.Context.PadRight(longestContext) +
+                 item.Details.InitialWormEnergy.ToString().PadRight(longestHealth) +
+                 weaponsOutput);
             }
+        }
+
+        private int GetWidth(string header, IEnumerable<string> values)
+        {
+            var anyItems = values.Any();
+            var headerLength = header.Length + 3;
+            var longest = anyItems ? values.Max(x => x.Length) + 3 : headerLength;
+            if (longest < headerLength) longest = headerLength;
+            return longest;
         }
 
         public void Print(TextWriter writer, SchemeResource item)
