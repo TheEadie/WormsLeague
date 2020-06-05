@@ -1,27 +1,36 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Worms.Logging.TableOutput;
 using Worms.Resources.Schemes;
 
 namespace Worms.Logging
 {
     internal class DefaultSchemesPrinter : IResourcePrinter<SchemeResource>
     {
-        public void Print(TextWriter writer, IReadOnlyCollection<SchemeResource> items)
+        public void Print(TextWriter writer, IReadOnlyCollection<SchemeResource> items, int outputMaxWidth)
         {
-            var anyResourcesToPrint = items.Any();
-            var longestName = anyResourcesToPrint ? items.Max(x => x.Name.Length) + 3 : 7;
-            var longestContext = anyResourcesToPrint ? items.Max(x => x.Context.Length) + 3 : 10;
+            var tableBuilder = new TableBuilder(outputMaxWidth);
+            tableBuilder.AddColumn("NAME", items.Select(x => x.Name).ToList());
+            tableBuilder.AddColumn("CONTEXT", items.Select(x => x.Context).ToList());
+            tableBuilder.AddColumn("HEALTH", items.Select(x => x.Details.InitialWormEnergy.ToString()).ToList());
+            tableBuilder.AddColumn("TURN-TIME", items.Select(x => x.Details.TurnTime + " secs").ToList());
+            tableBuilder.AddColumn("ROUND-TIME", items.Select(x => x.Details.RoundTime + " mins").ToList());
+            tableBuilder.AddColumn("WORM-SELECT", items.Select(x => (x.Details.WormSelect == 1).ToString()).ToList());
+            tableBuilder.AddColumn(
+                "WEAPONS",
+                items.Select(
+                        x => string.Join(
+                            ", ",
+                            x.Details.Weapons.Where(w => w.Ammo > 0)
+                                .Select(w => w.Name.Substring(0, 2) + " (" + w.Ammo + ")")))
+                    .ToList());
 
-            writer.WriteLine("NAME".PadRight(longestName) + "CONTEXT".PadRight(longestContext));
-
-            foreach (var item in items)
-            {
-                writer.WriteLine(item.Name.PadRight(longestName) + item.Context.PadRight(longestContext));
-            }
+            var table = tableBuilder.Build();
+            TablePrinter.Print(writer, table);
         }
 
-        public void Print(TextWriter writer, SchemeResource item)
+        public void Print(TextWriter writer, SchemeResource item, int outputMaxWidth)
         {
             WriteHeader(writer, "GENERAL");
             WriteItem(writer, "Name", item.Name);

@@ -35,7 +35,7 @@ namespace Worms.Commands
         {
             try
             {
-                PrintScheme(Name, console.Out);
+                PrintScheme(Name, console.Out, Console.WindowWidth);
                 return Task.FromResult(0);
             }
             catch (ArgumentException exception)
@@ -45,7 +45,7 @@ namespace Worms.Commands
             }
         }
 
-        private void PrintScheme(string name, TextWriter writer)
+        private void PrintScheme(string name, TextWriter writer, int outputMaxWidth)
         {
             var requestForAll = string.IsNullOrWhiteSpace(name);
             var userSpecifiedName = !requestForAll && !name.Contains('*');
@@ -59,16 +59,16 @@ namespace Worms.Commands
                         Logger.Error($"No Scheme found with name: {name}");
                         break;
                     case 1:
-                        _printer.Print(writer, matches.Single());
+                        _printer.Print(writer, matches.Single(), outputMaxWidth);
                         break;
                     default:
-                        _printer.Print(writer, matches);
+                        _printer.Print(writer, matches, outputMaxWidth);
                         break;
                 }
             }
             else
             {
-                _printer.Print(writer, matches);
+                _printer.Print(writer, matches, outputMaxWidth);
             }
         }
     }
