@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 
 namespace Worms.Logging.TableOutput
@@ -13,7 +12,7 @@ namespace Worms.Logging.TableOutput
                 writer.Write(column.Heading.PadRight(column.Width));
             }
 
-            writer.Write(Environment.NewLine);
+            writer.WriteLine();
 
             for (var i = 0; i < table.RowCount; i++)
             {
@@ -22,7 +21,7 @@ namespace Worms.Logging.TableOutput
                     writer.Write(column.Rows.ElementAt(i).PadRight(column.Width));
                 }
 
-                writer.Write(Environment.NewLine);
+                writer.WriteLine();
             }
         }
     }
