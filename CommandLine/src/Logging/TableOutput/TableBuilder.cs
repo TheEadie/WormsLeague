@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Worms.Logging.TableOutput
@@ -21,23 +20,32 @@ namespace Worms.Logging.TableOutput
 
         public Table Build()
         {
-            var lastColumn = _columns.LastOrDefault();
-
-            if (lastColumn is null)
+            if (!_columns.Any())
             {
                 return new Table(_columns, 0);
             }
 
-            _columns.Remove(lastColumn);
-            var remainingWidth = _outputWidth - _columns.Sum(x => x.Width) - 1;
+            var adjustedColumns = new List<TableColumn>();
+            var currentWidth = 0;
 
-            _columns.Add(
+            foreach (var column in _columns.TakeWhile(column => currentWidth <= _outputWidth))
+            {
+                adjustedColumns.Add(column);
+                currentWidth += column.Width;
+            }
+
+            var lastColumn = adjustedColumns.Last();
+
+            adjustedColumns.Remove(lastColumn);
+            var remainingWidth = _outputWidth - adjustedColumns.Sum(x => x.Width) - 1;
+
+            adjustedColumns.Add(
                 new TableColumn(
-                    lastColumn.Heading,
+                    TrimText(lastColumn.Heading, remainingWidth),
                     lastColumn.Rows.Select(x => TrimText(x, remainingWidth)).ToList(),
                     remainingWidth));
 
-            return new Table(_columns, _columns.Max(x => x.Rows.Count));
+            return new Table(adjustedColumns, adjustedColumns.Max(x => x.Rows.Count));
         }
 
         private static string TrimText(string input, int maxLength)
