@@ -39,6 +39,7 @@ namespace Worms.Container
             builder.RegisterType<DefaultSchemesPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
             builder.RegisterType<WscReader>();
+            builder.RegisterType<WscWriter>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)
