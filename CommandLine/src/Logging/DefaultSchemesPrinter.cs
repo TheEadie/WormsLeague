@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Worms.Logging.TableOutput;
 using Worms.Resources.Schemes;
 
 namespace Worms.Logging
@@ -10,32 +10,21 @@ namespace Worms.Logging
     {
         public void Print(TextWriter writer, IReadOnlyCollection<SchemeResource> items)
         {
-            var longestName = GetWidth("NAME", items.Select(x => x.Name));
-            var longestContext = GetWidth("CONTEXT", items.Select(x => x.Context));
-            var longestHealth = GetWidth("HEALTH", items.Select(x => x.Details.InitialWormEnergy.ToString()));
+            var tableBuilder = new TableBuilder();
+            tableBuilder.AddColumn("NAME", items.Select(x => x.Name).ToList());
+            tableBuilder.AddColumn("CONTEXT", items.Select(x => x.Context).ToList());
+            tableBuilder.AddColumn("HEALTH", items.Select(x => x.Details.InitialWormEnergy.ToString()).ToList());
+            tableBuilder.AddColumn(
+                "WEAPONS",
+                items.Select(
+                        x => string.Join(
+                            ", ",
+                            x.Details.Weapons.Where(w => w.Ammo > 0)
+                                .Select(w => w.Name.Substring(0, 2) + " (" + w.Ammo + ")")))
+                    .ToList());
 
-            writer.WriteLine("NAME".PadRight(longestName) + "CONTEXT".PadRight(longestContext) + "HEALTH".PadRight(longestHealth) + "WEAPONS");
-
-            foreach (var item in items)
-            {
-                var weapons = string.Join(", ", item.Details.Weapons.Where(x => x.Ammo > 0).Select(x => x.Name.Substring(0,2) + " (" + x.Ammo + ")"));
-                var remainingWidth = Console.WindowWidth - (longestName + longestContext + longestHealth);
-                var weaponsOutput = (weapons.Length > remainingWidth) ? weapons.Substring(0, remainingWidth - 3) + "..." : weapons;
-
-                writer.WriteLine(item.Name.PadRight(longestName) +
-                 item.Context.PadRight(longestContext) +
-                 item.Details.InitialWormEnergy.ToString().PadRight(longestHealth) +
-                 weaponsOutput);
-            }
-        }
-
-        private int GetWidth(string header, IEnumerable<string> values)
-        {
-            var anyItems = values.Any();
-            var headerLength = header.Length + 3;
-            var longest = anyItems ? values.Max(x => x.Length) + 3 : headerLength;
-            if (longest < headerLength) longest = headerLength;
-            return longest;
+            var table = tableBuilder.Build();
+            TablePrinter.Print(writer, table);
         }
 
         public void Print(TextWriter writer, SchemeResource item)
