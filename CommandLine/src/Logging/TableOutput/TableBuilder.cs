@@ -6,7 +6,13 @@ namespace Worms.Logging.TableOutput
 {
     public class TableBuilder
     {
+        private readonly int _outputWidth;
         private readonly List<TableColumn> _columns = new List<TableColumn>();
+
+        public TableBuilder(int outputWidth)
+        {
+            _outputWidth = outputWidth;
+        }
 
         public void AddColumn(string heading, IReadOnlyCollection<string> rows)
         {
@@ -23,7 +29,7 @@ namespace Worms.Logging.TableOutput
             }
 
             _columns.Remove(lastColumn);
-            var remainingWidth = Console.WindowWidth - _columns.Sum(x => x.Width) - 1;
+            var remainingWidth = _outputWidth - _columns.Sum(x => x.Width) - 1;
 
             _columns.Add(
                 new TableColumn(

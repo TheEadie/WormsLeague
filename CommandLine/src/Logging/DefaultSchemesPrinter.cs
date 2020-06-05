@@ -8,12 +8,15 @@ namespace Worms.Logging
 {
     internal class DefaultSchemesPrinter : IResourcePrinter<SchemeResource>
     {
-        public void Print(TextWriter writer, IReadOnlyCollection<SchemeResource> items)
+        public void Print(TextWriter writer, IReadOnlyCollection<SchemeResource> items, int outputMaxWidth)
         {
-            var tableBuilder = new TableBuilder();
+            var tableBuilder = new TableBuilder(outputMaxWidth);
             tableBuilder.AddColumn("NAME", items.Select(x => x.Name).ToList());
             tableBuilder.AddColumn("CONTEXT", items.Select(x => x.Context).ToList());
             tableBuilder.AddColumn("HEALTH", items.Select(x => x.Details.InitialWormEnergy.ToString()).ToList());
+            tableBuilder.AddColumn("TURN-TIME", items.Select(x => x.Details.TurnTime + " secs").ToList());
+            tableBuilder.AddColumn("ROUND-TIME", items.Select(x => x.Details.RoundTime + " mins").ToList());
+            tableBuilder.AddColumn("WORM-SELECT", items.Select(x => (x.Details.WormSelect == 1).ToString()).ToList());
             tableBuilder.AddColumn(
                 "WEAPONS",
                 items.Select(
@@ -27,7 +30,7 @@ namespace Worms.Logging
             TablePrinter.Print(writer, table);
         }
 
-        public void Print(TextWriter writer, SchemeResource item)
+        public void Print(TextWriter writer, SchemeResource item, int outputMaxWidth)
         {
             WriteHeader(writer, "GENERAL");
             WriteItem(writer, "Name", item.Name);
