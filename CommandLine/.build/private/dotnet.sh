@@ -26,7 +26,8 @@ Dotnet-Publish ()
             --self-contained true \
             /p:PublishSingleFile=true \
             /p:Version=$Version_MajorMinorPatch \
-            /p:PublishTrimmed=true
+            /p:PublishTrimmed=true \
+            /p:DebugType=none
     else
         WriteInfo "dotnet publish: Using local install"
         dotnet publish \
@@ -36,6 +37,7 @@ Dotnet-Publish ()
             --self-contained true \
             /p:PublishSingleFile=true \
             /p:Version=$Version_MajorMinorPatch \
-            /p:PublishTrimmed=true
+            /p:PublishTrimmed=true \
+            /p:DebugType=none
     fi
 }
