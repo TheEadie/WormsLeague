@@ -1,11 +1,16 @@
-default: publish
+default: all
 
 # Arguments
 OutputDir = .artifacts
 UseDocker = true
 
-publish:
-	@.build/publish.sh $(UseDocker) $(OutputDir)
+all: | windows linux
+
+windows:
+	@.build/publish.sh $(UseDocker) $(OutputDir) "win-x64"
+
+linux:
+	@.build/publish.sh $(UseDocker) $(OutputDir) "linux-x64"
 
 get-version:
 	@.build/get-version.sh $(UseDocker)
