@@ -35,7 +35,8 @@ namespace Worms.Commands
         {
             try
             {
-                PrintScheme(Name, console.Out, Console.WindowWidth);
+                var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
+                PrintScheme(Name, console.Out, windowWidth);
                 return Task.FromResult(0);
             }
             catch (ArgumentException exception)
