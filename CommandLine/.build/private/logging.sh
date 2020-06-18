@@ -43,5 +43,5 @@ WriteVerbose ()
 
 WriteStdError ()
 {
-    >&2 echo -e $@;
+    >&2 echo -e "$@";
 }

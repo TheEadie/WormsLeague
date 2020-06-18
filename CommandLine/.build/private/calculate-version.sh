@@ -11,11 +11,11 @@ GetVersionJson ()
     if [ $UseDocker = "true" ]
     then
         WriteInfo "GitVersion: Using Docker image - $DockerImage_GitVersion"
-        echo $(docker run --rm -v "$(pwd)/..:/repo" $DockerImage_GitVersion /repo/CommandLine)
+        echo "$(docker run --rm -v "$(pwd)/..:/repo" $DockerImage_GitVersion /repo/CommandLine)"
     else
         WriteInfo "GitVersion: Using dotnet global tool"
         dotnet tool install GitVersion.Tool -g
-        echo $(dotnet gitversion)
+        echo "$(dotnet gitversion)"
     fi
 }
 
@@ -25,6 +25,14 @@ CalculateVersion ()
 
     WriteHeading "Calculating version..."
     Version_Json=$(GetVersionJson $UseDocker)
+
+    # Check if the returned value is json
+    if !(jq -e . >/dev/null 2>&1 <<<"$Version_Json"); then
+        WriteVerbose "$Version_Json" # This needs to be printed or any error output is lost
+        WriteError "GitVersion: Failed to get version"
+        exit
+    fi
+
     Version_MajorMinorPatch=$(echo $Version_Json | jq -r '.MajorMinorPatch')
     WriteHighlight "Version - $Version_MajorMinorPatch"
     
