@@ -9,6 +9,7 @@ CreateGitHubRelease ()
     local ReleaseDir=$4
 
     WriteHeading "Creating GitHub Release v$Version..."
+    WriteVerbose "Calling - https://api.github.com/repos/$GitHubRepo/releases"
 
     CreateReleaseResponse=$(curl --request POST \
         --url "https://api.github.com/repos/$GitHubRepo/releases" \
@@ -36,7 +37,7 @@ CreateGitHubRelease ()
 
         name="${filename##*/}"
         UploadUrl=$AssetUrl?name=$name
-        WriteVerbose "URL - $UploadUrl"
+        WriteVerbose "Calling - $UploadUrl"
 
         curl --request POST \
         --url $UploadUrl \
