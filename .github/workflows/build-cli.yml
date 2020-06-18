@@ -36,7 +36,7 @@ jobs:
 
 
 
-  release-windows:
+  release-cli-windows:
     name: Release CLI - Windows
     needs: build-cli-windows
     runs-on: ubuntu-latest
@@ -49,4 +49,4 @@ jobs:
       with:
         name: win-x64
     - name: Release
-      run: ./CommandLine/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} win-x64
+      run: cd CommandLine; make release-github ReleaseDir=win-x64 GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
