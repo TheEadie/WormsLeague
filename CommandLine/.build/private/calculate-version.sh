@@ -40,3 +40,21 @@ CalculateVersion ()
     export Version_MajorMinorPatch
 }
 
+GetVersionFromBuildArtifact ()
+{
+    WriteHeading "Getting version from build artifact..."
+    Version_Json=$(cat $ReleaseDir/version.json)
+
+    # Check if the returned value is json
+    if !(jq -e . >/dev/null 2>&1 <<<"$Version_Json"); then
+        WriteVerbose "$Version_Json" # This needs to be printed or any error output is lost
+        WriteError "Failed to get version from build artifact"
+        exit
+    fi
+
+    Version_MajorMinorPatch=$(echo $Version_Json | jq -r '.MajorMinorPatch')
+    WriteHighlight "Version - $Version_MajorMinorPatch"
+
+    export Version_Json
+    export Version_MajorMinorPatch
+}
