@@ -1,6 +1,7 @@
 #!/bin/bash
 source `dirname "$0"`/private/logging.sh
 source `dirname "$0"`/private/release-github.sh
+source `dirname "$0"`/private/calculate-version.sh
 
 GitHubToken=$1
 GitHubRepo=$2
