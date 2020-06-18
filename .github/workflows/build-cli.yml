@@ -18,7 +18,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: Cli
-        path: CommandLine/.artifacts/
+        path: CommandLine/.artifacts/win-x64/
 
   release:
     name: Create GitHub Release for command line

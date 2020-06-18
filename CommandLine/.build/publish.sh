@@ -7,6 +7,12 @@ source `dirname "$0"`/private/publish.sh
 UseDocker=$1
 OutputDir=$2
 
-CleanArtifacts $OutputDir
 CalculateVersion $UseDocker
-Publish false $OutputDir $Version_MajorMinorPatch
+
+WinOutputDir="$OutputDir/win-x64"
+CleanArtifacts $WinOutputDir
+Publish false "win-x64" $WinOutputDir $Version_MajorMinorPatch
+
+LinuxOutputDir="$OutputDir/linux-x64"
+CleanArtifacts $LinuxOutputDir
+Publish false "linux-x64" $LinuxOutputDir $Version_MajorMinorPatch

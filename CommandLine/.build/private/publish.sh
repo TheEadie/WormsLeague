@@ -14,25 +14,20 @@ CleanArtifacts ()
 Publish ()
 {
     local UseDocker=$1
-    local OutputDir=$2
-    local Version_MajorMinorPatch=$3
+    local Platform=$2
+    local OutputDir=$3
+    local Version_MajorMinorPatch=$4
 
-    WriteHeading "Publishing version - $Version_MajorMinorPatch..."
+    WriteHeading "Publishing $Platform v$Version_MajorMinorPatch..."
 
-    WriteInfo "Making output directory $OutputDir/"
-    mkdir .artifacts
-
-    WriteInfo "Writing version info to $OutputDir/version.json"
-    echo $Version_Json > $OutputDir/version.json
-
-    WriteInfo "Building win-x64"
-    Dotnet-Publish $UseDocker $OutputDir $Version_MajorMinorPatch win-x64
-
-    WriteInfo "Building linux-x64"
-    Dotnet-Publish $UseDocker $OutputDir $Version_MajorMinorPatch linux-x64
+    WriteInfo "Building $Platform"
+    Dotnet-Publish $UseDocker $OutputDir $Version_MajorMinorPatch $Platform
 
     WriteInfo "Writing install script to output"
     cp *.ps1 $OutputDir
+
+    WriteInfo "Writing version info to $OutputDir/version.json"
+    echo $Version_Json > $OutputDir/version.json
 
     WriteHighlight "Published to $OutputDir/"
 }
