@@ -1,4 +1,4 @@
-name: Build Command Line
+name: CLI
 
 on:
   push:
@@ -6,29 +6,45 @@ on:
     - "CommandLine/**"
 
 jobs:
-  build-cli:
-    name: Build Command Line
+  build-cli-windows:
+    name: Build CLI - Windows
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Build
-      run: cd CommandLine; make
+      run: cd CommandLine; make windows
     - name: Upload build
       uses: actions/upload-artifact@v1
       with:
-        name: Cli
+        name: win-x64
         path: CommandLine/.artifacts/win-x64/
 
-  release:
-    name: Create GitHub Release for command line
-    needs: build-cli
+  build-cli-linux:
+    name: Build CLI - Linux
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Build
+      run: cd CommandLine; make linux
+    - name: Upload build
+      uses: actions/upload-artifact@v1
+      with:
+        name: linux-x64
+        path: CommandLine/.artifacts/linux-x64/
+
+
+
+  release-windows:
+    name: Release CLI - Windows
+    needs: build-cli-windows
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Download Gif Tool
+    - name: Download build
       uses: actions/download-artifact@v1
       with:
         name: Cli
