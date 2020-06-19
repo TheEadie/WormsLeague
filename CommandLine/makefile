@@ -3,6 +3,7 @@ default: all
 # Arguments
 OutputDir = .artifacts
 UseDocker = true
+DockerImageName = theeadie/wormscli
 
 all: | windows linux alpine
 
@@ -27,7 +28,7 @@ build:
 docker: | alpine docker-build
 
 docker-build:
-	@.build/docker.sh "$(OutputDir)/linux-musl-x64"
+	@.build/docker.sh "$(OutputDir)/linux-musl-x64" $(DockerImageName)
 
 help:
 	@echo "Worm CLI"
@@ -42,14 +43,16 @@ help:
 	@echo "make clean        - Clean the local bin directories"
 	@echo ""
 	@echo "Options:"
-	@echo "UseDocker=<true|false> - (default:true)       - Should docker be used to get non-dotnet build tools"
-	@echo "OutputDir=<path>       - (default:.artifacts) - The path the CLI will be published to"
+	@echo "UseDocker=<true|false> - (default:true)              - Should docker be used to get non-dotnet build tools"
+	@echo "OutputDir=<path>       - (default:.artifacts)        - The path the CLI will be published to"
+	@echo "DockerImageName=<name> - (default:theeadie/wormscli) - The name given to the docker image"
 	@echo ""
 	@echo "For release details see make release-help"
 
 # Release Arguments
 GitHubRepo = TheEadie/WormsLeague
 GitHubAuthToken = empty
+DockerHubUsername = theeadie
 DockerHubAuthToken = empty
 
 release: | release-github release-dockerhub
@@ -58,7 +61,7 @@ release-github:
 	@.build/release-github.sh $(GitHubAuthToken) $(GitHubRepo) "$(OutputDir)/win-64"
 
 release-dockerhub:
-	@.build/release-dockerhub.sh $(DockerHubAuthToken) "$(OutputDir)/linux-musl-x64"
+	@.build/release-dockerhub.sh $(DockerHubUsername) $(DockerHubAuthToken) "$(OutputDir)/linux-musl-x64" $(DockerImageName)
 
 release-help:
 	@echo "Worm CLI - Release"
@@ -69,7 +72,7 @@ release-help:
 	@echo "make release-dockerhub   - Release to DockerHub"
 	@echo ""
 	@echo "Options:"
-	@echo "ReleaseDir=<path>        - (default:.artifacts/win-x64)   - The path containing the build to be released"
-	@echo "GitHubAuthToken=<token>  - (default:unspecified)          - A token used to authenticate with GitHub"
-	@echo "GitHubRepo=<owner/repo>  - (default:TheEadie/WormsLeague) - The GitHub repo to release to"
-	@echo "GitHubAuthToken=<token>  - (default:unspecified)          - A token used to authenticate with DockerHub"
+	@echo "GitHubAuthToken=<token>    - (default:unspecified)          - A token used to authenticate with GitHub"
+	@echo "GitHubRepo=<owner/repo>    - (default:TheEadie/WormsLeague) - The GitHub repo to release to"
+	@echo "DockerHubUsername=<name>   - (default:theeadie)             - The username to use to authenticate with DockerHub"
+	@echo "DockerHubAuthToken=<token> - (default:unspecified)          - A token used to authenticate with DockerHub"

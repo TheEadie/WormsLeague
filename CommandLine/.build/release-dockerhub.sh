@@ -4,11 +4,11 @@ source `dirname "$0"`/private/docker.sh
 source `dirname "$0"`/private/calculate-version.sh
 
 # Input
-DockerHubToken=$1
-ReleaseDir=$2
-
-echo "$ReleaseDir"
+DockerHubUsername=$1
+DockerHubToken=$2
+ReleaseDir=$3
+ImageName=$4
 
 GetVersionFromBuildArtifact $ReleaseDir
-BuildDockerImage "theeadie/wormscli" $Version_Major $Version_Minor $Version_Patch
-PushDockerImages "theeadie" $DockerHubToken "theeadie/wormscli"
+BuildDockerImage $ImageName $Version_Major $Version_Minor $Version_Patch
+PushDockerImages $DockerHubUsername $DockerHubToken $ImageName
