@@ -34,16 +34,24 @@ CalculateVersion ()
     fi
 
     Version_MajorMinorPatch=$(echo $Version_Json | jq -r '.MajorMinorPatch')
+    Version_Major=$(echo $Version_Json | jq -r '.Major')
+    Version_Minor=$(echo $Version_Json | jq -r '.Minor')
+    Version_Patch=$(echo $Version_Json | jq -r '.Patch')
     WriteHighlight "Version - $Version_MajorMinorPatch"
-    
+
     export Version_Json
     export Version_MajorMinorPatch
+    export Version_Major
+    export Version_Minor
+    export Version_Patch
 }
 
 GetVersionFromBuildArtifact ()
 {
+    local ArtifactDir=$1
+
     WriteHeading "Getting version from build artifact..."
-    Version_Json=$(cat $ReleaseDir/version.json)
+    Version_Json=$(cat $ArtifactDir/version.json)
 
     # Check if the returned value is json
     if !(jq -e . >/dev/null 2>&1 <<<"$Version_Json"); then
@@ -53,8 +61,14 @@ GetVersionFromBuildArtifact ()
     fi
 
     Version_MajorMinorPatch=$(echo $Version_Json | jq -r '.MajorMinorPatch')
+    Version_Major=$(echo $Version_Json | jq -r '.Major')
+    Version_Minor=$(echo $Version_Json | jq -r '.Minor')
+    Version_Patch=$(echo $Version_Json | jq -r '.Patch')
     WriteHighlight "Version - $Version_MajorMinorPatch"
 
     export Version_Json
     export Version_MajorMinorPatch
+    export Version_Major
+    export Version_Minor
+    export Version_Patch
 }

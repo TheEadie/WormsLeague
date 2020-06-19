@@ -27,7 +27,7 @@ build:
 docker: | alpine docker-build
 
 docker-build:
-	@docker build -t theeadie/worms-cli:latest -f .build/dockerfile .
+	@.build/docker.sh "$(OutputDir)/linux-musl-x64"
 
 help:
 	@echo "Worm CLI"
