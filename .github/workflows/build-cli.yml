@@ -20,7 +20,7 @@ jobs:
         name: win-x64
         path: CommandLine/.artifacts/win-x64/
 
-  build-cli-linux:
+  build-cli-linux-x64:
     name: Build CLI - Linux
     runs-on: ubuntu-latest
     steps:
@@ -34,10 +34,32 @@ jobs:
         name: linux-x64
         path: CommandLine/.artifacts/linux-x64/
 
+  build-cli-linux-musl-x64:
+    name: Build CLI - Alpine
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Build
+      run: cd CommandLine; make alpine
+    - name: Upload build
+      uses: actions/upload-artifact@v1
+      with:
+        name: linux-musl-x64
+        path: CommandLine/.artifacts/linux-musl-x64/
 
+  build-cli-docker:
+    name: Build CLI - Docker
+    needs: build-cli-linux-musl-x64
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Build
+      run: cd CommandLine; make docker-build
 
-  release-cli-windows:
-    name: Release CLI - Windows
+  release-cli-github:
+    name: Release CLI - GitHub
     needs: build-cli-windows
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
@@ -48,5 +70,22 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: win-x64
+        path: CommandLine/.artifacts/win-x64/
     - name: Release
-      run: cd CommandLine; make release-github ReleaseDir=../win-x64 GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
+      run: cd CommandLine; make release-github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
+
+  release-cli-dockerhub:
+    name: Release CLI - DockerHub
+    needs: build-cli-docker
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Download build
+      uses: actions/download-artifact@v1
+      with:
+        name: linux-musl-x64
+        path: CommandLine/.artifacts/linux-musl-x64/
+    - name: Release
+      run: cd CommandLine; make release-dockerhub DockerHubAuthToken=${{ secrets.DockerHubAccessToken  }}
