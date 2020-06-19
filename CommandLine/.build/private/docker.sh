@@ -19,3 +19,14 @@ BuildDockerImage ()
     docker tag $ImageName:latest $ImageName:$Version_Major.$Version_Minor.$Version_Patch
     WriteVerbose "Tagged $ImageName:$Version_Major.$Version_Minor.$Version_Patch"
 }
+
+PushDockerImages ()
+{
+    local Username=$1
+    local Password=$2
+    local ImageName=$3
+
+    WriteHeading "Pushing Docker image..."
+    echo $Password | docker login -u $Username --password-stdin
+    docker push $ImageName
+}

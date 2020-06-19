@@ -20,7 +20,7 @@ jobs:
         name: win-x64
         path: CommandLine/.artifacts/win-x64/
 
-  build-cli-linux:
+  build-cli-linux-x64:
     name: Build CLI - Linux
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +34,7 @@ jobs:
         name: linux-x64
         path: CommandLine/.artifacts/linux-x64/
 
-  build-cli-alpine:
+  build-cli-linux-musl-x64:
     name: Build CLI - Alpine
     runs-on: ubuntu-latest
     steps:
@@ -47,6 +47,16 @@ jobs:
       with:
         name: linux-musl-x64
         path: CommandLine/.artifacts/linux-musl-x64/
+
+  build-cli-docker:
+    name: Build CLI - Docker
+    needs: build-cli-linux-musl-x64
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Build
+      run: cd CommandLine; make docker-build
 
   release-cli-github:
     name: Release CLI - GitHub
@@ -64,10 +74,11 @@ jobs:
     - name: Release
       run: cd CommandLine; make release-github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
 
-  release-cli-docker:
-    name: Release CLI - Docker
-    needs: build-cli-alpine
+  release-cli-dockerhub:
+    name: Release CLI - DockerHub
+    needs: build-cli-docker
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     steps:
     - name: Checkout
       uses: actions/checkout@v1
@@ -77,4 +88,4 @@ jobs:
         name: linux-musl-x64
         path: CommandLine/.artifacts/linux-musl-x64/
     - name: Release
-      run: cd CommandLine; make docker-build
+      run: cd CommandLine; make release-dockerhub DockerHubAuthToken=${{ secrets.DockerHubAccessToken  }}

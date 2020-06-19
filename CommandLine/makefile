@@ -50,15 +50,15 @@ help:
 # Release Arguments
 GitHubRepo = TheEadie/WormsLeague
 GitHubAuthToken = empty
-DockerHubToken = empty
+DockerHubAuthToken = empty
 
 release: | release-github release-dockerhub
 
 release-github:
-	@.build/release.sh $(GitHubAuthToken) $(GitHubRepo) "$(OutputDir)/win-64"
+	@.build/release-github.sh $(GitHubAuthToken) $(GitHubRepo) "$(OutputDir)/win-64"
 
 release-dockerhub:
-	@.build/release-dockerhub.sh $(DockerHubAuthToken)
+	@.build/release-dockerhub.sh $(DockerHubAuthToken) "$(OutputDir)/linux-musl-x64"
 
 release-help:
 	@echo "Worm CLI - Release"
@@ -66,9 +66,10 @@ release-help:
 	@echo "Commands:"
 	@echo "make release             - Release to all locations"
 	@echo "make release-github      - Release to GitHub"
-	@echo "make release-dockerhub      - Release to DockerHub"
+	@echo "make release-dockerhub   - Release to DockerHub"
 	@echo ""
 	@echo "Options:"
 	@echo "ReleaseDir=<path>        - (default:.artifacts/win-x64)   - The path containing the build to be released"
 	@echo "GitHubAuthToken=<token>  - (default:unspecified)          - A token used to authenticate with GitHub"
 	@echo "GitHubRepo=<owner/repo>  - (default:TheEadie/WormsLeague) - The GitHub repo to release to"
+	@echo "GitHubAuthToken=<token>  - (default:unspecified)          - A token used to authenticate with DockerHub"
