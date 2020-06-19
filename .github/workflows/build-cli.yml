@@ -63,3 +63,18 @@ jobs:
         path: CommandLine/.artifact/win-x64/
     - name: Release
       run: cd CommandLine; make release-github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
+
+  release-cli-docker:
+    name: Release CLI - Docker
+    needs: build-cli-alpine
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Download build
+      uses: actions/download-artifact@v1
+      with:
+        name: linux-musl-x64
+        path: CommandLine/.artifacts/linux-musl-x64/
+    - name: Release
+      run: cd CommandLine; make docker-build

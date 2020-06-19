@@ -48,14 +48,17 @@ help:
 	@echo "For release details see make release-help"
 
 # Release Arguments
-ReleaseDir = .artifacts/win-x64
 GitHubRepo = TheEadie/WormsLeague
 GitHubAuthToken = empty
+DockerHubToken = empty
 
-release: | release-github
+release: | release-github release-dockerhub
 
 release-github:
-	@.build/release.sh $(GitHubAuthToken) $(GitHubRepo) "$(ReleaseDir)"
+	@.build/release.sh $(GitHubAuthToken) $(GitHubRepo) "$(OutputDir)/win-64"
+
+release-dockerhub:
+	@.build/release-dockerhub.sh $(DockerHubAuthToken)
 
 release-help:
 	@echo "Worm CLI - Release"
@@ -63,6 +66,7 @@ release-help:
 	@echo "Commands:"
 	@echo "make release             - Release to all locations"
 	@echo "make release-github      - Release to GitHub"
+	@echo "make release-dockerhub      - Release to DockerHub"
 	@echo ""
 	@echo "Options:"
 	@echo "ReleaseDir=<path>        - (default:.artifacts/win-x64)   - The path containing the build to be released"
