@@ -1,10 +1,6 @@
-using System;
-using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Logging;
 using Worms.Resources.Schemes;
 using Worms.WormsArmageddon;
 using Worms.WormsArmageddon.Schemes.WscFiles;
@@ -22,13 +18,14 @@ namespace Worms.Commands
         private readonly WscWriter _wscWriter;
         private readonly IWormsLocator _wormsLocator;
 
-        [Argument(0, Description = "", Name = "name")]
+        [Option(Description = "The name for the created Scheme", ShortName = "n")]
         public string Name { get; }
 
-        [Option(
-            Description = "If set the scheme definition will be loaded from this file",
-            ShortName = "f")]
+        [Option(Description = "The file to load the scheme definition from", ShortName = "f")]
         public string FilePath { get; }
+
+        [Option(Description = "Override the location that the Scheme will be written to", ShortName = "s")]
+        public string OutputFolder { get; }
 
         public CreateScheme(IFileSystem fileSystem, WscWriter wscWriter, IWormsLocator wormsLocator)
         {
@@ -39,35 +36,76 @@ namespace Worms.Commands
 
         public Task<int> OnExecuteAsync(IConsole console)
         {
-            var definition = string.Empty;
+            string name;
+            string definition;
+            string source;
+            var outputFolder = OutputFolder;
 
-            if (string.IsNullOrWhiteSpace(Name))
+            try
             {
-                Logger.Error("No name provided for the scheme being created.");
+                name = ValidateName();
+                (definition, source) = ValidateSchemeDefinition(console);
+                outputFolder = ValidateOutputFolder(outputFolder);
+            }
+            catch (ConfigurationException exception)
+            {
+                Logger.Error(exception.Message);
+                return Task.FromResult(1);
             }
 
-            if (!string.IsNullOrWhiteSpace(FilePath))
-            {
-                definition = _fileSystem.File.ReadAllText(FilePath);
-            }
-            else if (console.IsInputRedirected)
-            {
-                definition = console.In.ReadToEnd();
-            }
-            else
-            {
-                Logger.Error("No scheme definition provided");
-                Task.FromResult(1);
-            }
-
-            var gameInfo = _wormsLocator.Find();
-
+            Logger.Verbose($"Reading definition from {source}");
             var schemeReader = new SchemeTextReader();
             var scheme = schemeReader.GetModel(definition);
 
-            _wscWriter.WriteModel(scheme, _fileSystem.Path.Combine(gameInfo.SchemesFolder , Name + ".wsc"));
+            var outputFilePath = _fileSystem.Path.Combine(outputFolder, name + ".wsc");
+            Logger.Verbose($"Writing scheme to {outputFilePath}");
+            _wscWriter.WriteModel(scheme, outputFilePath);
 
             return Task.FromResult(0);
+        }
+
+        private string ValidateOutputFolder(string outputFolder)
+        {
+            if (string.IsNullOrWhiteSpace(OutputFolder))
+            {
+                var gameInfo = _wormsLocator.Find();
+                outputFolder = gameInfo.SchemesFolder;
+            }
+
+            if (_fileSystem.Directory.Exists(outputFolder))
+            {
+                return outputFolder;
+            }
+
+            Logger.Information($"Output folder ({outputFolder}) does not exit. It will be created.");
+            _fileSystem.Directory.CreateDirectory(outputFolder);
+
+            return outputFolder;
+        }
+
+        private (string, string) ValidateSchemeDefinition(IConsole console)
+        {
+            if (!string.IsNullOrWhiteSpace(FilePath))
+            {
+                return (_fileSystem.File.ReadAllText(FilePath), $"file: + {FilePath}");
+            }
+
+            if (console.IsInputRedirected)
+            {
+                return (console.In.ReadToEnd(), "std in");
+            }
+
+            throw new ConfigurationException("No scheme definition provided");
+        }
+
+        private string ValidateName()
+        {
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                return Name;
+            }
+
+            throw new ConfigurationException("No name provided for the scheme being created.");
         }
     }
 }
