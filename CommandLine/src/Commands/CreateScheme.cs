@@ -18,14 +18,14 @@ namespace Worms.Commands
         private readonly WscWriter _wscWriter;
         private readonly IWormsLocator _wormsLocator;
 
-        [Option(Description = "The name for the created Scheme", ShortName = "n")]
+        [Option(Description = "Name for the Scheme", ShortName = "n")]
         public string Name { get; }
 
-        [Option(Description = "The file to load the scheme definition from", ShortName = "f")]
-        public string FilePath { get; }
+        [Option(Description = "File to load the Scheme definition from", ShortName = "f")]
+        public string File { get; }
 
-        [Option(Description = "Override the location that the Scheme will be written to", ShortName = "s")]
-        public string OutputFolder { get; }
+        [Option(Description = "Override the folder that the Scheme will be created in", ShortName = "r")]
+        public string ResourceFolder { get; }
 
         public CreateScheme(IFileSystem fileSystem, WscWriter wscWriter, IWormsLocator wormsLocator)
         {
@@ -39,7 +39,7 @@ namespace Worms.Commands
             string name;
             string definition;
             string source;
-            var outputFolder = OutputFolder;
+            var outputFolder = ResourceFolder;
 
             try
             {
@@ -53,12 +53,12 @@ namespace Worms.Commands
                 return Task.FromResult(1);
             }
 
-            Logger.Verbose($"Reading definition from {source}");
+            Logger.Verbose($"Reading Scheme definition from {source}");
             var schemeReader = new SchemeTextReader();
             var scheme = schemeReader.GetModel(definition);
 
             var outputFilePath = _fileSystem.Path.Combine(outputFolder, name + ".wsc");
-            Logger.Verbose($"Writing scheme to {outputFilePath}");
+            Logger.Information($"Writing Scheme to {outputFilePath}");
             _wscWriter.WriteModel(scheme, outputFilePath);
 
             return Task.FromResult(0);
@@ -66,9 +66,16 @@ namespace Worms.Commands
 
         private string ValidateOutputFolder(string outputFolder)
         {
-            if (string.IsNullOrWhiteSpace(OutputFolder))
+            if (string.IsNullOrWhiteSpace(ResourceFolder))
             {
                 var gameInfo = _wormsLocator.Find();
+
+                if (!gameInfo.IsInstalled)
+                {
+                    throw new ConfigurationException(
+                        "Worms is not installed. Use the --resource-folder option to specify where the Scheme should be created");
+                }
+
                 outputFolder = gameInfo.SchemesFolder;
             }
 
@@ -85,9 +92,9 @@ namespace Worms.Commands
 
         private (string, string) ValidateSchemeDefinition(IConsole console)
         {
-            if (!string.IsNullOrWhiteSpace(FilePath))
+            if (!string.IsNullOrWhiteSpace(File))
             {
-                return (_fileSystem.File.ReadAllText(FilePath), $"file: + {FilePath}");
+                return (_fileSystem.File.ReadAllText(File), $"file: + {File}");
             }
 
             if (console.IsInputRedirected)
@@ -95,7 +102,7 @@ namespace Worms.Commands
                 return (console.In.ReadToEnd(), "std in");
             }
 
-            throw new ConfigurationException("No scheme definition provided");
+            throw new ConfigurationException("No Scheme definition provided. Provide the definition using std in or the --file option");
         }
 
         private string ValidateName()
@@ -105,7 +112,7 @@ namespace Worms.Commands
                 return Name;
             }
 
-            throw new ConfigurationException("No name provided for the scheme being created.");
+            throw new ConfigurationException("No name provided for the Scheme being created.");
         }
     }
 }
