@@ -20,9 +20,9 @@ namespace Worms.Commands
 
         [Argument(
             0,
+            Name = "name",
             Description =
-                "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported",
-            Name = "name")]
+                "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported")]
         public string Name { get; }
 
         public GetScheme(ISchemesRetriever schemesRetriever, IResourcePrinter<SchemeResource> printer)
@@ -37,13 +37,14 @@ namespace Worms.Commands
             {
                 var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
                 PrintScheme(Name, console.Out, windowWidth);
-                return Task.FromResult(0);
             }
-            catch (ArgumentException exception)
+            catch (ConfigurationException exception)
             {
                 Logger.Error(exception.Message);
                 return Task.FromResult(1);
             }
+
+            return Task.FromResult(0);
         }
 
         private void PrintScheme(string name, TextWriter writer, int outputMaxWidth)
@@ -57,8 +58,7 @@ namespace Worms.Commands
                 switch (matches.Count)
                 {
                     case 0:
-                        Logger.Error($"No Scheme found with name: {name}");
-                        break;
+                        throw new ConfigurationException($"No Scheme found with name: {name}");
                     case 1:
                         _printer.Print(writer, matches.Single(), outputMaxWidth);
                         break;
