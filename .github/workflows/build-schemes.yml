@@ -1,0 +1,37 @@
+name: Schemes
+
+on:
+  push:
+    paths:
+    - "Schemes/**"
+
+jobs:
+  create-wscs:
+    name: Create .wsc files
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Build
+      run: cd Schemes; make schemes
+    - name: Upload .wsc files
+      uses: actions/upload-artifact@v1
+      with:
+        name: RGSchemes
+        path: Schemes/.artifacts/
+
+  release:
+    name: Create GitHub Release for .wsc files
+    needs: create-wscs
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Download .wscs
+      uses: actions/download-artifact@v1
+      with:
+        name: RGSchemes
+        path: Schemes/.artifacts/
+    - name: Release
+      run: cd Schemes; make release-github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
