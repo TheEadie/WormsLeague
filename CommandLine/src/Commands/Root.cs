@@ -9,6 +9,7 @@ namespace Worms.Commands
     [Command("worms", Description = "Worms CLI")]
     [Subcommand(typeof(Get))]
     [Subcommand(typeof(Create))]
+    [Subcommand(typeof(Delete))]
     [Subcommand(typeof(Version))]
     [Subcommand(typeof(Update))]
     [Subcommand(typeof(Host))]
