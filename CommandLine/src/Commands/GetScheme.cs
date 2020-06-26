@@ -12,7 +12,7 @@ using Worms.Resources.Schemes;
 
 namespace Worms.Commands
 {
-    [Command("scheme", "schemes", Description = "Retrieves information for Worms Schemes (.wsc files)")]
+    [Command("scheme", "schemes", "wsc", Description = "Retrieves information for Worms Schemes (.wsc files)")]
     internal class GetScheme : CommandBase
     {
         private readonly ISchemesRetriever _schemesRetriever;

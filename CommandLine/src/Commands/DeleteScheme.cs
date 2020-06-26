@@ -10,7 +10,7 @@ using Worms.WormsArmageddon.Schemes.WscFiles;
 
 namespace Worms.Commands
 {
-    [Command("scheme", "schemes", Description = "Delete Worms Schemes (.wsc files)")]
+    [Command("scheme", "schemes", "wsc", Description = "Delete Worms Schemes (.wsc files)")]
     internal class DeleteScheme : CommandBase
     {
         private readonly IFileSystem _fileSystem;

@@ -13,7 +13,7 @@ using Worms.WormsArmageddon.Schemes.WscFiles;
 
 namespace Worms.Commands
 {
-    [Command("scheme", "schemes", Description = "Create Worms Schemes (.wsc files)")]
+    [Command("scheme", "schemes", "wsc", Description = "Create Worms Schemes (.wsc files)")]
     internal class CreateScheme : CommandBase
     {
         private readonly IFileSystem _fileSystem;
