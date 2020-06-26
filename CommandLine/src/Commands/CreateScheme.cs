@@ -1,8 +1,10 @@
+using System;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Resources.Schemes;
 using Worms.WormsArmageddon;
+using Worms.WormsArmageddon.Schemes;
 using Worms.WormsArmageddon.Schemes.WscFiles;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
@@ -53,9 +55,19 @@ namespace Worms.Commands
                 return Task.FromResult(1);
             }
 
-            Logger.Verbose($"Reading Scheme definition from {source}");
-            var schemeReader = new SchemeTextReader();
-            var scheme = schemeReader.GetModel(definition);
+            Scheme scheme;
+
+            try
+            {
+                Logger.Verbose($"Reading Scheme definition from {source}");
+                var schemeReader = new SchemeTextReader();
+                scheme = schemeReader.GetModel(definition);
+            }
+            catch (FormatException exception)
+            {
+                Logger.Error("Failed to read Scheme definition: " + exception.Message);
+                return Task.FromResult(1);
+            }
 
             var outputFilePath = _fileSystem.Path.Combine(outputFolder, name + ".wsc");
             Logger.Information($"Writing Scheme to {outputFilePath}");
