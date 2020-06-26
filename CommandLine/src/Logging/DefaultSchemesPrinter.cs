@@ -33,9 +33,6 @@ namespace Worms.Logging
         public void Print(TextWriter writer, SchemeResource item, int outputMaxWidth)
         {
             WriteHeader(writer, "GENERAL");
-            WriteItem(writer, "Name", item.Name);
-            WriteItem(writer, "Context", item.Context);
-            writer.WriteLine();
             WriteItem(writer, "Hot seat delay", item.Details.HotSeatDelay);
             WriteItem(writer, "Retreat time", item.Details.RetreatTime, "Seconds");
             WriteItem(writer, "Rope retreat time", item.Details.RopeRetreatTime, "Seconds");
