@@ -20,7 +20,7 @@ namespace Worms.Commands
         private readonly WscWriter _wscWriter;
         private readonly IWormsLocator _wormsLocator;
 
-        [Option(Description = "Name for the Scheme", ShortName = "n")]
+        [Argument(0, Name = "name", Description = "The name of the Scheme to be created")]
         public string Name { get; }
 
         [Option(Description = "File to load the Scheme definition from", ShortName = "f")]
