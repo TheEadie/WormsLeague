@@ -1,7 +1,9 @@
 #!/bin/bash
-source `dirname "$0"`/private/logging.sh
-source `dirname "$0"`/private/release-github.sh
-source `dirname "$0"`/private/calculate-version.sh
+ScriptDir="${BASH_SOURCE%/*}"
+SharedScripts="$ScriptDir/../../.build/shared"
+source "$SharedScripts/logging.sh"
+source "$SharedScripts/release-github.sh"
+source "$SharedScripts/calculate-version.sh"
 
 # Input
 GitHubToken=$1
@@ -9,4 +11,4 @@ GitHubRepo=$2
 ReleaseDir=$3
 
 GetVersionFromBuildArtifact $ReleaseDir
-CreateGitHubRelease $Version_MajorMinorPatch $GitHubToken $GitHubRepo $ReleaseDir
+CreateGitHubRelease "Redgate Schemes v$Version_MajorMinorPatch" "schemes/v$Version_MajorMinorPatch" "$GitHubToken" "$GitHubRepo" "$ReleaseDir"

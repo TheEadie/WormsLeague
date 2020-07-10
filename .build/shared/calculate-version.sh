@@ -1,5 +1,6 @@
 #!/bin/bash
-source `dirname "$0"`/private/logging.sh
+ScriptDir="${BASH_SOURCE%/*}"
+source "$ScriptDir/logging.sh"
 
 # Input
 DockerImage_GitVersion="gittools/gitversion:5.3.4-linux-alpine.3.10-x64-netcoreapp3.1"

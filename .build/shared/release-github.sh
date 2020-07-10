@@ -1,14 +1,16 @@
 #!/bin/bash
-source `dirname "$0"`/private/logging.sh
+ScriptDir="${BASH_SOURCE%/*}"
+source "$ScriptDir/logging.sh"
 
 CreateGitHubRelease ()
 {
-    local Version=$1
-    local GitHubToken=$2
-    local GitHubRepo=$3
-    local ReleaseDir=$4
+    local ReleaseName=$1
+    local Tag=$2
+    local GitHubToken=$3
+    local GitHubRepo=$4
+    local ReleaseDir=$5
 
-    WriteHeading "Creating GitHub Release v$Version..."
+    WriteHeading "Creating GitHub Release $ReleaseName..."
     WriteVerbose "Calling - https://api.github.com/repos/$GitHubRepo/releases"
 
     CreateReleaseResponse=$(curl --request POST \
@@ -16,9 +18,9 @@ CreateGitHubRelease ()
         --header "authorization: Bearer $GitHubToken" \
         --header "content-type: application/json" \
         --data '{
-                    "tag_name": "schemes/v'$Version'",
+                    "tag_name": "'$Tag'",
                     "target_commitish": "master",
-                    "name": "Redgate Schemes v'$Version'",
+                    "name": "'$ReleaseName'",
                     "body": "",
                     "draft": false,
                     "prerelease": false }')
