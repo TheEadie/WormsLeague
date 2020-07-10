@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 ScriptDir="${BASH_SOURCE%/*}"
 SharedScripts="$ScriptDir/../../.build/shared"
 source "$SharedScripts/logging.sh"
