@@ -56,6 +56,11 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+    - name: Download build
+      uses: actions/download-artifact@v1
+      with:
+        name: linux-musl-x64
+        path: CommandLine/.artifacts/linux-musl-x64/
     - name: Build
       run: cd CommandLine; make docker-build
 
