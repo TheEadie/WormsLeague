@@ -4,6 +4,7 @@ on:
   push:
     paths:
     - "CommandLine/**"
+    - ".build/**"
 
 jobs:
   build-cli-windows:

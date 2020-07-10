@@ -4,6 +4,7 @@ on:
   push:
     paths:
     - "Schemes/**"
+    - ".build/**"
 
 jobs:
   build:
