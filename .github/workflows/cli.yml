@@ -4,10 +4,11 @@ on:
   push:
     paths:
     - "CommandLine/**"
+    - ".build/**"
 
 jobs:
   build-cli-windows:
-    name: Build CLI - Windows
+    name: Build - Windows
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -21,7 +22,7 @@ jobs:
         path: CommandLine/.artifacts/win-x64/
 
   build-cli-linux-x64:
-    name: Build CLI - Linux
+    name: Build - Linux
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -35,7 +36,7 @@ jobs:
         path: CommandLine/.artifacts/linux-x64/
 
   build-cli-linux-musl-x64:
-    name: Build CLI - Alpine
+    name: Build - Alpine
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -49,7 +50,7 @@ jobs:
         path: CommandLine/.artifacts/linux-musl-x64/
 
   build-cli-docker:
-    name: Build CLI - Docker
+    name: Build - Docker
     needs: build-cli-linux-musl-x64
     runs-on: ubuntu-latest
     steps:
@@ -59,7 +60,7 @@ jobs:
       run: cd CommandLine; make docker-build
 
   release-cli-github:
-    name: Release CLI - GitHub
+    name: Release - GitHub
     needs: build-cli-windows
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
@@ -75,7 +76,7 @@ jobs:
       run: cd CommandLine; make release-github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
 
   release-cli-dockerhub:
-    name: Release CLI - DockerHub
+    name: Release - DockerHub
     needs: build-cli-docker
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'

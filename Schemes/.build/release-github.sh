@@ -2,15 +2,13 @@
 ScriptDir="${BASH_SOURCE%/*}"
 SharedScripts="$ScriptDir/../../.build/shared"
 source "$SharedScripts/logging.sh"
-source "$SharedScripts/docker.sh"
+source "$SharedScripts/release-github.sh"
 source "$SharedScripts/calculate-version.sh"
 
 # Input
-DockerHubUsername=$1
-DockerHubToken=$2
+GitHubToken=$1
+GitHubRepo=$2
 ReleaseDir=$3
-ImageName=$4
 
 GetVersionFromBuildArtifact $ReleaseDir
-BuildDockerImage $ImageName $Version_Major $Version_Minor $Version_Patch
-PushDockerImages $DockerHubUsername $DockerHubToken $ImageName
+CreateGitHubRelease "Redgate Schemes v$Version_MajorMinorPatch" "schemes/v$Version_MajorMinorPatch" "$GitHubToken" "$GitHubRepo" "$ReleaseDir"

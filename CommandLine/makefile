@@ -8,13 +8,13 @@ DockerImageName = theeadie/wormscli
 all: | windows linux alpine
 
 windows:
-	@.build/publish.sh $(UseDocker) $(OutputDir) "win-x64"
+	@.build/build.sh $(UseDocker) $(OutputDir) "win-x64"
 
 linux:
-	@.build/publish.sh $(UseDocker) $(OutputDir) "linux-x64"
+	@.build/build.sh $(UseDocker) $(OutputDir) "linux-x64"
 
 alpine:
-	@.build/publish.sh $(UseDocker) $(OutputDir) "linux-musl-x64"
+	@.build/build.sh $(UseDocker) $(OutputDir) "linux-musl-x64"
 
 get-version:
 	@.build/get-version.sh $(UseDocker)
@@ -28,7 +28,7 @@ build:
 docker: | alpine docker-build
 
 docker-build:
-	@.build/docker.sh "$(OutputDir)/linux-musl-x64" $(DockerImageName)
+	@.build/build-docker.sh "$(OutputDir)/linux-musl-x64" $(DockerImageName)
 
 help:
 	@echo "Worm CLI"
