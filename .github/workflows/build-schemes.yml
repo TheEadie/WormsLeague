@@ -6,29 +6,29 @@ on:
     - "Schemes/**"
 
 jobs:
-  create-wscs:
-    name: Create .wsc files
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Build
       run: cd Schemes; make schemes
-    - name: Upload .wsc files
+    - name: Upload build
       uses: actions/upload-artifact@v1
       with:
         name: RGSchemes
         path: Schemes/.artifacts/
 
   release:
-    name: Create GitHub Release for .wsc files
-    needs: create-wscs
+    name: Release - GitHub
+    needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Download .wscs
+    - name: Download build
       uses: actions/download-artifact@v1
       with:
         name: RGSchemes
