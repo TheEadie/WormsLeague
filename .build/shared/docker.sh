@@ -1,5 +1,6 @@
 #!/bin/bash
-source `dirname "$0"`/private/logging.sh
+ScriptDir="${BASH_SOURCE%/*}"
+source "$ScriptDir/logging.sh"
 
 BuildDockerImage ()
 {

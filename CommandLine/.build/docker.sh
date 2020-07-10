@@ -1,7 +1,9 @@
 #!/bin/bash
-source `dirname "$0"`/private/logging.sh
-source `dirname "$0"`/private/calculate-version.sh
-source `dirname "$0"`/private/docker.sh
+ScriptDir="${BASH_SOURCE%/*}"
+SharedScripts="$ScriptDir/../../.build/shared"
+source "$SharedScripts/logging.sh"
+source "$SharedScripts/calculate-version.sh"
+source "$SharedScripts/docker.sh"
 
 # Input
 ArtifactDir=$1

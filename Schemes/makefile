@@ -19,6 +19,7 @@ help:
 	@echo "Commands:"
 	@echo "make              - Generate Scheme (.wsc) files for all files"
 	@echo "make schemes      - Generate Scheme (.wsc) files for all files"
+	@echo "make get-version  - Calculate the next version of the Schemes"
 	@echo ""
 	@echo "Options:"
 	@echo "UseDocker=<true|false> - (default:true)              - Should docker be used to get non-dotnet build tools"

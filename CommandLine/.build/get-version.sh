@@ -1,8 +1,10 @@
 #!/bin/bash
-source `dirname "$0"`/private/logging.sh
-source `dirname "$0"`/private/calculate-version.sh
+ScriptDir="${BASH_SOURCE%/*}"
+SharedScripts="$ScriptDir/../../.build/shared"
+source "$SharedScripts/logging.sh"
+source "$SharedScripts/calculate-version.sh"
 
 # Input
 UseDocker=$1
 
-CalculateVersion $UseDocker
+CalculateVersion "$UseDocker" "CommandLine"

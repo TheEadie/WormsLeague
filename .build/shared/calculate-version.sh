@@ -8,11 +8,12 @@ DockerImage_GitVersion="gittools/gitversion:5.3.4-linux-alpine.3.10-x64-netcorea
 GetVersionJson ()
 {
     local UseDocker=$1
+    local SubFolder=$2
 
     if [ $UseDocker = "true" ]
     then
         WriteInfo "GitVersion: Using Docker image - $DockerImage_GitVersion"
-        echo "$(docker run --rm -v "$(pwd)/..:/repo" $DockerImage_GitVersion /repo/Schemes)"
+        echo "$(docker run --rm -v "$(pwd)/..:/repo" $DockerImage_GitVersion /repo/$SubFolder)"
     else
         WriteInfo "GitVersion: Using dotnet global tool"
         dotnet tool install GitVersion.Tool -g
@@ -23,9 +24,10 @@ GetVersionJson ()
 CalculateVersion ()
 {
     local UseDocker=$1
+    local SubFolder=$2
 
     WriteHeading "Calculating version..."
-    Version_Json=$(GetVersionJson $UseDocker)
+    Version_Json=$(GetVersionJson "$UseDocker" "$SubFolder")
 
     # Check if the returned value is json
     if !(jq -e . >/dev/null 2>&1 <<<"$Version_Json"); then

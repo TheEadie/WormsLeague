@@ -7,4 +7,4 @@ source "$SharedScripts/calculate-version.sh"
 # Input
 UseDocker=$1
 
-CalculateVersion $UseDocker
+CalculateVersion "$UseDocker" "Schemes"

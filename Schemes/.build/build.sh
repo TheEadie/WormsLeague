@@ -10,7 +10,7 @@ UseDocker=$1
 OutputDir=$2
 
 # Build
-CalculateVersion $UseDocker
+CalculateVersion $UseDocker "Schemes"
 CleanArtifacts $OutputDir
 
 WriteHeading "Building Schemes v$Version_MajorMinorPatch..."
