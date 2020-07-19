@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-
-namespace Worms.Resources.Schemes
+﻿namespace Worms.Resources.Schemes.Text
 {
     /*public class SchemeTextReader
     {

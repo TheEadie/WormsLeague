@@ -7,6 +7,7 @@ using Worms.Configuration;
 using Worms.League;
 using Worms.Logging;
 using Worms.Resources.Schemes;
+using Worms.Resources.Schemes.Text;
 using Worms.Slack;
 
 namespace Worms.Container
@@ -35,7 +36,7 @@ namespace Worms.Container
             builder.RegisterType<LeagueUpdater>();
 
             // Schemes
-            builder.RegisterType<DefaultSchemesPrinter>().As<IResourcePrinter<SchemeResource>>();
+            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
         }
 

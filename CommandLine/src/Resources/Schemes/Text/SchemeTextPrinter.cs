@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Syroot.Worms.Armageddon;
+using Worms.Logging;
 using Worms.Logging.TableOutput;
-using Worms.Resources.Schemes;
 
-namespace Worms.Logging
+namespace Worms.Resources.Schemes.Text
 {
-    internal class DefaultSchemesPrinter : IResourcePrinter<SchemeResource>
+    internal class SchemeTextPrinter : IResourcePrinter<SchemeResource>
     {
         public void Print(TextWriter writer, IReadOnlyCollection<SchemeResource> items, int outputMaxWidth)
         {
