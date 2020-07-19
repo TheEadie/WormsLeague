@@ -17,12 +17,24 @@ namespace Worms.Logging
             tableBuilder.AddColumn("CONTEXT", items.Select(x => x.Context).ToList());
             tableBuilder.AddColumn("HEALTH", items.Select(x => x.Details.WormEnergy.ToString()).ToList());
             tableBuilder.AddColumn("TURN-TIME", items.Select(x => x.Details.TurnTime + " secs").ToList());
-            tableBuilder.AddColumn("ROUND-TIME", items.Select(x => x.Details.RoundTimeMinutes + " mins").ToList());
+            tableBuilder.AddColumn(
+                "ROUND-TIME",
+                items.Select(x => GetRoundTime(x.Details.RoundTimeMinutes, x.Details.RoundTimeSeconds)).ToList());
             tableBuilder.AddColumn("WORM-SELECT", items.Select(x => x.Details.WormSelect.ToString()).ToList());
             tableBuilder.AddColumn("WEAPONS", items.Select(x => GetWeaponSummary(x.Details.Weapons)).ToList());
 
             var table = tableBuilder.Build();
             TablePrinter.Print(writer, table);
+        }
+
+        private static string GetRoundTime(byte minutes, byte seconds)
+        {
+            if (seconds > 0)
+            {
+                return seconds + "secs";
+            }
+
+            return minutes + "mins";
         }
 
         private static string GetWeaponSummary(Scheme.WeaponList weapons)
@@ -43,7 +55,7 @@ namespace Worms.Logging
         public void Print(TextWriter writer, SchemeResource item, int outputMaxWidth)
         {
             WriteHeader(writer, "GENERAL");
-            WriteItem(writer, "Hot seat delay", item.Details.HotSeatTime);
+            WriteItem(writer, "Hot seat delay", item.Details.HotSeatTime, "Seconds");
             WriteItem(writer, "Retreat time", item.Details.RetreatTime, "Seconds");
             WriteItem(writer, "Rope retreat time", item.Details.RetreatTimeRope, "Seconds");
             WriteItem(writer, "Display total round time", item.Details.ShowRoundTime);
@@ -54,13 +66,13 @@ namespace Worms.Logging
                 writer,
                 "Stockpiling mode",
                 item.Details.Stockpiling,
-                "0 = Replenishing, 1 = Accumulating, 2 = Reducing");
-            WriteItem(writer, "Worms select", item.Details.WormSelect, "0 = Off, 1 = On, 2 = Random");
+                "Off | On | Anti");
+            WriteItem(writer, "Worms select", item.Details.WormSelect, "Sequential | Manual | Random");
             WriteItem(
                 writer,
                 "Sudden death event",
                 item.Details.SuddenDeathEvent,
-                "0 = Leader wins, 1 = Nuclear strike, 2 = HP reduced to 1, 3 = Nothing");
+                "RoundEnd | NuclearStrike | HealthDrop | WaterRise");
             WriteItem(
                 writer,
                 "Sudden death water rise rate",
@@ -83,17 +95,17 @@ namespace Worms.Logging
                 "0-100, See http://worms2d.info/Crate_probability");
             WriteItem(writer, "Health crate energy", item.Details.HealthCrateEnergy);
             WriteItem(writer, "Donor cards", item.Details.DonorCards);
-            WriteItem(
-                writer,
-                "Hazard objects",
-                item.Details.ObjectTypes,
-                "Stores type and number See http://worms2d.info/Hazardous_Objects");
+            WriteItem(writer, "Hazard objects", item.Details.ObjectTypes, "None | Mines | OilDrums | Both");
+            WriteItem(writer, "Max num of hazard objects", item.Details.ObjectCount);
+            WriteItem(writer, "Random mine delay", item.Details.MineDelayRandom, "If set mine delay will be ignored");
             WriteItem(writer, "Mine delay", item.Details.MineDelay);
             WriteItem(writer, "Dud mines", item.Details.DudMines);
-            WriteItem(writer, "Worm placement", item.Details.DudMines, "0 = Auto, 1 = Manual");
+            WriteItem(writer, "Worm placement", item.Details.ManualWormPlacement);
             WriteItem(writer, "Initial worm energy", item.Details.WormEnergy);
-            WriteItem(writer, "Turn time", item.Details.TurnTime, "Seconds, >180 = unlimited");
-            WriteItem(writer, "Round time", item.Details.RoundTimeMinutes, "Minutes, >180 = x-180 Seconds");
+            WriteItem(writer, "Infinite turn time", item.Details.TurnTimeInfinite, "If set turn time will be ignored");
+            WriteItem(writer, "Turn time", item.Details.TurnTime, "Seconds");
+            WriteItem(writer, "Round time (mins)", item.Details.RoundTimeMinutes, "Minutes");
+            WriteItem(writer, "Round time (secs)", item.Details.RoundTimeSeconds, "Seconds");
             WriteItem(writer, "Number of rounds", item.Details.NumberOfWins);
             WriteItem(writer, "Blood", item.Details.Blood);
             WriteItem(writer, "Aqua sheep", item.Details.AquaSheep);
