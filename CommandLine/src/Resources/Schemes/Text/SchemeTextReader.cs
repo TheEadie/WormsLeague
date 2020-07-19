@@ -1,13 +1,17 @@
-﻿namespace Worms.Resources.Schemes.Text
+﻿using System;
+using System.IO;
+using Syroot.Worms.Armageddon;
+
+namespace Worms.Resources.Schemes.Text
 {
-    /*public class SchemeTextReader
+    public class SchemeTextReader : ISchemeTextReader
     {
         public Scheme GetModel(string definition)
         {
+            var scheme = new Scheme();
             using var b = new StringReader(definition);
 
-            const string signature = "SCHM";
-            const int version = 2;
+            scheme.Version = SchemeVersion.Version2;
 
             // Skip over some heading lines
             b.ReadLine();
@@ -15,41 +19,45 @@
             b.ReadLine();
             b.ReadLine();
 
-            var hotSeatDelay = GetInt(b);
-            var retreatTime = GetInt(b);
-            var ropeRetreatTime = GetInt(b);
-            var displayTotalRoundTime = GetBool(b);
-            var automaticReplays = GetBool(b);
-            var fallDamage = GetInt(b);
-            var artilleryMode = GetBool(b);
-            var stockpilingMode = GetByte(b);
-            var wormSelect = GetByte(b);
-            var suddenDeathEvent = GetByte(b);
-            var waterRiseRate = GetInt(b);
-            var weaponCrateProb = GetInt(b);
-            var healthCrateProb = GetInt(b);
-            var utilityCrateProb = GetInt(b);
-            var healthCrateEnergy = GetInt(b);
-            var donorCards = GetBool(b);
-            var hazardObjects = GetInt(b);
-            var mineDelay = GetInt(b);
-            var dudMines = GetBool(b);
-            var wormPlacement = GetBool(b);
-            var initialWormEnergy = GetInt(b);
-            var turnTime = GetInt(b);
-            var roundTime = GetInt(b);
-            var numberOfRounds = GetInt(b);
-            var blood = GetBool(b);
-            var aquaSheep = GetBool(b);
-            var sheepHeaven = GetBool(b);
-            var godWorms = GetBool(b);
-            var indestructibleLand = GetBool(b);
-            var upgradedGrenade = GetBool(b);
-            var upgradedShotgun = GetBool(b);
-            var upgradedClusters = GetBool(b);
-            var upgradedLongbow = GetBool(b);
-            var teamWeapons = GetBool(b);
-            var superWeapons = GetBool(b);
+            scheme.HotSeatTime = GetByte(b);
+            scheme.RetreatTime = GetByte(b);
+            scheme.RetreatTimeRope = GetByte(b);
+            scheme.ShowRoundTime = GetBool(b);
+            scheme.Replays = GetBool(b);
+            scheme.FallDamage = GetByte(b);
+            scheme.ArtilleryMode = GetBool(b);
+            scheme.Stockpiling = GetEnum<Stockpiling>(b);
+            scheme.WormSelect = GetEnum<WormSelect>(b);
+            scheme.SuddenDeathEvent = GetEnum<SuddenDeathEvent>(b);
+            scheme.WaterRiseRate = GetByte(b);
+            scheme.WeaponCrateProb = GetSbyte(b);
+            scheme.HealthCrateProb = GetSbyte(b);
+            scheme.UtilityCrateProb = GetSbyte(b);
+            scheme.HealthCrateEnergy = GetByte(b);
+            scheme.DonorCards = GetBool(b);
+            scheme.ObjectTypes = GetEnum<MapObjectType>(b);
+            scheme.ObjectCount = GetByte(b);
+            scheme.MineDelayRandom = GetBool(b);
+            scheme.MineDelay = GetByte(b);
+            scheme.DudMines = GetBool(b);
+            scheme.ManualWormPlacement = GetBool(b);
+            scheme.WormEnergy = GetByte(b);
+            scheme.TurnTimeInfinite = GetBool(b);
+            scheme.TurnTime = GetByte(b);
+            scheme.RoundTimeMinutes = GetByte(b);
+            scheme.RoundTimeSeconds = GetByte(b);
+            scheme.NumberOfWins = GetByte(b);
+            scheme.Blood = GetBool(b);
+            scheme.AquaSheep = GetBool(b);
+            scheme.SheepHeaven = GetBool(b);
+            scheme.GodWorms = GetBool(b);
+            scheme.IndiLand = GetBool(b);
+            scheme.UpgradeGrenade = GetBool(b);
+            scheme.UpgradeShotgun = GetBool(b);
+            scheme.UpgradeCluster = GetBool(b);
+            scheme.UpgradeLongbow = GetBool(b);
+            scheme.TeamWeapons = GetBool(b);
+            scheme.SuperWeapons = GetBool(b);
 
             // Skip over the middle heading
             b.ReadLine();
@@ -60,32 +68,26 @@
             b.ReadLine();
             b.ReadLine();
 
-            var weapons = new List<Weapon>();
-
-            foreach (var weaponName in Weapons.AllWeapons)
+            foreach (var weaponName in (Weapon[])Enum.GetValues(typeof(Weapon)))
             {
-                var values = GetInts(b);
-                var ammo = values[0];
-                var power = values[1];
-                var delay = values[2];
-                var crateProb = values[3];
-
-                weapons.Add(new Weapon(weaponName, ammo, power, delay, crateProb));
+                var (ammo, power, delay, prob) = GetWeaponDetails(b);
+                scheme.Weapons[weaponName].Ammo = ammo;
+                scheme.Weapons[weaponName].Power = power;
+                scheme.Weapons[weaponName].Delay = delay;
+                scheme.Weapons[weaponName].Prob = prob;
             }
 
-            return new Scheme(signature, version, hotSeatDelay, retreatTime, ropeRetreatTime,
-                displayTotalRoundTime,
-                automaticReplays, fallDamage, artilleryMode, stockpilingMode, wormSelect, suddenDeathEvent,
-                waterRiseRate, weaponCrateProb, donorCards, healthCrateProb, healthCrateEnergy, utilityCrateProb,
-                hazardObjects, mineDelay, dudMines, wormPlacement, initialWormEnergy, turnTime, roundTime,
-                numberOfRounds, blood, aquaSheep, sheepHeaven, godWorms, indestructibleLand, upgradedGrenade,
-                upgradedShotgun, upgradedClusters, upgradedLongbow, teamWeapons, superWeapons,
-                weapons);
+            return scheme;
         }
 
         private static byte GetByte(TextReader b)
         {
             return (byte)GetInt(b);
+        }
+
+        private static sbyte GetSbyte(TextReader b)
+        {
+            return (sbyte)GetInt(b);
         }
 
         private static bool GetBool(TextReader b)
@@ -98,16 +100,20 @@
             return int.Parse(GetValue(b.ReadLine()));
         }
 
-        private static int[] GetInts(TextReader b)
+        private static (sbyte, byte, sbyte, sbyte) GetWeaponDetails(TextReader b)
         {
-            var values = new int[4];
             var line = b.ReadLine();
-            values[0] = int.Parse(GetValue(line.Substring(0, 44)));
-            values[1] = int.Parse(GetValue(line.Substring(44, 10)));
-            values[2] = int.Parse(GetValue(line.Substring(55, 20)));
-            values[3] = int.Parse(GetValue(line.Substring(75, line.Length - 75)));
+            var ammo = (sbyte)int.Parse(GetValue(line.Substring(0, 44)));
+            var power = (byte)int.Parse(GetValue(line.Substring(44, 10)));
+            var delay = (sbyte)int.Parse(GetValue(line.Substring(55, 20)));
+            var prob = (sbyte)int.Parse(GetValue(line.Substring(75, line.Length - 75)));
 
-            return values;
+            return (ammo, power, delay, prob);
+        }
+
+        private static T GetEnum<T>(TextReader b) where T : struct
+        {
+            return Enum.Parse<T>(GetValue(b.ReadLine()));
         }
 
         private static string GetValue(string text)
@@ -117,5 +123,5 @@
             var substring = text.Substring(startIndex, endIndex - startIndex);
             return substring;
         }
-    }*/
+    }
 }
