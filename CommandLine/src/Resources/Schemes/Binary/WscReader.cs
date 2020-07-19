@@ -2,7 +2,7 @@ using Syroot.Worms.Armageddon;
 
 namespace Worms.Resources.Schemes.Binary
 {
-    public class WscReader : IWscReader
+    internal class WscReader : IWscReader
     {
         public Scheme Read(string path)
         {

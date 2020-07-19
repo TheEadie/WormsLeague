@@ -4,7 +4,7 @@ using Syroot.Worms.Armageddon;
 
 namespace Worms.Resources.Schemes.Text
 {
-    public class SchemeTextReader : ISchemeTextReader
+    internal class SchemeTextReader : ISchemeTextReader
     {
         public Scheme GetModel(string definition)
         {
