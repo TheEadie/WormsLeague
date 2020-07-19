@@ -32,7 +32,7 @@ namespace Worms.Resources.Schemes
             foreach (var scheme in _fileSystem.Directory.GetFiles(gameInfo.SchemesFolder, $"{pattern}.wsc"))
             {
                 var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);
-                var details = _wscReader.Read(fileName);
+                var details = _wscReader.Read(scheme);
                 schemes.Add(new SchemeResource(fileName, "local", details));
             }
 
