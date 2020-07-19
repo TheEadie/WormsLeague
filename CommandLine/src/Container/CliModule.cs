@@ -7,6 +7,7 @@ using Worms.Configuration;
 using Worms.League;
 using Worms.Logging;
 using Worms.Resources.Schemes;
+using Worms.Resources.Schemes.Binary;
 using Worms.Resources.Schemes.Text;
 using Worms.Slack;
 
@@ -38,6 +39,8 @@ namespace Worms.Container
             // Schemes
             builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
+            builder.RegisterType<WscReader>().As<IWscReader>();
+            builder.RegisterType<WscWriter>().As<IWscWriter>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)
