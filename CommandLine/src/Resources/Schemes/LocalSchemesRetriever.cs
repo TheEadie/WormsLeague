@@ -1,17 +1,19 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
-using Syroot.Worms.Armageddon;
+using Worms.Resources.Schemes.Binary;
 using Worms.WormsArmageddon;
 
 namespace Worms.Resources.Schemes
 {
     internal class LocalSchemesRetriever : ISchemesRetriever
     {
+        private readonly IWscReader _wscReader;
         private readonly IWormsLocator _wormsLocator;
         private readonly IFileSystem _fileSystem;
 
-        public LocalSchemesRetriever(IWormsLocator wormsLocator, IFileSystem fileSystem)
+        public LocalSchemesRetriever(IWscReader wscReader, IWormsLocator wormsLocator, IFileSystem fileSystem)
         {
+            _wscReader = wscReader;
             _wormsLocator = wormsLocator;
             _fileSystem = fileSystem;
         }
@@ -30,7 +32,7 @@ namespace Worms.Resources.Schemes
             foreach (var scheme in _fileSystem.Directory.GetFiles(gameInfo.SchemesFolder, $"{pattern}.wsc"))
             {
                 var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);
-                var details = new Scheme(scheme);
+                var details = _wscReader.Read(fileName);
                 schemes.Add(new SchemeResource(fileName, "local", details));
             }
 
