@@ -2,10 +2,9 @@ using System;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Syroot.Worms.Armageddon;
 using Worms.Resources.Schemes;
 using Worms.WormsArmageddon;
-using Worms.WormsArmageddon.Schemes;
-using Worms.WormsArmageddon.Schemes.WscFiles;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
@@ -17,7 +16,6 @@ namespace Worms.Commands
     internal class CreateScheme : CommandBase
     {
         private readonly IFileSystem _fileSystem;
-        private readonly WscWriter _wscWriter;
         private readonly IWormsLocator _wormsLocator;
 
         [Argument(0, Name = "name", Description = "The name of the Scheme to be created")]
@@ -29,10 +27,9 @@ namespace Worms.Commands
         [Option(Description = "Override the folder that the Scheme will be created in", ShortName = "r")]
         public string ResourceFolder { get; }
 
-        public CreateScheme(IFileSystem fileSystem, WscWriter wscWriter, IWormsLocator wormsLocator)
+        public CreateScheme(IFileSystem fileSystem, IWormsLocator wormsLocator)
         {
             _fileSystem = fileSystem;
-            _wscWriter = wscWriter;
             _wormsLocator = wormsLocator;
         }
 
@@ -55,6 +52,7 @@ namespace Worms.Commands
                 return Task.FromResult(1);
             }
 
+            /*
             Scheme scheme;
 
             try
@@ -72,6 +70,7 @@ namespace Worms.Commands
             var outputFilePath = _fileSystem.Path.Combine(outputFolder, name + ".wsc");
             Logger.Information($"Writing Scheme to {outputFilePath}");
             _wscWriter.WriteModel(scheme, outputFilePath);
+            */
 
             return Task.FromResult(0);
         }

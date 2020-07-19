@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Worms.WormsArmageddon.Schemes;
 
 namespace Worms.Resources.Schemes
 {
-    public class SchemeTextReader
+    /*public class SchemeTextReader
     {
         public Scheme GetModel(string definition)
         {
@@ -121,5 +120,5 @@ namespace Worms.Resources.Schemes
             var substring = text.Substring(startIndex, endIndex - startIndex);
             return substring;
         }
-    }
+    }*/
 }

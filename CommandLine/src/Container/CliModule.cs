@@ -8,7 +8,6 @@ using Worms.League;
 using Worms.Logging;
 using Worms.Resources.Schemes;
 using Worms.Slack;
-using Worms.WormsArmageddon.Schemes.WscFiles;
 
 namespace Worms.Container
 {
@@ -38,8 +37,6 @@ namespace Worms.Container
             // Schemes
             builder.RegisterType<DefaultSchemesPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
-            builder.RegisterType<WscReader>();
-            builder.RegisterType<WscWriter>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)

@@ -1,4 +1,4 @@
-using Worms.WormsArmageddon.Schemes;
+using Syroot.Worms.Armageddon;
 
 namespace Worms.Resources.Schemes
 {

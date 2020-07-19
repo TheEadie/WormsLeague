@@ -2,7 +2,6 @@ using System.IO.Abstractions;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.WormsArmageddon;
-using Worms.WormsArmageddon.Schemes.WscFiles;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
@@ -19,7 +18,7 @@ namespace Worms.Commands
         [Argument(0, Name = "name", Description = "The name of the Scheme to be deleted")]
         public string Name { get; }
 
-        public DeleteScheme(IFileSystem fileSystem, WscWriter wscWriter, IWormsLocator wormsLocator)
+        public DeleteScheme(IFileSystem fileSystem, IWormsLocator wormsLocator)
         {
             _fileSystem = fileSystem;
             _wormsLocator = wormsLocator;
