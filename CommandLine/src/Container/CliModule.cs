@@ -41,6 +41,7 @@ namespace Worms.Container
             builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
             builder.RegisterType<WscReader>().As<IWscReader>();
             builder.RegisterType<WscWriter>().As<IWscWriter>();
+            builder.RegisterType<SchemeTextReader>().As<ISchemeTextReader>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)
