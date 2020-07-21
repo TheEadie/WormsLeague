@@ -16,7 +16,9 @@ namespace Worms.Resources.Schemes.Text
             tableBuilder.AddColumn("NAME", items.Select(x => x.Name).ToList());
             tableBuilder.AddColumn("CONTEXT", items.Select(x => x.Context).ToList());
             tableBuilder.AddColumn("HEALTH", items.Select(x => x.Details.WormEnergy.ToString()).ToList());
-            tableBuilder.AddColumn("TURN-TIME", items.Select(x => x.Details.TurnTime + " secs").ToList());
+            tableBuilder.AddColumn(
+                "TURN-TIME",
+                items.Select(x => GetTurnTime(x.Details.TurnTimeInfinite, x.Details.TurnTime)).ToList());
             tableBuilder.AddColumn(
                 "ROUND-TIME",
                 items.Select(x => GetRoundTime(x.Details.RoundTimeMinutes, x.Details.RoundTimeSeconds)).ToList());
@@ -27,14 +29,14 @@ namespace Worms.Resources.Schemes.Text
             TablePrinter.Print(writer, table);
         }
 
+        private static string GetTurnTime(bool infinite, byte seconds)
+        {
+            return infinite ? "Infinite" : seconds + " secs";
+        }
+
         private static string GetRoundTime(byte minutes, byte seconds)
         {
-            if (seconds > 0)
-            {
-                return seconds + " secs";
-            }
-
-            return minutes + " mins";
+            return seconds > 0 ? seconds + " secs" : minutes + " mins";
         }
 
         private static string GetWeaponSummary(Scheme.WeaponList weapons)
@@ -45,8 +47,13 @@ namespace Worms.Resources.Schemes.Text
                 var weapon = weapons[weaponName];
                 if (weapon.Ammo > 0)
                 {
-                    summary += $"{weaponName.ToString().Substring(0,2)} ({weapon.Ammo}) ,";
+                    summary += $"{weaponName.ToString().Substring(0,2)}({weapon.Ammo}), ";
                 }
+            }
+
+            if (summary.Length > 0)
+            {
+                summary = summary.Substring(0, summary.Length - 2);
             }
 
             return summary;
