@@ -37,11 +37,12 @@ namespace Worms.Container
             builder.RegisterType<LeagueUpdater>();
 
             // Schemes
-            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
             builder.RegisterType<WscReader>().As<IWscReader>();
             builder.RegisterType<WscWriter>().As<IWscWriter>();
+            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<SchemeTextReader>().As<ISchemeTextReader>();
+            builder.RegisterType<SchemeTextWriter>().As<ISchemeTextWriter>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)
