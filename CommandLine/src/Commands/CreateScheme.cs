@@ -2,10 +2,10 @@ using System;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Resources.Schemes;
+using Syroot.Worms.Armageddon;
+using Worms.Resources.Schemes.Binary;
+using Worms.Resources.Schemes.Text;
 using Worms.WormsArmageddon;
-using Worms.WormsArmageddon.Schemes;
-using Worms.WormsArmageddon.Schemes.WscFiles;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
@@ -16,8 +16,9 @@ namespace Worms.Commands
     [Command("scheme", "schemes", "wsc", Description = "Create Worms Schemes (.wsc files)")]
     internal class CreateScheme : CommandBase
     {
+        private readonly ISchemeTextReader _schemeTextReader;
+        private readonly IWscWriter _wscWriter;
         private readonly IFileSystem _fileSystem;
-        private readonly WscWriter _wscWriter;
         private readonly IWormsLocator _wormsLocator;
 
         [Argument(0, Name = "name", Description = "The name of the Scheme to be created")]
@@ -29,10 +30,11 @@ namespace Worms.Commands
         [Option(Description = "Override the folder that the Scheme will be created in", ShortName = "r")]
         public string ResourceFolder { get; }
 
-        public CreateScheme(IFileSystem fileSystem, WscWriter wscWriter, IWormsLocator wormsLocator)
+        public CreateScheme(ISchemeTextReader schemeTextReader, IWscWriter wscWriter, IFileSystem fileSystem, IWormsLocator wormsLocator)
         {
-            _fileSystem = fileSystem;
+            _schemeTextReader = schemeTextReader;
             _wscWriter = wscWriter;
+            _fileSystem = fileSystem;
             _wormsLocator = wormsLocator;
         }
 
@@ -60,8 +62,7 @@ namespace Worms.Commands
             try
             {
                 Logger.Verbose($"Reading Scheme definition from {source}");
-                var schemeReader = new SchemeTextReader();
-                scheme = schemeReader.GetModel(definition);
+                scheme = _schemeTextReader.GetModel(definition);
             }
             catch (FormatException exception)
             {
@@ -71,7 +72,7 @@ namespace Worms.Commands
 
             var outputFilePath = _fileSystem.Path.Combine(outputFolder, name + ".wsc");
             Logger.Information($"Writing Scheme to {outputFilePath}");
-            _wscWriter.WriteModel(scheme, outputFilePath);
+            _wscWriter.Write(scheme, outputFilePath);
 
             return Task.FromResult(0);
         }

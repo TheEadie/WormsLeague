@@ -7,8 +7,9 @@ using Worms.Configuration;
 using Worms.League;
 using Worms.Logging;
 using Worms.Resources.Schemes;
+using Worms.Resources.Schemes.Binary;
+using Worms.Resources.Schemes.Text;
 using Worms.Slack;
-using Worms.WormsArmageddon.Schemes.WscFiles;
 
 namespace Worms.Container
 {
@@ -36,10 +37,12 @@ namespace Worms.Container
             builder.RegisterType<LeagueUpdater>();
 
             // Schemes
-            builder.RegisterType<DefaultSchemesPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
-            builder.RegisterType<WscReader>();
-            builder.RegisterType<WscWriter>();
+            builder.RegisterType<WscReader>().As<IWscReader>();
+            builder.RegisterType<WscWriter>().As<IWscWriter>();
+            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
+            builder.RegisterType<SchemeTextReader>().As<ISchemeTextReader>();
+            builder.RegisterType<SchemeTextWriter>().As<ISchemeTextWriter>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)
