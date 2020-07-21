@@ -31,10 +31,10 @@ namespace Worms.Resources.Schemes.Text
         {
             if (seconds > 0)
             {
-                return seconds + "secs";
+                return seconds + " secs";
             }
 
-            return minutes + "mins";
+            return minutes + " mins";
         }
 
         private static string GetWeaponSummary(Scheme.WeaponList weapons)
