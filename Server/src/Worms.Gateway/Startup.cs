@@ -1,20 +1,22 @@
-using System.Threading.Tasks;
-using AspNet.Security.OAuth.GitHub;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Text.Json;
-using System.Net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Worms.Gateway.Auth;
 
 namespace Worms.Gateway
 {
     public class Startup
     {
+        private readonly IWebHostEnvironment _env;
+
+        public Startup(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -36,8 +38,12 @@ namespace Worms.Gateway
             {
                 options.AddPolicy("AllowedUsers",
                 policy => policy.RequireClaim("https://davideadie.dev/username", "TheEadie"));
+            });
+
+            if (_env.IsDevelopment())
+            {
+                services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
             }
-            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
