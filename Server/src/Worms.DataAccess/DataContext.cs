@@ -3,13 +3,13 @@ using Worms.DataAccess.Models;
 
 namespace Worms.DataAccess
 {
-    public class DataContext: DbContext
+    internal class DataContext: DbContext
     {
-        public DataContext (DbContextOptions<DataContext> options)
+        public DataContext(DbContextOptions<DataContext> options)
             : base(options)
         {
         }
-        
-        public DbSet<GameEf> Games { get; set; }
+
+        public DbSet<GameDb> Games { get; set; }
     }
 }

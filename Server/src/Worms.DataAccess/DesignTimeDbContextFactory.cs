@@ -5,7 +5,8 @@ using Microsoft.Extensions.Configuration;
 
 namespace Worms.DataAccess
 {
-    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<DataContext> 
+    // ReSharper disable once UnusedType.Global - Used by dotnet ef cli to make migrations
+    internal class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<DataContext> 
     { 
         public DataContext CreateDbContext(string[] args) 
         {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Worms.DataAccess;
+using Worms.DataAccess.Repositories;
 using Worms.Gateway.Auth;
 
 namespace Worms.Gateway
@@ -45,13 +46,12 @@ namespace Worms.Gateway
                 policy => policy.RequireClaim("https://davideadie.dev/username", "TheEadie"));
             });
 
-            services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(_configuration.GetConnectionString("DataContext")));
-
             if (_env.IsDevelopment())
             {
                 services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
             }
+
+            new DataAccessModule(_configuration).ConfigureServices(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
