@@ -6,7 +6,16 @@ namespace Worms.Resources.Schemes.Binary
     {
         public Scheme Read(string path)
         {
-            return new Scheme(path);
+            var scheme = new Scheme(path);
+
+            // This value incorrectly defaults to false in the 3rd party library
+            // when the scheme is Version 1
+            if (scheme.Version == SchemeVersion.Version1)
+            {
+                scheme.Extended.FiringPausesTimer = true;
+            }
+
+            return scheme;
         }
     }
 }

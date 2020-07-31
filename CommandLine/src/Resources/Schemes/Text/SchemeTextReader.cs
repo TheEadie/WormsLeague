@@ -77,6 +77,9 @@ namespace Worms.Resources.Schemes.Text
                 scheme.Weapons[weaponName].Prob = prob;
             }
 
+            // This value incorrectly defaults to false in the 3rd party library
+            scheme.Extended.FiringPausesTimer = true;
+
             return scheme;
         }
 
