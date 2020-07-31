@@ -144,7 +144,6 @@ namespace Worms.Resources.Schemes.Text
             WriteItem(textWriter, "Explosions Cause Fall Damage ", definition.Extended.ExplosionFallDamage);
             WriteItem(textWriter, "Explosions Push All Objects", definition.Extended.ObjectPushByExplosion);
             WriteItem(textWriter, "Undetermined Crates", definition.Extended.UndeterminedCrates);
-            WriteItem(textWriter, "Undetermined Crates", definition.Extended.UndeterminedCrates);
             WriteItem(textWriter, "Undetermined Fuses", definition.Extended.UndeterminedMineFuse);
             WriteItem(textWriter, "Pause Timer While Firing", definition.Extended.FiringPausesTimer);
             WriteItem(textWriter, "Loss of Control Doesn't End Turn", definition.Extended.LoseControlDoesntEndTurn);

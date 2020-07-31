@@ -11,7 +11,7 @@ namespace Worms.Resources.Schemes.Text
             var scheme = new Scheme();
             using var b = new StringReader(definition);
 
-            scheme.Version = SchemeVersion.Version2;
+            scheme.Version = SchemeVersion.Version3;
 
             // Skip over some heading lines
             b.ReadLine();
@@ -77,8 +77,87 @@ namespace Worms.Resources.Schemes.Text
                 scheme.Weapons[weaponName].Prob = prob;
             }
 
-            // This value incorrectly defaults to false in the 3rd party library
-            scheme.Extended.FiringPausesTimer = true;
+            // Skip over the heading
+            b.ReadLine();
+            b.ReadLine();
+            b.ReadLine();
+            b.ReadLine();
+            b.ReadLine();
+            b.ReadLine();
+            b.ReadLine();
+
+            scheme.Extended.ConstantWind = GetBool(b);
+            scheme.Extended.Wind = GetSbyte(b);
+            scheme.Extended.WindBias = GetByte(b);
+            scheme.Extended.Gravity = GetFloat(b);
+            scheme.Extended.Friction = GetFloat(b);
+            scheme.Extended.RopeKnockForce = GetByte(b);
+            scheme.Extended.BloodAmount = GetByte(b);
+            scheme.Extended.RopeUpgrade = GetBool(b);
+            scheme.Extended.GroupPlaceAllies = GetBool(b);
+            scheme.Extended.NoCrateProbability = GetByte(b);
+            scheme.Extended.CrateLimit = GetByte(b);
+            scheme.Extended.SuddenDeathNoWormSelect = GetBool(b);
+            scheme.Extended.SuddenDeathTurnDamage = GetByte(b);
+            scheme.Extended.WormPhasingAlly = GetEnum<WormPhasing>(b);
+            scheme.Extended.WormPhasingEnemy = GetEnum<WormPhasing>(b);
+            scheme.Extended.CircularAim = GetBool(b);
+            scheme.Extended.AntiLockAim = GetBool(b);
+            scheme.Extended.AntiLockPower = GetBool(b);
+            scheme.Extended.WormSelectKeepHotSeat = GetBool(b);
+            scheme.Extended.WormSelectAnytime = GetBool(b);
+            scheme.Extended.BattyRope = GetBool(b);
+            scheme.Extended.RopeRollDrops = GetEnum<RopeRollDrops>(b);
+            scheme.Extended.KeepControlXImpact = GetEnum<XImpactControlLoss>(b);
+            scheme.Extended.KeepControlHeadBump = GetBool(b);
+            scheme.Extended.KeepControlSkim = GetEnum<SkimControlLoss>(b);
+            scheme.Extended.ExplosionFallDamage = GetBool(b);
+            scheme.Extended.ObjectPushByExplosion = GetBool(b);
+            scheme.Extended.UndeterminedCrates = GetBool(b);
+            scheme.Extended.UndeterminedMineFuse = GetBool(b);
+            scheme.Extended.FiringPausesTimer = GetBool(b);
+            scheme.Extended.LoseControlDoesntEndTurn = GetBool(b);
+            scheme.Extended.ShotDoesntEndTurn = GetBool(b);
+            scheme.Extended.ShotDoesntEndTurnAll = GetBool(b);
+            scheme.Extended.DrillImpartsVelocity = GetBool(b);
+            scheme.Extended.GirderRadiusAssist = GetBool(b);
+            scheme.Extended.FlameTurnDecay = GetFloat(b);
+            scheme.Extended.FlameTouchDecay = GetByte(b);
+            scheme.Extended.FlameLimit = GetByte(b);
+            scheme.Extended.ProjectileMaxSpeed = GetByte(b);
+            scheme.Extended.RopeMaxSpeed = GetByte(b);
+            scheme.Extended.JetpackMaxSpeed = GetByte(b);
+            scheme.Extended.GameSpeed = GetByte(b);
+            scheme.Extended.IndianRopeGlitch = GetBool(b);
+            scheme.Extended.HerdDoublingGlitch = GetBool(b);
+            scheme.Extended.JetpackBungeeGlitch = GetBool(b);
+            scheme.Extended.AngleCheatGlitch = GetBool(b);
+            scheme.Extended.GlideGlitch = GetBool(b);
+            scheme.Extended.SkipWalk = GetEnum<SkipWalk>(b);
+            scheme.Extended.Roofing = GetEnum<Roofing>(b);
+            scheme.Extended.FloatingWeaponGlitch = GetBool(b);
+            scheme.Extended.WormBounce = GetFloat(b);
+            scheme.Extended.Viscosity = GetFloat(b);
+            scheme.Extended.ViscosityWorms = GetBool(b);
+            scheme.Extended.RwWind = GetFloat(b);
+            scheme.Extended.RwWindWorms = GetBool(b);
+            scheme.Extended.RwGravityType = GetEnum<RwGravityType>(b);
+            scheme.Extended.RwGravity = GetFloat(b);
+            scheme.Extended.CrateRate = GetByte(b);
+            scheme.Extended.CrateShower = GetBool(b);
+            scheme.Extended.AntiSink = GetBool(b);
+            scheme.Extended.WeaponsDontChange = GetBool(b);
+            scheme.Extended.ExtendedFuse = GetBool(b);
+            scheme.Extended.AutoReaim = GetBool(b);
+            scheme.Extended.TerrainOverlapGlitch = GetBool(b);
+            scheme.Extended.RoundTimeFractional = GetBool(b);
+            scheme.Extended.AutoRetreat = GetBool(b);
+            scheme.Extended.HealthCure = GetEnum<HealthCure>(b);
+            scheme.Extended.KaosMod = GetByte(b);
+            scheme.Extended.SheepHeavenFlags = GetEnum<SheepHeavenFlags>(b);
+            scheme.Extended.ConserveUtilities = GetBool(b);
+            scheme.Extended.ExpediteUtilities = GetBool(b);
+            scheme.Extended.DoubleTimeCount = GetByte(b);
 
             return scheme;
         }
@@ -101,6 +180,11 @@ namespace Worms.Resources.Schemes.Text
         private static int GetInt(TextReader b)
         {
             return int.Parse(GetValue(b.ReadLine()));
+        }
+
+        private static float GetFloat(TextReader b)
+        {
+            return float.Parse(GetValue(b.ReadLine()));
         }
 
         private static (sbyte, byte, sbyte, sbyte) GetWeaponDetails(TextReader b)
