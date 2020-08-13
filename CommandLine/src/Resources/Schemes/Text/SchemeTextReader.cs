@@ -91,11 +91,11 @@ namespace Worms.Resources.Schemes.Text
             scheme.Extended.WindBias = GetByte(b);
             scheme.Extended.Gravity = GetFloat(b);
             scheme.Extended.Friction = GetFloat(b);
-            scheme.Extended.RopeKnockForce = GetByte(b);
-            scheme.Extended.BloodAmount = GetByte(b);
+            scheme.Extended.RopeKnockForce = GetNullableByte(b);
+            scheme.Extended.BloodAmount = GetNullableByte(b);
             scheme.Extended.RopeUpgrade = GetBool(b);
             scheme.Extended.GroupPlaceAllies = GetBool(b);
-            scheme.Extended.NoCrateProbability = GetByte(b);
+            scheme.Extended.NoCrateProbability = GetNullableByte(b);
             scheme.Extended.CrateLimit = GetByte(b);
             scheme.Extended.SuddenDeathNoWormSelect = GetBool(b);
             scheme.Extended.SuddenDeathTurnDamage = GetByte(b);
@@ -112,14 +112,14 @@ namespace Worms.Resources.Schemes.Text
             scheme.Extended.KeepControlHeadBump = GetBool(b);
             scheme.Extended.KeepControlSkim = GetEnum<SkimControlLoss>(b);
             scheme.Extended.ExplosionFallDamage = GetBool(b);
-            scheme.Extended.ObjectPushByExplosion = GetBool(b);
-            scheme.Extended.UndeterminedCrates = GetBool(b);
-            scheme.Extended.UndeterminedMineFuse = GetBool(b);
+            scheme.Extended.ObjectPushByExplosion = GetNullableBool(b);
+            scheme.Extended.UndeterminedCrates = GetNullableBool(b);
+            scheme.Extended.UndeterminedMineFuse = GetNullableBool(b);
             scheme.Extended.FiringPausesTimer = GetBool(b);
             scheme.Extended.LoseControlDoesntEndTurn = GetBool(b);
             scheme.Extended.ShotDoesntEndTurn = GetBool(b);
             scheme.Extended.ShotDoesntEndTurnAll = GetBool(b);
-            scheme.Extended.DrillImpartsVelocity = GetBool(b);
+            scheme.Extended.DrillImpartsVelocity = GetNullableBool(b);
             scheme.Extended.GirderRadiusAssist = GetBool(b);
             scheme.Extended.FlameTurnDecay = GetFloat(b);
             scheme.Extended.FlameTouchDecay = GetByte(b);
@@ -128,8 +128,8 @@ namespace Worms.Resources.Schemes.Text
             scheme.Extended.RopeMaxSpeed = GetByte(b);
             scheme.Extended.JetpackMaxSpeed = GetByte(b);
             scheme.Extended.GameSpeed = GetByte(b);
-            scheme.Extended.IndianRopeGlitch = GetBool(b);
-            scheme.Extended.HerdDoublingGlitch = GetBool(b);
+            scheme.Extended.IndianRopeGlitch = GetNullableBool(b);
+            scheme.Extended.HerdDoublingGlitch = GetNullableBool(b);
             scheme.Extended.JetpackBungeeGlitch = GetBool(b);
             scheme.Extended.AngleCheatGlitch = GetBool(b);
             scheme.Extended.GlideGlitch = GetBool(b);
@@ -149,7 +149,7 @@ namespace Worms.Resources.Schemes.Text
             scheme.Extended.WeaponsDontChange = GetBool(b);
             scheme.Extended.ExtendedFuse = GetBool(b);
             scheme.Extended.AutoReaim = GetBool(b);
-            scheme.Extended.TerrainOverlapGlitch = GetBool(b);
+            scheme.Extended.TerrainOverlapGlitch = GetNullableBool(b);
             scheme.Extended.RoundTimeFractional = GetBool(b);
             scheme.Extended.AutoRetreat = GetBool(b);
             scheme.Extended.HealthCure = GetEnum<HealthCure>(b);
@@ -167,6 +167,18 @@ namespace Worms.Resources.Schemes.Text
             return (byte)GetInt(b);
         }
 
+        private static byte? GetNullableByte(TextReader b)
+        {
+            var value = GetValue(b.ReadLine());
+
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            return (byte)GetInt(b);
+        }
+
         private static sbyte GetSbyte(TextReader b)
         {
             return (sbyte)GetInt(b);
@@ -175,6 +187,18 @@ namespace Worms.Resources.Schemes.Text
         private static bool GetBool(TextReader b)
         {
             return bool.Parse(GetValue(b.ReadLine()));
+        }
+
+        private static bool? GetNullableBool(TextReader b)
+        {
+            var value = GetValue(b.ReadLine());
+
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            return bool.Parse(value);
         }
 
         private static int GetInt(TextReader b)
