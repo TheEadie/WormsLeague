@@ -1,6 +1,6 @@
-///////////////////
-// GENERAL       //
-///////////////////
+//////////////////////
+// GENERAL          //
+//////////////////////
 
 Hot seat delay:                         [5] (Seconds)
 Retreat time:                           [3] (Seconds)
@@ -42,9 +42,9 @@ Upgraded longbow:                       [False]
 Team weapons:                           [False] (Teams will start the match with their preselected team weapon)
 Super weapons:                          [True] (Super weapons may appear in crates)
 
-///////////////////
-// WEAPONS       //
-///////////////////
+//////////////////////
+// WEAPONS          //
+//////////////////////
 
 (See http://worms2d.info/Weapons for what various power settings will do)
 
@@ -112,3 +112,82 @@ SuicideBomber                 Ammo: [0]    Power: [0]    Delay: [0]    Crate pro
 SheepStrike                   Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
 MailStrike                    Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
 Armageddon                    Ammo: [0]    Power: [0]    Delay: [0]    Crate probability: [0]
+
+//////////////////////
+// EXTENDED OPTIONS //
+//////////////////////
+
+(See https://worms2d.info/Game_scheme_file for docs)
+
+Constant Wind:                          [False]
+Wind:                                   [100]
+Wind Bias:                              [15]
+Gravity:                                [0.23999023]
+Terrain Friction:                       [0.95999146]
+Rope Knocking:                          []
+Blood Level:                            []
+Unrestrict Rope:                        [False]
+Auto-Place Worms by Ally:               [False]
+No-Crate Probability:                   []
+Maximum Crate Count on Map:             [5]
+Sudden Death Disables Worm Select:      [True]
+Sudden Death Worm Damage Per Turn:      [5]
+Phased Worms (Allied):                  [None] (None | Worms | WormsWeapons | WormsWeaponsDamage)
+Phased Worms (Enemy):                   [None] (None | Worms | WormsWeapons | WormsWeaponsDamage)
+Circular Aim:                           [False]
+Anti-Lock Aim:                          [False]
+Anti-Lock Power:                        [False]
+Worm Selection Doesn't End Hot Seat:    [False]
+Worm Selection is Never Cancelled:      [False]
+Batty Rope:                             [False]
+Rope-Roll Drops:                        [None] (None | Rope | RopeJump)
+X-Impact Loss of Control:               [Loss] (Loss | Kept)
+Keep Control After Bumping Head:        [False]
+Keep Control After Skimming:            [Lost] (Lost | Kept | KeptWithRope)
+Explosions Cause Fall Damage :          [False]
+Explosions Push All Objects:            []
+Undetermined Crates:                    []
+Undetermined Fuses:                     []
+Pause Timer While Firing:               [True]
+Loss of Control Doesn't End Turn:       [False]
+Weapon Use Doesn't End Turn:            [False]
+Above option doesn't block any weapons: [False]
+Pneumatic Drill Imparts Velocity:       []
+Girder Radius Assist:                   [False]
+Petrol Turn Decay:                      [0.19998169]
+Petrol Touch Decay:                     [30]
+Maximum Flamelet Count:                 [200]
+Maximum Projectile Speed:               [32]
+Maximum Rope Speed:                     [16]
+Maximum Jet Pack Speed:                 [5]
+Game Engine Speed:                      [1]
+Indian Rope Glitch:                     []
+Herd-Doubling Glitch:                   []
+Jet Pack Bungee Glitch:                 [True]
+Angle Cheat Glitch:                     [True]
+Glide Glitch:                           [True]
+Skipwalking:                            [Default] (Default | Facilitated | Disabled)
+Block Roofing:                          [Default] (Default | Up | UpSide)
+Floating Weapon Glitch:                 [True]
+RubberWorm Bounciness:                  [0]
+RubberWorm Air Viscosity:               [0]
+RubberWorm Air Viscosity to Worms:      [False]
+RubberWorm Wind Influence:              [0]
+RubberWorm Wind Influence to Worms:     [False]
+RubberWorm Gravity Type:                [None] (None | Default | BlackHoleConstant | BlackHoleLinear)
+RubberWorm Gravity Strength:            [1]
+RubberWorm Crate Rate:                  [0]
+RubberWorm Crate Shower:                [False]
+RubberWorm Anti-Sink:                   [False]
+RubberWorm Remember Weapons:            [False]
+RubberWorm Extended Fuses/Herds:        [False]
+RubberWorm Anti-Lock Aim:               [False]
+Terrain Overlap Phasing Glitch:         []
+Fractional Round Timer:                 [False]
+Automatic End-of-Turn Retreat:          [False]
+Health Crates Cure Poison:              [Team] (Single | Team | Allies | Nobody)
+RubberWorm Kaos Mod:                    [0]
+Sheep Heaven's Gate:                    [All]
+Conserve Instant Utilities:             [False]
+Expedite Instant Utilities:             [False]
+Double Time Stack Limit:                [1]
