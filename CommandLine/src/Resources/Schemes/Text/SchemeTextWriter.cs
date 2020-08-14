@@ -110,6 +110,85 @@ namespace Worms.Resources.Schemes.Text
                     + weapon.Prob
                     + "]");
             }
+
+            textWriter.WriteLine();
+            WriteHeader(textWriter, "EXTENDED OPTIONS");
+            textWriter.WriteLine("(See https://worms2d.info/Game_scheme_file for docs)");
+            textWriter.WriteLine();
+
+            WriteItem(textWriter, "Constant Wind", definition.Extended.ConstantWind);
+            WriteItem(textWriter, "Wind", definition.Extended.Wind);
+            WriteItem(textWriter, "Wind Bias", definition.Extended.WindBias);
+            WriteItem(textWriter, "Gravity", definition.Extended.Gravity);
+            WriteItem(textWriter, "Terrain Friction", definition.Extended.Friction);
+            WriteItem(textWriter, "Rope Knocking", definition.Extended.RopeKnockForce);
+            WriteItem(textWriter, "Blood Level", definition.Extended.BloodAmount);
+            WriteItem(textWriter, "Unrestrict Rope", definition.Extended.RopeUpgrade);
+            WriteItem(textWriter, "Auto-Place Worms by Ally", definition.Extended.GroupPlaceAllies);
+            WriteItem(textWriter, "No-Crate Probability", definition.Extended.NoCrateProbability);
+            WriteItem(textWriter, "Maximum Crate Count on Map", definition.Extended.CrateLimit);
+            WriteItem(textWriter, "Sudden Death Disables Worm Select", definition.Extended.SuddenDeathNoWormSelect);
+            WriteItem(textWriter, "Sudden Death Worm Damage Per Turn", definition.Extended.SuddenDeathTurnDamage);
+            WriteItem(textWriter, "Phased Worms (Allied)", definition.Extended.WormPhasingAlly, "None | Worms | WormsWeapons | WormsWeaponsDamage");
+            WriteItem(textWriter, "Phased Worms (Enemy)", definition.Extended.WormPhasingEnemy, "None | Worms | WormsWeapons | WormsWeaponsDamage");
+            WriteItem(textWriter, "Circular Aim", definition.Extended.CircularAim);
+            WriteItem(textWriter, "Anti-Lock Aim", definition.Extended.AntiLockAim);
+            WriteItem(textWriter, "Anti-Lock Power", definition.Extended.AntiLockPower);
+            WriteItem(textWriter, "Worm Selection Doesn't End Hot Seat", definition.Extended.WormSelectKeepHotSeat);
+            WriteItem(textWriter, "Worm Selection is Never Cancelled", definition.Extended.WormSelectAnytime);
+            WriteItem(textWriter, "Batty Rope", definition.Extended.BattyRope);
+            WriteItem(textWriter, "Rope-Roll Drops", definition.Extended.RopeRollDrops, "None | Rope | RopeJump");
+            WriteItem(textWriter, "X-Impact Loss of Control", definition.Extended.KeepControlXImpact, "Loss | Kept");
+            WriteItem(textWriter, "Keep Control After Bumping Head", definition.Extended.KeepControlHeadBump);
+            WriteItem(textWriter, "Keep Control After Skimming", definition.Extended.KeepControlSkim, "Lost | Kept | KeptWithRope");
+            WriteItem(textWriter, "Explosions Cause Fall Damage ", definition.Extended.ExplosionFallDamage);
+            WriteItem(textWriter, "Explosions Push All Objects", definition.Extended.ObjectPushByExplosion);
+            WriteItem(textWriter, "Undetermined Crates", definition.Extended.UndeterminedCrates);
+            WriteItem(textWriter, "Undetermined Fuses", definition.Extended.UndeterminedMineFuse);
+            WriteItem(textWriter, "Pause Timer While Firing", definition.Extended.FiringPausesTimer);
+            WriteItem(textWriter, "Loss of Control Doesn't End Turn", definition.Extended.LoseControlDoesntEndTurn);
+            WriteItem(textWriter, "Weapon Use Doesn't End Turn", definition.Extended.ShotDoesntEndTurn);
+            WriteItem(textWriter, "Above option doesn't block any weapons", definition.Extended.ShotDoesntEndTurnAll);
+            WriteItem(textWriter, "Pneumatic Drill Imparts Velocity", definition.Extended.DrillImpartsVelocity);
+            WriteItem(textWriter, "Girder Radius Assist", definition.Extended.GirderRadiusAssist);
+            WriteItem(textWriter, "Petrol Turn Decay", definition.Extended.FlameTurnDecay);
+            WriteItem(textWriter, "Petrol Touch Decay", definition.Extended.FlameTouchDecay);
+            WriteItem(textWriter, "Maximum Flamelet Count", definition.Extended.FlameLimit);
+            WriteItem(textWriter, "Maximum Projectile Speed", definition.Extended.ProjectileMaxSpeed);
+            WriteItem(textWriter, "Maximum Rope Speed", definition.Extended.RopeMaxSpeed);
+            WriteItem(textWriter, "Maximum Jet Pack Speed", definition.Extended.JetpackMaxSpeed);
+            WriteItem(textWriter, "Game Engine Speed", definition.Extended.GameSpeed);
+            WriteItem(textWriter, "Indian Rope Glitch", definition.Extended.IndianRopeGlitch);
+            WriteItem(textWriter, "Herd-Doubling Glitch", definition.Extended.HerdDoublingGlitch);
+            WriteItem(textWriter, "Jet Pack Bungee Glitch", definition.Extended.JetpackBungeeGlitch);
+            WriteItem(textWriter, "Angle Cheat Glitch", definition.Extended.AngleCheatGlitch);
+            WriteItem(textWriter, "Glide Glitch", definition.Extended.GlideGlitch);
+            WriteItem(textWriter, "Skipwalking", definition.Extended.SkipWalk, "Default | Facilitated | Disabled");
+            WriteItem(textWriter, "Block Roofing", definition.Extended.Roofing, "Default | Up | UpSide");
+            WriteItem(textWriter, "Floating Weapon Glitch", definition.Extended.FloatingWeaponGlitch);
+            WriteItem(textWriter, "RubberWorm Bounciness", definition.Extended.WormBounce);
+            WriteItem(textWriter, "RubberWorm Air Viscosity", definition.Extended.Viscosity);
+            WriteItem(textWriter, "RubberWorm Air Viscosity to Worms", definition.Extended.ViscosityWorms);
+            WriteItem(textWriter, "RubberWorm Wind Influence", definition.Extended.RwWind);
+            WriteItem(textWriter, "RubberWorm Wind Influence to Worms", definition.Extended.RwWindWorms);
+            WriteItem(textWriter, "RubberWorm Gravity Type", definition.Extended.RwGravityType, "None | Default | BlackHoleConstant | BlackHoleLinear");
+            WriteItem(textWriter, "RubberWorm Gravity Strength", definition.Extended.RwGravity);
+            WriteItem(textWriter, "RubberWorm Crate Rate", definition.Extended.CrateRate);
+            WriteItem(textWriter, "RubberWorm Crate Shower", definition.Extended.CrateShower);
+            WriteItem(textWriter, "RubberWorm Anti-Sink", definition.Extended.AntiSink);
+            WriteItem(textWriter, "RubberWorm Remember Weapons", definition.Extended.WeaponsDontChange);
+            WriteItem(textWriter, "RubberWorm Extended Fuses/Herds", definition.Extended.ExtendedFuse);
+            WriteItem(textWriter, "RubberWorm Anti-Lock Aim", definition.Extended.AutoReaim);
+            WriteItem(textWriter, "Terrain Overlap Phasing Glitch", definition.Extended.TerrainOverlapGlitch);
+            WriteItem(textWriter, "Fractional Round Timer", definition.Extended.RoundTimeFractional);
+            WriteItem(textWriter, "Automatic End-of-Turn Retreat", definition.Extended.AutoRetreat);
+            WriteItem(textWriter, "Health Crates Cure Poison", definition.Extended.HealthCure, "Single | Team | Allies | Nobody");
+            WriteItem(textWriter, "RubberWorm Kaos Mod", definition.Extended.KaosMod);
+            WriteItem(textWriter, "Sheep Heaven's Gate", definition.Extended.SheepHeavenFlags);
+            WriteItem(textWriter, "Conserve Instant Utilities", definition.Extended.ConserveUtilities);
+            WriteItem(textWriter, "Expedite Instant Utilities", definition.Extended.ExpediteUtilities);
+            WriteItem(textWriter, "Double Time Stack Limit", definition.Extended.DoubleTimeCount);
+
         }
 
         private static void WriteItem(TextWriter writer, string description, object value, string comment = null)
@@ -126,9 +205,9 @@ namespace Worms.Resources.Schemes.Text
 
         private static void WriteHeader(TextWriter writer, string heading)
         {
-            writer.WriteLine("///////////////////");
-            writer.WriteLine($"// {heading}".PadRight(17) + "//");
-            writer.WriteLine("///////////////////");
+            writer.WriteLine("//////////////////////");
+            writer.WriteLine($"// {heading}".PadRight(20) + "//");
+            writer.WriteLine("//////////////////////");
             writer.WriteLine("");
         }
     }
