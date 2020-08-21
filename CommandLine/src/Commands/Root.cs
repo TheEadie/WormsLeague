@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Worms.Commands.Resources;
 
 // ReSharper disable ClassNeverInstantiated.Global - CLI library loads this as the root command
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()

@@ -8,7 +8,7 @@ using Worms.Resources.Games;
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
-namespace Worms.Commands
+namespace Worms.Commands.Resources.Games
 {
     [Command("game", "games", "replay", "replays", "WAgame", Description = "Retrieves information for Worms games (.WAgame files)")]
     internal class GetGame : CommandBase

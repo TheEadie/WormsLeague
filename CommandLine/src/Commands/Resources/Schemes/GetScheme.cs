@@ -1,18 +1,14 @@
 using System;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Logging;
 using Worms.Resources;
-using Worms.Resources.Games;
 using Worms.Resources.Schemes;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
-namespace Worms.Commands
+namespace Worms.Commands.Resources.Schemes
 {
     [Command("scheme", "schemes", "wsc", Description = "Retrieves information for Worms Schemes (.wsc files)")]
     internal class GetScheme : CommandBase
