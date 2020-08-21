@@ -25,6 +25,7 @@ namespace Worms.WormsArmageddon.Windows
 
             var exeLocation = Path.Combine(rootLocation, processName + ".exe");
             var schemesFolder = Path.Combine(rootLocation, "User", "Schemes");
+            var gamesFolder = Path.Combine(rootLocation, "User", "Games");
 
             var versionInfo = FileVersionInfo.GetVersionInfo(exeLocation);
             var version = new Version(
@@ -33,7 +34,7 @@ namespace Worms.WormsArmageddon.Windows
                 versionInfo.ProductBuildPart,
                 versionInfo.ProductPrivatePart);
 
-            return new GameInfo(true, exeLocation, processName, version, schemesFolder);
+            return new GameInfo(true, exeLocation, processName, version, schemesFolder, gamesFolder);
         }
     }
 }

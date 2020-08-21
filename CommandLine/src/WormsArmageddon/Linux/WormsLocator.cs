@@ -19,6 +19,7 @@ namespace Worms.WormsArmageddon.Linux
             var rootLocation = Path.Combine(userHomeDirectory, "games", "worms");
             var exeLocation = Path.Combine(rootLocation, processName + ".exe");
             var schemesFolder = Path.Combine(rootLocation, "User", "Schemes");
+            var gamesFolder = Path.Combine(rootLocation, "User", "Games");
 
             if (!File.Exists(exeLocation))
             {
@@ -32,7 +33,7 @@ namespace Worms.WormsArmageddon.Linux
                 versionInfo.ProductBuildPart,
                 versionInfo.ProductPrivatePart);
 
-            return new GameInfo(true, exeLocation, processName, version, schemesFolder);
+            return new GameInfo(true, exeLocation, processName, version, schemesFolder, gamesFolder);
         }
     }
 }

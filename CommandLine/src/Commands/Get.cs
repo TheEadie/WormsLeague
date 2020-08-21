@@ -7,6 +7,7 @@ namespace Worms.Commands
 {
     [Command("get", Description = "Get a list of resources")]
     [Subcommand(typeof(GetScheme))]
+    [Subcommand(typeof(GetGame))]
     internal class Get : CommandBase
     {
         public Task<int> OnExecuteAsync(CommandLineApplication app)
