@@ -45,7 +45,7 @@ namespace Worms.Resources.Games
                 resources.Add(new GameResource(date, "local", type, teams));
             }
 
-            return resources;
+            return resources.OrderByDescending(x => x.Date).ToList();
         }
     }
 }

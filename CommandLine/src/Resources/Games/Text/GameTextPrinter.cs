@@ -12,7 +12,7 @@ namespace Worms.Resources.Games.Text
         {
             var tableBuilder = new TableBuilder(outputMaxWidth);
 
-            tableBuilder.AddColumn("DATE", items.Select(x => x.Date.ToString(CultureInfo.InvariantCulture)).ToList());
+            tableBuilder.AddColumn("DATE", items.Select(x => x.Date.ToString(CultureInfo.CurrentCulture)).ToList());
             tableBuilder.AddColumn("CONTEXT", items.Select(x => x.Context).ToList());
             tableBuilder.AddColumn("TYPE", items.Select(x => x.Type).ToList());
             tableBuilder.AddColumn("TEAMS", items.Select(x => string.Join(",", x.Teams)).ToList());
