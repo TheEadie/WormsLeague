@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Linq;
 using Worms.WormsArmageddon;
 
 namespace Worms.Resources.Games
@@ -29,7 +31,16 @@ namespace Worms.Resources.Games
             foreach (var game in _fileSystem.Directory.GetFiles(gameInfo.GamesFolder, $"{pattern}.WAgame"))
             {
                 var fileName = _fileSystem.Path.GetFileNameWithoutExtension(game);
-                resources.Add(new GameResource(fileName, "local"));
+
+                var startIndex = fileName.IndexOf('[');
+                var endIndex = fileName.IndexOf(']');
+
+                var date = fileName.Substring(0, startIndex - 1);
+                var type = fileName.Substring(startIndex + 1, endIndex - startIndex - 1);
+                var teamsString = fileName.Substring(endIndex + 2, fileName.Length - endIndex - 2);
+                var teams = teamsString.Split(',').ToList();
+
+                resources.Add(new GameResource(date, "local", type, teams));
             }
 
             return resources;
