@@ -5,7 +5,7 @@ using Worms.WormsArmageddon;
 
 namespace Worms.Resources.Schemes
 {
-    internal class LocalSchemesRetriever : ISchemesRetriever
+    internal class LocalSchemesRetriever : IResourceRetriever<SchemeResource>
     {
         private readonly IWscReader _wscReader;
         private readonly IWormsLocator _wormsLocator;

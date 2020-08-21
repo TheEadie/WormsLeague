@@ -6,6 +6,7 @@ using Worms.Cli.PackageManagers;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Logging;
+using Worms.Resources;
 using Worms.Resources.Games;
 using Worms.Resources.Games.Text;
 using Worms.Resources.Schemes;
@@ -39,15 +40,15 @@ namespace Worms.Container
             builder.RegisterType<LeagueUpdater>();
 
             // Schemes
-            builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
+            builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<SchemeResource>>();
+            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<WscReader>().As<IWscReader>();
             builder.RegisterType<WscWriter>().As<IWscWriter>();
-            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<SchemeTextReader>().As<ISchemeTextReader>();
             builder.RegisterType<SchemeTextWriter>().As<ISchemeTextWriter>();
 
             // Games / Replays
-            builder.RegisterType<LocalGameRetriever>().As<IGameRetriever>();
+            builder.RegisterType<LocalGameRetriever>().As<IResourceRetriever<GameResource>>();
             builder.RegisterType<GameTextPrinter>().As<IResourcePrinter<GameResource>>();
         }
 

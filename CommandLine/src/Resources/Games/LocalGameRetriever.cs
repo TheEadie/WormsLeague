@@ -4,7 +4,7 @@ using Worms.WormsArmageddon;
 
 namespace Worms.Resources.Games
 {
-    internal class LocalGameRetriever : IGameRetriever
+    internal class LocalGameRetriever : IResourceRetriever<GameResource>
     {
         private readonly IWormsLocator _wormsLocator;
         private readonly IFileSystem _fileSystem;
