@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Cli;
 using Worms.Cli.PackageManagers;
+using Worms.Commands;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Logging;
@@ -50,6 +51,8 @@ namespace Worms.Container
             // Games / Replays
             builder.RegisterType<LocalGameRetriever>().As<IResourceRetriever<GameResource>>();
             builder.RegisterType<GameTextPrinter>().As<IResourcePrinter<GameResource>>();
+
+            builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)
