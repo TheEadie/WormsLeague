@@ -1,0 +1,17 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/CommandLine"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+- package-ecosystem: docker
+  directory: "/CommandLine/.build"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+- package-ecosystem: nuget
+  directory: "/WormsGifTool"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
