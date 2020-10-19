@@ -3,7 +3,7 @@ ScriptDir="${BASH_SOURCE%/*}"
 source "$ScriptDir/logging.sh"
 
 # Input
-DockerImage_DotnetSdk="mcr.microsoft.com/dotnet/core/sdk:3.1.8"
+DockerImage_DotnetSdk="mcr.microsoft.com/dotnet/core/sdk:3.1.9"
 
 Dotnet-Publish ()
 {
