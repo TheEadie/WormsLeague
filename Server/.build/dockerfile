@@ -1,4 +1,18 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+WORKDIR /app
+
+# Copy csproj and restore as distinct layers
+COPY *.sln .
+COPY src/Worms.Gateway/Worms.Gateway.csproj ./src/Worms.Gateway/Worms.Gateway.csproj
+COPY src/Worms.DataAccess/Worms.DataAccess.csproj ./src/Worms.DataAccess/Worms.DataAccess.csproj
+RUN dotnet restore
+
+# Copy everything else and build
+COPY src/ ./src/
+RUN dotnet publish "src/Worms.Gateway/Worms.Gateway.csproj" -c Release -o out
+
+# Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
-COPY .artifacts .
-ENTRYPOINT ["dotnet", "Worms.Gateway.dll"]
+COPY --from=build /app/out .
+ENTRYPOINT ["dotnet", "Worms.Gateway.dll"] 
