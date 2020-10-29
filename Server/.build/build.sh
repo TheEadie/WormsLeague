@@ -1,29 +1,29 @@
-#!/usr/bin/env bash
+#!/bin/bash
+set -e
+ScriptDir="${BASH_SOURCE%/*}"
+SharedScripts="$ScriptDir/../../.build/shared"
+source "$SharedScripts/logging.sh"
+source "$SharedScripts/calculate-version.sh"
+source "$SharedScripts/artifacts.sh"
+source "$SharedScripts/dotnet.sh"
 
-# Define default arguments.
-SCRIPT=".build/build.cake"
-CAKE_ARGUMENTS=()
+# Input
+UseDocker=$1
+OutputDir=$2
+Platform=$3
 
-# Parse arguments.
-for i in "$@"; do
-    case $1 in
-        -s|--script) SCRIPT="$2"; shift ;;
-        --) shift; CAKE_ARGUMENTS+=("$@"); break ;;
-        *) CAKE_ARGUMENTS+=("$1") ;;
-    esac
-    shift
-done
+#Build
+PlatformOutputDir="$OutputDir/$Platform"
 
-# Restore Cake tool
-dotnet tool restore
+CalculateVersion "$UseDocker" "Server"
+CleanArtifacts "$PlatformOutputDir"
 
-if [ $? -ne 0 ]; then
-    echo "An error occured while installing Cake."
-    exit 1
-fi
+WriteHeading "Publishing $Platform v$Version_MajorMinorPatch..."
 
-# Run bootstrap to install modules and tools from nuget
-dotnet tool run dotnet-cake "$SCRIPT" "--bootstrap"
+WriteInfo "Building $Platform"
+Dotnet-Publish false "src/Worms.Gateway/Worms.Gateway.csproj" $PlatformOutputDir $Version_MajorMinorPatch $Platform
 
-# Start Cake
-dotnet tool run dotnet-cake "$SCRIPT" "${CAKE_ARGUMENTS[@]}"
+WriteInfo "Writing version info to $PlatformOutputDir/version.json"
+echo $Version_Json > $PlatformOutputDir/version.json
+
+WriteHighlight "Published to $PlatformOutputDir/"
