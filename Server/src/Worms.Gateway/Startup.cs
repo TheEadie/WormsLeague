@@ -60,6 +60,10 @@ namespace Worms.Gateway
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                using var scope = app.ApplicationServices.CreateScope();
+                var databaseConfig = scope.ServiceProvider.GetService<IDatabaseMigrator>();
+                databaseConfig.MigrateDatabase();
             }
 
             app.UseHttpsRedirection();

@@ -20,6 +20,7 @@ namespace Worms.DataAccess
                 options.UseSqlServer(_configuration.GetConnectionString("DataContext")));
 
             services.AddScoped<IGamesRepo, GamesRepo>();
+            services.AddScoped<IDatabaseMigrator, DatabaseMigrator>();
         }
     }
 }
