@@ -12,6 +12,13 @@ docker:
 get-version:
 	@.build/get-version.sh $(UseDocker)
 
+start:
+	@docker-compose build
+	@docker-compose up -d
+
+stop:
+	@docker-compose down
+
 clean:
 	@dotnet clean
 
