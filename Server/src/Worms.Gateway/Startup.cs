@@ -5,9 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Worms.DataAccess;
-using Worms.DataAccess.Repositories;
 using Worms.Gateway.Auth;
 
 namespace Worms.Gateway
