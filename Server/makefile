@@ -30,6 +30,8 @@ help:
 	@echo ""
 	@echo "Commands:"
 	@echo "make              - Build and publish the Server for all platforms"
+	@echo "make start        - Build and start all containers to run the server"
+	@echo "make stop         - Stop all containers"
 	@echo "make docker       - Package the linux build into a docker container"
 	@echo "make get-version  - Calculate the next version of the CLI"
 	@echo "make build        - Build for the local platform"
