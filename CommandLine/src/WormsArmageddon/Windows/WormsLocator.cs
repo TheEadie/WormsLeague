@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Versioning;
 using Microsoft.Win32;
 
 namespace Worms.WormsArmageddon.Windows
 {
+    [SupportedOSPlatform("windows")]
     internal class WormsLocator : IWormsLocator
     {
         public GameInfo Find()
