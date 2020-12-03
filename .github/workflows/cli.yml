@@ -5,6 +5,7 @@ on:
     paths:
     - "CommandLine/**"
     - ".build/**"
+    - ".github/workflows/cli.yml"
 
 jobs:
   build-cli-windows:
@@ -13,6 +14,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
     - name: Build
       run: cd CommandLine; make windows
     - name: Upload build
@@ -27,6 +32,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
     - name: Build
       run: cd CommandLine; make linux
     - name: Upload build
@@ -41,6 +50,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
     - name: Build
       run: cd CommandLine; make alpine
     - name: Upload build
