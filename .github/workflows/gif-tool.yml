@@ -4,6 +4,7 @@ on:
   push:
     paths:
     - "WormsGifTool/**"
+    - ".github/workflows/gif-tool.yml"
 
 jobs:
   build-gif-tool:
@@ -11,10 +12,10 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Setup .NET Core
+    - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0.100
+        dotnet-version: 5.0.x
     - name: Build
       run: cd WormsGifTool; ./.build/build.ps1
     - name: Upload build
