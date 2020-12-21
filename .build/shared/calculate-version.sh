@@ -3,7 +3,7 @@ ScriptDir="${BASH_SOURCE%/*}"
 source "$ScriptDir/logging.sh"
 
 # Input
-DockerImage_GitVersion="gittools/gitversion:5.3.4-linux-alpine.3.10-x64-netcoreapp3.1"
+DockerImage_GitVersion="gittools/gitversion:5.6.1-alpine.3.12-x64-5.0"
 
 GetVersionJson ()
 {
