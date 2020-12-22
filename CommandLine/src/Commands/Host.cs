@@ -89,7 +89,9 @@ namespace Worms.Commands
         private static string GetIpAddress(string domain)
         {
             var adapters = NetworkInterface.GetAllNetworkInterfaces();
-            var leagueNetworkAdapter = adapters.SingleOrDefault(x => x.GetIPProperties().DnsSuffix == domain);
+            var leagueNetworkAdapter = adapters.FirstOrDefault(x =>
+                x.GetIPProperties().DnsSuffix == domain &&
+                x.OperationalStatus == OperationalStatus.Up);
 
             if (leagueNetworkAdapter is null)
             {
