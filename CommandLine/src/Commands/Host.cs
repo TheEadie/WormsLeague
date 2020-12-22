@@ -9,6 +9,8 @@ using Worms.League;
 using Worms.Slack;
 using Worms.WormsArmageddon;
 
+// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
+// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
 namespace Worms.Commands
@@ -21,6 +23,9 @@ namespace Worms.Commands
         private readonly IConfigManager _configManager;
         private readonly IWormsLocator _wormsLocator;
         private readonly LeagueUpdater _leagueUpdater;
+
+        [Option(Description = "When set the CLI will print what will happen rather than running the commands", LongName = "dry-run", ShortName = "dr")]
+        public bool DryRun { get; }
 
         public Host(
             IWormsLocator wormsLocator,
@@ -62,14 +67,20 @@ namespace Worms.Commands
             }
 
             Logger.Information("Downloading the latest options");
-            await _leagueUpdater.Update(config, Logger).ConfigureAwait(false);
+            if (!DryRun)
+            {
+                await _leagueUpdater.Update(config, Logger).ConfigureAwait(false);
+            }
 
             Logger.Information("Starting Worms Armageddon");
-            var runGame = _wormsRunner.RunWorms("wa://").ConfigureAwait(false);
+            var runGame = !DryRun ? _wormsRunner.RunWorms("wa://") : Task.CompletedTask;
 
             Logger.Information("Announcing game on Slack");
             Logger.Verbose($"Host name: {hostIp}");
-            await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, Logger).ConfigureAwait(false);
+            if (!DryRun)
+            {
+                await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, Logger).ConfigureAwait(false);
+            }
 
             await runGame;
             return 0;
@@ -78,7 +89,9 @@ namespace Worms.Commands
         private static string GetIpAddress(string domain)
         {
             var adapters = NetworkInterface.GetAllNetworkInterfaces();
-            var leagueNetworkAdapter = adapters.SingleOrDefault(x => x.GetIPProperties().DnsSuffix == domain);
+            var leagueNetworkAdapter = adapters.FirstOrDefault(x =>
+                x.GetIPProperties().DnsSuffix == domain &&
+                x.OperationalStatus == OperationalStatus.Up);
 
             if (leagueNetworkAdapter is null)
             {
