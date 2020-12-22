@@ -43,7 +43,7 @@ namespace Worms.Resources.Games.Text
                 }
             }
 
-            return new GameResource(startTime, "local", "", teams);
+            return new GameResource(startTime, "local", true, teams);
         }
     }
 }

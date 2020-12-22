@@ -7,14 +7,14 @@ namespace Worms.Resources.Games
     {
         public DateTime Date { get; }
         public string Context { get; }
-        public string Type { get; }
+        public bool Processed { get; }
         public List<string> Teams { get; }
 
-        public GameResource(DateTime date, string context, string type, List<string> teams)
+        public GameResource(DateTime date, string context, bool processed, List<string> teams)
         {
             Date = date;
             Context = context;
-            Type = type;
+            Processed = processed;
             Teams = teams;
         }
     }

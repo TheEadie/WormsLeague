@@ -43,15 +43,9 @@ namespace Worms.Resources.Games
                 else
                 {
                     var startIndex = fileName.IndexOf('[');
-                    var endIndex = fileName.IndexOf(']');
-
                     var dateString = fileName.Substring(0, startIndex - 1);
                     var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);
-
-                    var type = fileName.Substring(startIndex + 1, endIndex - startIndex - 1);
-                    var teamsString = fileName.Substring(endIndex + 2, fileName.Length - endIndex - 2);
-                    var teams = teamsString.Split(',').ToList();
-                    resources.Add(new GameResource(date, "local", type, teams));
+                    resources.Add(new GameResource(date, "local", false, new List<string>()));
                 }
             }
 
