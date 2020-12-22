@@ -31,7 +31,7 @@ namespace Worms.Resources.Games
 
             var resources = new List<GameResource>();
 
-            foreach (var game in _fileSystem.Directory.GetFiles(gameInfo.GamesFolder, $"{pattern}.WAgame"))
+            foreach (var game in _fileSystem.Directory.GetFiles(gameInfo.GamesFolder, $"{pattern}*.WAgame"))
             {
                 var fileName = _fileSystem.Path.GetFileNameWithoutExtension(game);
                 var replayLogFilePath = _fileSystem.Path.Combine(gameInfo.GamesFolder, fileName + ".log");
