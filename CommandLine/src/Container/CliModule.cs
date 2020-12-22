@@ -51,6 +51,7 @@ namespace Worms.Container
             // Games / Replays
             builder.RegisterType<LocalGameRetriever>().As<IResourceRetriever<GameResource>>();
             builder.RegisterType<GameTextPrinter>().As<IResourcePrinter<GameResource>>();
+            builder.RegisterType<GameTextReader>().As<IGameTextReader>();
 
             builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
         }
