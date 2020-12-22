@@ -26,7 +26,7 @@ namespace Worms.Resources
                 switch (matches.Count)
                 {
                     case 0:
-                        throw new ConfigurationException($"No Game found with name: {name}");
+                        throw new ConfigurationException($"No resources found with name: {name}");
                     case 1:
                         _printer.Print(writer, matches.Single(), outputMaxWidth);
                         break;
