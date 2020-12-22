@@ -15,6 +15,7 @@ namespace Worms.Resources.Games.Text
             tableBuilder.AddColumn("DATE", items.Select(x => x.Date.ToString(CultureInfo.CurrentCulture)).ToList());
             tableBuilder.AddColumn("CONTEXT", items.Select(x => x.Context).ToList());
             tableBuilder.AddColumn("PROCESSED", items.Select(x => x.Processed.ToString()).ToList());
+            tableBuilder.AddColumn("WINNER", items.Select(x => x.Winner.ToString()).ToList());
             tableBuilder.AddColumn("TEAMS", items.Select(x => string.Join(",", x.Teams)).ToList());
 
             var table = tableBuilder.Build();

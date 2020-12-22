@@ -16,16 +16,23 @@ namespace Worms.Resources.Games.Text
         private static readonly Regex TeamSummaryOnline = new Regex($"{TeamColour}:.*\"{PlayerName}\" as .*\"{TeamName}\"");
         private static readonly Regex TeamSummaryOffline = new Regex($"{TeamColour}:.*\"{TeamName}\"");
 
+        private static readonly Regex WinnerDraw = new Regex($"The round was drawn.");
+        private static readonly Regex Winner = new Regex($"{TeamName} wins the (match!|round.)");
+
         public GameResource GetModel(string definition)
         {
             var startTime = DateTime.MinValue;
             var teams = new List<string>();
+            var winner = string.Empty;
 
             foreach (var line in definition.Split('\n'))
             {
                 var startTimeMatch = StartTime.Match(line);
                 var teamSummaryOnlineMatch = TeamSummaryOnline.Match(line);
                 var teamSummaryOfflineMatch = TeamSummaryOffline.Match(line);
+
+                var winnerDrawMatch = WinnerDraw.Match(line);
+                var winnerMatch = Winner.Match(line);
 
                 if (startTimeMatch.Success)
                 {
@@ -41,9 +48,19 @@ namespace Worms.Resources.Games.Text
                 {
                     teams.Add(teamSummaryOfflineMatch.Groups[2].Value);
                 }
+
+                if (winnerDrawMatch.Success)
+                {
+                    winner = "Draw";
+                }
+
+                if (winnerMatch.Success)
+                {
+                    winner = winnerMatch.Groups[1].Value;
+                }
             }
 
-            return new GameResource(startTime, "local", true, teams);
+            return new GameResource(startTime, "local", true, teams, winner);
         }
     }
 }
