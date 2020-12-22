@@ -45,7 +45,15 @@ namespace Worms.Resources.Games
                     var startIndex = fileName.IndexOf('[');
                     var dateString = fileName.Substring(0, startIndex - 1);
                     var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);
-                    resources.Add(new GameResource(date, "local", false, new List<string>(), string.Empty));
+                    resources.Add(
+                        new GameResource(
+                            date,
+                            "local",
+                            false,
+                            new List<string>(),
+                            string.Empty,
+                            string.Empty)
+                        );
                 }
             }
 

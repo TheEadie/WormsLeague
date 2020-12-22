@@ -24,7 +24,7 @@ namespace Worms.Resources.Games.Text
 
         public void Print(TextWriter writer, GameResource resource, int outputMaxWidth)
         {
-            Print(writer, new List<GameResource> {resource}, outputMaxWidth);
+            writer.Write(resource.Processed ? resource.FullLog : "Replay has not yet been processed");
         }
     }
 }

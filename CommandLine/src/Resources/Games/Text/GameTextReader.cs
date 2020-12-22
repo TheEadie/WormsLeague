@@ -60,7 +60,7 @@ namespace Worms.Resources.Games.Text
                 }
             }
 
-            return new GameResource(startTime, "local", true, teams, winner);
+            return new GameResource(startTime, "local", true, teams, winner, definition);
         }
     }
 }
