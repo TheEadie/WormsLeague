@@ -14,6 +14,7 @@ using Worms.Resources.Schemes;
 using Worms.Resources.Schemes.Binary;
 using Worms.Resources.Schemes.Text;
 using Worms.Slack;
+using Worms.WormsArmageddon.Replays;
 
 namespace Worms.Container
 {
@@ -54,6 +55,7 @@ namespace Worms.Container
             builder.RegisterType<GameTextReader>().As<IGameTextReader>();
 
             builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
+            builder.RegisterType<ReplayLogGenerator>().As<IReplayLogGenerator>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)
