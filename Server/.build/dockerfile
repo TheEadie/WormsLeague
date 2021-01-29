@@ -1,6 +1,9 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /app
 
+# Hack to prevent regression in docker 20: https://github.com/dotnet/dotnet-docker/issues/2470
+ENV COMPlus_EnableDiagnostics=0
+
 # Copy csproj and restore as distinct layers
 COPY *.sln .
 COPY src/Worms.Gateway/Worms.Gateway.csproj ./src/Worms.Gateway/Worms.Gateway.csproj

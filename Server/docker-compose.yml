@@ -13,6 +13,13 @@ services:
             ConnectionStrings__DataContext: "Server=db;Database=Worms_Config;User=sa;Password=Local_Dev_Super_Secret;"
     db:
         image: "mcr.microsoft.com/mssql/server"
+        hostname: worms
+        ports:
+            - "1401:1433"
+        volumes:
+            - sqlserver-data:/var/opt/mssql
         environment:
             SA_PASSWORD: "Local_Dev_Super_Secret"
             ACCEPT_EULA: "Y"
+volumes:
+    sqlserver-data:
