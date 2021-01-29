@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using Worms.DataAccess;
 using Worms.Gateway.Auth;
 
@@ -36,18 +37,13 @@ namespace Worms.Gateway
             {
                 options.Authority = "https://eadie.eu.auth0.com/";
                 options.Audience = "worms.davideadie.dev";
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    RoleClaimType = "permissions"
+                };
             });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("AllowedUsers",
-                policy => policy.RequireClaim("https://davideadie.dev/username", "TheEadie"));
-            });
-
-            if (_env.IsDevelopment())
-            {
-                services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
-            }
+            services.AddAuthorization();
 
             new DataAccessModule(_configuration).ConfigureServices(services);
         }

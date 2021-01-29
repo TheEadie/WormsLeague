@@ -6,7 +6,7 @@ namespace Worms.Gateway.Controllers
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [Authorize("AllowedUsers")]
+    [Authorize(Roles = "access")]
     public class V1ApiController : ControllerBase
     {
     }
