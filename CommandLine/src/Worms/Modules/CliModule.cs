@@ -60,7 +60,7 @@ namespace Worms.Modules
 
 
             // Login
-            builder.RegisterType<LoginService>().As<ILoginService>();
+            builder.RegisterType<AuthCodeLoginService>().As<ILoginService>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)

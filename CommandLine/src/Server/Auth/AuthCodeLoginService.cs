@@ -6,7 +6,7 @@ using Serilog;
 
 namespace Worms.Server.Auth
 {
-    public class LoginService : ILoginService
+    public class AuthCodeLoginService : ILoginService
     {
         public async Task RequestLogin(ILogger logger, CancellationToken cancellationToken)
         {
