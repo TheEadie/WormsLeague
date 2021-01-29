@@ -61,6 +61,7 @@ namespace Worms.Modules
 
             // Login
             builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
+            builder.RegisterType<TokenStore>().As<ITokenStore>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)

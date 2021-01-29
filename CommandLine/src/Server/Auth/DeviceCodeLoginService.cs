@@ -12,6 +12,12 @@ namespace Worms.Server.Auth
         private const string Authority = "https://eadie.eu.auth0.com";
         private const string ClientId = "0dBbKeIKO2UAzWfBh6LuGwWYSWGZPFHB";
         private const string Audience = "worms.davideadie.dev";
+        private readonly ITokenStore _tokenStore;
+
+        public DeviceCodeLoginService(ITokenStore tokenStore)
+        {
+            _tokenStore = tokenStore;
+        }
 
         public async Task RequestLogin(ILogger logger, CancellationToken cancellationToken)
         {
@@ -27,11 +33,10 @@ namespace Worms.Server.Auth
 
             if (tokenResponse != null)
             {
-                logger.Information("Logged in successfully");
+                logger.Verbose("Saving tokens...");
+                _tokenStore.StoreAccessTokens(new AccessTokens(tokenResponse.AccessToken, tokenResponse.RefreshToken));
 
-                logger.Verbose($"Identity token: {tokenResponse.IdentityToken}");
-                logger.Verbose($"Access token:   {tokenResponse.AccessToken}");
-                logger.Verbose($"Refresh token:  {tokenResponse.RefreshToken ?? "none"}");
+                logger.Information("Logged in successfully");
                 return;
             }
 
