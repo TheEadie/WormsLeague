@@ -45,6 +45,11 @@ namespace Worms.Gateway
 
             services.AddAuthorization();
 
+            if (_env.IsDevelopment())
+            {
+                services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
+            }
+
             new DataAccessModule(_configuration).ConfigureServices(services);
         }
 
