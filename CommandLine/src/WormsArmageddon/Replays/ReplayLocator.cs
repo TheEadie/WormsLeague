@@ -22,7 +22,7 @@ namespace Worms.WormsArmageddon.Replays
                 return new List<string>(0);
             }
 
-            return _fileSystem.Directory.GetFiles(gameInfo.GamesFolder, $"{pattern}*.WAgame");
+            return _fileSystem.Directory.GetFiles(gameInfo.ReplayFolder, $"{pattern}*.WAgame");
         }
     }
 }

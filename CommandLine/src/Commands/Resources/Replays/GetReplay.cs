@@ -2,29 +2,29 @@ using System;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Resources;
-using Worms.Resources.Games;
+using Worms.Resources.Replays;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
-namespace Worms.Commands.Resources.Games
+namespace Worms.Commands.Resources.Replays
 {
-    [Command("game", "games", "replay", "replays", "WAgame", Description = "Retrieves information for Worms games (.WAgame files)")]
-    internal class GetGame : CommandBase
+    [Command("replay", "replays", "WAgame", Description = "Retrieves information for Worms replays (.WAgame files)")]
+    internal class GetReplay : CommandBase
     {
-        private readonly ResourceGetter<GameResource> _gameRetriever;
+        private readonly ResourceGetter<ReplayResource> _replayRetriever;
 
         [Argument(
             0,
             Name = "name",
             Description =
-                "Optional: The name or search pattern for the Game to be retrieved. Wildcards (*) are supported")]
+                "Optional: The name or search pattern for the Replay to be retrieved. Wildcards (*) are supported")]
         public string Name { get; }
 
-        public GetGame(ResourceGetter<GameResource> gameRetriever)
+        public GetReplay(ResourceGetter<ReplayResource> replayRetriever)
         {
-            _gameRetriever = gameRetriever;
+            _replayRetriever = replayRetriever;
         }
 
         public Task<int> OnExecuteAsync(IConsole console)
@@ -32,7 +32,7 @@ namespace Worms.Commands.Resources.Games
             try
             {
                 var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-                _gameRetriever.PrintResources(Name, console.Out, windowWidth);
+                _replayRetriever.PrintResources(Name, console.Out, windowWidth);
             }
             catch (ConfigurationException exception)
             {

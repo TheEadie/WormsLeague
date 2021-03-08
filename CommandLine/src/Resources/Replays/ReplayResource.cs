@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Worms.Resources.Games
+namespace Worms.Resources.Replays
 {
-    public class GameResource
+    public class ReplayResource
     {
         public DateTime Date { get; }
         public string Context { get; }
@@ -12,7 +12,7 @@ namespace Worms.Resources.Games
         public string Winner { get; }
         public string FullLog { get; }
 
-        public GameResource(DateTime date, string context, bool processed, List<string> teams, string winner, string fullLog)
+        public ReplayResource(DateTime date, string context, bool processed, List<string> teams, string winner, string fullLog)
         {
             Date = date;
             Context = context;

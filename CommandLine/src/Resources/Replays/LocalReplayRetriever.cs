@@ -2,27 +2,27 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
-using Worms.Resources.Games.Text;
+using Worms.Resources.Replays.Text;
 using Worms.WormsArmageddon.Replays;
 
-namespace Worms.Resources.Games
+namespace Worms.Resources.Replays
 {
-    internal class LocalGameRetriever : IResourceRetriever<GameResource>
+    internal class LocalReplayRetriever : IResourceRetriever<ReplayResource>
     {
         private readonly IReplayLocator _replayLocator;
         private readonly IFileSystem _fileSystem;
-        private readonly IGameTextReader _gameTextReader;
+        private readonly IReplayTextReader _replayTextReader;
 
-        public LocalGameRetriever(IReplayLocator replayLocator, IFileSystem fileSystem, IGameTextReader gameTextReader)
+        public LocalReplayRetriever(IReplayLocator replayLocator, IFileSystem fileSystem, IReplayTextReader replayTextReader)
         {
             _replayLocator = replayLocator;
             _fileSystem = fileSystem;
-            _gameTextReader = gameTextReader;
+            _replayTextReader = replayTextReader;
         }
 
-        public IReadOnlyCollection<GameResource> Get(string pattern = "*")
+        public IReadOnlyCollection<ReplayResource> Get(string pattern = "*")
         {
-            var resources = new List<GameResource>();
+            var resources = new List<ReplayResource>();
 
             foreach (var game in _replayLocator.GetReplayPaths(pattern))
             {
@@ -32,7 +32,7 @@ namespace Worms.Resources.Games
 
                 if (_fileSystem.File.Exists(replayLogFilePath))
                 {
-                    resources.Add(_gameTextReader.GetModel(_fileSystem.File.ReadAllText(replayLogFilePath)));
+                    resources.Add(_replayTextReader.GetModel(_fileSystem.File.ReadAllText(replayLogFilePath)));
                 }
                 else
                 {
@@ -40,7 +40,7 @@ namespace Worms.Resources.Games
                     var dateString = fileName.Substring(0, startIndex - 1);
                     var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);
                     resources.Add(
-                        new GameResource(
+                        new ReplayResource(
                             date,
                             "local",
                             false,

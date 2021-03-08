@@ -6,10 +6,10 @@ using Worms.WormsArmageddon.Replays;
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
-namespace Worms.Commands.Resources.Games
+namespace Worms.Commands.Resources.Replays
 {
-    [Command("game", "games", "replay", "replays", "WAgame", Description = "Extract more information from Worms games (.WAgame files)")]
-    internal class ProcessGame : CommandBase
+    [Command("replay", "replays", "WAgame", Description = "Extract more information from Worms games (.WAgame files)")]
+    internal class ProcessReplay : CommandBase
     {
         private readonly IReplayLogGenerator _replayLogGenerator;
         private readonly IReplayLocator _replayLocator;
@@ -18,16 +18,16 @@ namespace Worms.Commands.Resources.Games
             0,
             Name = "name",
             Description =
-                "Optional: The name or search pattern for the Game to be processed. Wildcards (*) are supported")]
+                "Optional: The name or search pattern for the Replay to be processed. Wildcards (*) are supported")]
         public string Name { get; }
 
-        public ProcessGame(IReplayLogGenerator replayLogGenerator, IReplayLocator replayLocator)
+        public ProcessReplay(IReplayLogGenerator replayLogGenerator, IReplayLocator replayLocator)
         {
             _replayLogGenerator = replayLogGenerator;
             _replayLocator = replayLocator;
         }
 
-        public async Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync()
         {
             var pattern = string.Empty;
 
@@ -36,10 +36,10 @@ namespace Worms.Commands.Resources.Games
                 pattern = Name;
             }
 
-            foreach (var game in _replayLocator.GetReplayPaths(pattern))
+            foreach (var replayPath in _replayLocator.GetReplayPaths(pattern))
             {
-                Logger.Information($"Processing: {game}");
-                await _replayLogGenerator.GenerateReplayLog(game);
+                Logger.Information($"Processing: {replayPath}");
+                await _replayLogGenerator.GenerateReplayLog(replayPath);
             }
 
             return 0;

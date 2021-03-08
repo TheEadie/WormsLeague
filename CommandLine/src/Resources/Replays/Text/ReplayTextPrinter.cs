@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using Worms.Logging.TableOutput;
 
-namespace Worms.Resources.Games.Text
+namespace Worms.Resources.Replays.Text
 {
-    public class GameTextPrinter : IResourcePrinter<GameResource>
+    public class ReplayTextPrinter : IResourcePrinter<ReplayResource>
     {
-        public void Print(TextWriter writer, IReadOnlyCollection<GameResource> items, int outputMaxWidth)
+        public void Print(TextWriter writer, IReadOnlyCollection<ReplayResource> items, int outputMaxWidth)
         {
             var tableBuilder = new TableBuilder(outputMaxWidth);
 
@@ -22,7 +21,7 @@ namespace Worms.Resources.Games.Text
             TablePrinter.Print(writer, table);
         }
 
-        public void Print(TextWriter writer, GameResource resource, int outputMaxWidth)
+        public void Print(TextWriter writer, ReplayResource resource, int outputMaxWidth)
         {
             writer.Write(resource.Processed ? resource.FullLog : "Replay has not yet been processed");
         }

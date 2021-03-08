@@ -3,13 +3,11 @@ using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Cli;
 using Worms.Cli.PackageManagers;
-using Worms.Commands;
 using Worms.Configuration;
 using Worms.League;
-using Worms.Logging;
 using Worms.Resources;
-using Worms.Resources.Games;
-using Worms.Resources.Games.Text;
+using Worms.Resources.Replays;
+using Worms.Resources.Replays.Text;
 using Worms.Resources.Schemes;
 using Worms.Resources.Schemes.Binary;
 using Worms.Resources.Schemes.Text;
@@ -49,14 +47,14 @@ namespace Worms.Container
             builder.RegisterType<SchemeTextReader>().As<ISchemeTextReader>();
             builder.RegisterType<SchemeTextWriter>().As<ISchemeTextWriter>();
 
-            // Games / Replays
-            builder.RegisterType<LocalGameRetriever>().As<IResourceRetriever<GameResource>>();
-            builder.RegisterType<GameTextPrinter>().As<IResourcePrinter<GameResource>>();
-            builder.RegisterType<GameTextReader>().As<IGameTextReader>();
-
-            builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
+            // Replays
+            builder.RegisterType<LocalReplayRetriever>().As<IResourceRetriever<ReplayResource>>();
+            builder.RegisterType<ReplayTextPrinter>().As<IResourcePrinter<ReplayResource>>();
+            builder.RegisterType<ReplayTextReader>().As<IReplayTextReader>();
             builder.RegisterType<ReplayLocator>().As<IReplayLocator>();
             builder.RegisterType<ReplayLogGenerator>().As<IReplayLogGenerator>();
+
+            builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)

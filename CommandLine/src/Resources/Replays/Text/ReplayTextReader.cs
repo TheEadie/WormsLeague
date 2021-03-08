@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Worms.Resources.Games.Text
+namespace Worms.Resources.Replays.Text
 {
-    public class GameTextReader : IGameTextReader
+    public class ReplayTextReader : IReplayTextReader
     {
         private const string DateAndTime = @"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})";
 
@@ -19,7 +19,7 @@ namespace Worms.Resources.Games.Text
         private static readonly Regex WinnerDraw = new Regex($"The round was drawn.");
         private static readonly Regex Winner = new Regex($"{TeamName} wins the (match!|round.)");
 
-        public GameResource GetModel(string definition)
+        public ReplayResource GetModel(string definition)
         {
             var startTime = DateTime.MinValue;
             var teams = new List<string>();
@@ -58,7 +58,7 @@ namespace Worms.Resources.Games.Text
                 }
             }
 
-            return new GameResource(startTime, "local", true, teams, winner, definition);
+            return new ReplayResource(startTime, "local", true, teams, winner, definition);
         }
     }
 }

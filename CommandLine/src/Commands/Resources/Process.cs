@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Commands.Resources.Games;
+using Worms.Commands.Resources.Replays;
 using Worms.Commands.Resources.Schemes;
 
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
@@ -8,7 +8,7 @@ using Worms.Commands.Resources.Schemes;
 namespace Worms.Commands.Resources
 {
     [Command("process", Description = "Process a resource to extract more information")]
-    [Subcommand(typeof(ProcessGame))]
+    [Subcommand(typeof(ProcessReplay))]
     internal class Process : CommandBase
     {
         public Task<int> OnExecuteAsync(CommandLineApplication app)
