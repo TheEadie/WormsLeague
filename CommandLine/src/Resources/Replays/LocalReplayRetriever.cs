@@ -24,18 +24,15 @@ namespace Worms.Resources.Replays
         {
             var resources = new List<ReplayResource>();
 
-            foreach (var game in _replayLocator.GetReplayPaths(pattern))
+            foreach (var paths in _replayLocator.GetReplayPaths(pattern))
             {
-                var fileName = _fileSystem.Path.GetFileNameWithoutExtension(game);
-                var folder = _fileSystem.Path.GetDirectoryName(game);
-                var replayLogFilePath = _fileSystem.Path.Combine(folder, fileName + ".log");
-
-                if (_fileSystem.File.Exists(replayLogFilePath))
+                if (_fileSystem.File.Exists(paths.LogPath))
                 {
-                    resources.Add(_replayTextReader.GetModel(_fileSystem.File.ReadAllText(replayLogFilePath)));
+                    resources.Add(_replayTextReader.GetModel(_fileSystem.File.ReadAllText(paths.LogPath)));
                 }
                 else
                 {
+                    var fileName = _fileSystem.Path.GetFileNameWithoutExtension(paths.WAgamePath);
                     var startIndex = fileName.IndexOf('[');
                     var dateString = fileName.Substring(0, startIndex - 1);
                     var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);

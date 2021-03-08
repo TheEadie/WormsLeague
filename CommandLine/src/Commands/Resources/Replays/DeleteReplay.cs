@@ -1,3 +1,4 @@
+using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -9,41 +10,46 @@ using Worms.WormsArmageddon.Replays;
 
 namespace Worms.Commands.Resources.Replays
 {
-    [Command("replay", "replays", "WAgame", Description = "View replays (.WAgame file)")]
-    internal class ViewReplay : CommandBase
+    [Command("replay", "replays", "WAgame", Description = "Delete replays (.WAgame file)")]
+    internal class DeleteReplay : CommandBase
     {
-        private readonly IReplayPlayer _replayPlayer;
+        private readonly IFileSystem _fileSystem;
         private readonly IReplayLocator _replayLocator;
 
-        [Argument(0, Name = "name", Description = "The name of the Replay to be viewed")]
+        [Argument(0, Name = "name", Description = "The name of the Replay to be deleted")]
         public string Name { get; }
 
-        public ViewReplay(IReplayPlayer replayPlayer, IReplayLocator replayLocator)
+        public DeleteReplay(IFileSystem fileSystem, IReplayLocator replayLocator)
         {
-            _replayPlayer = replayPlayer;
+            _fileSystem = fileSystem;
             _replayLocator = replayLocator;
         }
 
-        public async Task<int> OnExecuteAsync()
+        public Task<int> OnExecuteAsync()
         {
             ReplayPaths filePaths;
 
             try
             {
                 var name = ValidateName();
-                filePaths = GetFilePaths(name);
+                filePaths = GetFilePath(name);
             }
             catch (ConfigurationException exception)
             {
                 Logger.Error(exception.Message);
-                return 1;
+                return Task.FromResult(1);
             }
 
-            await _replayPlayer.Play(filePaths.WAgamePath);
-            return 0;
+            _fileSystem.File.Delete(filePaths.WAgamePath);
+            if (!string.IsNullOrEmpty(filePaths.LogPath))
+            {
+                _fileSystem.File.Delete(filePaths.LogPath);
+            }
+
+            return Task.FromResult(0);
         }
 
-        private ReplayPaths GetFilePaths(string name)
+        private ReplayPaths GetFilePath(string name)
         {
             var replaysFound = _replayLocator.GetReplayPaths(name);
 
@@ -67,7 +73,7 @@ namespace Worms.Commands.Resources.Replays
                 return Name;
             }
 
-            throw new ConfigurationException("No name provided for the Replay to be viewed.");
+            throw new ConfigurationException("No name provided for the Replay to be deleted.");
         }
     }
 }
