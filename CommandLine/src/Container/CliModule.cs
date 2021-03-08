@@ -55,6 +55,7 @@ namespace Worms.Container
             builder.RegisterType<GameTextReader>().As<IGameTextReader>();
 
             builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
+            builder.RegisterType<ReplayLocator>().As<IReplayLocator>();
             builder.RegisterType<ReplayLogGenerator>().As<IReplayLogGenerator>();
         }
 
