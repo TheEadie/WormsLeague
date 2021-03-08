@@ -43,8 +43,7 @@ namespace Worms.Resources.Games.Text
                 {
                     teams.Add(teamSummaryOnlineMatch.Groups[3].Value);
                 }
-
-                if (teamSummaryOfflineMatch.Success)
+                else if (teamSummaryOfflineMatch.Success)
                 {
                     teams.Add(teamSummaryOfflineMatch.Groups[2].Value);
                 }
@@ -53,8 +52,7 @@ namespace Worms.Resources.Games.Text
                 {
                     winner = "Draw";
                 }
-
-                if (winnerMatch.Success)
+                else if (winnerMatch.Success)
                 {
                     winner = winnerMatch.Groups[1].Value;
                 }
