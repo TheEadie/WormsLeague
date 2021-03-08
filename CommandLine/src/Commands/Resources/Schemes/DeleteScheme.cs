@@ -7,7 +7,7 @@ using Worms.WormsArmageddon;
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
-namespace Worms.Commands
+namespace Worms.Commands.Resources.Schemes
 {
     [Command("scheme", "schemes", "wsc", Description = "Delete Worms Schemes (.wsc files)")]
     internal class DeleteScheme : CommandBase

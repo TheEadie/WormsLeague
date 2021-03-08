@@ -5,11 +5,14 @@ using Worms.Cli;
 using Worms.Cli.PackageManagers;
 using Worms.Configuration;
 using Worms.League;
-using Worms.Logging;
+using Worms.Resources;
+using Worms.Resources.Replays;
+using Worms.Resources.Replays.Text;
 using Worms.Resources.Schemes;
 using Worms.Resources.Schemes.Binary;
 using Worms.Resources.Schemes.Text;
 using Worms.Slack;
+using Worms.WormsArmageddon.Replays;
 
 namespace Worms.Container
 {
@@ -37,12 +40,21 @@ namespace Worms.Container
             builder.RegisterType<LeagueUpdater>();
 
             // Schemes
-            builder.RegisterType<LocalSchemesRetriever>().As<ISchemesRetriever>();
+            builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<SchemeResource>>();
+            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<WscReader>().As<IWscReader>();
             builder.RegisterType<WscWriter>().As<IWscWriter>();
-            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<SchemeTextReader>().As<ISchemeTextReader>();
             builder.RegisterType<SchemeTextWriter>().As<ISchemeTextWriter>();
+
+            // Replays
+            builder.RegisterType<LocalReplayRetriever>().As<IResourceRetriever<ReplayResource>>();
+            builder.RegisterType<ReplayTextPrinter>().As<IResourcePrinter<ReplayResource>>();
+            builder.RegisterType<ReplayTextReader>().As<IReplayTextReader>();
+            builder.RegisterType<ReplayLocator>().As<IReplayLocator>();
+            builder.RegisterType<ReplayLogGenerator>().As<IReplayLogGenerator>();
+
+            builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)

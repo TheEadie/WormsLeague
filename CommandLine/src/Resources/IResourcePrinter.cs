@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace Worms.Logging
+namespace Worms.Resources
 {
     public interface IResourcePrinter<in T>
     {
