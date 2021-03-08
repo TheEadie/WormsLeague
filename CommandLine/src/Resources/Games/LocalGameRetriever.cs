@@ -3,38 +3,32 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 using Worms.Resources.Games.Text;
-using Worms.WormsArmageddon;
+using Worms.WormsArmageddon.Replays;
 
 namespace Worms.Resources.Games
 {
     internal class LocalGameRetriever : IResourceRetriever<GameResource>
     {
-        private readonly IWormsLocator _wormsLocator;
+        private readonly IReplayLocator _replayLocator;
         private readonly IFileSystem _fileSystem;
         private readonly IGameTextReader _gameTextReader;
 
-        public LocalGameRetriever(IWormsLocator wormsLocator, IFileSystem fileSystem, IGameTextReader gameTextReader)
+        public LocalGameRetriever(IReplayLocator replayLocator, IFileSystem fileSystem, IGameTextReader gameTextReader)
         {
-            _wormsLocator = wormsLocator;
+            _replayLocator = replayLocator;
             _fileSystem = fileSystem;
             _gameTextReader = gameTextReader;
         }
 
         public IReadOnlyCollection<GameResource> Get(string pattern = "*")
         {
-            var gameInfo = _wormsLocator.Find();
-
-            if (!gameInfo.IsInstalled)
-            {
-                return new List<GameResource>(0);
-            }
-
             var resources = new List<GameResource>();
 
-            foreach (var game in _fileSystem.Directory.GetFiles(gameInfo.GamesFolder, $"{pattern}*.WAgame"))
+            foreach (var game in _replayLocator.GetReplayPaths(pattern))
             {
                 var fileName = _fileSystem.Path.GetFileNameWithoutExtension(game);
-                var replayLogFilePath = _fileSystem.Path.Combine(gameInfo.GamesFolder, fileName + ".log");
+                var folder = _fileSystem.Path.GetDirectoryName(game);
+                var replayLogFilePath = _fileSystem.Path.Combine(folder, fileName + ".log");
 
                 if (_fileSystem.File.Exists(replayLogFilePath))
                 {

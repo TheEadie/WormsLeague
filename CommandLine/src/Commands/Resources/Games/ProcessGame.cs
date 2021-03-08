@@ -1,7 +1,5 @@
-using System.IO.Abstractions;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.WormsArmageddon;
 using Worms.WormsArmageddon.Replays;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
@@ -14,8 +12,7 @@ namespace Worms.Commands.Resources.Games
     internal class ProcessGame : CommandBase
     {
         private readonly IReplayLogGenerator _replayLogGenerator;
-        private readonly IFileSystem _fileSystem;
-        private readonly IWormsLocator _wormsLocator;
+        private readonly IReplayLocator _replayLocator;
 
         [Argument(
             0,
@@ -24,17 +21,14 @@ namespace Worms.Commands.Resources.Games
                 "Optional: The name or search pattern for the Game to be processed. Wildcards (*) are supported")]
         public string Name { get; }
 
-        public ProcessGame(IReplayLogGenerator replayLogGenerator, IFileSystem fileSystem, IWormsLocator wormsLocator)
+        public ProcessGame(IReplayLogGenerator replayLogGenerator, IReplayLocator replayLocator)
         {
             _replayLogGenerator = replayLogGenerator;
-            _fileSystem = fileSystem;
-            _wormsLocator = wormsLocator;
+            _replayLocator = replayLocator;
         }
 
         public async Task<int> OnExecuteAsync(IConsole console)
         {
-            var gameInfo = _wormsLocator.Find();
-
             var pattern = string.Empty;
 
             if (Name != "*" && !string.IsNullOrEmpty(Name))
@@ -42,10 +36,10 @@ namespace Worms.Commands.Resources.Games
                 pattern = Name;
             }
 
-            foreach (var game in _fileSystem.Directory.GetFiles(gameInfo.GamesFolder, $"{pattern}*.WAgame"))
+            foreach (var game in _replayLocator.GetReplayPaths(pattern))
             {
                 Logger.Information($"Processing: {game}");
-                await _replayLogGenerator.GenerateReplayLog(_fileSystem.Path.Combine(gameInfo.GamesFolder, game));
+                await _replayLogGenerator.GenerateReplayLog(game);
             }
 
             return 0;
