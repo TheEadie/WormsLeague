@@ -15,7 +15,7 @@ function Update-Path() {
     if (!($env:Path -like $installDirPath))
     {
         $env:Path += ";$installDirPath"
-        [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine) + ";$installDirPath", [EnvironmentVariableTarget]::User)
+        [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::User) + ";$installDirPath", [EnvironmentVariableTarget]::User)
     }
 }
 
