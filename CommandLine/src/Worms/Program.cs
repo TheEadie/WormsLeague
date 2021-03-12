@@ -3,7 +3,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Commands;
-using Worms.Container;
+using Worms.Modules;
 
 namespace Worms
 {

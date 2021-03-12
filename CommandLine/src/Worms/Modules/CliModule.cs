@@ -16,7 +16,7 @@ using Worms.Resources.Schemes;
 using Worms.Resources.Schemes.Text;
 using Worms.Slack;
 
-namespace Worms.Container
+namespace Worms.Modules
 {
     public class CliModule : Module
     {

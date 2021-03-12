@@ -1,13 +1,13 @@
 ﻿using Autofac;
 using Worms.Configuration.SecureStorage;
 
-namespace Worms.Container
+namespace Worms.Modules
 {
-    public class WindowsCliModule : Module
+    public class LinuxCliModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<WindowsCredentialStorage>().As<ICredentialStorage>();
+            builder.RegisterType<NoOpCredentialStorage>().As<ICredentialStorage>();
         }
     }
 }
