@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Resources.Replays.Text
 {
-    public class ReplayTextReader : IReplayTextReader
+    internal class ReplayTextReader : IReplayTextReader
     {
         private const string DateAndTime = @"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})";
 
