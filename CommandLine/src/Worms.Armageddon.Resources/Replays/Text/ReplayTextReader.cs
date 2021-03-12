@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Worms.Resources.Replays.Text
+namespace Worms.Armageddon.Resources.Replays.Text
 {
     internal class ReplayTextReader : IReplayTextReader
     {

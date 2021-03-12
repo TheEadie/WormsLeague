@@ -1,6 +1,6 @@
 using Syroot.Worms.Armageddon;
 
-namespace Worms.Resources.Schemes.Binary
+namespace Worms.Armageddon.Resources.Schemes.Binary
 {
     internal class WscWriter : IWscWriter
     {

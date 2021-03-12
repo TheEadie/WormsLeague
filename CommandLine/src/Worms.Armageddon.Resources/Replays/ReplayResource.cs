@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Worms.Resources.Replays
+namespace Worms.Armageddon.Resources.Replays
 {
     public class ReplayResource
     {

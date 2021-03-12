@@ -1,4 +1,4 @@
-﻿namespace Worms.Resources.Replays.Text
+﻿namespace Worms.Armageddon.Resources.Replays.Text
 {
     public interface IReplayTextReader
     {

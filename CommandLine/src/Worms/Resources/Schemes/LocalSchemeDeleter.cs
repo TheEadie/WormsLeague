@@ -1,5 +1,6 @@
 using System.IO.Abstractions;
 using Worms.Armageddon.Game;
+using Worms.Armageddon.Resources.Schemes;
 
 namespace Worms.Resources.Schemes
 {

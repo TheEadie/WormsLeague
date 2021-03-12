@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Syroot.Worms.Armageddon;
 using Worms.Armageddon.Game;
-using Worms.Resources.Schemes.Binary;
+using Worms.Armageddon.Resources.Schemes.Binary;
+using Worms.Armageddon.Resources.Schemes.Text;
 using Worms.Resources.Schemes.Text;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using Worms.Armageddon.Game;
-using Worms.Resources.Schemes.Binary;
+using Worms.Armageddon.Resources.Schemes;
+using Worms.Armageddon.Resources.Schemes.Binary;
 
 namespace Worms.Resources.Schemes
 {

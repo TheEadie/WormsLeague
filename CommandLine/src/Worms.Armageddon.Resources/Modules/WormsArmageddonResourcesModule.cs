@@ -1,7 +1,7 @@
 ﻿using Autofac;
-using Worms.Resources.Replays.Text;
-using Worms.Resources.Schemes.Binary;
-using Worms.Resources.Schemes.Text;
+using Worms.Armageddon.Resources.Replays.Text;
+using Worms.Armageddon.Resources.Schemes.Binary;
+using Worms.Armageddon.Resources.Schemes.Text;
 
 namespace Worms.Armageddon.Resources.Modules
 {

@@ -1,6 +1,6 @@
 using Syroot.Worms.Armageddon;
 
-namespace Worms.Resources.Schemes
+namespace Worms.Armageddon.Resources.Schemes
 {
     public class SchemeResource
     {

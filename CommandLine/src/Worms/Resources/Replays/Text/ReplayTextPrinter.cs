@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Worms.Armageddon.Resources.Replays;
 using Worms.Logging.TableOutput;
 
 namespace Worms.Resources.Replays.Text
