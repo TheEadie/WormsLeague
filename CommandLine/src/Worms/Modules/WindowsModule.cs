@@ -3,7 +3,7 @@ using Worms.Configuration.SecureStorage;
 
 namespace Worms.Modules
 {
-    public class WindowsCliModule : Module
+    internal class WindowsModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {

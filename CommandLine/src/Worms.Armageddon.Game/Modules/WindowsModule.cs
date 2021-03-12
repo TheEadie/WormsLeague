@@ -3,7 +3,7 @@ using Worms.Armageddon.Game.Windows;
 
 namespace Worms.Armageddon.Game.Modules
 {
-    internal class WindowsCliModule : Module
+    internal class WindowsModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {

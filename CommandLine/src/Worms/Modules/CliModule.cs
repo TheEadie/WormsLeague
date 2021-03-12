@@ -52,8 +52,8 @@ namespace Worms.Modules
             builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
             builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
 
-            builder.RegisterModule<WormsArmageddonGameModule>();
-            builder.RegisterModule<WormsArmageddonResourcesModule>();
+            builder.RegisterModule<ArmageddonGameModule>();
+            builder.RegisterModule<ArmageddonResourcesModule>();
 
         }
 
@@ -62,13 +62,13 @@ namespace Worms.Modules
             // Windows
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                builder.RegisterModule<WindowsCliModule>();
+                builder.RegisterModule<WindowsModule>();
             }
 
             // Linux
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                builder.RegisterModule<LinuxCliModule>();
+                builder.RegisterModule<LinuxModule>();
             }
         }
     }

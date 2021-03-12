@@ -5,7 +5,7 @@ using Worms.Armageddon.Game.Replays;
 
 namespace Worms.Armageddon.Game.Modules
 {
-    public class WormsArmageddonGameModule : Module
+    public class ArmageddonGameModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
@@ -25,13 +25,13 @@ namespace Worms.Armageddon.Game.Modules
             // Windows
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                builder.RegisterModule<WindowsCliModule>();
+                builder.RegisterModule<WindowsModule>();
             }
 
             // Linux
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                builder.RegisterModule<LinuxCliModule>();
+                builder.RegisterModule<LinuxModule>();
             }
         }
     }

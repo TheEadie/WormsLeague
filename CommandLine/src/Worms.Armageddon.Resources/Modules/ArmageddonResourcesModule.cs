@@ -5,7 +5,7 @@ using Worms.Armageddon.Resources.Schemes.Text;
 
 namespace Worms.Armageddon.Resources.Modules
 {
-    public class WormsArmageddonResourcesModule : Module
+    public class ArmageddonResourcesModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
