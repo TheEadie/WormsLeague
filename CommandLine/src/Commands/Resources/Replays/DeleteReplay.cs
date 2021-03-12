@@ -1,28 +1,28 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Resources;
-using Worms.Resources.Schemes;
+using Worms.Resources.Replays;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
-namespace Worms.Commands.Resources.Schemes
+namespace Worms.Commands.Resources.Replays
 {
-    [Command("scheme", "schemes", "wsc", Description = "Delete Worms Schemes (.wsc files)")]
-    internal class DeleteScheme : CommandBase
+    [Command("replay", "replays", "WAgame", Description = "Delete replays (.WAgame file)")]
+    internal class DeleteReplay : CommandBase
     {
-        private readonly ResourceDeleter<SchemeResource> _resourceDeleter;
+        private readonly ResourceDeleter<ReplayResource> _resourceDeleter;
 
-        [Argument(0, Name = "name", Description = "The name of the Scheme to be deleted")]
+        [Argument(0, Name = "name", Description = "The name of the Replay to be deleted")]
         public string Name { get; }
 
-        public DeleteScheme(ResourceDeleter<SchemeResource> resourceDeleter)
+        public DeleteReplay(ResourceDeleter<ReplayResource> resourceDeleter)
         {
             _resourceDeleter = resourceDeleter;
         }
 
-        public Task<int> OnExecuteAsync(IConsole console)
+        public Task<int> OnExecuteAsync()
         {
             try
             {

@@ -41,6 +41,7 @@ namespace Worms.Container
 
             // Schemes
             builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<SchemeResource>>();
+            builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<SchemeResource>>();
             builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
             builder.RegisterType<WscReader>().As<IWscReader>();
             builder.RegisterType<WscWriter>().As<IWscWriter>();
@@ -49,12 +50,15 @@ namespace Worms.Container
 
             // Replays
             builder.RegisterType<LocalReplayRetriever>().As<IResourceRetriever<ReplayResource>>();
+            builder.RegisterType<LocalReplayDeleter>().As<IResourceDeleter<ReplayResource>>();
             builder.RegisterType<ReplayTextPrinter>().As<IResourcePrinter<ReplayResource>>();
             builder.RegisterType<ReplayTextReader>().As<IReplayTextReader>();
             builder.RegisterType<ReplayLocator>().As<IReplayLocator>();
             builder.RegisterType<ReplayLogGenerator>().As<IReplayLogGenerator>();
+            builder.RegisterType<ReplayPlayer>().As<IReplayPlayer>();
 
             builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
+            builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)

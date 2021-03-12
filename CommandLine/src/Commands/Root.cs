@@ -12,6 +12,7 @@ namespace Worms.Commands
     [Subcommand(typeof(Create))]
     [Subcommand(typeof(Delete))]
     [Subcommand(typeof(Process))]
+    [Subcommand(typeof(View))]
     [Subcommand(typeof(Version))]
     [Subcommand(typeof(Update))]
     [Subcommand(typeof(Host))]

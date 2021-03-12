@@ -8,7 +8,7 @@ using Worms.WormsArmageddon.Replays;
 
 namespace Worms.Commands.Resources.Replays
 {
-    [Command("replay", "replays", "WAgame", Description = "Extract more information from Worms games (.WAgame files)")]
+    [Command("replay", "replays", "WAgame", Description = "Extract more information from replays (.WAgame files)")]
     internal class ProcessReplay : CommandBase
     {
         private readonly IReplayLogGenerator _replayLogGenerator;
@@ -39,7 +39,7 @@ namespace Worms.Commands.Resources.Replays
             foreach (var replayPath in _replayLocator.GetReplayPaths(pattern))
             {
                 Logger.Information($"Processing: {replayPath}");
-                await _replayLogGenerator.GenerateReplayLog(replayPath);
+                await _replayLogGenerator.GenerateReplayLog(replayPath.WAgamePath);
             }
 
             return 0;

@@ -7,10 +7,9 @@ using Worms.Commands.Resources.Schemes;
 
 namespace Worms.Commands.Resources
 {
-    [Command("delete", "rm", Description = "Delete a resource")]
-    [Subcommand(typeof(DeleteScheme))]
-    [Subcommand(typeof(DeleteReplay))]
-    internal class Delete : CommandBase
+    [Command("view", Description = "View a resource")]
+    [Subcommand(typeof(ViewReplay))]
+    internal class View : CommandBase
     {
         public Task<int> OnExecuteAsync(CommandLineApplication app)
         {
