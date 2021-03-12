@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Worms.WormsArmageddon.Replays
+namespace Worms.Armageddon.Game.Replays
 {
     public interface IReplayLocator
     {

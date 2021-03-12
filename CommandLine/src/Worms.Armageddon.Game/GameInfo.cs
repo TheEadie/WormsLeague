@@ -1,6 +1,6 @@
 using System;
 
-namespace Worms.WormsArmageddon
+namespace Worms.Armageddon.Game
 {
     public class GameInfo
     {

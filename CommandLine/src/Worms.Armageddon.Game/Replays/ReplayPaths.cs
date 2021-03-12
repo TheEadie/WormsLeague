@@ -1,4 +1,4 @@
-namespace Worms.WormsArmageddon.Replays
+namespace Worms.Armageddon.Game.Replays
 {
     public class ReplayPaths
     {

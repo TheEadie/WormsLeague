@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Worms.WormsArmageddon.Windows
+namespace Worms.Armageddon.Game.Windows
 {
     public static class WindowTools
     {

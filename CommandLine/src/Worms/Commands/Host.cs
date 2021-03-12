@@ -4,10 +4,10 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Worms.Armageddon.Game;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Slack;
-using Worms.WormsArmageddon;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members

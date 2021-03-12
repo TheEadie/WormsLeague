@@ -1,6 +1,7 @@
 ﻿using System.IO.Abstractions;
 using System.Runtime.InteropServices;
 using Autofac;
+using Worms.Armageddon.Game.Modules;
 using Worms.Cli;
 using Worms.Cli.PackageManagers;
 using Worms.Configuration;
@@ -12,7 +13,6 @@ using Worms.Resources.Schemes;
 using Worms.Resources.Schemes.Binary;
 using Worms.Resources.Schemes.Text;
 using Worms.Slack;
-using Worms.WormsArmageddon.Replays;
 
 namespace Worms.Container
 {
@@ -53,12 +53,12 @@ namespace Worms.Container
             builder.RegisterType<LocalReplayDeleter>().As<IResourceDeleter<ReplayResource>>();
             builder.RegisterType<ReplayTextPrinter>().As<IResourcePrinter<ReplayResource>>();
             builder.RegisterType<ReplayTextReader>().As<IReplayTextReader>();
-            builder.RegisterType<ReplayLocator>().As<IReplayLocator>();
-            builder.RegisterType<ReplayLogGenerator>().As<IReplayLogGenerator>();
-            builder.RegisterType<ReplayPlayer>().As<IReplayPlayer>();
 
             builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
             builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
+
+            // Worms Armageddon Game
+            builder.RegisterModule<WormsArmageddonGameModule>();
         }
 
         private static void RegisterOsModules(ContainerBuilder builder)

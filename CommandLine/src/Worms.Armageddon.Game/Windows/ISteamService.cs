@@ -1,4 +1,4 @@
-﻿namespace Worms.WormsArmageddon.Windows
+﻿namespace Worms.Armageddon.Game.Windows
 {
     public interface ISteamService
     {

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Worms.WormsArmageddon.Replays
+namespace Worms.Armageddon.Game.Replays
 {
     internal class ReplayPlayer : IReplayPlayer
     {

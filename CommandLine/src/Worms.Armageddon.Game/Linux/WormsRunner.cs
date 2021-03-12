@@ -1,8 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace Worms.WormsArmageddon.Linux
+namespace Worms.Armageddon.Game.Linux
 {
     internal class WormsRunner : IWormsRunner
     {

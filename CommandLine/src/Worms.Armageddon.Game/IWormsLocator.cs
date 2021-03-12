@@ -1,4 +1,4 @@
-﻿namespace Worms.WormsArmageddon
+﻿namespace Worms.Armageddon.Game
 {
     public interface IWormsLocator
     {

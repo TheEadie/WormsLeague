@@ -1,6 +1,6 @@
 using System.IO.Abstractions;
 using System.Linq;
-using Worms.WormsArmageddon.Replays;
+using Worms.Armageddon.Game.Replays;
 
 namespace Worms.Resources.Replays
 {

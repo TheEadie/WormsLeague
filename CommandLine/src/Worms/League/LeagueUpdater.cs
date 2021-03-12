@@ -1,9 +1,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
+using Worms.Armageddon.Game;
 using Worms.Cli.PackageManagers;
 using Worms.Configuration;
-using Worms.WormsArmageddon;
 
 namespace Worms.League
 {

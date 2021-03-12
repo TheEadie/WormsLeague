@@ -21,4 +21,8 @@
     <PackageReference Include="System.IO.Abstractions" Version="13.2.25" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Worms.Armageddon.Game\Worms.Armageddon.Game.csproj" />
+  </ItemGroup>
+
 </Project>
