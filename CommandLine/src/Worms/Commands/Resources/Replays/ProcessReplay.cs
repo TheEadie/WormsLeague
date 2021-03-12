@@ -38,7 +38,7 @@ namespace Worms.Commands.Resources.Replays
 
             foreach (var replayPath in _replayLocator.GetReplayPaths(pattern))
             {
-                Logger.Information($"Processing: {replayPath}");
+                Logger.Information($"Processing: {replayPath.WAgamePath}");
                 await _replayLogGenerator.GenerateReplayLog(replayPath.WAgamePath);
             }
 
