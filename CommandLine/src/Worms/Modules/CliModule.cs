@@ -11,9 +11,7 @@ using Worms.Configuration;
 using Worms.League;
 using Worms.Resources;
 using Worms.Resources.Replays;
-using Worms.Resources.Replays.Text;
 using Worms.Resources.Schemes;
-using Worms.Resources.Schemes.Text;
 using Worms.Slack;
 
 namespace Worms.Modules

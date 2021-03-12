@@ -6,7 +6,6 @@ using Syroot.Worms.Armageddon;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Resources.Schemes.Binary;
 using Worms.Armageddon.Resources.Schemes.Text;
-using Worms.Resources.Schemes.Text;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members

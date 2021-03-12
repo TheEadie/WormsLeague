@@ -5,7 +5,6 @@ using System.Linq;
 using Worms.Armageddon.Game.Replays;
 using Worms.Armageddon.Resources.Replays;
 using Worms.Armageddon.Resources.Replays.Text;
-using Worms.Resources.Replays.Text;
 
 namespace Worms.Resources.Replays
 {
