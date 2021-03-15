@@ -29,5 +29,5 @@ PushDockerImages ()
 
     WriteHeading "Pushing Docker image..."
     echo $Password | docker login -u $Username --password-stdin
-    docker push $ImageName
+    docker push $ImageName --all-tags
 }
