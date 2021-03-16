@@ -8,9 +8,10 @@ DockerImage_DotnetSdk="mcr.microsoft.com/dotnet/core/sdk:3.1.9"
 Dotnet-Publish ()
 {
     local UseDocker=$1
-    local OutputDir=$2
-    local Version_MajorMinorPatch=$3
-    local Runtime=$4
+    local ProjectPath=$2
+    local OutputDir=$3
+    local Version_MajorMinorPatch=$4
+    local Runtime=$5
 
     if [ $UseDocker = "true" ]
     then
@@ -21,6 +22,7 @@ Dotnet-Publish ()
         -w /repo \
         $DockerImage_DotnetSdk \
             dotnet publish \
+            $ProjectPath \
             -c Release \
             -r $Runtime \
             -o $OutputDir \
@@ -32,6 +34,7 @@ Dotnet-Publish ()
     else
         WriteInfo "dotnet publish: Using local install"
         dotnet publish \
+            $ProjectPath \
             -c Release \
             -r $Runtime \
             -o $OutputDir \
