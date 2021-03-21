@@ -8,8 +8,22 @@ on:
     - ".github/workflows/cli.yml"
 
 jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Run tests
+      run: cd CommandLine; dotnet test
+
   build-cli-windows:
     name: Build - Windows
+    needs: unit-tests
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -28,6 +42,7 @@ jobs:
 
   build-cli-linux-x64:
     name: Build - Linux
+    needs: unit-tests
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -46,6 +61,7 @@ jobs:
 
   build-cli-linux-musl-x64:
     name: Build - Alpine
+    needs: unit-tests
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

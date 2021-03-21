@@ -21,7 +21,7 @@ CleanArtifacts "$PlatformOutputDir"
 WriteHeading "Publishing $Platform v$Version_MajorMinorPatch..."
 
 WriteInfo "Building $Platform"
-Dotnet-Publish false $PlatformOutputDir $Version_MajorMinorPatch $Platform
+Dotnet-Publish false "src/Worms/worms.csproj" $PlatformOutputDir $Version_MajorMinorPatch $Platform
 
 WriteInfo "Writing install script to output"
 cp *.ps1 $PlatformOutputDir
