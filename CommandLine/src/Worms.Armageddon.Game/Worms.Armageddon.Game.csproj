@@ -7,7 +7,7 @@
     <ItemGroup>
       <PackageReference Include="Autofac" Version="6.2.0" />
       <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-      <PackageReference Include="System.IO.Abstractions" Version="13.2.28" />
+      <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
     </ItemGroup>
 
 </Project>
