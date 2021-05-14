@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Worms.Logging.TableOutput
 {
-    public static class TablePrinter
+    internal static class TablePrinter
     {
         public static void Print(TextWriter writer, Table table)
         {

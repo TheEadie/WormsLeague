@@ -2,17 +2,8 @@ using System;
 
 namespace Worms.Cli
 {
-    internal class CliInfo
+    internal record CliInfo(Version Version, string Path)
     {
-        public Version Version { get; }
-        public string Path { get; }
-
-        public CliInfo(Version version, string path)
-        {
-            Version = version;
-            Path = path;
-        }
-
         public override string ToString() => "Worms CLI: {" + $"Version: {Version}, " + $"Path: {Path}" + "}";
     }
 }
