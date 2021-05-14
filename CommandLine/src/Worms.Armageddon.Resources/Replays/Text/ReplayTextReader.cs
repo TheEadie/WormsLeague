@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Resources.Replays.Text
@@ -22,7 +23,7 @@ namespace Worms.Armageddon.Resources.Replays.Text
         public ReplayResource GetModel(string definition)
         {
             var startTime = DateTime.MinValue;
-            var teams = new List<string>();
+            var teams = new List<Team>();
             var winner = string.Empty;
 
             foreach (var line in definition.Split('\n'))
@@ -41,11 +42,17 @@ namespace Worms.Armageddon.Resources.Replays.Text
 
                 if (teamSummaryOnlineMatch.Success)
                 {
-                    teams.Add(teamSummaryOnlineMatch.Groups[3].Value);
+                    teams.Add(new Team(
+                        teamSummaryOnlineMatch.Groups[3].Value,
+                        teamSummaryOnlineMatch.Groups[2].Value,
+                        teamSummaryOnlineMatch.Groups[1].Value));
                 }
                 else if (teamSummaryOfflineMatch.Success)
                 {
-                    teams.Add(teamSummaryOfflineMatch.Groups[2].Value);
+                    teams.Add(new Team(
+                        teamSummaryOfflineMatch.Groups[2].Value,
+                        "local",
+                        teamSummaryOfflineMatch.Groups[1].Value));
                 }
 
                 if (winnerDrawMatch.Success)
@@ -58,7 +65,14 @@ namespace Worms.Armageddon.Resources.Replays.Text
                 }
             }
 
-            return new ReplayResource(startTime, "local", true, teams, winner, definition);
+            return new ReplayResource(
+                startTime,
+                "local",
+                true,
+                teams,
+                winner,
+                new List<Turn>(),
+                definition);
         }
     }
 }

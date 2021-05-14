@@ -42,8 +42,9 @@ namespace Worms.Resources.Replays
                             date,
                             "local",
                             false,
-                            new List<string>(),
-                            string.Empty,
+                            new List<Team>(0),
+                            null,
+                            new List<Turn>(0),
                             string.Empty)
                         );
                 }
