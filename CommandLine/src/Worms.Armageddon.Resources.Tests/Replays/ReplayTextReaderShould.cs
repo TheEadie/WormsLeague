@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Armageddon.Resources.Replays;
@@ -107,5 +108,41 @@ namespace Worms.Armageddon.Resources.Tests.Replays
 
             replay.Winner.ShouldBe("Draw");
         }
+
+        [Test]
+        public void ReadTurnFromOnlineReplay()
+        {
+            var log =
+                "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
+                "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Start.ShouldBe(new TimeSpan(0, 0, 6, 59, 80));
+            replay.Turns.ElementAt(0).End.ShouldBe(new TimeSpan(0, 0, 7, 26, 600));
+            replay.Turns.ElementAt(0).Team.Name.ShouldBe("Some Team");
+            replay.Turns.ElementAt(0).Team.Machine.ShouldBe("a person");
+        }
+
+        [Test]
+        public void ReadTurnFromOfflineReplay()
+        {
+            var log =
+                "Red: \"Some Team\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team fires Shotgun" + Environment.NewLine +
+                "[00:07:26.60] ••• Some Team ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Start.ShouldBe(new TimeSpan(0, 0, 6, 59, 80));
+            replay.Turns.ElementAt(0).End.ShouldBe(new TimeSpan(0, 0, 7, 26, 600));
+            replay.Turns.ElementAt(0).Team.Name.ShouldBe("Some Team");
+        }
+
     }
 }

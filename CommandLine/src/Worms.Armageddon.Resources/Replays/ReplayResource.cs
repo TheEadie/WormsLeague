@@ -7,9 +7,9 @@ namespace Worms.Armageddon.Resources.Replays
         DateTime Date,
         string Context,
         bool Processed,
-        List<Team> Teams,
+        IReadOnlyCollection<Team> Teams,
         string Winner,
-        List<Turn> Turns,
+        IReadOnlyCollection<Turn> Turns,
         string FullLog);
 
     public record Team(string Name, string Machine, TeamColour Colour)

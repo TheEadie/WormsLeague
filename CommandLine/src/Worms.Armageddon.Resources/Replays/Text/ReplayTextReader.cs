@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Resources.Replays.Text
@@ -7,6 +8,7 @@ namespace Worms.Armageddon.Resources.Replays.Text
     internal class ReplayTextReader : IReplayTextReader
     {
         private const string DateAndTime = @"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})";
+        private const string Timestamp = @"\[(\d+:\d+:\d+.\d+)\]";
 
         private const string TeamColour = @"(Red|Blue|Green|Yellow|Magenta|Cyan)";
         private const string TeamName = @"(.+)";
@@ -18,6 +20,10 @@ namespace Worms.Armageddon.Resources.Replays.Text
 
         private static readonly Regex WinnerDraw = new Regex($"The round was drawn.");
         private static readonly Regex Winner = new Regex($"{TeamName} wins the (match!|round.)");
+
+        private static readonly Regex StartOfTurn = new($"{Timestamp} ••• {TeamName} starts turn");
+        private static readonly Regex EndOfTurn = new($"{Timestamp} ••• {TeamName} .*; time used:.*sec");
+        private static readonly Regex DamageDealt = new Regex($"{Timestamp} ••• Damage dealt:");
 
         public ReplayResource GetModel(string definition)
         {
@@ -63,14 +69,58 @@ namespace Worms.Armageddon.Resources.Replays.Text
                 }
             }
 
+            var turns = ParseTurns(definition, teams);
+
             return new ReplayResource(
                 startTime,
                 "local",
                 true,
                 teams,
                 winner,
-                new List<Turn>(),
+                turns,
                 definition);
+        }
+
+        private IReadOnlyCollection<Turn> ParseTurns(string definition, IReadOnlyCollection<Team> teams)
+        {
+            var turns = new List<Turn>();
+            var currentTurn = new TurnBuilder();
+
+            foreach (var line in definition.Split('\n'))
+            {
+                var startOfTurn = StartOfTurn.Match(line);
+                var endOfTurn = EndOfTurn.Match(line);
+                var damageDealt = DamageDealt.Match(line);
+
+                if (startOfTurn.Success)
+                {
+                    var startTime = TimeSpan.Parse(startOfTurn.Groups[1].Value);
+                    var teamName = GetTeamNameFromText(startOfTurn.Groups[2].Value);
+
+                    currentTurn
+                        .WithStartTime(startTime)
+                        .WithTeam(teams.Single(x => x.Name == teamName));
+                }
+                else if (endOfTurn.Success)
+                {
+                    currentTurn.WithEndTime(TimeSpan.Parse(endOfTurn.Groups[1].Value));
+                    turns.Add(currentTurn.Build());
+                    currentTurn = new TurnBuilder();
+                }
+                else if (damageDealt.Success)
+                {
+                    currentTurn.WithEndTime(TimeSpan.Parse(damageDealt.Groups[1].Value));
+                    turns.Add(currentTurn.Build());
+                    currentTurn = new TurnBuilder();
+                }
+            }
+
+            return turns;
+        }
+
+        private static string GetTeamNameFromText(string text)
+        {
+            return text.Split('(')[0].Trim();
         }
     }
 }
