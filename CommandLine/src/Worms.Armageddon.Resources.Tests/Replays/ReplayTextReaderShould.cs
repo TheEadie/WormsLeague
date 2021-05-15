@@ -10,12 +10,12 @@ namespace Worms.Armageddon.Resources.Tests.Replays
     {
         private IReplayTextReader _replayTextReader;
 
-        private readonly Team _redTeam = new("Red Team", "local", "Red");
-        private readonly Team _blueTeam = new("Blue Team", "local", "Blue");
-        private readonly Team _greenTeam = new("Green Team", "local", "Green");
-        private readonly Team _yellowTeam = new("1UP", "local", "Yellow");
-        private readonly Team _magentaTeam = new("Test Team", "local", "Magenta");
-        private readonly Team _cyanTeam = new("Last Team Name", "local", "Cyan");
+        private readonly Team _redTeam = new("Red Team", "local", TeamColour.Red);
+        private readonly Team _blueTeam = new("Blue Team", "local", TeamColour.Blue);
+        private readonly Team _greenTeam = new("Green Team", "local", TeamColour.Green);
+        private readonly Team _yellowTeam = new("1UP", "local", TeamColour.Yellow);
+        private readonly Team _magentaTeam = new("Test Team", "local", TeamColour.Magenta);
+        private readonly Team _cyanTeam = new("Last Team Name", "local", TeamColour.Cyan);
 
         [SetUp]
         public void Setup()

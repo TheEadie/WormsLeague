@@ -41,17 +41,16 @@ namespace Worms.Armageddon.Resources.Replays.Text
 
                 if (teamSummaryOnlineMatch.Success)
                 {
-                    teams.Add(new Team(
+                    teams.Add(Team.Remote(
                         teamSummaryOnlineMatch.Groups[3].Value,
                         teamSummaryOnlineMatch.Groups[2].Value,
-                        teamSummaryOnlineMatch.Groups[1].Value));
+                        Enum.Parse<TeamColour>(teamSummaryOnlineMatch.Groups[1].Value)));
                 }
                 else if (teamSummaryOfflineMatch.Success)
                 {
-                    teams.Add(new Team(
+                    teams.Add(Team.Local(
                         teamSummaryOfflineMatch.Groups[2].Value,
-                        "local",
-                        teamSummaryOfflineMatch.Groups[1].Value));
+                        Enum.Parse<TeamColour>(teamSummaryOfflineMatch.Groups[1].Value)));
                 }
 
                 if (winnerDrawMatch.Success)
