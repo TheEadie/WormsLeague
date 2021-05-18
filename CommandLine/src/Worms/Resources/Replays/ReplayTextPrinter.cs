@@ -24,7 +24,33 @@ namespace Worms.Resources.Replays
 
         public void Print(TextWriter writer, ReplayResource resource, int outputMaxWidth)
         {
-            writer.Write(resource.Processed ? resource.FullLog : "Replay has not yet been processed");
+            if (!resource.Processed)
+            {
+                writer.WriteLine("Replay has not been processed");
+                writer.WriteLine($"Run \"worms process replay {resource.Date:yyyy-MM-dd HH.mm.ss}\" to extract the log");
+            }
+            else
+            {
+                writer.WriteLine($"Start Time: {resource.Date:yyyy-MM-dd HH.mm.ss}");
+                writer.WriteLine();
+
+                writer.WriteLine("Teams:");
+                var teamsTable = new TableBuilder(outputMaxWidth);
+                teamsTable.AddColumn("NAME", resource.Teams.Select(x => x.Name).ToList());
+                teamsTable.AddColumn("PLAYER", resource.Teams.Select(x => x.Machine).ToList());
+                teamsTable.AddColumn("COLOUR", resource.Teams.Select(x => x.Colour.ToString()).ToList());
+                TablePrinter.Print(writer, teamsTable.Build());
+                writer.WriteLine();
+
+                writer.WriteLine("Turns:");
+                var turnsTable = new TableBuilder(outputMaxWidth);
+                turnsTable.AddColumn("NUM", resource.Turns.Select((_, i) => (i+1).ToString()).ToList());
+                turnsTable.AddColumn("TEAM", resource.Turns.Select(x => x.Team.Name).ToList());
+                turnsTable.AddColumn("WEAPONS", resource.Turns.Select(x => string.Join(", ", x.Weapons.Select(t => t.Name))).ToList());
+                turnsTable.AddColumn("DAMAGE", resource.Turns.Select(x => string.Join(", ", x.Damage.Select(d => d.Team.Name + ": " + d.HealthLost + " (" + d.WormsKilled + " kills)"))).ToList());
+                TablePrinter.Print(writer, turnsTable.Build());
+                writer.WriteLine();
+            }
         }
     }
 }
