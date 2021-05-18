@@ -38,15 +38,22 @@ namespace Worms.Armageddon.Resources.Replays.Text
             var startTime = DateTime.MinValue;
             var teams = new List<Team>();
             var winner = string.Empty;
+            var turns = new List<Turn>();
+            var currentTurn = new TurnBuilder();
 
             foreach (var line in definition.Split('\n'))
             {
                 var startTimeMatch = StartTime.Match(line);
                 var teamSummaryOnlineMatch = TeamSummaryOnline.Match(line);
                 var teamSummaryOfflineMatch = TeamSummaryOffline.Match(line);
-
                 var winnerDrawMatch = WinnerDraw.Match(line);
                 var winnerMatch = Winner.Match(line);
+                var startOfTurn = StartOfTurn.Match(line);
+                var endOfTurn = EndOfTurn.Match(line);
+                var damageDealt = DamageDealt.Match(line);
+                var weaponUsedWithFuseAndModifier = WeaponUsageWithFuseAndModifier.Match(line);
+                var weaponUsedWithFuse = WeaponUsageWithFuse.Match(line);
+                var weaponUsed = WeaponUsage.Match(line);
 
                 if (startTimeMatch.Success)
                 {
@@ -75,42 +82,15 @@ namespace Worms.Armageddon.Resources.Replays.Text
                 {
                     winner = winnerMatch.Groups[1].Value;
                 }
-            }
-
-            var turns = ParseTurns(definition, teams);
-
-            return new ReplayResource(
-                startTime,
-                "local",
-                true,
-                teams,
-                winner,
-                turns,
-                definition);
-        }
-
-        private IReadOnlyCollection<Turn> ParseTurns(string definition, IReadOnlyCollection<Team> teams)
-        {
-            var turns = new List<Turn>();
-            var currentTurn = new TurnBuilder();
-
-            foreach (var line in definition.Split('\n'))
-            {
-                var startOfTurn = StartOfTurn.Match(line);
-                var endOfTurn = EndOfTurn.Match(line);
-                var damageDealt = DamageDealt.Match(line);
-                var weaponUsedWithFuseAndModifier = WeaponUsageWithFuseAndModifier.Match(line);
-                var weaponUsedWithFuse = WeaponUsageWithFuse.Match(line);
-                var weaponUsed = WeaponUsage.Match(line);
 
                 if (startOfTurn.Success)
                 {
-                    var startTime = TimeSpan.Parse(startOfTurn.Groups[1].Value);
+                    var startTimeTurn = TimeSpan.Parse(startOfTurn.Groups[1].Value);
                     var teamName = GetTeamNameFromText(startOfTurn.Groups[2].Value);
 
                     AddTurnIfAnyDetailsSet(currentTurn, turns);
                     currentTurn = new TurnBuilder()
-                        .WithStartTime(startTime)
+                        .WithStartTime(startTimeTurn)
                         .WithTeam(teams.Single(x => x.Name == teamName));
                 }
                 else if (weaponUsedWithFuseAndModifier.Success)
@@ -170,7 +150,14 @@ namespace Worms.Armageddon.Resources.Replays.Text
 
             AddTurnIfAnyDetailsSet(currentTurn, turns);
 
-            return turns;
+            return new ReplayResource(
+                startTime,
+                "local",
+                true,
+                teams,
+                winner,
+                turns,
+                definition);
         }
 
         private static void AddTurnIfAnyDetailsSet(TurnBuilder currentTurn, ICollection<Turn> turns)
