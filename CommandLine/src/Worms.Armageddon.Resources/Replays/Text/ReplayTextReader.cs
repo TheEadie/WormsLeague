@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Resources.Replays.Text
@@ -35,11 +33,7 @@ namespace Worms.Armageddon.Resources.Replays.Text
 
         public ReplayResource GetModel(string definition)
         {
-            var startTime = DateTime.MinValue;
-            var teams = new List<Team>();
-            var winner = string.Empty;
-            var turns = new List<Turn>();
-            var currentTurn = new TurnBuilder();
+            var builder = new ReplayResourceBuilder();
 
             foreach (var line in definition.Split('\n'))
             {
@@ -57,30 +51,30 @@ namespace Worms.Armageddon.Resources.Replays.Text
 
                 if (startTimeMatch.Success)
                 {
-                    startTime = DateTime.Parse(startTimeMatch.Groups[1].Value);
+                    builder.WithStartTime(DateTime.Parse(startTimeMatch.Groups[1].Value));
                 }
 
                 if (teamSummaryOnlineMatch.Success)
                 {
-                    teams.Add(Team.Remote(
+                    builder.WithTeam(Team.Remote(
                         teamSummaryOnlineMatch.Groups[3].Value,
                         teamSummaryOnlineMatch.Groups[2].Value,
                         Enum.Parse<TeamColour>(teamSummaryOnlineMatch.Groups[1].Value)));
                 }
                 else if (teamSummaryOfflineMatch.Success)
                 {
-                    teams.Add(Team.Local(
+                    builder.WithTeam(Team.Local(
                         teamSummaryOfflineMatch.Groups[2].Value,
                         Enum.Parse<TeamColour>(teamSummaryOfflineMatch.Groups[1].Value)));
                 }
 
                 if (winnerDrawMatch.Success)
                 {
-                    winner = "Draw";
+                    builder.WithWinner("Draw");
                 }
                 else if (winnerMatch.Success)
                 {
-                    winner = winnerMatch.Groups[1].Value;
+                    builder.WithWinner(winnerMatch.Groups[1].Value);
                 }
 
                 if (startOfTurn.Success)
@@ -88,14 +82,14 @@ namespace Worms.Armageddon.Resources.Replays.Text
                     var startTimeTurn = TimeSpan.Parse(startOfTurn.Groups[1].Value);
                     var teamName = GetTeamNameFromText(startOfTurn.Groups[2].Value);
 
-                    AddTurnIfAnyDetailsSet(currentTurn, turns);
-                    currentTurn = new TurnBuilder()
+                    builder.FinaliseCurrentTurn();
+                    builder.CurrentTurn
                         .WithStartTime(startTimeTurn)
-                        .WithTeam(teams.Single(x => x.Name == teamName));
+                        .WithTeam(builder.GetTeamByName(teamName));
                 }
                 else if (weaponUsedWithFuseAndModifier.Success)
                 {
-                    currentTurn.WithWeapon(
+                    builder.CurrentTurn.WithWeapon(
                         new Weapon(
                             weaponUsedWithFuseAndModifier.Groups[3].Value.Trim(),
                             uint.Parse(weaponUsedWithFuseAndModifier.Groups[4].Value),
@@ -103,7 +97,7 @@ namespace Worms.Armageddon.Resources.Replays.Text
                 }
                 else if (weaponUsedWithFuse.Success)
                 {
-                    currentTurn.WithWeapon(
+                    builder.CurrentTurn.WithWeapon(
                         new Weapon(
                             weaponUsedWithFuse.Groups[3].Value.Trim(),
                             uint.Parse(weaponUsedWithFuse.Groups[4].Value),
@@ -111,7 +105,7 @@ namespace Worms.Armageddon.Resources.Replays.Text
                 }
                 else if (weaponUsed.Success)
                 {
-                    currentTurn.WithWeapon(
+                    builder.CurrentTurn.WithWeapon(
                         new Weapon(
                             weaponUsed.Groups[3].Value.Trim(),
                             null,
@@ -119,11 +113,11 @@ namespace Worms.Armageddon.Resources.Replays.Text
                 }
                 else if (endOfTurn.Success)
                 {
-                    currentTurn.WithEndTime(TimeSpan.Parse(endOfTurn.Groups[1].Value));
+                    builder.CurrentTurn.WithEndTime(TimeSpan.Parse(endOfTurn.Groups[1].Value));
                 }
                 else if (damageDealt.Success)
                 {
-                    currentTurn.WithEndTime(TimeSpan.Parse(damageDealt.Groups[1].Value));
+                    builder.CurrentTurn.WithEndTime(TimeSpan.Parse(damageDealt.Groups[1].Value));
 
                     var damageDetails = damageDealt.Groups[2].Value.Split(',');
                     foreach (var damageDetail in damageDetails)
@@ -135,39 +129,24 @@ namespace Worms.Armageddon.Resources.Replays.Text
                         {
                             var teamName = GetTeamNameFromText(damageWithNoKills.Groups[2].Value);
                             var damageDone = uint.Parse(damageWithNoKills.Groups[1].Value);
-                            currentTurn.WithDamage(new Damage(teams.Single(x => x.Name == teamName), damageDone, 0));
+                            builder.CurrentTurn.WithDamage(new Damage(builder.GetTeamByName(teamName), damageDone, 0));
                         }
                         else if (damageWithKills.Success)
                         {
                             var teamName = GetTeamNameFromText(damageWithKills.Groups[3].Value);
                             var damageDone = uint.Parse(damageWithKills.Groups[1].Value);
                             var kills = uint.Parse(damageWithKills.Groups[2].Value);
-                            currentTurn.WithDamage(new Damage(teams.Single(x => x.Name == teamName), damageDone, kills));
+                            builder.CurrentTurn.WithDamage(new Damage(builder.GetTeamByName(teamName), damageDone, kills));
                         }
                     }
                 }
             }
 
-            AddTurnIfAnyDetailsSet(currentTurn, turns);
-
-            return new ReplayResource(
-                startTime,
-                "local",
-                true,
-                teams,
-                winner,
-                turns,
-                definition);
-        }
-
-        private static void AddTurnIfAnyDetailsSet(TurnBuilder currentTurn, ICollection<Turn> turns)
-        {
-            if (!currentTurn.HasRequiredDetails())
-            {
-                return;
-            }
-
-            turns.Add(currentTurn.Build());
+            return builder
+                .FinaliseCurrentTurn()
+                .WithContext("local")
+                .WithFullLog(definition)
+                .Build();
         }
 
         private static string GetTeamNameFromText(string text)
