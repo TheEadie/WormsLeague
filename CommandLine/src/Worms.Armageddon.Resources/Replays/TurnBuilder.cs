@@ -8,6 +8,7 @@ namespace Worms.Armageddon.Resources.Replays
         private Team _team;
         private TimeSpan _start;
         private TimeSpan _end;
+        private readonly List<Weapon> _weapons = new();
 
         public TurnBuilder WithStartTime(TimeSpan start)
         {
@@ -27,6 +28,17 @@ namespace Worms.Armageddon.Resources.Replays
             return this;
         }
 
-        public Turn Build() => new(_start, _end, _team, new List<Weapon>(), new List<Damage>());
+        public TurnBuilder WithWeapon(Weapon weapon)
+        {
+            _weapons.Add(weapon);
+            return this;
+        }
+
+        public Turn Build() => new(_start, _end, _team, _weapons, new List<Damage>());
+
+        public bool HasRequiredDetails()
+        {
+            return _end != default;
+        }
     }
 }

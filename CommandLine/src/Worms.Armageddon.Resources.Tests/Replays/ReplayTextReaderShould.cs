@@ -80,7 +80,7 @@ namespace Worms.Armageddon.Resources.Tests.Replays
         }
 
         [Test]
-        public void ReadWinnerOfMatchFromReplay()
+        public void ReadWinnerOfMatch()
         {
             var log = $"{_redTeam.Name} wins the match!";
 
@@ -90,7 +90,7 @@ namespace Worms.Armageddon.Resources.Tests.Replays
         }
 
         [Test]
-        public void ReadWinnerOfRoundFromReplay()
+        public void ReadWinnerOfRound()
         {
             var log = $"{_redTeam.Name} wins the round.";
 
@@ -100,7 +100,7 @@ namespace Worms.Armageddon.Resources.Tests.Replays
         }
 
         [Test]
-        public void ReadWinnerAsADrawFromReplay()
+        public void ReadWinnerAsADraw()
         {
             const string log = "The round was drawn.";
 
@@ -110,7 +110,7 @@ namespace Worms.Armageddon.Resources.Tests.Replays
         }
 
         [Test]
-        public void ReadTurnFromOnlineReplay()
+        public void ReadTurnTeamFromOnlineGame()
         {
             var log =
                 "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
@@ -128,7 +128,7 @@ namespace Worms.Armageddon.Resources.Tests.Replays
         }
 
         [Test]
-        public void ReadTurnFromOfflineReplay()
+        public void ReadTurnTeamFromOfflineGame()
         {
             var log =
                 "Red: \"Some Team\"" + Environment.NewLine +
@@ -144,5 +144,118 @@ namespace Worms.Armageddon.Resources.Tests.Replays
             replay.Turns.ElementAt(0).Team.Name.ShouldBe("Some Team");
         }
 
+        [Test]
+        public void ReadMultipleTurns()
+        {
+            var log =
+                "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
+                "Blue: \"another person\" as \"Team 2\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
+                "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat" + Environment.NewLine +
+                "[00:09:59.08] ••• Team 2 (another person) starts turn" + Environment.NewLine +
+                "[00:10:08.26] ••• Team 2 (another person) fires Shotgun" + Environment.NewLine +
+                "[00:11:26.60] ••• Team 3 (another person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(2);
+            replay.Turns.ElementAt(0).Team.Name.ShouldBe("Some Team");
+            replay.Turns.ElementAt(1).Team.Name.ShouldBe("Team 2");
+        }
+
+        [Test]
+        public void ReadEndOfTurnWithLossOfControl()
+        {
+            var log =
+                "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
+                "Blue: \"another person\" as \"Team 2\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
+                "[00:07:26.60] ••• Some Team (a person) loses turn due to loss of control; time used: 40.94 sec turn, 0.00 sec retreat";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Start.ShouldBe(new TimeSpan(0, 0, 6, 59, 80));
+            replay.Turns.ElementAt(0).End.ShouldBe(new TimeSpan(0, 0, 7, 26, 600));
+            replay.Turns.ElementAt(0).Team.Name.ShouldBe("Some Team");
+        }
+
+        [Test]
+        public void ReadWeaponDetails()
+        {
+            var log =
+                "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
+                "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Weapons.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Name.ShouldBe("Shotgun");
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Fuse.ShouldBe(null);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Modifier.ShouldBe(null);
+        }
+
+        [Test]
+        public void ReadWeaponDetailsForGrenades()
+        {
+            var log =
+                "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team (a person) fires Grenade (3 sec, min bounce)" + Environment.NewLine +
+                "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Weapons.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Name.ShouldBe("Grenade");
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Fuse.ShouldBe(3);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Modifier.ShouldBe("min bounce");
+        }
+
+        [Test]
+        public void ReadWeaponDetailsForBananaBomb()
+        {
+            var log =
+                "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team (a person) fires Banana Bomb (3 sec)" + Environment.NewLine +
+                "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Weapons.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Name.ShouldBe("Banana Bomb");
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Fuse.ShouldBe(3);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Modifier.ShouldBe(null);
+        }
+
+        [Test]
+        public void ReadWeaponDetailsWhenMultipleWeaponsUsed()
+        {
+            var log =
+                "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team (a person) fires Ninja Rope" + Environment.NewLine +
+                "[00:07:45.34] ••• Some Team (a person) fires Banana Bomb (3 sec)" + Environment.NewLine +
+                "[00:08:35.87] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Weapons.Count.ShouldBe(2);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Name.ShouldBe("Ninja Rope");
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Fuse.ShouldBe(null);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Modifier.ShouldBe(null);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(1).Name.ShouldBe("Banana Bomb");
+            replay.Turns.ElementAt(0).Weapons.ElementAt(1).Fuse.ShouldBe(3);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(1).Modifier.ShouldBe(null);
+        }
     }
 }

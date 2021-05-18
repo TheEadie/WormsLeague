@@ -13,6 +13,9 @@ namespace Worms.Armageddon.Resources.Replays.Text
         private const string TeamColour = @"(Red|Blue|Green|Yellow|Magenta|Cyan)";
         private const string TeamName = @"(.+)";
         private const string PlayerName = @"(.+)";
+        private const string WeaponName = @"(.+)";
+        private const string Number = @"(\d+)";
+        private const string Modifiers = @"(.+)";
 
         private static readonly Regex StartTime = new Regex($"Game Started at {DateAndTime} GMT");
         private static readonly Regex TeamSummaryOnline = new Regex($"{TeamColour}:.*\"{PlayerName}\" as .*\"{TeamName}\"");
@@ -24,6 +27,10 @@ namespace Worms.Armageddon.Resources.Replays.Text
         private static readonly Regex StartOfTurn = new($"{Timestamp} ••• {TeamName} starts turn");
         private static readonly Regex EndOfTurn = new($"{Timestamp} ••• {TeamName} .*; time used:.*sec");
         private static readonly Regex DamageDealt = new Regex($"{Timestamp} ••• Damage dealt:");
+
+        private static readonly Regex WeaponUsageWithFuseAndModifier = new Regex($@"{Timestamp} ••• {TeamName} fires {WeaponName} \({Number} sec, {Modifiers}\)");
+        private static readonly Regex WeaponUsageWithFuse = new Regex($@"{Timestamp} ••• {TeamName} fires {WeaponName} \({Number} sec\)");
+        private static readonly Regex WeaponUsage = new Regex($@"{Timestamp} ••• {TeamName} fires {WeaponName}");
 
         public ReplayResource GetModel(string definition)
         {
@@ -91,31 +98,64 @@ namespace Worms.Armageddon.Resources.Replays.Text
                 var startOfTurn = StartOfTurn.Match(line);
                 var endOfTurn = EndOfTurn.Match(line);
                 var damageDealt = DamageDealt.Match(line);
+                var weaponUsedWithFuseAndModifier = WeaponUsageWithFuseAndModifier.Match(line);
+                var weaponUsedWithFuse = WeaponUsageWithFuse.Match(line);
+                var weaponUsed = WeaponUsage.Match(line);
 
                 if (startOfTurn.Success)
                 {
                     var startTime = TimeSpan.Parse(startOfTurn.Groups[1].Value);
                     var teamName = GetTeamNameFromText(startOfTurn.Groups[2].Value);
 
-                    currentTurn
+                    AddTurnIfAnyDetailsSet(currentTurn, turns);
+                    currentTurn = new TurnBuilder()
                         .WithStartTime(startTime)
                         .WithTeam(teams.Single(x => x.Name == teamName));
+                }
+                else if (weaponUsedWithFuseAndModifier.Success)
+                {
+                    currentTurn.WithWeapon(
+                        new Weapon(
+                            weaponUsedWithFuseAndModifier.Groups[3].Value.Trim(),
+                            int.Parse(weaponUsedWithFuseAndModifier.Groups[4].Value),
+                            weaponUsedWithFuseAndModifier.Groups[5].Value));
+                }
+                else if (weaponUsedWithFuse.Success)
+                {
+                    currentTurn.WithWeapon(
+                        new Weapon(
+                            weaponUsedWithFuse.Groups[3].Value.Trim(),
+                            int.Parse(weaponUsedWithFuse.Groups[4].Value),
+                            null));
+                }
+                else if (weaponUsed.Success)
+                {
+                    currentTurn.WithWeapon(
+                        new Weapon(
+                            weaponUsed.Groups[3].Value.Trim(),
+                            null,
+                            null));
                 }
                 else if (endOfTurn.Success)
                 {
                     currentTurn.WithEndTime(TimeSpan.Parse(endOfTurn.Groups[1].Value));
-                    turns.Add(currentTurn.Build());
-                    currentTurn = new TurnBuilder();
                 }
                 else if (damageDealt.Success)
                 {
                     currentTurn.WithEndTime(TimeSpan.Parse(damageDealt.Groups[1].Value));
-                    turns.Add(currentTurn.Build());
-                    currentTurn = new TurnBuilder();
                 }
             }
 
+            AddTurnIfAnyDetailsSet(currentTurn, turns);
+
             return turns;
+        }
+
+        private static void AddTurnIfAnyDetailsSet(TurnBuilder currentTurn, ICollection<Turn> turns)
+        {
+            if (!currentTurn.HasRequiredDetails()) return;
+
+            turns.Add(currentTurn.Build());
         }
 
         private static string GetTeamNameFromText(string text)
