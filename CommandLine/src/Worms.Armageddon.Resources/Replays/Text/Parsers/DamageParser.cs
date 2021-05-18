@@ -9,7 +9,7 @@ namespace Worms.Armageddon.Resources.Replays.Text.Parsers
         private const string DamageDealtDetails = @"(.+)";
         private const string Number = @"(\d+)";
         private const string TeamName = @"(.+)";
-        private static readonly Regex DamageDealt = new($"{Timestamp} ••• Damage dealt: {DamageDealtDetails}");
+        private static readonly Regex DamageDealt = new($"{Timestamp} (•••|���) Damage dealt: {DamageDealtDetails}");
 
         public bool CanParse(string line) => DamageDealt.IsMatch(line);
 
@@ -21,7 +21,7 @@ namespace Worms.Armageddon.Resources.Replays.Text.Parsers
             {
                 builder.CurrentTurn.WithEndTime(TimeSpan.Parse(damageDealt.Groups[1].Value));
 
-                var damageDetails = damageDealt.Groups[2].Value.Split(',');
+                var damageDetails = damageDealt.Groups[3].Value.Split(',');
                 foreach (var damageDetail in damageDetails)
                 {
                     var damageWithNoKills = new Regex(@$"{Number} to {TeamName}").Match(damageDetail);

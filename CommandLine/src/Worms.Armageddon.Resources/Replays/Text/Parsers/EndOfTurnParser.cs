@@ -7,7 +7,7 @@ namespace Worms.Armageddon.Resources.Replays.Text.Parsers
     {
         private const string Timestamp = @"\[(\d+:\d+:\d+.\d+)\]";
         private const string TeamName = @"(.+)";
-        private static readonly Regex EndOfTurn = new($"{Timestamp} ••• {TeamName} .*; time used:.*sec");
+        private static readonly Regex EndOfTurn = new($"{Timestamp} (•••|���) {TeamName} .*; time used:.*sec");
 
         public bool CanParse(string line) => EndOfTurn.IsMatch(line);
 

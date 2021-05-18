@@ -7,7 +7,7 @@ namespace Worms.Armageddon.Resources.Replays.Text.Parsers
     {
         private const string Timestamp = @"\[(\d+:\d+:\d+.\d+)\]";
         private const string TeamName = @"(.+)";
-        private static readonly Regex StartOfTurn = new($"{Timestamp} ••• {TeamName} starts turn");
+        private static readonly Regex StartOfTurn = new($"{Timestamp} (•••|���) {TeamName} starts turn");
 
         public bool CanParse(string line) => StartOfTurn.IsMatch(line);
 
@@ -18,7 +18,7 @@ namespace Worms.Armageddon.Resources.Replays.Text.Parsers
             if (startOfTurn.Success)
             {
                 var startTimeTurn = TimeSpan.Parse(startOfTurn.Groups[1].Value);
-                var teamName = GetTeamNameFromText(startOfTurn.Groups[2].Value);
+                var teamName = GetTeamNameFromText(startOfTurn.Groups[3].Value);
 
                 builder.FinaliseCurrentTurn();
                 builder.CurrentTurn.WithStartTime(startTimeTurn).WithTeam(builder.GetTeamByName(teamName));
