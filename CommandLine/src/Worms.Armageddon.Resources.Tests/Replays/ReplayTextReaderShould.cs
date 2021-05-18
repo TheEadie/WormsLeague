@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Armageddon.Resources.Replays;
 using Worms.Armageddon.Resources.Replays.Text;
+using Worms.Armageddon.Resources.Replays.Text.Parsers;
 
 namespace Worms.Armageddon.Resources.Tests.Replays
 {
@@ -21,7 +23,17 @@ namespace Worms.Armageddon.Resources.Tests.Replays
         [SetUp]
         public void Setup()
         {
-            _replayTextReader = new ReplayTextReader();
+            _replayTextReader = new ReplayTextReader(
+                new List<IReplayLineParser>()
+                {
+                    new StartTimeParser(),
+                    new TeamParser(),
+                    new WinnerParser(),
+                    new StartOfTurnParser(),
+                    new WeaponUsedParser(),
+                    new DamageParser(),
+                    new EndOfTurnParser()
+                });
         }
 
         [Test]
