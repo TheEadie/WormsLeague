@@ -16,6 +16,7 @@ namespace Worms.Armageddon.Resources.Replays.Text
         private const string WeaponName = @"(.+)";
         private const string Number = @"(\d+)";
         private const string Modifiers = @"(.+)";
+        private const string DamageDealtDetails = @"(.+)";
 
         private static readonly Regex StartTime = new Regex($"Game Started at {DateAndTime} GMT");
         private static readonly Regex TeamSummaryOnline = new Regex($"{TeamColour}:.*\"{PlayerName}\" as .*\"{TeamName}\"");
@@ -26,7 +27,7 @@ namespace Worms.Armageddon.Resources.Replays.Text
 
         private static readonly Regex StartOfTurn = new($"{Timestamp} ••• {TeamName} starts turn");
         private static readonly Regex EndOfTurn = new($"{Timestamp} ••• {TeamName} .*; time used:.*sec");
-        private static readonly Regex DamageDealt = new Regex($"{Timestamp} ••• Damage dealt:");
+        private static readonly Regex DamageDealt = new Regex($"{Timestamp} ••• Damage dealt: {DamageDealtDetails}");
 
         private static readonly Regex WeaponUsageWithFuseAndModifier = new Regex($@"{Timestamp} ••• {TeamName} fires {WeaponName} \({Number} sec, {Modifiers}\)");
         private static readonly Regex WeaponUsageWithFuse = new Regex($@"{Timestamp} ••• {TeamName} fires {WeaponName} \({Number} sec\)");
@@ -143,6 +144,27 @@ namespace Worms.Armageddon.Resources.Replays.Text
                 else if (damageDealt.Success)
                 {
                     currentTurn.WithEndTime(TimeSpan.Parse(damageDealt.Groups[1].Value));
+
+                    var damageDetails = damageDealt.Groups[2].Value.Split(',');
+                    foreach (var damageDetail in damageDetails)
+                    {
+                        var damageWithNoKills = new Regex(@$"{Number} to {TeamName}").Match(damageDetail);
+                        var damageWithKills = new Regex(@$"{Number} \({Number} kill\) to {TeamName}").Match(damageDetail);
+
+                        if (damageWithNoKills.Success)
+                        {
+                            var teamName = GetTeamNameFromText(damageWithNoKills.Groups[2].Value);
+                            var damageDone = uint.Parse(damageWithNoKills.Groups[1].Value);
+                            currentTurn.WithDamage(new Damage(teams.Single(x => x.Name == teamName), damageDone, 0));
+                        }
+                        else if (damageWithKills.Success)
+                        {
+                            var teamName = GetTeamNameFromText(damageWithKills.Groups[3].Value);
+                            var damageDone = uint.Parse(damageWithKills.Groups[1].Value);
+                            var kills = uint.Parse(damageWithKills.Groups[2].Value);
+                            currentTurn.WithDamage(new Damage(teams.Single(x => x.Name == teamName), damageDone, kills));
+                        }
+                    }
                 }
             }
 

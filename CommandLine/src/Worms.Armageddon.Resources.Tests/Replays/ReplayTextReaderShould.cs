@@ -257,5 +257,65 @@ namespace Worms.Armageddon.Resources.Tests.Replays
             replay.Turns.ElementAt(0).Weapons.ElementAt(1).Fuse.ShouldBe(new uint?(3));
             replay.Turns.ElementAt(0).Weapons.ElementAt(1).Modifier.ShouldBe(null);
         }
+
+        [Test]
+        public void ReadDamageToSingleTeam()
+        {
+            var log =
+                "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
+                "Blue: \"another person\" as \"Team 2\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
+                "[00:07:26.60] ••• Damage dealt: 45 to Team 2 (another person)";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Damage.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Damage.ElementAt(0).Team.Name.ShouldBe("Team 2");
+            replay.Turns.ElementAt(0).Damage.ElementAt(0).HealthLost.ShouldBe((uint) 45);
+            replay.Turns.ElementAt(0).Damage.ElementAt(0).WormsKilled.ShouldBe((uint) 0);
+        }
+
+        [Test]
+        public void ReadDamageToSingleTeamWithDeaths()
+        {
+            var log =
+                "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
+                "Blue: \"another person\" as \"Team 2\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
+                "[00:07:26.60] ••• Damage dealt: 100 (1 kill) to Team 2 (another person)";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Damage.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Damage.ElementAt(0).Team.Name.ShouldBe("Team 2");
+            replay.Turns.ElementAt(0).Damage.ElementAt(0).HealthLost.ShouldBe((uint) 100);
+            replay.Turns.ElementAt(0).Damage.ElementAt(0).WormsKilled.ShouldBe((uint) 1);
+        }
+
+        [Test]
+        public void ReadDamageToMultipleTeams()
+        {
+            var log =
+                "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
+                "Blue: \"another person\" as \"Team 2\"" + Environment.NewLine +
+                "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
+                "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
+                "[00:07:26.60] ••• Damage dealt: 42 to Some Team (a person), 100 (1 kill) to Team 2 (another person)";
+
+            var replay = _replayTextReader.GetModel(log);
+
+            replay.Turns.Count.ShouldBe(1);
+            replay.Turns.ElementAt(0).Damage.Count.ShouldBe(2);
+            replay.Turns.ElementAt(0).Damage.ElementAt(0).Team.Name.ShouldBe("Some Team");
+            replay.Turns.ElementAt(0).Damage.ElementAt(0).HealthLost.ShouldBe((uint) 42);
+            replay.Turns.ElementAt(0).Damage.ElementAt(0).WormsKilled.ShouldBe((uint) 0);
+            replay.Turns.ElementAt(0).Damage.ElementAt(1).Team.Name.ShouldBe("Team 2");
+            replay.Turns.ElementAt(0).Damage.ElementAt(1).HealthLost.ShouldBe((uint) 100);
+            replay.Turns.ElementAt(0).Damage.ElementAt(1).WormsKilled.ShouldBe((uint) 1);
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace Worms.Armageddon.Resources.Replays
         private TimeSpan _start;
         private TimeSpan _end;
         private readonly List<Weapon> _weapons = new();
+        private readonly List<Damage> _damage = new();
 
         public TurnBuilder WithStartTime(TimeSpan start)
         {
@@ -34,7 +35,13 @@ namespace Worms.Armageddon.Resources.Replays
             return this;
         }
 
-        public Turn Build() => new(_start, _end, _team, _weapons, new List<Damage>());
+        public TurnBuilder WithDamage(Damage damage)
+        {
+            _damage.Add(damage);
+            return this;
+        }
+
+        public Turn Build() => new(_start, _end, _team, _weapons, _damage);
 
         public bool HasRequiredDetails()
         {
