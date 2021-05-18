@@ -117,7 +117,7 @@ namespace Worms.Armageddon.Resources.Replays.Text
                     currentTurn.WithWeapon(
                         new Weapon(
                             weaponUsedWithFuseAndModifier.Groups[3].Value.Trim(),
-                            int.Parse(weaponUsedWithFuseAndModifier.Groups[4].Value),
+                            uint.Parse(weaponUsedWithFuseAndModifier.Groups[4].Value),
                             weaponUsedWithFuseAndModifier.Groups[5].Value));
                 }
                 else if (weaponUsedWithFuse.Success)
@@ -125,7 +125,7 @@ namespace Worms.Armageddon.Resources.Replays.Text
                     currentTurn.WithWeapon(
                         new Weapon(
                             weaponUsedWithFuse.Groups[3].Value.Trim(),
-                            int.Parse(weaponUsedWithFuse.Groups[4].Value),
+                            uint.Parse(weaponUsedWithFuse.Groups[4].Value),
                             null));
                 }
                 else if (weaponUsed.Success)

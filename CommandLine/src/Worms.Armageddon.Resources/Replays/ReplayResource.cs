@@ -29,9 +29,9 @@ namespace Worms.Armageddon.Resources.Replays
         Cyan
     }
 
-    public record Turn(TimeSpan Start, TimeSpan End, Team Team, List<Weapon> Weapons, List<Damage> Damage);
+    public record Turn(TimeSpan Start, TimeSpan End, Team Team, IReadOnlyCollection<Weapon> Weapons, IReadOnlyCollection<Damage> Damage);
 
-    public record Weapon(string Name, int? Fuse, string Modifier);
+    public record Weapon(string Name, uint? Fuse, string Modifier);
 
-    public record Damage(Team Team, int HealthLost, int WormsKilled);
+    public record Damage(Team Team, uint HealthLost, uint WormsKilled);
 }

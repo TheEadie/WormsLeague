@@ -214,7 +214,7 @@ namespace Worms.Armageddon.Resources.Tests.Replays
             replay.Turns.Count.ShouldBe(1);
             replay.Turns.ElementAt(0).Weapons.Count.ShouldBe(1);
             replay.Turns.ElementAt(0).Weapons.ElementAt(0).Name.ShouldBe("Grenade");
-            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Fuse.ShouldBe(3);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Fuse.ShouldBe(new uint?(3));
             replay.Turns.ElementAt(0).Weapons.ElementAt(0).Modifier.ShouldBe("min bounce");
         }
 
@@ -232,7 +232,7 @@ namespace Worms.Armageddon.Resources.Tests.Replays
             replay.Turns.Count.ShouldBe(1);
             replay.Turns.ElementAt(0).Weapons.Count.ShouldBe(1);
             replay.Turns.ElementAt(0).Weapons.ElementAt(0).Name.ShouldBe("Banana Bomb");
-            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Fuse.ShouldBe(3);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(0).Fuse.ShouldBe(new uint?(3));
             replay.Turns.ElementAt(0).Weapons.ElementAt(0).Modifier.ShouldBe(null);
         }
 
@@ -254,7 +254,7 @@ namespace Worms.Armageddon.Resources.Tests.Replays
             replay.Turns.ElementAt(0).Weapons.ElementAt(0).Fuse.ShouldBe(null);
             replay.Turns.ElementAt(0).Weapons.ElementAt(0).Modifier.ShouldBe(null);
             replay.Turns.ElementAt(0).Weapons.ElementAt(1).Name.ShouldBe("Banana Bomb");
-            replay.Turns.ElementAt(0).Weapons.ElementAt(1).Fuse.ShouldBe(3);
+            replay.Turns.ElementAt(0).Weapons.ElementAt(1).Fuse.ShouldBe(new uint?(3));
             replay.Turns.ElementAt(0).Weapons.ElementAt(1).Modifier.ShouldBe(null);
         }
     }
