@@ -153,7 +153,10 @@ namespace Worms.Armageddon.Resources.Replays.Text
 
         private static void AddTurnIfAnyDetailsSet(TurnBuilder currentTurn, ICollection<Turn> turns)
         {
-            if (!currentTurn.HasRequiredDetails()) return;
+            if (!currentTurn.HasRequiredDetails())
+            {
+                return;
+            }
 
             turns.Add(currentTurn.Build());
         }
