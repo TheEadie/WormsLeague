@@ -47,10 +47,16 @@ namespace Worms.Resources.Replays
                 turnsTable.AddColumn("NUM", resource.Turns.Select((_, i) => (i+1).ToString()).ToList());
                 turnsTable.AddColumn("TEAM", resource.Turns.Select(x => x.Team.Name).ToList());
                 turnsTable.AddColumn("WEAPONS", resource.Turns.Select(x => string.Join(", ", x.Weapons.Select(t => t.Name))).ToList());
-                turnsTable.AddColumn("DAMAGE", resource.Turns.Select(x => string.Join(", ", x.Damage.Select(d => d.Team.Name + ": " + d.HealthLost + " (" + d.WormsKilled + " kills)"))).ToList());
+                turnsTable.AddColumn("DAMAGE", resource.Turns.Select(x => string.Join(", ", x.Damage.Select(GetDamageText))).ToList());
                 TablePrinter.Print(writer, turnsTable.Build());
                 writer.WriteLine();
             }
+        }
+
+        private string GetDamageText(Damage damage)
+        {
+            var killsText = damage.WormsKilled > 0 ? $" ({damage.WormsKilled} kill)" : "";
+            return $"{damage.Team.Name}: {damage.HealthLost}{killsText}";
         }
     }
 }
