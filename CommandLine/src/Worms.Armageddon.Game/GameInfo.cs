@@ -2,25 +2,14 @@ using System;
 
 namespace Worms.Armageddon.Game
 {
-    public class GameInfo
+    public record GameInfo(
+        bool IsInstalled,
+        string ExeLocation,
+        string ProcessName,
+        Version Version,
+        string SchemesFolder,
+        string ReplayFolder)
     {
-        public bool IsInstalled { get; }
-        public string ExeLocation { get; }
-        public string ProcessName { get; }
-        public Version Version { get; }
-        public string SchemesFolder { get; }
-        public string ReplayFolder { get; }
-
-        public GameInfo(bool isInstalled, string exeLocation, string processName, Version version, string schemesFolder, string replayFolder)
-        {
-            IsInstalled = isInstalled;
-            ExeLocation = exeLocation;
-            ProcessName = processName;
-            Version = version;
-            SchemesFolder = schemesFolder;
-            ReplayFolder = replayFolder;
-        }
-
         public static readonly GameInfo NotInstalled = new GameInfo(
             false,
             string.Empty,

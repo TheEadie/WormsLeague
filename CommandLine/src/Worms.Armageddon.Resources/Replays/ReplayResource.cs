@@ -3,23 +3,35 @@ using System.Collections.Generic;
 
 namespace Worms.Armageddon.Resources.Replays
 {
-    public class ReplayResource
-    {
-        public DateTime Date { get; }
-        public string Context { get; }
-        public bool Processed { get; }
-        public List<string> Teams { get; }
-        public string Winner { get; }
-        public string FullLog { get; }
+    public record ReplayResource(
+        DateTime Date,
+        string Context,
+        bool Processed,
+        IReadOnlyCollection<Team> Teams,
+        string Winner,
+        IReadOnlyCollection<Turn> Turns,
+        string FullLog);
 
-        public ReplayResource(DateTime date, string context, bool processed, List<string> teams, string winner, string fullLog)
-        {
-            Date = date;
-            Context = context;
-            Processed = processed;
-            Teams = teams;
-            Winner = winner;
-            FullLog = fullLog;
-        }
+    public record Team(string Name, string Machine, TeamColour Colour)
+    {
+        public static Team Local(string name, TeamColour colour) => new(name, "local", colour);
+
+        public static Team Remote(string name, string machine, TeamColour colour) => new(name, machine, colour);
+    };
+
+    public enum TeamColour
+    {
+        Red,
+        Blue,
+        Green,
+        Yellow,
+        Magenta,
+        Cyan
     }
+
+    public record Turn(TimeSpan Start, TimeSpan End, Team Team, IReadOnlyCollection<Weapon> Weapons, IReadOnlyCollection<Damage> Damage);
+
+    public record Weapon(string Name, uint? Fuse, string Modifier);
+
+    public record Damage(Team Team, uint HealthLost, uint WormsKilled);
 }

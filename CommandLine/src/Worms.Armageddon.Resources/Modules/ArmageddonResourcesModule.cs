@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Worms.Armageddon.Resources.Replays.Text;
+using Worms.Armageddon.Resources.Replays.Text.Parsers;
 using Worms.Armageddon.Resources.Schemes.Binary;
 using Worms.Armageddon.Resources.Schemes.Text;
 
@@ -17,6 +18,13 @@ namespace Worms.Armageddon.Resources.Modules
 
             // Replays
             builder.RegisterType<ReplayTextReader>().As<IReplayTextReader>();
+            builder.RegisterType<StartTimeParser>().As<IReplayLineParser>();
+            builder.RegisterType<TeamParser>().As<IReplayLineParser>();
+            builder.RegisterType<WinnerParser>().As<IReplayLineParser>();
+            builder.RegisterType<StartOfTurnParser>().As<IReplayLineParser>();
+            builder.RegisterType<WeaponUsedParser>().As<IReplayLineParser>();
+            builder.RegisterType<DamageParser>().As<IReplayLineParser>();
+            builder.RegisterType<EndOfTurnParser>().As<IReplayLineParser>();
         }
     }
 }

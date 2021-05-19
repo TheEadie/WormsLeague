@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace Worms.Logging.TableOutput
 {
-    public class TableBuilder
+    internal class TableBuilder
     {
         private readonly int _outputWidth;
-        private readonly List<TableColumn> _columns = new List<TableColumn>();
-        private const int _columnPadding = 3;
+        private readonly List<TableColumn> _columns = new();
+        private const int ColumnPadding = 3;
 
         public TableBuilder(int outputWidth)
         {
@@ -34,7 +34,7 @@ namespace Worms.Logging.TableOutput
             foreach (var column in _columns)
             {
                 // Only add another column if the heading can be rendered
-                var headingLength = column.Heading.Length + _columnPadding;
+                var headingLength = column.Heading.Length + ColumnPadding;
                 if (currentWidth >= _outputWidth - headingLength)
                     break;
 
@@ -71,8 +71,8 @@ namespace Worms.Logging.TableOutput
         private static int GetWidth(string header, IReadOnlyCollection<string> values)
         {
             var anyItems = values.Any();
-            var headerLength = header.Length + _columnPadding;
-            var longest = anyItems ? values.Max(x => x.Length) + _columnPadding : headerLength;
+            var headerLength = header.Length + ColumnPadding;
+            var longest = anyItems ? values.Max(x => x.Length) + ColumnPadding : headerLength;
             if (longest < headerLength)
                 longest = headerLength;
             return longest;

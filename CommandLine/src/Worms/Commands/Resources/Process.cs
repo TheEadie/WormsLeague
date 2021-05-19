@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Commands.Resources.Replays;
-using Worms.Commands.Resources.Schemes;
 
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
