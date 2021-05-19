@@ -8,7 +8,7 @@ namespace Worms.Armageddon.Resources.Replays
         private Team _team;
         private TimeSpan _start;
         private TimeSpan _end;
-        private readonly List<Weapon> _weapons = new();
+        private readonly HashSet<Weapon> _weapons = new();
         private readonly List<Damage> _damage = new();
 
         public TurnBuilder WithStartTime(TimeSpan start)
