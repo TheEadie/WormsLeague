@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace Worms.Armageddon.Game.Replays
@@ -14,6 +15,11 @@ namespace Worms.Armageddon.Game.Replays
         public async Task Play(string replayPath)
         {
             await _wormsRunner.RunWorms("/play", $"\"{replayPath}\"", "/quiet");
+        }
+
+        public async Task Play(string replayPath, TimeSpan startTime)
+        {
+            await _wormsRunner.RunWorms("/playat", $"\"{replayPath}\"", startTime.ToString(), "/quiet");
         }
     }
 }

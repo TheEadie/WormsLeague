@@ -2,6 +2,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Armageddon.Game.Replays;
+using Worms.Armageddon.Resources.Replays;
+using Worms.Resources;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
@@ -14,14 +16,19 @@ namespace Worms.Commands.Resources.Replays
     {
         private readonly IReplayPlayer _replayPlayer;
         private readonly IReplayLocator _replayLocator;
+        private readonly IResourceRetriever<ReplayResource> _replayRetriever;
 
         [Argument(0, Name = "name", Description = "The name of the Replay to be viewed")]
         public string Name { get; }
 
-        public ViewReplay(IReplayPlayer replayPlayer, IReplayLocator replayLocator)
+        [Option(Description = "The turn you wish to start the replay from", ShortName = "t")]
+        public uint Turn { get; }
+
+        public ViewReplay(IReplayPlayer replayPlayer, IReplayLocator replayLocator, IResourceRetriever<ReplayResource> replayRetriever)
         {
             _replayPlayer = replayPlayer;
             _replayLocator = replayLocator;
+            _replayRetriever = replayRetriever;
         }
 
         public async Task<int> OnExecuteAsync()
@@ -37,6 +44,14 @@ namespace Worms.Commands.Resources.Replays
             {
                 Logger.Error(exception.Message);
                 return 1;
+            }
+
+            if (Turn != default)
+            {
+                var replay = _replayRetriever.Get(Name).Single();
+                var startTime = replay.Turns.ElementAt((int)Turn - 1).Start;
+                await _replayPlayer.Play(filePaths.WAgamePath, startTime);
+                return 0;
             }
 
             await _replayPlayer.Play(filePaths.WAgamePath);
