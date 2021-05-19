@@ -46,17 +46,40 @@ namespace Worms.Resources.Replays
                 var turnsTable = new TableBuilder(outputMaxWidth);
                 turnsTable.AddColumn("NUM", resource.Turns.Select((_, i) => (i+1).ToString()).ToList());
                 turnsTable.AddColumn("TEAM", resource.Turns.Select(x => x.Team.Name).ToList());
-                turnsTable.AddColumn("WEAPONS", resource.Turns.Select(x => string.Join(", ", x.Weapons.Select(t => t.Name))).ToList());
+                turnsTable.AddColumn("WEAPONS", resource.Turns.Select(x => string.Join(", ", x.Weapons.Select(GetWeaponText))).ToList());
                 turnsTable.AddColumn("DAMAGE", resource.Turns.Select(x => string.Join(", ", x.Damage.Select(GetDamageText))).ToList());
                 TablePrinter.Print(writer, turnsTable.Build());
                 writer.WriteLine();
+
+                writer.WriteLine("Awards:");
+                writer.WriteLine($"Winner: {resource.Winner}");
             }
         }
 
-        private string GetDamageText(Damage damage)
+        private static string GetDamageText(Damage damage)
         {
             var killsText = damage.WormsKilled > 0 ? $" ({damage.WormsKilled} kill)" : "";
             return $"{damage.Team.Name}: {damage.HealthLost}{killsText}";
+        }
+
+        private static string GetWeaponText(Weapon weapon)
+        {
+            var details = "";
+            var (name, fuse, modifier) = weapon;
+            if (fuse != null && modifier != null)
+            {
+                details = $" ({fuse} sec, {modifier})";
+            }
+            else if (fuse != null)
+            {
+                details = $" ({fuse} sec)";
+            }
+            else if (modifier != null)
+            {
+                details = $" ({modifier})";
+            }
+
+            return $"{name}{details}";
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Worms.Armageddon.Resources.Replays.Text.Parsers
         private const string Modifiers = @"(.+)";
         private static readonly Regex WeaponUsageWithFuseAndModifier = new($@"{Timestamp} (•••|���) {TeamName} fires {WeaponName} \({Number} sec, {Modifiers}\)");
         private static readonly Regex WeaponUsageWithFuse = new($@"{Timestamp} (•••|���) {TeamName} fires {WeaponName} \({Number} sec\)");
+        private static readonly Regex WeaponUsageWithModifier = new($@"{Timestamp} (•••|���) {TeamName} fires {WeaponName} \({Modifiers}\)");
         private static readonly Regex WeaponUsage = new($@"{Timestamp} (•••|���) {TeamName} fires {WeaponName}");
 
         public bool CanParse(string line) =>
@@ -22,6 +23,7 @@ namespace Worms.Armageddon.Resources.Replays.Text.Parsers
         {
             var weaponUsedWithFuseAndModifier = WeaponUsageWithFuseAndModifier.Match(line);
             var weaponUsedWithFuse = WeaponUsageWithFuse.Match(line);
+            var weaponUsedWithModifier = WeaponUsageWithModifier.Match(line);
             var weaponUsed = WeaponUsage.Match(line);
 
             if (weaponUsedWithFuseAndModifier.Success)
@@ -39,6 +41,14 @@ namespace Worms.Armageddon.Resources.Replays.Text.Parsers
                         weaponUsedWithFuse.Groups[4].Value.Trim(),
                         uint.Parse(weaponUsedWithFuse.Groups[5].Value),
                         null));
+            }
+            else if (weaponUsedWithModifier.Success)
+            {
+                builder.CurrentTurn.WithWeapon(
+                    new Weapon(
+                        weaponUsedWithModifier.Groups[4].Value.Trim(),
+                        null,
+                        weaponUsedWithModifier.Groups[5].Value));
             }
             else if (weaponUsed.Success)
             {
