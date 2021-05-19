@@ -9,8 +9,8 @@ namespace Worms.Armageddon.Resources.Replays.Text.Parsers
         private const string TeamName = @"(.+)";
         private const string PlayerName = @"(.+)";
 
-        private static readonly Regex TeamSummaryOnline = new Regex($"{TeamColour}:.*\"{PlayerName}\" as .*\"{TeamName}\"");
-        private static readonly Regex TeamSummaryOffline = new Regex($"{TeamColour}:.*\"{TeamName}\"");
+        private static readonly Regex TeamSummaryOnline = new Regex($"{TeamColour}:.+\"{PlayerName}\".+as.+\"{TeamName}\"");
+        private static readonly Regex TeamSummaryOffline = new Regex($"{TeamColour}:.+\"{TeamName}\"");
 
         public bool CanParse(string line) => TeamSummaryOnline.IsMatch(line) || TeamSummaryOffline.IsMatch(line);
 
