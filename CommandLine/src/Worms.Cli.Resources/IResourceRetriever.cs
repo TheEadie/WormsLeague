@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Worms.Resources
+namespace Worms.Cli.Resources
 {
     public interface IResourceRetriever<out T>
     {

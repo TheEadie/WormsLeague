@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using Worms.Armageddon.Game;
 
-namespace Worms.Armageddon.Game.Replays
+namespace Worms.Cli.Resources.Replays
 {
     internal class ReplayLocator : IReplayLocator
     {

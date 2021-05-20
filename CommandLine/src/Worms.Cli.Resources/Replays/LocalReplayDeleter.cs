@@ -1,9 +1,8 @@
 using System.IO.Abstractions;
 using System.Linq;
-using Worms.Armageddon.Game.Replays;
 using Worms.Armageddon.Resources.Replays;
 
-namespace Worms.Resources.Replays
+namespace Worms.Cli.Resources.Replays
 {
     internal class LocalReplayDeleter : IResourceDeleter<ReplayResource>
     {

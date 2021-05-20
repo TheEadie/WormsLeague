@@ -4,7 +4,7 @@ using Worms.Armageddon.Game;
 using Worms.Armageddon.Resources.Schemes;
 using Worms.Armageddon.Resources.Schemes.Binary;
 
-namespace Worms.Resources.Schemes
+namespace Worms.Cli.Resources.Schemes
 {
     internal class LocalSchemesRetriever : IResourceRetriever<SchemeResource>
     {

@@ -1,4 +1,5 @@
 using System.Linq;
+using Worms.Cli.Resources;
 using Worms.Commands;
 
 namespace Worms.Resources
