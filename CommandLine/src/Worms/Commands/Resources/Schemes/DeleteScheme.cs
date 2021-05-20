@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Armageddon.Resources.Schemes;
+using Worms.Cli.Resources.Local.Schemes;
 using Worms.Resources;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
@@ -12,12 +12,12 @@ namespace Worms.Commands.Resources.Schemes
     [Command("scheme", "schemes", "wsc", Description = "Delete Worms Schemes (.wsc files)")]
     internal class DeleteScheme : CommandBase
     {
-        private readonly ResourceDeleter<SchemeResource> _resourceDeleter;
+        private readonly ResourceDeleter<LocalScheme> _resourceDeleter;
 
         [Argument(0, Name = "name", Description = "The name of the Scheme to be deleted")]
         public string Name { get; }
 
-        public DeleteScheme(ResourceDeleter<SchemeResource> resourceDeleter)
+        public DeleteScheme(ResourceDeleter<LocalScheme> resourceDeleter)
         {
             _resourceDeleter = resourceDeleter;
         }

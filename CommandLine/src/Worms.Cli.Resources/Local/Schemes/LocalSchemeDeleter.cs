@@ -1,10 +1,9 @@
 using System.IO.Abstractions;
 using Worms.Armageddon.Game;
-using Worms.Armageddon.Resources.Schemes;
 
 namespace Worms.Cli.Resources.Local.Schemes
 {
-    internal class LocalSchemeDeleter : IResourceDeleter<SchemeResource>
+    internal class LocalSchemeDeleter : IResourceDeleter<LocalScheme>
     {
         private readonly IWormsLocator _wormsLocator;
         private readonly IFileSystem _fileSystem;
@@ -15,7 +14,7 @@ namespace Worms.Cli.Resources.Local.Schemes
             _fileSystem = fileSystem;
         }
 
-        public void Delete(SchemeResource resource)
+        public void Delete(LocalScheme resource)
         {
             var gameInfo = _wormsLocator.Find();
             var path = _fileSystem.Path.Combine(gameInfo.SchemesFolder, resource.Name + ".wsc");

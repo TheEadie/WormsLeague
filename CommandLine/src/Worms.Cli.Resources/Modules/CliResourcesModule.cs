@@ -1,6 +1,5 @@
 ﻿using System.IO.Abstractions;
 using Autofac;
-using Worms.Armageddon.Resources.Schemes;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
 
@@ -14,8 +13,8 @@ namespace Worms.Cli.Resources.Modules
             builder.RegisterType<FileSystem>().As<IFileSystem>();
 
             // Schemes
-            builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<SchemeResource>>();
-            builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<SchemeResource>>();
+            builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<LocalScheme>>();
+            builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<LocalScheme>>();
 
             // Replays
             builder.RegisterType<LocalReplayLocator>().As<ILocalReplayLocator>();

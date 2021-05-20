@@ -7,6 +7,7 @@ using Worms.Armageddon.Resources.Schemes;
 using Worms.Cli;
 using Worms.Cli.PackageManagers;
 using Worms.Cli.Resources.Local.Replays;
+using Worms.Cli.Resources.Local.Schemes;
 using Worms.Cli.Resources.Modules;
 using Worms.Configuration;
 using Worms.League;
@@ -41,7 +42,7 @@ namespace Worms.Modules
             builder.RegisterType<LeagueUpdater>();
 
             // Schemes
-            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
+            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<LocalScheme>>();
 
             // Replays
             builder.RegisterType<ReplayTextPrinter>().As<IResourcePrinter<LocalReplay>>();
