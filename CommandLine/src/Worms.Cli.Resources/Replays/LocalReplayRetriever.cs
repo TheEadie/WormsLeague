@@ -42,7 +42,6 @@ namespace Worms.Cli.Resources.Replays
                         new LocalReplay(paths,
                         new ReplayResource(
                             date,
-                            "local",
                             false,
                             new List<Team>(0),
                             null,

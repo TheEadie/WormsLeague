@@ -5,7 +5,6 @@ namespace Worms.Armageddon.Resources.Replays
 {
     public record ReplayResource(
         DateTime Date,
-        string Context,
         bool Processed,
         IReadOnlyCollection<Team> Teams,
         string Winner,
