@@ -1,8 +1,8 @@
 ﻿using System.IO.Abstractions;
 using Autofac;
 using Worms.Armageddon.Resources.Schemes;
-using Worms.Cli.Resources.Replays;
-using Worms.Cli.Resources.Schemes;
+using Worms.Cli.Resources.Local.Replays;
+using Worms.Cli.Resources.Local.Schemes;
 
 namespace Worms.Cli.Resources.Modules
 {

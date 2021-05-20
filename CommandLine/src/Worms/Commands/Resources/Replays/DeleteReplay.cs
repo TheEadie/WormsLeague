@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Cli.Resources.Replays;
+using Worms.Cli.Resources.Local.Replays;
 using Worms.Resources;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members

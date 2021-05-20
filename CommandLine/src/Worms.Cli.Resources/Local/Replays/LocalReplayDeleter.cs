@@ -1,6 +1,6 @@
 using System.IO.Abstractions;
 
-namespace Worms.Cli.Resources.Replays
+namespace Worms.Cli.Resources.Local.Replays
 {
     internal class LocalReplayDeleter : IResourceDeleter<LocalReplay>
     {

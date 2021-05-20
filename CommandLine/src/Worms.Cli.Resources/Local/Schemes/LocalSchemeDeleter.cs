@@ -2,7 +2,7 @@ using System.IO.Abstractions;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Resources.Schemes;
 
-namespace Worms.Cli.Resources.Schemes
+namespace Worms.Cli.Resources.Local.Schemes
 {
     internal class LocalSchemeDeleter : IResourceDeleter<SchemeResource>
     {

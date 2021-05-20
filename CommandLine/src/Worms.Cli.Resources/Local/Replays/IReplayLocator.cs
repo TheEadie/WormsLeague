@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Worms.Cli.Resources.Replays
+namespace Worms.Cli.Resources.Local.Replays
 {
     public interface IReplayLocator
     {

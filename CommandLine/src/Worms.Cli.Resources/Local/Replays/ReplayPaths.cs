@@ -1,4 +1,4 @@
-namespace Worms.Cli.Resources.Replays
+namespace Worms.Cli.Resources.Local.Replays
 {
     public record ReplayPaths(string WAgamePath, string LogPath);
 }

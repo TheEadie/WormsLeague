@@ -3,7 +3,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using Worms.Armageddon.Game;
 
-namespace Worms.Cli.Resources.Replays
+namespace Worms.Cli.Resources.Local.Replays
 {
     internal class ReplayLocator : IReplayLocator
     {
