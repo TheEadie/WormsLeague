@@ -20,6 +20,7 @@ namespace Worms.Cli.Resources.Modules
             builder.RegisterType<LocalReplayLocator>().As<ILocalReplayLocator>();
             builder.RegisterType<LocalReplayRetriever>().As<IResourceRetriever<LocalReplay>>();
             builder.RegisterType<LocalReplayDeleter>().As<IResourceDeleter<LocalReplay>>();
+            builder.RegisterType<LocalReplayViewer>().As<IResourceViewer<LocalReplay, LocalReplayViewParameters>>();
         }
     }
 }

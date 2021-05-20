@@ -49,6 +49,7 @@ namespace Worms.Modules
 
             builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
             builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
+            builder.RegisterGeneric(typeof(ResourceViewer<,>)).As(typeof(ResourceViewer<,>));
 
             builder.RegisterModule<ArmageddonGameModule>();
             builder.RegisterModule<ArmageddonResourcesModule>();
