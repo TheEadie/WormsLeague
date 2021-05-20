@@ -9,13 +9,13 @@ namespace Worms.Cli.Resources.Local.Replays
 {
     internal class LocalReplayRetriever : IResourceRetriever<LocalReplay>
     {
-        private readonly IReplayLocator _replayLocator;
+        private readonly ILocalReplayLocator _localReplayLocator;
         private readonly IFileSystem _fileSystem;
         private readonly IReplayTextReader _replayTextReader;
 
-        public LocalReplayRetriever(IReplayLocator replayLocator, IFileSystem fileSystem, IReplayTextReader replayTextReader)
+        public LocalReplayRetriever(ILocalReplayLocator localReplayLocator, IFileSystem fileSystem, IReplayTextReader replayTextReader)
         {
-            _replayLocator = replayLocator;
+            _localReplayLocator = localReplayLocator;
             _fileSystem = fileSystem;
             _replayTextReader = replayTextReader;
         }
@@ -24,7 +24,7 @@ namespace Worms.Cli.Resources.Local.Replays
         {
             var resources = new List<LocalReplay>();
 
-            foreach (var paths in _replayLocator.GetReplayPaths(pattern))
+            foreach (var paths in _localReplayLocator.GetReplayPaths(pattern))
             {
                 if (_fileSystem.File.Exists(paths.LogPath))
                 {

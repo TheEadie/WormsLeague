@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Worms.Cli.Resources.Local.Replays
 {
-    public interface IReplayLocator
+    internal interface ILocalReplayLocator
     {
         IReadOnlyCollection<ReplayPaths> GetReplayPaths(string searchPattern);
     }
