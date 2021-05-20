@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Armageddon.Game.Replays;
+using Worms.Cli.Resources;
 using Worms.Cli.Resources.Replays;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
@@ -13,7 +14,7 @@ namespace Worms.Commands.Resources.Replays
     internal class ProcessReplay : CommandBase
     {
         private readonly IReplayLogGenerator _replayLogGenerator;
-        private readonly IReplayLocator _replayLocator;
+        private readonly IResourceRetriever<LocalReplay> _replayRetriever;
 
         [Argument(
             0,
@@ -22,10 +23,10 @@ namespace Worms.Commands.Resources.Replays
                 "Optional: The name or search pattern for the Replay to be processed. Wildcards (*) are supported")]
         public string Name { get; }
 
-        public ProcessReplay(IReplayLogGenerator replayLogGenerator, IReplayLocator replayLocator)
+        public ProcessReplay(IReplayLogGenerator replayLogGenerator, IResourceRetriever<LocalReplay> replayRetriever)
         {
             _replayLogGenerator = replayLogGenerator;
-            _replayLocator = replayLocator;
+            _replayRetriever = replayRetriever;
         }
 
         public async Task<int> OnExecuteAsync()
@@ -37,10 +38,10 @@ namespace Worms.Commands.Resources.Replays
                 pattern = Name;
             }
 
-            foreach (var replayPath in _replayLocator.GetReplayPaths(pattern))
+            foreach (var replayPath in _replayRetriever.Get(pattern))
             {
-                Logger.Information($"Processing: {replayPath.WAgamePath}");
-                await _replayLogGenerator.GenerateReplayLog(replayPath.WAgamePath);
+                Logger.Information($"Processing: {replayPath.Paths.WAgamePath}");
+                await _replayLogGenerator.GenerateReplayLog(replayPath.Paths.WAgamePath);
             }
 
             return 0;

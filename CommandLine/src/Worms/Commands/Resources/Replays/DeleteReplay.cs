@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Armageddon.Resources.Replays;
 using Worms.Cli.Resources.Replays;
 using Worms.Resources;
 

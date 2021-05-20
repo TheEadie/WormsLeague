@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Armageddon.Game.Modules;
 using Worms.Armageddon.Resources.Modules;
-using Worms.Armageddon.Resources.Replays;
 using Worms.Armageddon.Resources.Schemes;
 using Worms.Cli;
 using Worms.Cli.PackageManagers;
