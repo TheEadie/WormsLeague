@@ -7,7 +7,7 @@ using Worms.Armageddon.Resources.Replays.Text;
 
 namespace Worms.Cli.Resources.Replays
 {
-    internal class LocalReplayRetriever : IResourceRetriever<ReplayResource>
+    internal class LocalReplayRetriever : IResourceRetriever<LocalReplay>
     {
         private readonly IReplayLocator _replayLocator;
         private readonly IFileSystem _fileSystem;
@@ -20,15 +20,17 @@ namespace Worms.Cli.Resources.Replays
             _replayTextReader = replayTextReader;
         }
 
-        public IReadOnlyCollection<ReplayResource> Get(string pattern = "*")
+        public IReadOnlyCollection<LocalReplay> Get(string pattern = "*")
         {
-            var resources = new List<ReplayResource>();
+            var resources = new List<LocalReplay>();
 
             foreach (var paths in _replayLocator.GetReplayPaths(pattern))
             {
                 if (_fileSystem.File.Exists(paths.LogPath))
                 {
-                    resources.Add(_replayTextReader.GetModel(_fileSystem.File.ReadAllText(paths.LogPath)));
+                    resources.Add(new LocalReplay(
+                        paths,
+                        _replayTextReader.GetModel(_fileSystem.File.ReadAllText(paths.LogPath))));
                 }
                 else
                 {
@@ -37,6 +39,7 @@ namespace Worms.Cli.Resources.Replays
                     var dateString = fileName.Substring(0, startIndex - 1);
                     var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);
                     resources.Add(
+                        new LocalReplay(paths,
                         new ReplayResource(
                             date,
                             "local",
@@ -45,11 +48,11 @@ namespace Worms.Cli.Resources.Replays
                             null,
                             new List<Turn>(0),
                             string.Empty)
-                        );
+                        ));
                 }
             }
 
-            return resources.OrderByDescending(x => x.Date).ToList();
+            return resources.OrderByDescending(x => x.Details.Date).ToList();
         }
     }
 }
