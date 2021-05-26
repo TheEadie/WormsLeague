@@ -7,10 +7,9 @@ namespace Worms.Armageddon.Resources.Replays
     internal class ReplayResourceBuilder
     {
         private DateTime _start;
-        private string _context;
         private readonly List<Team> _teams = new();
         private readonly List<Turn> _turns = new();
-        private string _winner;
+        private string _winner = "";
         private string _fullLog;
 
         public TurnBuilder CurrentTurn { get; private set; } = new();
@@ -18,12 +17,6 @@ namespace Worms.Armageddon.Resources.Replays
         public ReplayResourceBuilder WithStartTime(DateTime start)
         {
             _start = start;
-            return this;
-        }
-
-        public ReplayResourceBuilder WithContext(string context)
-        {
-            _context = context;
             return this;
         }
 
@@ -58,6 +51,6 @@ namespace Worms.Armageddon.Resources.Replays
 
         public Team GetTeamByName(string name) => _teams.Single(x => x.Name == name);
 
-        public ReplayResource Build() => new(_start, _context, true, _teams, _winner, _turns, _fullLog);
+        public ReplayResource Build() => new(_start, true, _teams, _winner, _turns, _fullLog);
     }
 }

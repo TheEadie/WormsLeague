@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Armageddon.Resources.Schemes;
+using Worms.Cli.Resources.Local.Schemes;
 using Worms.Resources;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
@@ -13,7 +14,7 @@ namespace Worms.Commands.Resources.Schemes
     [Command("scheme", "schemes", "wsc", Description = "Retrieves information for Worms Schemes (.wsc files)")]
     internal class GetScheme : CommandBase
     {
-        private readonly ResourceGetter<SchemeResource> _schemesRetriever;
+        private readonly ResourceGetter<LocalScheme> _schemesRetriever;
 
         [Argument(
             0,
@@ -22,7 +23,7 @@ namespace Worms.Commands.Resources.Schemes
                 "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported")]
         public string Name { get; }
 
-        public GetScheme(ResourceGetter<SchemeResource> schemesRetriever)
+        public GetScheme(ResourceGetter<LocalScheme> schemesRetriever)
         {
             _schemesRetriever = schemesRetriever;
         }

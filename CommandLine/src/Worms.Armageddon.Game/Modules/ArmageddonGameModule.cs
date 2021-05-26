@@ -1,5 +1,4 @@
-﻿using System.IO.Abstractions;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Armageddon.Game.Replays;
 
@@ -11,11 +10,7 @@ namespace Worms.Armageddon.Game.Modules
         {
             RegisterOsModules(builder);
 
-            // FileSystem
-            builder.RegisterType<FileSystem>().As<IFileSystem>();
-
             // Replays
-            builder.RegisterType<ReplayLocator>().As<IReplayLocator>();
             builder.RegisterType<ReplayLogGenerator>().As<IReplayLogGenerator>();
             builder.RegisterType<ReplayPlayer>().As<IReplayPlayer>();
         }

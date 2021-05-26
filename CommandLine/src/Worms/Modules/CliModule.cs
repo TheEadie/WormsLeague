@@ -3,10 +3,12 @@ using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Armageddon.Game.Modules;
 using Worms.Armageddon.Resources.Modules;
-using Worms.Armageddon.Resources.Replays;
 using Worms.Armageddon.Resources.Schemes;
 using Worms.Cli;
 using Worms.Cli.PackageManagers;
+using Worms.Cli.Resources.Local.Replays;
+using Worms.Cli.Resources.Local.Schemes;
+using Worms.Cli.Resources.Modules;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Resources;
@@ -40,20 +42,18 @@ namespace Worms.Modules
             builder.RegisterType<LeagueUpdater>();
 
             // Schemes
-            builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<SchemeResource>>();
-            builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<SchemeResource>>();
-            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<SchemeResource>>();
+            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<LocalScheme>>();
 
             // Replays
-            builder.RegisterType<LocalReplayRetriever>().As<IResourceRetriever<ReplayResource>>();
-            builder.RegisterType<LocalReplayDeleter>().As<IResourceDeleter<ReplayResource>>();
-            builder.RegisterType<ReplayTextPrinter>().As<IResourcePrinter<ReplayResource>>();
+            builder.RegisterType<ReplayTextPrinter>().As<IResourcePrinter<LocalReplay>>();
 
             builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
             builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
+            builder.RegisterGeneric(typeof(ResourceViewer<,>)).As(typeof(ResourceViewer<,>));
 
             builder.RegisterModule<ArmageddonGameModule>();
             builder.RegisterModule<ArmageddonResourcesModule>();
+            builder.RegisterModule<CliResourcesModule>();
 
         }
 

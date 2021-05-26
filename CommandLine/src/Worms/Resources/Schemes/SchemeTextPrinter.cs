@@ -5,11 +5,12 @@ using System.Linq;
 using Syroot.Worms.Armageddon;
 using Worms.Armageddon.Resources.Schemes;
 using Worms.Armageddon.Resources.Schemes.Text;
+using Worms.Cli.Resources.Local.Schemes;
 using Worms.Logging.TableOutput;
 
 namespace Worms.Resources.Schemes
 {
-    internal class SchemeTextPrinter : IResourcePrinter<SchemeResource>
+    internal class SchemeTextPrinter : IResourcePrinter<LocalScheme>
     {
         private readonly ISchemeTextWriter _schemeTextWriter;
 
@@ -18,7 +19,7 @@ namespace Worms.Resources.Schemes
             _schemeTextWriter = schemeTextWriter;
         }
 
-        public void Print(TextWriter writer, IReadOnlyCollection<SchemeResource> items, int outputMaxWidth)
+        public void Print(TextWriter writer, IReadOnlyCollection<LocalScheme> items, int outputMaxWidth)
         {
             var tableBuilder = new TableBuilder(outputMaxWidth);
             tableBuilder.AddColumn("NAME", items.Select(x => x.Name).ToList());
@@ -37,7 +38,7 @@ namespace Worms.Resources.Schemes
             TablePrinter.Print(writer, table);
         }
 
-        public void Print(TextWriter writer, SchemeResource resource, int outputMaxWidth)
+        public void Print(TextWriter writer, LocalScheme resource, int outputMaxWidth)
         {
             _schemeTextWriter.Write(resource.Details, writer);
         }

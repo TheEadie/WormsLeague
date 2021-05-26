@@ -24,7 +24,6 @@ namespace Worms.Armageddon.Resources.Replays.Text
 
             return builder
                 .FinaliseCurrentTurn()
-                .WithContext("local")
                 .WithFullLog(definition)
                 .Build();
         }

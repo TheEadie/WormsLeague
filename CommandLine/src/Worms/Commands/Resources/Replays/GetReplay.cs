@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Armageddon.Resources.Replays;
+using Worms.Cli.Resources.Local.Replays;
 using Worms.Resources;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
@@ -13,7 +13,7 @@ namespace Worms.Commands.Resources.Replays
     [Command("replay", "replays", "WAgame", Description = "Retrieves information for Worms replays (.WAgame files)")]
     internal class GetReplay : CommandBase
     {
-        private readonly ResourceGetter<ReplayResource> _replayRetriever;
+        private readonly ResourceGetter<LocalReplay> _replayRetriever;
 
         [Argument(
             0,
@@ -22,7 +22,7 @@ namespace Worms.Commands.Resources.Replays
                 "Optional: The name or search pattern for the Replay to be retrieved. Wildcards (*) are supported")]
         public string Name { get; }
 
-        public GetReplay(ResourceGetter<ReplayResource> replayRetriever)
+        public GetReplay(ResourceGetter<LocalReplay> replayRetriever)
         {
             _replayRetriever = replayRetriever;
         }

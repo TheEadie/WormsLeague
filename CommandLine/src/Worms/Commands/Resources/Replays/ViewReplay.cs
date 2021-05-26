@@ -1,7 +1,7 @@
-using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Armageddon.Game.Replays;
+using Worms.Cli.Resources.Local.Replays;
+using Worms.Resources;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
@@ -12,26 +12,24 @@ namespace Worms.Commands.Resources.Replays
     [Command("replay", "replays", "WAgame", Description = "View replays (.WAgame file)")]
     internal class ViewReplay : CommandBase
     {
-        private readonly IReplayPlayer _replayPlayer;
-        private readonly IReplayLocator _replayLocator;
+        private readonly ResourceViewer<LocalReplay, LocalReplayViewParameters> _resourceViewer;
 
         [Argument(0, Name = "name", Description = "The name of the Replay to be viewed")]
         public string Name { get; }
 
-        public ViewReplay(IReplayPlayer replayPlayer, IReplayLocator replayLocator)
+        [Option(Description = "The turn you wish to start the replay from", ShortName = "t")]
+        public uint Turn { get; }
+
+        public ViewReplay(ResourceViewer<LocalReplay, LocalReplayViewParameters> resourceViewer)
         {
-            _replayPlayer = replayPlayer;
-            _replayLocator = replayLocator;
+            _resourceViewer = resourceViewer;
         }
 
         public async Task<int> OnExecuteAsync()
         {
-            ReplayPaths filePaths;
-
             try
             {
-                var name = ValidateName();
-                filePaths = GetFilePaths(name);
+                await _resourceViewer.View(Name, new LocalReplayViewParameters(Turn));
             }
             catch (ConfigurationException exception)
             {
@@ -39,35 +37,7 @@ namespace Worms.Commands.Resources.Replays
                 return 1;
             }
 
-            await _replayPlayer.Play(filePaths.WAgamePath);
             return 0;
-        }
-
-        private ReplayPaths GetFilePaths(string name)
-        {
-            var replaysFound = _replayLocator.GetReplayPaths(name);
-
-            if (replaysFound.Count == 0)
-            {
-                throw new ConfigurationException($"No Replay found with name: {name}");
-            }
-
-            if (replaysFound.Count > 1)
-            {
-                throw new ConfigurationException($"More than one Replay found with name matching: {name}");
-            }
-
-            return replaysFound.Single();
-        }
-
-        private string ValidateName()
-        {
-            if (!string.IsNullOrWhiteSpace(Name))
-            {
-                return Name;
-            }
-
-            throw new ConfigurationException("No name provided for the Replay to be viewed.");
         }
     }
 }

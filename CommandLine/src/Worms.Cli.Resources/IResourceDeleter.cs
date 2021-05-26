@@ -1,4 +1,4 @@
-namespace Worms.Resources
+namespace Worms.Cli.Resources
 {
     public interface IResourceDeleter<in T>
     {

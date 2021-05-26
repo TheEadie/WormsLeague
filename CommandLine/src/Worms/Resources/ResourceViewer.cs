@@ -1,25 +1,26 @@
-using System.Linq;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Worms.Cli.Resources;
 using Worms.Commands;
 
 namespace Worms.Resources
 {
-    public class ResourceDeleter<T>
+    public class ResourceViewer<T, TParams>
     {
         private readonly IResourceRetriever<T> _retriever;
-        private readonly IResourceDeleter<T> _deleter;
+        private readonly IResourceViewer<T, TParams> _resourceViewer;
 
-        public ResourceDeleter(IResourceRetriever<T> retriever, IResourceDeleter<T> deleter)
+        public ResourceViewer(IResourceRetriever<T> retriever, IResourceViewer<T, TParams> resourceViewer)
         {
             _retriever = retriever;
-            _deleter = deleter;
+            _resourceViewer = resourceViewer;
         }
 
-        public void Delete(string name)
+        public async Task View(string name, TParams parameters)
         {
             name = ValidateName(name);
             var resource = GetResource(name);
-            _deleter.Delete(resource);
+            await _resourceViewer.View(resource, parameters);
         }
 
         private T GetResource(string name)
@@ -43,7 +44,7 @@ namespace Worms.Resources
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ConfigurationException("No name provided for the resource to be deleted.");
+                throw new ConfigurationException("No name provided for the resource to be viewed.");
             }
 
             return name;

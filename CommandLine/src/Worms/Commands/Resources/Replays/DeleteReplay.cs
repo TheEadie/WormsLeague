@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Armageddon.Resources.Replays;
+using Worms.Cli.Resources.Local.Replays;
 using Worms.Resources;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
@@ -12,12 +12,12 @@ namespace Worms.Commands.Resources.Replays
     [Command("replay", "replays", "WAgame", Description = "Delete replays (.WAgame file)")]
     internal class DeleteReplay : CommandBase
     {
-        private readonly ResourceDeleter<ReplayResource> _resourceDeleter;
+        private readonly ResourceDeleter<LocalReplay> _resourceDeleter;
 
         [Argument(0, Name = "name", Description = "The name of the Replay to be deleted")]
         public string Name { get; }
 
-        public DeleteReplay(ResourceDeleter<ReplayResource> resourceDeleter)
+        public DeleteReplay(ResourceDeleter<LocalReplay> resourceDeleter)
         {
             _resourceDeleter = resourceDeleter;
         }

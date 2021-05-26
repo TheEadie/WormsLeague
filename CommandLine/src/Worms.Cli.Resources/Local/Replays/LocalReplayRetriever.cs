@@ -2,34 +2,35 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
-using Worms.Armageddon.Game.Replays;
 using Worms.Armageddon.Resources.Replays;
 using Worms.Armageddon.Resources.Replays.Text;
 
-namespace Worms.Resources.Replays
+namespace Worms.Cli.Resources.Local.Replays
 {
-    internal class LocalReplayRetriever : IResourceRetriever<ReplayResource>
+    internal class LocalReplayRetriever : IResourceRetriever<LocalReplay>
     {
-        private readonly IReplayLocator _replayLocator;
+        private readonly ILocalReplayLocator _localReplayLocator;
         private readonly IFileSystem _fileSystem;
         private readonly IReplayTextReader _replayTextReader;
 
-        public LocalReplayRetriever(IReplayLocator replayLocator, IFileSystem fileSystem, IReplayTextReader replayTextReader)
+        public LocalReplayRetriever(ILocalReplayLocator localReplayLocator, IFileSystem fileSystem, IReplayTextReader replayTextReader)
         {
-            _replayLocator = replayLocator;
+            _localReplayLocator = localReplayLocator;
             _fileSystem = fileSystem;
             _replayTextReader = replayTextReader;
         }
 
-        public IReadOnlyCollection<ReplayResource> Get(string pattern = "*")
+        public IReadOnlyCollection<LocalReplay> Get(string pattern = "*")
         {
-            var resources = new List<ReplayResource>();
+            var resources = new List<LocalReplay>();
 
-            foreach (var paths in _replayLocator.GetReplayPaths(pattern))
+            foreach (var paths in _localReplayLocator.GetReplayPaths(pattern))
             {
                 if (_fileSystem.File.Exists(paths.LogPath))
                 {
-                    resources.Add(_replayTextReader.GetModel(_fileSystem.File.ReadAllText(paths.LogPath)));
+                    resources.Add(new LocalReplay(
+                        paths,
+                        _replayTextReader.GetModel(_fileSystem.File.ReadAllText(paths.LogPath))));
                 }
                 else
                 {
@@ -38,19 +39,19 @@ namespace Worms.Resources.Replays
                     var dateString = fileName.Substring(0, startIndex - 1);
                     var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);
                     resources.Add(
+                        new LocalReplay(paths,
                         new ReplayResource(
                             date,
-                            "local",
                             false,
                             new List<Team>(0),
                             null,
                             new List<Turn>(0),
                             string.Empty)
-                        );
+                        ));
                 }
             }
 
-            return resources.OrderByDescending(x => x.Date).ToList();
+            return resources.OrderByDescending(x => x.Details.Date).ToList();
         }
     }
 }
