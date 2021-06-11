@@ -17,7 +17,7 @@
     <PackageReference Include="Newtonsoft.json" Version="13.0.1" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.33" />
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.37" />
   </ItemGroup>
 
   <ItemGroup>
