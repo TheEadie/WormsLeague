@@ -22,7 +22,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: GifTool
-        path: WormsGifTool/release/
+        path: WormsGifTool/.artifacts/
 
   release:
     name: Create GitHub Release for gif tool
