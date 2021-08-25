@@ -14,6 +14,7 @@ namespace Worms.Cli.Resources.Modules
 
             // Schemes
             builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<LocalScheme>>();
+            builder.RegisterType<LocalSchemeCreator>().As<IResourceCreator<LocalSchemeCreateParameters>>();
             builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<LocalScheme>>();
 
             // Replays

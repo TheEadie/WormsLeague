@@ -2,10 +2,9 @@ using System;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Syroot.Worms.Armageddon;
 using Worms.Armageddon.Game;
-using Worms.Armageddon.Resources.Schemes.Binary;
-using Worms.Armageddon.Resources.Schemes.Text;
+using Worms.Cli.Resources;
+using Worms.Cli.Resources.Local.Schemes;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
@@ -16,8 +15,7 @@ namespace Worms.Commands.Resources.Schemes
     [Command("scheme", "schemes", "wsc", Description = "Create Worms Schemes (.wsc files)")]
     internal class CreateScheme : CommandBase
     {
-        private readonly ISchemeTextReader _schemeTextReader;
-        private readonly IWscWriter _wscWriter;
+        private readonly IResourceCreator<LocalSchemeCreateParameters> _schemeCreator;
         private readonly IFileSystem _fileSystem;
         private readonly IWormsLocator _wormsLocator;
 
@@ -30,10 +28,9 @@ namespace Worms.Commands.Resources.Schemes
         [Option(Description = "Override the folder that the Scheme will be created in", ShortName = "r")]
         public string ResourceFolder { get; }
 
-        public CreateScheme(ISchemeTextReader schemeTextReader, IWscWriter wscWriter, IFileSystem fileSystem, IWormsLocator wormsLocator)
+        public CreateScheme(IResourceCreator<LocalSchemeCreateParameters> schemeCreator, IFileSystem fileSystem, IWormsLocator wormsLocator)
         {
-            _schemeTextReader = schemeTextReader;
-            _wscWriter = wscWriter;
+            _schemeCreator = schemeCreator;
             _fileSystem = fileSystem;
             _wormsLocator = wormsLocator;
         }
@@ -57,22 +54,18 @@ namespace Worms.Commands.Resources.Schemes
                 return Task.FromResult(1);
             }
 
-            Scheme scheme;
+            Logger.Verbose($"Scheme definition being read from {source}");
+            Logger.Information($"Writing Scheme to {outputFolder}");
 
             try
             {
-                Logger.Verbose($"Reading Scheme definition from {source}");
-                scheme = _schemeTextReader.GetModel(definition);
+                _schemeCreator.Create(new LocalSchemeCreateParameters(name, outputFolder, definition));
             }
             catch (FormatException exception)
             {
                 Logger.Error("Failed to read Scheme definition: " + exception.Message);
                 return Task.FromResult(1);
             }
-
-            var outputFilePath = _fileSystem.Path.Combine(outputFolder, name + ".wsc");
-            Logger.Information($"Writing Scheme to {outputFilePath}");
-            _wscWriter.Write(scheme, outputFilePath);
 
             return Task.FromResult(0);
         }
