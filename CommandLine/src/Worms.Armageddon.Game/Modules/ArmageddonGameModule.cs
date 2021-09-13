@@ -11,6 +11,7 @@ namespace Worms.Armageddon.Game.Modules
             RegisterOsModules(builder);
 
             // Replays
+            builder.RegisterType<ReplayFrameExtractor>().As<IReplayFrameExtractor>();
             builder.RegisterType<ReplayLogGenerator>().As<IReplayLogGenerator>();
             builder.RegisterType<ReplayPlayer>().As<IReplayPlayer>();
         }
