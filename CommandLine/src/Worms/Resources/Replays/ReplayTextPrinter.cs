@@ -16,7 +16,7 @@ namespace Worms.Resources.Replays
             tableBuilder.AddColumn("NAME", items.Select(x => x.Details.Date.ToString("yyyy-MM-dd HH.mm.ss")).ToList());
             tableBuilder.AddColumn("CONTEXT", items.Select(x => x.Context).ToList());
             tableBuilder.AddColumn("PROCESSED", items.Select(x => x.Details.Processed.ToString()).ToList());
-            tableBuilder.AddColumn("WINNER", items.Select(x => x.Details.Winner.ToString()).ToList());
+            tableBuilder.AddColumn("WINNER", items.Select(x => x.Details.Winner != null ? x.Details.Winner.ToString() : "").ToList());
             tableBuilder.AddColumn("TEAMS", items.Select(x => string.Join(", ", x.Details.Teams.Select(t => t.Name))).ToList());
 
             var table = tableBuilder.Build();
