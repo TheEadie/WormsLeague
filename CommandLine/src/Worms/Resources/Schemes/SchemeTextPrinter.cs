@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Syroot.Worms.Armageddon;
-using Worms.Armageddon.Resources.Schemes;
 using Worms.Armageddon.Resources.Schemes.Text;
 using Worms.Cli.Resources.Local.Schemes;
 using Worms.Logging.TableOutput;

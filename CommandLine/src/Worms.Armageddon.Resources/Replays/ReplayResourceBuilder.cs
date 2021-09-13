@@ -9,7 +9,7 @@ namespace Worms.Armageddon.Resources.Replays
         private DateTime _start;
         private readonly List<Team> _teams = new();
         private readonly List<Turn> _turns = new();
-        private string _winner = "";
+        private string _winner;
         private string _fullLog;
 
         public TurnBuilder CurrentTurn { get; private set; } = new();

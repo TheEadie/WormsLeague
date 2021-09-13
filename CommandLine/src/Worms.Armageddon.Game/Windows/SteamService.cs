@@ -6,9 +6,9 @@ namespace Worms.Armageddon.Game.Windows
 {
     internal class SteamService : ISteamService
     {
-        private const string _processName = "Steam";
+        private const string ProcessName = "Steam";
 
-        private static readonly Regex _launchGamePromptRegex = new Regex(
+        private static readonly Regex LaunchGamePromptRegex = new Regex(
             "Allow game launch\\?",
             RegexOptions.IgnoreCase);
 
@@ -27,8 +27,8 @@ namespace Worms.Armageddon.Game.Windows
 
         private static IntPtr GetSteamPromptWindow()
         {
-            var windows = WindowTools.GetWindowsWithTitleMatching(_launchGamePromptRegex);
-            return Array.Find(windows, w => WindowTools.GetProcessForWindow(w).ProcessName == _processName);
+            var windows = WindowTools.GetWindowsWithTitleMatching(LaunchGamePromptRegex);
+            return Array.Find(windows, w => WindowTools.GetProcessForWindow(w).ProcessName == ProcessName);
         }
     }
 }
