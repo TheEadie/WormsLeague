@@ -36,7 +36,9 @@ namespace Worms.Logging.TableOutput
                 // Only add another column if the heading can be rendered
                 var headingLength = column.Heading.Length + ColumnPadding;
                 if (currentWidth >= _outputWidth - headingLength)
+                {
                     break;
+                }
 
                 adjustedColumns.Add(column);
                 currentWidth += column.Width;
@@ -74,7 +76,10 @@ namespace Worms.Logging.TableOutput
             var headerLength = header.Length + ColumnPadding;
             var longest = anyItems ? values.Max(x => x.Length) + ColumnPadding : headerLength;
             if (longest < headerLength)
+            {
                 longest = headerLength;
+            }
+
             return longest;
         }
     }

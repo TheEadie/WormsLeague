@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Armageddon.Resources.Schemes;
 using Worms.Cli.Resources.Local.Schemes;
 using Worms.Resources;
 
