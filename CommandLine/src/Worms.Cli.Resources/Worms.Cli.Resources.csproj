@@ -13,8 +13,4 @@
       <ProjectReference Include="..\Worms.Armageddon.Resources\Worms.Armageddon.Resources.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Local" />
-    </ItemGroup>
-
 </Project>
