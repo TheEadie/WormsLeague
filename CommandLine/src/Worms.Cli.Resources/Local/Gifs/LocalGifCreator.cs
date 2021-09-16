@@ -1,6 +1,7 @@
 ﻿using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
+using ImageMagick;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Game.Replays;
 
@@ -25,19 +26,46 @@ namespace Worms.Cli.Resources.Local.Gifs
             var turn = parameters.Replay.Details.Turns.ElementAt((int)parameters.Turn - 1);
 
             var replayName = _fileSystem.Path.GetFileNameWithoutExtension(replayPath);
-            DeleteFrames(replayName);
-            await _replayFrameExtractor.ExtractReplayFrames(replayPath, 30, turn.Start, turn.End);
-        }
-
-        private void DeleteFrames(string replayName)
-        {
             var worms = _wormsLocator.Find();
             var framesFolder = _fileSystem.Path.Combine(worms.CaptureFolder, replayName);
+            var outputFileName = _fileSystem.Path.Combine(worms.CaptureFolder, replayName + ".gif");
 
+            const int fps = 5;
+            const int timesSpeed = 2; // 2x as fast
+            const int animationDelay = 100 / fps / timesSpeed;
+
+            DeleteFrames(framesFolder);
+            await _replayFrameExtractor.ExtractReplayFrames(replayPath, fps, turn.Start, turn.End);
+            CreateGifFromFiles(framesFolder, outputFileName, animationDelay, 640, 480);
+            DeleteFrames(framesFolder);
+        }
+
+        private void DeleteFrames(string framesFolder)
+        {
             if (_fileSystem.Directory.Exists(framesFolder))
             {
                 _fileSystem.Directory.Delete(framesFolder, true);
             }
+        }
+
+        private void CreateGifFromFiles(string framesFolder, string outputFile, int animationDelay, int width, int height)
+        {
+            var frames = _fileSystem.Directory.GetFiles(framesFolder, "*.png");
+
+            using var collection = new MagickImageCollection();
+            foreach (var file in frames)
+            {
+                var image = new MagickImage(file);
+                image.Resize(width, height);
+                image.AnimationDelay = animationDelay;
+                collection.Add(image);
+            }
+
+            var settings = new QuantizeSettings {Colors = 256};
+
+            collection.Quantize(settings);
+            collection.Optimize();
+            collection.Write(outputFile);
         }
     }
 }
