@@ -1,4 +1,5 @@
 ﻿using System.IO.Abstractions;
+using System.Threading.Tasks;
 using Worms.Armageddon.Resources.Schemes.Binary;
 using Worms.Armageddon.Resources.Schemes.Text;
 
@@ -17,11 +18,13 @@ namespace Worms.Cli.Resources.Local.Schemes
             _fileSystem = fileSystem;
         }
 
-        public void Create(LocalSchemeCreateParameters parameters)
+        public Task Create(LocalSchemeCreateParameters parameters)
         {
             var scheme = _schemeTextReader.GetModel(parameters.Definition);
             var path = _fileSystem.Path.Combine(parameters.Folder, parameters.Name + ".wsc");
             _wscWriter.Write(scheme, path);
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Worms.Armageddon.Game.Replays;
 
 namespace Worms.Cli.Resources.Local.Gifs
@@ -12,11 +13,11 @@ namespace Worms.Cli.Resources.Local.Gifs
             _replayFrameExtractor = replayFrameExtractor;
         }
 
-        public void Create(LocalGifCreateParameters parameters)
+        public async Task Create(LocalGifCreateParameters parameters)
         {
             var replayPath = parameters.Replay.Paths.WAgamePath;
-            var turn = parameters.Replay.Details.Turns.ElementAt(parameters.Turn - 1);
-            _replayFrameExtractor.ExtractReplayFrames(replayPath, 3, turn.Start, turn.End);
+            var turn = parameters.Replay.Details.Turns.ElementAt((int)parameters.Turn - 1);
+            await _replayFrameExtractor.ExtractReplayFrames(replayPath, 3, turn.Start, turn.End);
         }
     }
 }
