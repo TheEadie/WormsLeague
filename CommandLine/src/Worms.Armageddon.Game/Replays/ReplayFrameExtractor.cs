@@ -15,7 +15,7 @@ namespace Worms.Armageddon.Game.Replays
 
         public async Task ExtractReplayFrames(
             string replayPath,
-            int fps,
+            uint fps,
             TimeSpan startTime,
             TimeSpan endTime,
             int xResolution = 640,

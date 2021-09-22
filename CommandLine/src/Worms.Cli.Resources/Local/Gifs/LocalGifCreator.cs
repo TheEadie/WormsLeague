@@ -30,12 +30,10 @@ namespace Worms.Cli.Resources.Local.Gifs
             var framesFolder = _fileSystem.Path.Combine(worms.CaptureFolder, replayName);
             var outputFileName = _fileSystem.Path.Combine(worms.CaptureFolder, replayName + ".gif");
 
-            const int fps = 5;
-            const int timesSpeed = 2; // 2x as fast
-            const int animationDelay = 100 / fps / timesSpeed;
+            var animationDelay = 100 / parameters.FramesPerSecond;
 
             DeleteFrames(framesFolder);
-            await _replayFrameExtractor.ExtractReplayFrames(replayPath, fps, turn.Start, turn.End);
+            await _replayFrameExtractor.ExtractReplayFrames(replayPath, parameters.FramesPerSecond, turn.Start, turn.End);
             CreateGifFromFiles(framesFolder, outputFileName, animationDelay, 640, 480);
             DeleteFrames(framesFolder);
         }
@@ -48,7 +46,7 @@ namespace Worms.Cli.Resources.Local.Gifs
             }
         }
 
-        private void CreateGifFromFiles(string framesFolder, string outputFile, int animationDelay, int width, int height)
+        private void CreateGifFromFiles(string framesFolder, string outputFile, uint animationDelay, int width, int height)
         {
             var frames = _fileSystem.Directory.GetFiles(framesFolder, "*.png");
 
@@ -57,7 +55,7 @@ namespace Worms.Cli.Resources.Local.Gifs
             {
                 var image = new MagickImage(file);
                 image.Resize(width, height);
-                image.AnimationDelay = animationDelay;
+                image.AnimationDelay = (int)animationDelay;
                 collection.Add(image);
             }
 

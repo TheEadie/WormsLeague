@@ -1,13 +1,10 @@
 using System;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using Worms.Armageddon.Game;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Replays;
-using Worms.Cli.Resources.Local.Schemes;
 
 // ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
 // ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
@@ -29,6 +26,9 @@ namespace Worms.Commands.Resources.Gifs
 
         [Option(Description = "The turn number", ShortName = "t")]
         public uint Turn { get; }
+
+        [Option(Description = "The number of frames per second", ShortName = "fps")]
+        public uint FramesPerSecond { get; } = 10;
 
         public CreateGif(IResourceCreator<LocalGifCreateParameters> gifCreator, IResourceRetriever<LocalReplay> replayRetriever)
         {
@@ -55,7 +55,7 @@ namespace Worms.Commands.Resources.Gifs
 
             try
             {
-                await _gifCreator.Create(new LocalGifCreateParameters(name, string.Empty, replay, Turn));
+                await _gifCreator.Create(new LocalGifCreateParameters(name, string.Empty, replay, Turn, FramesPerSecond));
             }
             catch (FormatException exception)
             {
