@@ -18,9 +18,6 @@ namespace Worms.Commands.Resources.Gifs
         private readonly IResourceCreator<LocalGifCreateParameters> _gifCreator;
         private readonly IResourceRetriever<LocalReplay> _replayRetriever;
 
-        [Argument(0, Name = "name", Description = "The name of the Scheme to be created")]
-        public string Name { get; }
-
         [Option(Description = "The replay name", ShortName = "r")]
         public string Replay { get; }
 
@@ -38,12 +35,10 @@ namespace Worms.Commands.Resources.Gifs
 
         public async Task<int> OnExecuteAsync(IConsole console)
         {
-            string name;
             LocalReplay replay;
 
             try
             {
-                name = ValidateName();
                 replay = ValidateReplay(Replay, Turn);
 
             }
@@ -55,11 +50,12 @@ namespace Worms.Commands.Resources.Gifs
 
             try
             {
-                await _gifCreator.Create(new LocalGifCreateParameters(name, string.Empty, replay, Turn, FramesPerSecond));
+                Logger.Information($"Creating gif for {Replay}, turn {Turn} ...");
+                await _gifCreator.Create(new LocalGifCreateParameters(replay, Turn, FramesPerSecond));
             }
             catch (FormatException exception)
             {
-                Logger.Error("Failed to read Scheme definition: " + exception.Message);
+                Logger.Error("Failed to create gif: " + exception.Message);
                 return 1;
             }
 
@@ -94,16 +90,6 @@ namespace Worms.Commands.Resources.Gifs
             }
 
             return foundReplay;
-        }
-
-        private string ValidateName()
-        {
-            if (!string.IsNullOrWhiteSpace(Name))
-            {
-                return Name;
-            }
-
-            throw new ConfigurationException("No name provided for the Scheme being created.");
         }
     }
 }
