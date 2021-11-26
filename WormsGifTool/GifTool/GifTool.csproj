@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>True</UseWPF>
     <OutputType>winexe</OutputType>
     <LanguageTargets>$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets>
@@ -9,7 +9,7 @@
     <AssemblyName>GifTool</AssemblyName>
     <Product>Worms Gif Tool</Product>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="8.4.0" />
