@@ -1,8 +1,10 @@
-﻿using Autofac;
+﻿using System.Runtime.Versioning;
+using Autofac;
 using Worms.Armageddon.Game.Windows;
 
 namespace Worms.Armageddon.Game.Modules
 {
+    [SupportedOSPlatform("windows")]
     internal class WindowsModule : Module
     {
         protected override void Load(ContainerBuilder builder)
