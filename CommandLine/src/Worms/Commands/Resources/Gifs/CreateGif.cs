@@ -31,6 +31,12 @@ namespace Worms.Commands.Resources.Gifs
         [Option(Description = "Speed multiplier for the gif", ShortName = "s")]
         public uint Speed { get; } = 2;
 
+        [Option(Description = "Offset for the start of the gif in seconds", ShortName = "so")]
+        public uint StartOffset { get; } = 0;
+
+        [Option(Description = "Offset for the end of the gif in seconds", ShortName = "eo")]
+        public uint EndOffset { get; } = 0;
+
         public CreateGif(IResourceCreator<LocalGif, LocalGifCreateParameters> gifCreator, IResourceRetriever<LocalReplay> replayRetriever)
         {
             _gifCreator = gifCreator;
@@ -55,7 +61,9 @@ namespace Worms.Commands.Resources.Gifs
             try
             {
                 Logger.Information($"Creating gif for {Replay}, turn {Turn} ...");
-                var gif = await _gifCreator.Create(new LocalGifCreateParameters(replay, Turn, FramesPerSecond, Speed));
+                var gif = await _gifCreator.Create(new LocalGifCreateParameters(replay, Turn,
+                    TimeSpan.FromSeconds(StartOffset), TimeSpan.FromSeconds(EndOffset),
+                    FramesPerSecond, Speed));
                 await console.Out.WriteLineAsync(gif.Path);
             }
             catch (FormatException exception)

@@ -33,7 +33,8 @@ namespace Worms.Cli.Resources.Local.Gifs
             var animationDelay = 100 / parameters.FramesPerSecond / parameters.SpeedMultiplier;
 
             DeleteFrames(framesFolder);
-            await _replayFrameExtractor.ExtractReplayFrames(replayPath, parameters.FramesPerSecond, turn.Start, turn.End);
+            await _replayFrameExtractor.ExtractReplayFrames(replayPath, parameters.FramesPerSecond,
+                turn.Start + parameters.StartOffset, turn.End - parameters.EndOffset);
             CreateGifFromFiles(framesFolder, outputFileName, animationDelay, 640, 480);
             DeleteFrames(framesFolder);
 
