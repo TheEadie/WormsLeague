@@ -4,6 +4,8 @@
         <TargetFramework>net6.0</TargetFramework>
 
         <IsPackable>false</IsPackable>
+
+        <RootNamespace>Worms.Armageddon.Resources.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Worms.Armageddon.Resources\Worms.Armageddon.Resources.csproj" />
+      <ProjectReference Include="..\Worms.Armageddon.Files\Worms.Armageddon.Files.csproj" />
     </ItemGroup>
 
 </Project>

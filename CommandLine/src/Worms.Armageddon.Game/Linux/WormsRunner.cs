@@ -20,7 +20,15 @@ namespace Worms.Armageddon.Game.Linux
                         var gameInfo = _wormsLocator.Find();
 
                         var args = string.Join(" ", wormsArgs);
-                        using var process = Process.Start("wine", gameInfo.ExeLocation + " " + args);
+                        var processStartInfo = new ProcessStartInfo
+                        {
+                            FileName = "wine",
+                            Arguments = gameInfo.ExeLocation + " " + args,
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true
+                        };
+
+                        using var process = Process.Start(processStartInfo);
                         if (process == null)
                         {
                             return;

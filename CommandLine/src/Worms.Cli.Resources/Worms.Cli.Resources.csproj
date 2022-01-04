@@ -6,15 +6,12 @@
 
     <ItemGroup>
       <PackageReference Include="System.IO.Abstractions" Version="16.0.1" />
+      <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="8.3.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Worms.Armageddon.Game\Worms.Armageddon.Game.csproj" />
-      <ProjectReference Include="..\Worms.Armageddon.Resources\Worms.Armageddon.Resources.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Local" />
+      <ProjectReference Include="..\Worms.Armageddon.Files\Worms.Armageddon.Files.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Worms.Commands.Resources.Gifs;
 using Worms.Commands.Resources.Schemes;
 
 // ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
@@ -8,6 +9,7 @@ namespace Worms.Commands.Resources
 {
     [Command("create", Description = "Create a resource")]
     [Subcommand(typeof(CreateScheme))]
+    [Subcommand(typeof(CreateGif))]
     internal class Create : CommandBase
     {
         public Task<int> OnExecuteAsync(CommandLineApplication app)

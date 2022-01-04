@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms", "src\Worms\worms.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Game", "src\Worms.Armageddon.Game\Worms.Armageddon.Game.csproj", "{D2CEB1E4-3B74-4279-BB35-6FDAE14BB587}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Resources", "src\Worms.Armageddon.Resources\Worms.Armageddon.Resources.csproj", "{4ABB5A97-19AC-4CCE-BB88-FAC2CE91C97A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Files", "src\Worms.Armageddon.Files\Worms.Armageddon.Files.csproj", "{4ABB5A97-19AC-4CCE-BB88-FAC2CE91C97A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Resources.Tests", "src\Worms.Armageddon.Resources.Tests\Worms.Armageddon.Resources.Tests.csproj", "{52B33C8D-6C98-481B-AD56-6ED5432448D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Files.Tests", "src\Worms.Armageddon.Files.Tests\Worms.Armageddon.Files.Tests.csproj", "{52B33C8D-6C98-481B-AD56-6ED5432448D1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Cli.Resources", "src\Worms.Cli.Resources\Worms.Cli.Resources.csproj", "{5E856C9A-674F-48A5-A17F-EF6A7E8D568C}"
 EndProject
