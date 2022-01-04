@@ -30,7 +30,7 @@ namespace Worms.Cli.Resources.Local.Gifs
             var framesFolder = _fileSystem.Path.Combine(worms.CaptureFolder, replayName);
             var outputFileName = _fileSystem.Path.Combine(worms.CaptureFolder, replayName + ".gif");
 
-            var animationDelay = 100 / parameters.FramesPerSecond;
+            var animationDelay = 100 / parameters.FramesPerSecond / parameters.SpeedMultiplier;
 
             DeleteFrames(framesFolder);
             await _replayFrameExtractor.ExtractReplayFrames(replayPath, parameters.FramesPerSecond, turn.Start, turn.End);

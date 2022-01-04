@@ -2,5 +2,5 @@
 
 namespace Worms.Cli.Resources.Local.Gifs
 {
-    public record LocalGifCreateParameters(LocalReplay Replay, uint Turn, uint FramesPerSecond);
+    public record LocalGifCreateParameters(LocalReplay Replay, uint Turn, uint FramesPerSecond, uint SpeedMultiplier);
 }
