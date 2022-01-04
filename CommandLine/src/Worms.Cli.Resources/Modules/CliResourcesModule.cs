@@ -15,7 +15,7 @@ namespace Worms.Cli.Resources.Modules
 
             // Schemes
             builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<LocalScheme>>();
-            builder.RegisterType<LocalSchemeCreator>().As<IResourceCreator<LocalSchemeCreateParameters>>();
+            builder.RegisterType<LocalSchemeCreator>().As<IResourceCreator<LocalScheme, LocalSchemeCreateParameters>>();
             builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<LocalScheme>>();
 
             // Replays
@@ -25,7 +25,7 @@ namespace Worms.Cli.Resources.Modules
             builder.RegisterType<LocalReplayViewer>().As<IResourceViewer<LocalReplay, LocalReplayViewParameters>>();
 
             // Gifs
-            builder.RegisterType<LocalGifCreator>().As<IResourceCreator<LocalGifCreateParameters>>();
+            builder.RegisterType<LocalGifCreator>().As<IResourceCreator<LocalGif, LocalGifCreateParameters>>();
         }
     }
 }

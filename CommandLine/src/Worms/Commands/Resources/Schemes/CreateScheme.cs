@@ -15,7 +15,7 @@ namespace Worms.Commands.Resources.Schemes
     [Command("scheme", "schemes", "wsc", Description = "Create Worms Schemes (.wsc files)")]
     internal class CreateScheme : CommandBase
     {
-        private readonly IResourceCreator<LocalSchemeCreateParameters> _schemeCreator;
+        private readonly IResourceCreator<LocalScheme, LocalSchemeCreateParameters> _schemeCreator;
         private readonly IFileSystem _fileSystem;
         private readonly IWormsLocator _wormsLocator;
 
@@ -28,14 +28,14 @@ namespace Worms.Commands.Resources.Schemes
         [Option(Description = "Override the folder that the Scheme will be created in", ShortName = "r")]
         public string ResourceFolder { get; }
 
-        public CreateScheme(IResourceCreator<LocalSchemeCreateParameters> schemeCreator, IFileSystem fileSystem, IWormsLocator wormsLocator)
+        public CreateScheme(IResourceCreator<LocalScheme, LocalSchemeCreateParameters> schemeCreator, IFileSystem fileSystem, IWormsLocator wormsLocator)
         {
             _schemeCreator = schemeCreator;
             _fileSystem = fileSystem;
             _wormsLocator = wormsLocator;
         }
 
-        public Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync(IConsole console)
         {
             string name;
             string definition;
@@ -51,7 +51,7 @@ namespace Worms.Commands.Resources.Schemes
             catch (ConfigurationException exception)
             {
                 Logger.Error(exception.Message);
-                return Task.FromResult(1);
+                return 1;
             }
 
             Logger.Verbose($"Scheme definition being read from {source}");
@@ -59,15 +59,16 @@ namespace Worms.Commands.Resources.Schemes
 
             try
             {
-                _schemeCreator.Create(new LocalSchemeCreateParameters(name, outputFolder, definition));
+                var scheme = await _schemeCreator.Create(new LocalSchemeCreateParameters(name, outputFolder, definition));
+                await console.Out.WriteLineAsync(scheme.Path);
             }
             catch (FormatException exception)
             {
                 Logger.Error("Failed to read Scheme definition: " + exception.Message);
-                return Task.FromResult(1);
+                return 1;
             }
 
-            return Task.FromResult(0);
+            return 0;
         }
 
         private string ValidateOutputFolder(string outputFolder)

@@ -7,7 +7,7 @@ using Worms.Armageddon.Game.Replays;
 
 namespace Worms.Cli.Resources.Local.Gifs
 {
-    public class LocalGifCreator : IResourceCreator<LocalGifCreateParameters>
+    public class LocalGifCreator : IResourceCreator<LocalGif, LocalGifCreateParameters>
     {
         private readonly IReplayFrameExtractor _replayFrameExtractor;
         private readonly IWormsLocator _wormsLocator;
@@ -20,7 +20,7 @@ namespace Worms.Cli.Resources.Local.Gifs
             _fileSystem = fileSystem;
         }
 
-        public async Task Create(LocalGifCreateParameters parameters)
+        public async Task<LocalGif> Create(LocalGifCreateParameters parameters)
         {
             var replayPath = parameters.Replay.Paths.WAgamePath;
             var turn = parameters.Replay.Details.Turns.ElementAt((int)parameters.Turn - 1);
@@ -36,6 +36,8 @@ namespace Worms.Cli.Resources.Local.Gifs
             await _replayFrameExtractor.ExtractReplayFrames(replayPath, parameters.FramesPerSecond, turn.Start, turn.End);
             CreateGifFromFiles(framesFolder, outputFileName, animationDelay, 640, 480);
             DeleteFrames(framesFolder);
+
+            return new LocalGif(outputFileName);
         }
 
         private void DeleteFrames(string framesFolder)

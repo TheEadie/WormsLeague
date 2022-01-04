@@ -5,7 +5,7 @@ using Worms.Armageddon.Resources.Schemes.Text;
 
 namespace Worms.Cli.Resources.Local.Schemes
 {
-    public class LocalSchemeCreator : IResourceCreator<LocalSchemeCreateParameters>
+    public class LocalSchemeCreator : IResourceCreator<LocalScheme, LocalSchemeCreateParameters>
     {
         private readonly ISchemeTextReader _schemeTextReader;
         private readonly IWscWriter _wscWriter;
@@ -18,13 +18,13 @@ namespace Worms.Cli.Resources.Local.Schemes
             _fileSystem = fileSystem;
         }
 
-        public Task Create(LocalSchemeCreateParameters parameters)
+        public Task<LocalScheme> Create(LocalSchemeCreateParameters parameters)
         {
             var scheme = _schemeTextReader.GetModel(parameters.Definition);
             var path = _fileSystem.Path.Combine(parameters.Folder, parameters.Name + ".wsc");
             _wscWriter.Write(scheme, path);
 
-            return Task.CompletedTask;
+            return Task.FromResult(new LocalScheme(path, parameters.Name, scheme));
         }
     }
 }

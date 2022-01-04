@@ -2,8 +2,8 @@
 
 namespace Worms.Cli.Resources
 {
-    public interface IResourceCreator<in TParams>
+    public interface IResourceCreator<T, in TParams>
     {
-        Task Create(TParams parameters);
+        Task<T> Create(TParams parameters);
     }
 }

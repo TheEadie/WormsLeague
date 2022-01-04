@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -15,7 +16,7 @@ namespace Worms.Commands.Resources.Gifs
     [Command("gif", Description = "Create animated gifs of replays (.gif files)")]
     internal class CreateGif : CommandBase
     {
-        private readonly IResourceCreator<LocalGifCreateParameters> _gifCreator;
+        private readonly IResourceCreator<LocalGif, LocalGifCreateParameters> _gifCreator;
         private readonly IResourceRetriever<LocalReplay> _replayRetriever;
 
         [Option(Description = "The replay name", ShortName = "r")]
@@ -27,7 +28,7 @@ namespace Worms.Commands.Resources.Gifs
         [Option(Description = "The number of frames per second", ShortName = "fps")]
         public uint FramesPerSecond { get; } = 10;
 
-        public CreateGif(IResourceCreator<LocalGifCreateParameters> gifCreator, IResourceRetriever<LocalReplay> replayRetriever)
+        public CreateGif(IResourceCreator<LocalGif, LocalGifCreateParameters> gifCreator, IResourceRetriever<LocalReplay> replayRetriever)
         {
             _gifCreator = gifCreator;
             _replayRetriever = replayRetriever;
@@ -51,7 +52,8 @@ namespace Worms.Commands.Resources.Gifs
             try
             {
                 Logger.Information($"Creating gif for {Replay}, turn {Turn} ...");
-                await _gifCreator.Create(new LocalGifCreateParameters(replay, Turn, FramesPerSecond));
+                var gif = await _gifCreator.Create(new LocalGifCreateParameters(replay, Turn, FramesPerSecond));
+                await console.Out.WriteLineAsync(gif.Path);
             }
             catch (FormatException exception)
             {
