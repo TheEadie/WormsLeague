@@ -164,3 +164,4 @@ resharper_unnecessary_whitespace_highlighting = warning
 [*.{aiproj,appxmanifest,axml,build,config,csproj,dbml,discomap,DotSettings,dtd,json,jsproj,lsproj,njsproj,nuspec,proj,props,resjson,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_size = 2
 tab_width = 2
+
