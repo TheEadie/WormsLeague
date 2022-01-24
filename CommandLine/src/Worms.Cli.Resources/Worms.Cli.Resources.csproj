@@ -6,7 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="System.IO.Abstractions" Version="16.0.1" />
-      <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="8.5.0" />
+      <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="9.0.0" />
     </ItemGroup>
 
     <ItemGroup>
