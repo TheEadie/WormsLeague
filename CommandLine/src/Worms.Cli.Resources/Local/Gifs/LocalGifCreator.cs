@@ -31,7 +31,7 @@ namespace Worms.Cli.Resources.Local.Gifs
             var replayName = _fileSystem.Path.GetFileNameWithoutExtension(replayPath);
             var worms = _wormsLocator.Find();
             var framesFolder = _fileSystem.Path.Combine(worms.CaptureFolder, replayName);
-            var outputFileName = _fileSystem.Path.Combine(worms.CaptureFolder, replayName + ".gif");
+            var outputFileName = _fileSystem.Path.Combine(worms.CaptureFolder, replayName + " - " + parameters.Turn + ".gif");
 
             var animationDelay = 100 / parameters.FramesPerSecond / parameters.SpeedMultiplier;
 
