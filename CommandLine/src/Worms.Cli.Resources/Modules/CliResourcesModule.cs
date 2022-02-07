@@ -1,5 +1,6 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using Autofac;
+using Worms.Armageddon.Resources.Schemes.Random;
 using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
@@ -13,9 +14,13 @@ namespace Worms.Cli.Resources.Modules
             // FileSystem
             builder.RegisterType<FileSystem>().As<IFileSystem>();
 
+            // Random Configurations
+            builder.RegisterType<RandomSchemeGenerator>().As<IRandomSchemeGenerator>();
+
             // Schemes
             builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<LocalScheme>>();
             builder.RegisterType<LocalSchemeCreator>().As<IResourceCreator<LocalScheme, LocalSchemeCreateParameters>>();
+            builder.RegisterType<LocalSchemeRandomCreator>().As<IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>>();
             builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<LocalScheme>>();
 
             // Replays

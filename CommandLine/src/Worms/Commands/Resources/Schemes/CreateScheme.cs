@@ -16,6 +16,7 @@ namespace Worms.Commands.Resources.Schemes
     internal class CreateScheme : CommandBase
     {
         private readonly IResourceCreator<LocalScheme, LocalSchemeCreateParameters> _schemeCreator;
+        private readonly IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters> _randomSchemeCreator;
         private readonly IFileSystem _fileSystem;
         private readonly IWormsLocator _wormsLocator;
 
@@ -25,12 +26,16 @@ namespace Worms.Commands.Resources.Schemes
         [Option(Description = "File to load the Scheme definition from", ShortName = "f")]
         public string File { get; }
 
+        [Option(CommandOptionType.NoValue, Description = "Generate a scheme randomnly", LongName = "random", ShortName = "")]
+        public bool Random { get; }
+
         [Option(Description = "Override the folder that the Scheme will be created in", ShortName = "r")]
         public string ResourceFolder { get; }
 
-        public CreateScheme(IResourceCreator<LocalScheme, LocalSchemeCreateParameters> schemeCreator, IFileSystem fileSystem, IWormsLocator wormsLocator)
+        public CreateScheme(IResourceCreator<LocalScheme, LocalSchemeCreateParameters> schemeCreator, IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters> randomSchemeCreator, IFileSystem fileSystem, IWormsLocator wormsLocator)
         {
             _schemeCreator = schemeCreator;
+            _randomSchemeCreator = randomSchemeCreator;
             _fileSystem = fileSystem;
             _wormsLocator = wormsLocator;
         }
@@ -38,15 +43,25 @@ namespace Worms.Commands.Resources.Schemes
         public async Task<int> OnExecuteAsync(IConsole console)
         {
             string name;
-            string definition;
-            string source;
             var outputFolder = ResourceFolder;
+            Func<Task<LocalScheme>> creator;
 
             try
             {
                 name = ValidateName();
-                (definition, source) = ValidateSchemeDefinition(console);
                 outputFolder = ValidateOutputFolder(outputFolder);
+                if (!Random)
+                {
+                    var (definition, source) = ValidateSchemeDefinition(console);
+                    creator = () =>
+                        _schemeCreator.Create(new LocalSchemeCreateParameters(name, outputFolder, definition));
+                    Logger.Verbose($"Scheme definition being read from {source}");
+                }
+                else
+                {
+                    creator = () =>
+                        _randomSchemeCreator.Create(new LocalSchemeCreateRandomParameters(name, outputFolder));
+                }
             }
             catch (ConfigurationException exception)
             {
@@ -54,12 +69,11 @@ namespace Worms.Commands.Resources.Schemes
                 return 1;
             }
 
-            Logger.Verbose($"Scheme definition being read from {source}");
             Logger.Information($"Writing Scheme to {outputFolder}");
 
             try
             {
-                var scheme = await _schemeCreator.Create(new LocalSchemeCreateParameters(name, outputFolder, definition));
+                var scheme = await creator();
                 await console.Out.WriteLineAsync(scheme.Path);
             }
             catch (FormatException exception)
