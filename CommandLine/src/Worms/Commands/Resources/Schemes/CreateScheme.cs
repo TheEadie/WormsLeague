@@ -26,10 +26,10 @@ namespace Worms.Commands.Resources.Schemes
         [Option(Description = "File to load the Scheme definition from", ShortName = "f")]
         public string File { get; }
 
-        [Option(CommandOptionType.NoValue, Description = "Generate a scheme randomnly", LongName = "random", ShortName = "r")]
+        [Option(CommandOptionType.NoValue, Description = "Generate a scheme randomnly", LongName = "random", ShortName = "")]
         public bool Random { get; }
 
-        [Option(Description = "Override the folder that the Scheme will be created in", ShortName = "o")]
+        [Option(Description = "Override the folder that the Scheme will be created in", ShortName = "r")]
         public string ResourceFolder { get; }
 
         public CreateScheme(IResourceCreator<LocalScheme, LocalSchemeCreateParameters> schemeCreator, IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters> randomSchemeCreator, IFileSystem fileSystem, IWormsLocator wormsLocator)
