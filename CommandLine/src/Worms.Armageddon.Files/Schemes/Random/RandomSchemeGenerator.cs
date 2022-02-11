@@ -695,7 +695,7 @@ namespace Worms.Armageddon.Resources.Schemes.Random
             scheme.Stockpiling = Stockpiling.Anti;
             scheme.WormSelect = 0;
             scheme.SuddenDeathEvent = SuddenDeathEvent.WaterRise;
-            scheme.WaterRiseRate = 2;
+            scheme.WaterRiseRate = 20;
             scheme.WeaponCrateProb = 100;
             scheme.HealthCrateProb = 0;
             scheme.UtilityCrateProb = 0;
