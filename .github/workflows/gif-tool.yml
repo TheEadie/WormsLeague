@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: cd WormsGifTool; ./.build/build.ps1
     - name: Upload build
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
         name: GifTool
         path: WormsGifTool/.artifacts/
