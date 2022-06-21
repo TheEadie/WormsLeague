@@ -35,7 +35,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Download build
-      uses: actions/download-artifact@v1
+      uses: actions/download-artifact@v3
       with:
         name: RGSchemes
         path: Schemes/.artifacts/
