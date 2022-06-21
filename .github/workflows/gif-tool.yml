@@ -38,7 +38,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Download Gif Tool
-      uses: actions/download-artifact@v1
+      uses: actions/download-artifact@v3
       with:
         name: GifTool
     - name: Release
