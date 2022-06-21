@@ -100,7 +100,7 @@ GitHubAuthToken = empty
 release: | release-github release-dockerhub
 
 release-github:
-	@../build/release-github.sh "CLI v$(VERSION)" "cli/c$(VERSION)" $(GitHubAuthToken) $(GitHubRepo) "$(OUTPUT_DIR)/win-x64"
+	@../build/release-github.sh "CLI v$(VERSION)" "cli/v$(VERSION)" $(GitHubAuthToken) $(GitHubRepo) "$(OUTPUT_DIR)/win-x64"
 
 release-dockerhub: docker-build
 	@docker push $(IMAGE_NAME) --all-tags
