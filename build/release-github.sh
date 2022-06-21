@@ -18,7 +18,8 @@ CreateReleaseResponse=$(curl --request POST \
                 "name": "'"$ReleaseName"'",
                 "body": "",
                 "draft": false,
-                "prerelease": false }')
+                "prerelease": false,
+                "generate_release_notes": true }')
 
 echo "$CreateReleaseResponse" # Print the message
 
