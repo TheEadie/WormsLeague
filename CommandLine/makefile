@@ -1,23 +1,64 @@
 default: all
 
 # Arguments
-OutputDir = .artifacts
-UseDocker = true
-DockerImageName = theeadie/wormscli
+OUTPUT_DIR = .artifacts
+IMAGE_NAME = theeadie/wormscli
+
+NEXT_VERSION := 0.18
+TAG_PREFIX := cli/v
+
+VERSION := $(shell ../build/version.sh $(NEXT_VERSION) $(TAG_PREFIX))
+VERSION_MAJOR := $(word 1,$(subst ., ,$(VERSION)))
+VERSION_MINOR := $(word 2,$(subst ., ,$(VERSION)))
+VERSION_PATCH := $(word 2,$(subst ., ,$(VERSION)))
 
 all: | windows linux alpine
 
 windows:
-	@.build/build.sh $(UseDocker) $(OutputDir) "win-x64"
+	@rm -rf $(OUTPUT_DIR)/win-x64
+	@dotnet publish \
+            "src/Worms/worms.csproj" \
+            -c Release \
+            -r win-x64 \
+            -o $(OUTPUT_DIR)/win-x64 \
+            --self-contained true \
+            /p:PublishSingleFile=true \
+            /p:Version=$(VERSION) \
+            /p:PublishTrimmed=true \
+            /p:DebugType=none
+	@cp *.ps1 $(OUTPUT_DIR)/win-x64/
+	@echo $(VERSION) > $(OUTPUT_DIR)/win-x64/version.txt
 
 linux:
-	@.build/build.sh $(UseDocker) $(OutputDir) "linux-x64"
+	@rm -rf $(OUTPUT_DIR)/linux-x64
+	@dotnet publish \
+            "src/Worms/worms.csproj" \
+            -c Release \
+            -r linux-x64 \
+            -o $(OUTPUT_DIR)/linux-x64 \
+            --self-contained true \
+            /p:PublishSingleFile=true \
+            /p:Version=$(VERSION) \
+            /p:PublishTrimmed=true \
+            /p:DebugType=none
+	@echo $(VERSION) > $(OUTPUT_DIR)/linux-x64/version.txt
 
 alpine:
-	@.build/build.sh $(UseDocker) $(OutputDir) "linux-musl-x64"
+	@rm -rf $(OUTPUT_DIR)/linux-musl-x64
+	@dotnet publish \
+            "src/Worms/worms.csproj" \
+            -c Release \
+            -r linux-musl-x64 \
+            -o $(OUTPUT_DIR)/linux-musl-x64 \
+            --self-contained true \
+            /p:PublishSingleFile=true \
+            /p:Version=$(VERSION) \
+            /p:PublishTrimmed=true \
+            /p:DebugType=none
+	@echo $(VERSION) > $(OUTPUT_DIR)/linux-musl-x64/version.txt
 
-get-version:
-	@.build/get-version.sh $(UseDocker)
+version:
+	@echo $(VERSION)
 
 clean:
 	@dotnet clean
@@ -28,7 +69,11 @@ build:
 docker: | alpine docker-build
 
 docker-build:
-	@.build/build-docker.sh "$(OutputDir)/linux-musl-x64" $(DockerImageName)
+	@docker build . \
+		-t $(IMAGE_NAME):latest \
+		-t $(IMAGE_NAME):$(VERSION) \
+		-t $(IMAGE_NAME):$(VERSION_MAJOR) \
+		-t $(IMAGE_NAME):$(VERSION_MAJOR).$(VERSION_MINOR)
 
 help:
 	@echo "Worm CLI"
@@ -38,30 +83,27 @@ help:
 	@echo "make windows      - Build and publish the CLI for windows"
 	@echo "make linux        - Build and publish the CLI for linux"
 	@echo "make docker       - Package the linux build into a docker container"
-	@echo "make get-version  - Calculate the next version of the CLI"
+	@echo "make version      - Calculate the next version of the CLI"
 	@echo "make build        - Build the CLI for the local platform"
 	@echo "make clean        - Clean the local bin directories"
 	@echo ""
 	@echo "Options:"
-	@echo "UseDocker=<true|false> - (default:true)              - Should docker be used to get non-dotnet build tools"
-	@echo "OutputDir=<path>       - (default:.artifacts)        - The path the CLI will be published to"
-	@echo "DockerImageName=<name> - (default:theeadie/wormscli) - The name given to the docker image"
+	@echo "OUTPUT_DIR=<path>      - (default:.artifacts)        - The path the CLI will be published to"
+	@echo "IMAGE_NAME=<name>      - (default:theeadie/wormscli) - The name given to the docker image"
 	@echo ""
 	@echo "For release details see make release-help"
 
 # Release Arguments
 GitHubRepo = TheEadie/WormsLeague
 GitHubAuthToken = empty
-DockerHubUsername = theeadie
-DockerHubAuthToken = empty
 
 release: | release-github release-dockerhub
 
 release-github:
-	@.build/release-github.sh $(GitHubAuthToken) $(GitHubRepo) "$(OutputDir)/win-x64"
+	@../build/release-github.sh "CLI v$(VERSION)" "cli/c$(VERSION)" $(GitHubAuthToken) $(GitHubRepo) "$(OUTPUT_DIR)/win-x64"
 
 release-dockerhub:
-	@.build/release-dockerhub.sh $(DockerHubUsername) $(DockerHubAuthToken) "$(OutputDir)/linux-musl-x64" $(DockerImageName)
+	@docker push $(IMAGE_NAME) --all-tags
 
 release-help:
 	@echo "Worm CLI - Release"
@@ -74,5 +116,3 @@ release-help:
 	@echo "Options:"
 	@echo "GitHubAuthToken=<token>    - (default:unspecified)          - A token used to authenticate with GitHub"
 	@echo "GitHubRepo=<owner/repo>    - (default:TheEadie/WormsLeague) - The GitHub repo to release to"
-	@echo "DockerHubUsername=<name>   - (default:theeadie)             - The username to use to authenticate with DockerHub"
-	@echo "DockerHubAuthToken=<token> - (default:unspecified)          - A token used to authenticate with DockerHub"
