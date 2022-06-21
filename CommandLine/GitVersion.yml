@@ -1,4 +1,0 @@
-next-version: 0.17
-mode: ContinuousDelivery
-tag-prefix: 'cli/v'
-branches: {}

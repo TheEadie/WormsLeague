@@ -4,7 +4,8 @@ on:
   push:
     paths:
     - "Schemes/**"
-    - ".build/**"
+    - "build/**"
+    - ".github/workflows/schemes.yml"
 
 jobs:
   build:
@@ -12,7 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - name: Build
       run: cd Schemes; make schemes
     - name: Upload build
@@ -28,7 +31,9 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - name: Download build
       uses: actions/download-artifact@v1
       with:

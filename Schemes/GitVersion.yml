@@ -1,4 +1,0 @@
-next-version: 2020.0
-mode: ContinuousDelivery
-tag-prefix: 'schemes/v'
-branches: {}
