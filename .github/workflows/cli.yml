@@ -39,7 +39,7 @@ jobs:
     - name: Build
       run: cd CommandLine; make windows
     - name: Upload build
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
         name: win-x64
         path: CommandLine/.artifacts/win-x64/
@@ -60,7 +60,7 @@ jobs:
     - name: Build
       run: cd CommandLine; make linux
     - name: Upload build
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
         name: linux-x64
         path: CommandLine/.artifacts/linux-x64/
@@ -81,7 +81,7 @@ jobs:
     - name: Build
       run: cd CommandLine; make alpine
     - name: Upload build
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
         name: linux-musl-x64
         path: CommandLine/.artifacts/linux-musl-x64/
