@@ -11,7 +11,7 @@ jobs:
     name: Build GIF tool
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
@@ -31,7 +31,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v3
     - name: Download Gif Tool
       uses: actions/download-artifact@v1
       with:
