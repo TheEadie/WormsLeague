@@ -1,9 +1,9 @@
 #!/bin/bash
-local ReleaseName=$1
-local Tag=$2
-local GitHubToken=$3
-local GitHubRepo=$4
-local ReleaseDir=$5
+ReleaseName=$1
+Tag=$2
+GitHubToken=$3
+GitHubRepo=$4
+ReleaseDir=$5
 
 echo "Creating GitHub Release $ReleaseName..."
 echo "Calling - https://api.github.com/repos/$GitHubRepo/releases"
@@ -29,7 +29,7 @@ for filename in $ReleaseDir/*; do
 
     name="${filename##*/}"
     UploadUrl=$AssetUrl?name=$name
-    WriteVerbose "Calling - $UploadUrl"
+    echo "Calling - $UploadUrl"
 
     curl --request POST \
     --url $UploadUrl \
