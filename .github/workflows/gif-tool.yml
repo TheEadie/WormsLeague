@@ -11,7 +11,10 @@ jobs:
     name: Build GIF tool
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
@@ -32,6 +35,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - name: Download Gif Tool
       uses: actions/download-artifact@v1
       with:
