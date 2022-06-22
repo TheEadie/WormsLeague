@@ -41,5 +41,6 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: GifTool
+        path: WormsGifTool/.artifacts
     - name: Release
-      run: ./WormsGifTool/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} GifTool
+      run: ./WormsGifTool/.build/release.sh ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} WormsGifTool/.artifacts
