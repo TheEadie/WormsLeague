@@ -1,7 +1,7 @@
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Serilog;
 
 namespace Worms.Slack
@@ -20,7 +20,7 @@ namespace Worms.Slack
 
             using var client = new HttpClient();
             var slackUrl = new System.Uri(webHookUrl);
-            var body = JsonConvert.SerializeObject(slackMessage);
+            var body = JsonSerializer.Serialize(slackMessage);
             var content = new StringContent(body, Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync(slackUrl, content).ConfigureAwait(false);

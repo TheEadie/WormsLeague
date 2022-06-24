@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO.Abstractions;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Worms.Configuration.SecureStorage;
 
 namespace Worms.Configuration
@@ -37,7 +37,7 @@ namespace Worms.Configuration
             if (_fileSystem.File.Exists(configPath))
             {
                 var configContent = _fileSystem.File.ReadAllText(configPath);
-                return JsonConvert.DeserializeObject<Config>(configContent);
+                return JsonSerializer.Deserialize<Config>(configContent);
             }
             else
             {
@@ -55,7 +55,7 @@ namespace Worms.Configuration
                 SlackWebHook = config.SlackWebHook
             };
 
-            _fileSystem.File.WriteAllText(_localConfigPath, JsonConvert.SerializeObject(localConfig));
+            _fileSystem.File.WriteAllText(_localConfigPath, JsonSerializer.Serialize(localConfig));
         }
     }
 }

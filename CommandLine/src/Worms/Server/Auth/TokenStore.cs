@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO.Abstractions;
+using System.Text.Json;
 using Microsoft.AspNetCore.DataProtection;
-using Newtonsoft.Json;
 
 namespace Worms.Server.Auth
 {
@@ -32,7 +32,7 @@ namespace Worms.Server.Auth
             if (_fileSystem.File.Exists(_tokenStorePath))
             {
                 var fileContent = _fileSystem.File.ReadAllText(_tokenStorePath);
-                var protectedTokens = JsonConvert.DeserializeObject<AccessTokens>(fileContent);
+                var protectedTokens = JsonSerializer.Deserialize<AccessTokens>(fileContent);
                 var accessToken = _dataProtector.Unprotect(protectedTokens.AccessToken);
                 var refreshToken = _dataProtector.Unprotect(protectedTokens.RefreshToken);
                 return new AccessTokens(accessToken, refreshToken);
@@ -54,7 +54,7 @@ namespace Worms.Server.Auth
                 _fileSystem.Directory.CreateDirectory(_tokenStoreFolder);
             }
 
-            _fileSystem.File.WriteAllText(_tokenStorePath, JsonConvert.SerializeObject(protectedTokens));
+            _fileSystem.File.WriteAllText(_tokenStorePath, JsonSerializer.Serialize(protectedTokens));
         }
     }
 }
