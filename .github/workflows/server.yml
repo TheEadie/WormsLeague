@@ -1,0 +1,62 @@
+name: Build
+
+on:
+  push:
+    paths:
+    - "Server/**"
+    - ".github/workflows/server.yml"
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Expose GitHub Runtime
+      uses: crazy-max/ghaction-github-runtime@v2
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Publish
+      run: | 
+        cd Server; make publish
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Expose GitHub Runtime
+      uses: crazy-max/ghaction-github-runtime@v2
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: theeadie
+        password: ${{ secrets.DockerHubAccessToken }}
+
+    - name: Release
+      run: |
+        cd Server; make release GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}

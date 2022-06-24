@@ -60,16 +60,8 @@ stop:
 version:
 	@echo $(VERSION)
 
-lint: | lint-dockerfile lint-sh
-
-lint-dockerfile:
-	@docker run --rm -i hadolint/hadolint:v2.10.0 < Dockerfile
-
-lint-sh:
-	@docker run --rm -v "$(PWD):/mnt" koalaman/shellcheck:v0.8.0 **/*.sh
-
 ## Release
-release: | docker-push github-release
+release: | docker-push
 
 docker-push:
 	@docker buildx build . \
@@ -81,6 +73,3 @@ docker-push:
 		--push \
 		--cache-from=type=gha,scope=publish \
 		--cache-to=type=gha,mode=max,scope=publish
-
-github-release:
-	@./build/github-release.sh $(VERSION) $(TAG_PREFIX)$(VERSION) $(GITHUB_AUTH_TOKEN) $(GITHUB_REPO)
