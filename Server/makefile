@@ -1,6 +1,6 @@
-IMAGE_NAME := theeadie/worms-server
+IMAGE_NAME := theeadie/worms-server-gateway
 NEXT_VERSION := 0.1
-TAG_PREFIX := server/v
+TAG_PREFIX := server/gateway/v
 
 GITHUB_REPO := theeadie/WormsLeague
 GITHUB_AUTH_TOKEN := empty
