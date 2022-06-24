@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  worms-server:
+    build: .
+    ports:
+      - "5005:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
