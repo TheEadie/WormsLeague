@@ -13,6 +13,7 @@ using Worms.League;
 using Worms.Resources;
 using Worms.Resources.Replays;
 using Worms.Resources.Schemes;
+using Worms.Server.Auth;
 using Worms.Slack;
 
 namespace Worms.Modules
@@ -28,6 +29,10 @@ namespace Worms.Modules
 
             // Config
             builder.RegisterType<ConfigManager>().As<IConfigManager>();
+            
+            // Auth
+            builder.RegisterType<TokenStore>().As<ITokenStore>();
+            builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
 
             // CLI
             builder.RegisterType<GitHubReleasePackageManager>();
