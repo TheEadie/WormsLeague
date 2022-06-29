@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using Worms.Cli.Resources;
 using Worms.Commands;
 
@@ -16,16 +18,16 @@ namespace Worms.Resources
             _deleter = deleter;
         }
 
-        public async Task Delete(string name)
+        public async Task Delete(string name, ILogger logger, CancellationToken cancellationToken)
         {
             name = ValidateName(name);
-            var resource = await GetResource(name);
+            var resource = await GetResource(name, logger, cancellationToken);
             _deleter.Delete(resource);
         }
 
-        private async Task<T> GetResource(string name)
+        private async Task<T> GetResource(string name, ILogger logger, CancellationToken cancellationToken)
         {
-            var resourcesFound = await _retriever.Get(name);
+            var resourcesFound = await _retriever.Get(name, logger, cancellationToken);
 
             if (resourcesFound.Count == 0)
             {

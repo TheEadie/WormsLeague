@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Cli.Resources.Local.Schemes;
@@ -27,12 +28,12 @@ namespace Worms.Commands.Resources.Schemes
             _schemesRetriever = schemesRetriever;
         }
 
-        public async Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync(IConsole console, CancellationToken cancellationToken)
         {
             try
             {
                 var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-                await _schemesRetriever.PrintResources(Name, console.Out, windowWidth);
+                await _schemesRetriever.PrintResources(Name, console.Out, windowWidth, Logger, cancellationToken);
             }
             catch (ConfigurationException exception)
             {

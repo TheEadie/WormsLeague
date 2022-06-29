@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Armageddon.Game.Replays;
@@ -29,7 +30,7 @@ namespace Worms.Commands.Resources.Replays
             _replayRetriever = replayRetriever;
         }
 
-        public async Task<int> OnExecuteAsync()
+        public async Task<int> OnExecuteAsync(CancellationToken cancellationToken)
         {
             var pattern = string.Empty;
 
@@ -38,7 +39,7 @@ namespace Worms.Commands.Resources.Replays
                 pattern = Name;
             }
 
-            foreach (var replayPath in await _replayRetriever.Get(pattern))
+            foreach (var replayPath in await _replayRetriever.Get(pattern, Logger, cancellationToken))
             {
                 Logger.Information($"Processing: {replayPath.Paths.WAgamePath}");
                 await _replayLogGenerator.GenerateReplayLog(replayPath.Paths.WAgamePath);

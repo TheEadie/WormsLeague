@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Cli.Resources.Local.Replays;
@@ -27,12 +28,12 @@ namespace Worms.Commands.Resources.Replays
             _replayRetriever = replayRetriever;
         }
 
-        public async Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync(IConsole console, CancellationToken cancellationToken)
         {
             try
             {
                 var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-                await _replayRetriever.PrintResources(Name, console.Out, windowWidth);
+                await _replayRetriever.PrintResources(Name, console.Out, windowWidth, Logger, cancellationToken);
             }
             catch (ConfigurationException exception)
             {

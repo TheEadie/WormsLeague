@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Cli.Resources.Local.Schemes;
@@ -22,11 +23,11 @@ namespace Worms.Commands.Resources.Schemes
             _resourceDeleter = resourceDeleter;
         }
 
-        public async Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync(IConsole console, CancellationToken cancellationToken)
         {
             try
             {
-                await _resourceDeleter.Delete(Name);
+                await _resourceDeleter.Delete(Name, Logger, cancellationToken);
             }
             catch (ConfigurationException exception)
             {

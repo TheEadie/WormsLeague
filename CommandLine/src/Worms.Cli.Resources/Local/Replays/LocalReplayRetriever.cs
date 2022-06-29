@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using Worms.Armageddon.Resources.Replays;
 using Worms.Armageddon.Resources.Replays.Text;
 
@@ -21,7 +23,10 @@ namespace Worms.Cli.Resources.Local.Replays
             _replayTextReader = replayTextReader;
         }
 
-        public Task<IReadOnlyCollection<LocalReplay>> Get(string pattern = "*")
+        public Task<IReadOnlyCollection<LocalReplay>> Get(ILogger logger, CancellationToken cancellationToken)
+            => Get("*", logger, cancellationToken);
+        
+        public Task<IReadOnlyCollection<LocalReplay>> Get(string pattern, ILogger logger, CancellationToken cancellationToken)
         {
             var resources = new List<LocalReplay>();
 

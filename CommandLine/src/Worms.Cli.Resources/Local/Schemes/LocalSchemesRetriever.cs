@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Resources.Schemes.Binary;
 
@@ -18,8 +20,11 @@ namespace Worms.Cli.Resources.Local.Schemes
             _wormsLocator = wormsLocator;
             _fileSystem = fileSystem;
         }
+        
+        public Task<IReadOnlyCollection<LocalScheme>> Get(ILogger logger, CancellationToken cancellationToken)
+            => Get("*", logger, cancellationToken);
 
-        public Task<IReadOnlyCollection<LocalScheme>> Get(string pattern = "*")
+        public Task<IReadOnlyCollection<LocalScheme>> Get(string pattern, ILogger logger, CancellationToken cancellationToken)
         {
             var gameInfo = _wormsLocator.Find();
 

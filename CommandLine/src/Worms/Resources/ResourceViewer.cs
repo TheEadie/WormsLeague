@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using Worms.Cli.Resources;
 using Worms.Commands;
 
@@ -16,16 +18,16 @@ namespace Worms.Resources
             _resourceViewer = resourceViewer;
         }
 
-        public async Task View(string name, TParams parameters)
+        public async Task View(string name, TParams parameters, ILogger logger, CancellationToken cancellationToken)
         {
             name = ValidateName(name);
-            var resource = await GetResource(name);
+            var resource = await GetResource(name, logger, cancellationToken);
             await _resourceViewer.View(resource, parameters);
         }
 
-        private async Task<T> GetResource(string name)
+        private async Task<T> GetResource(string name, ILogger logger, CancellationToken cancellationToken)
         {
-            var resourcesFound = await _retriever.Get(name);
+            var resourcesFound = await _retriever.Get(name, logger, cancellationToken);
 
             if (resourcesFound.Count == 0)
             {
