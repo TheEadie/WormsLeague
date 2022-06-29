@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Worms.Cli.Resources.Remote.Auth;
 
@@ -19,10 +21,22 @@ internal class WormsServerApi : IWormsServerApi
         _accessTokenRefreshService = accessTokenRefreshService;
         _tokenStore = tokenStore;
         _httpClient = new HttpClient();
-        _httpClient.BaseAddress = new Uri("https://worms.davideadie.dev");
+#if DEBUG
+        _httpClient.BaseAddress = new Uri("https://localhost:5001/");
+#else
+        _httpClient.BaseAddress = new Uri("https://worms.davideadie.dev/");
+#endif
     }
+
+    public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames() =>
+        await Get<IReadOnlyCollection<GamesDtoV1>>(new Uri("api/v1/games", UriKind.Relative));
+
+    public record GamesDtoV1(
+        [property:JsonPropertyName("id")] string Id,
+        [property:JsonPropertyName("status")] string Status,
+        [property:JsonPropertyName("hostMachine")]string HostMachine);
     
-    public async Task<T> Get<T>(Uri path)
+    private async Task<T> Get<T>(Uri path)
     {
         var accessTokens = _tokenStore.GetAccessTokens();
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);

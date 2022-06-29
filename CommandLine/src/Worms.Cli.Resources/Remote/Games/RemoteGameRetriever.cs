@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Worms.Cli.Resources.Remote.Games;
@@ -15,6 +15,7 @@ internal class RemoteGameRetriever : IResourceRetriever<RemoteGame>
     
     public async Task<IReadOnlyCollection<RemoteGame>> Get(string pattern = "*")
     {
-        return await _api.Get<IReadOnlyCollection<RemoteGame>>(new Uri("api/v1/games", UriKind.Relative));
+        var apiGames = await _api.GetGames();
+        return apiGames.Select(x=>new RemoteGame(x.Id, x.Status, x.HostMachine)).ToList();
     }
 }

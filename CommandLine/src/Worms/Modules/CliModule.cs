@@ -9,9 +9,11 @@ using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
 using Worms.Cli.Resources.Modules;
 using Worms.Cli.Resources.Remote.Auth;
+using Worms.Cli.Resources.Remote.Games;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Resources;
+using Worms.Resources.Games;
 using Worms.Resources.Replays;
 using Worms.Resources.Schemes;
 using Worms.Slack;
@@ -51,6 +53,9 @@ namespace Worms.Modules
             // Replays
             builder.RegisterType<ReplayTextPrinter>().As<IResourcePrinter<LocalReplay>>();
 
+            // Games
+            builder.RegisterType<GameTextPrinter>().As<IResourcePrinter<RemoteGame>>();
+            
             builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
             builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
             builder.RegisterGeneric(typeof(ResourceViewer<,>)).As(typeof(ResourceViewer<,>));
