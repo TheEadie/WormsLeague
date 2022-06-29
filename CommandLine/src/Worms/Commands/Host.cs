@@ -95,7 +95,7 @@ namespace Worms.Commands
 
             if (leagueNetworkAdapter is null)
             {
-                throw new Exception("No network adapter for domain: {domain}");
+                throw new Exception($"No network adapter for domain: {domain}");
             }
 
             var hostIp = leagueNetworkAdapter.GetIPProperties()
@@ -104,7 +104,7 @@ namespace Worms.Commands
 
             if (hostIp is null)
             {
-                throw new Exception("No IPv4 address found for network adapter: {leagueNetworkAdapter.Name}");
+                throw new Exception($"No IPv4 address found for network adapter: {leagueNetworkAdapter.Name}");
             }
 
             return hostIp;
