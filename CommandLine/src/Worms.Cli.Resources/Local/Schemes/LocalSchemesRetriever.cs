@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Threading.Tasks;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Resources.Schemes.Binary;
 
@@ -18,13 +19,13 @@ namespace Worms.Cli.Resources.Local.Schemes
             _fileSystem = fileSystem;
         }
 
-        public IReadOnlyCollection<LocalScheme> Get(string pattern = "*")
+        public Task<IReadOnlyCollection<LocalScheme>> Get(string pattern = "*")
         {
             var gameInfo = _wormsLocator.Find();
 
             if (!gameInfo.IsInstalled)
             {
-                return new List<LocalScheme>(0);
+                return Task.FromResult<IReadOnlyCollection<LocalScheme>>(new List<LocalScheme>(0));
             }
 
             var schemes = new List<LocalScheme>();
@@ -36,7 +37,7 @@ namespace Worms.Cli.Resources.Local.Schemes
                 schemes.Add(new LocalScheme(scheme, fileName, details));
             }
 
-            return schemes;
+            return Task.FromResult<IReadOnlyCollection<LocalScheme>>(schemes);
         }
     }
 }

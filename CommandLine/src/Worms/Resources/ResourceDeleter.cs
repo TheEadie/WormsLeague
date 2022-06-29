@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Worms.Cli.Resources;
 using Worms.Commands;
 
@@ -15,16 +16,16 @@ namespace Worms.Resources
             _deleter = deleter;
         }
 
-        public void Delete(string name)
+        public async Task Delete(string name)
         {
             name = ValidateName(name);
-            var resource = GetResource(name);
+            var resource = await GetResource(name);
             _deleter.Delete(resource);
         }
 
-        private T GetResource(string name)
+        private async Task<T> GetResource(string name)
         {
-            var resourcesFound = _retriever.Get(name);
+            var resourcesFound = await _retriever.Get(name);
 
             if (resourcesFound.Count == 0)
             {

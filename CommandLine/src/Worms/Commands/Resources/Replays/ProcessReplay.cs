@@ -38,7 +38,7 @@ namespace Worms.Commands.Resources.Replays
                 pattern = Name;
             }
 
-            foreach (var replayPath in _replayRetriever.Get(pattern))
+            foreach (var replayPath in await _replayRetriever.Get(pattern))
             {
                 Logger.Information($"Processing: {replayPath.Paths.WAgamePath}");
                 await _replayLogGenerator.GenerateReplayLog(replayPath.Paths.WAgamePath);

@@ -27,20 +27,20 @@ namespace Worms.Commands.Resources.Replays
             _replayRetriever = replayRetriever;
         }
 
-        public Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync(IConsole console)
         {
             try
             {
                 var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-                _replayRetriever.PrintResources(Name, console.Out, windowWidth);
+                await _replayRetriever.PrintResources(Name, console.Out, windowWidth);
             }
             catch (ConfigurationException exception)
             {
                 Logger.Error(exception.Message);
-                return Task.FromResult(1);
+                return 1;
             }
 
-            return Task.FromResult(0);
+            return 0;
         }
     }
 }

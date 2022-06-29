@@ -8,12 +8,12 @@ using Worms.Cli.PackageManagers;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
 using Worms.Cli.Resources.Modules;
+using Worms.Cli.Resources.Remote.Auth;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Resources;
 using Worms.Resources.Replays;
 using Worms.Resources.Schemes;
-using Worms.Server.Auth;
 using Worms.Slack;
 
 namespace Worms.Modules

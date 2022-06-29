@@ -19,13 +19,13 @@ namespace Worms.Resources
         public async Task View(string name, TParams parameters)
         {
             name = ValidateName(name);
-            var resource = GetResource(name);
+            var resource = await GetResource(name);
             await _resourceViewer.View(resource, parameters);
         }
 
-        private T GetResource(string name)
+        private async Task<T> GetResource(string name)
         {
-            var resourcesFound = _retriever.Get(name);
+            var resourcesFound = await _retriever.Get(name);
 
             if (resourcesFound.Count == 0)
             {

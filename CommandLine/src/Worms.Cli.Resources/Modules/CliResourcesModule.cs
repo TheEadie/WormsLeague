@@ -4,6 +4,9 @@ using Worms.Armageddon.Resources.Schemes.Random;
 using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
+using Worms.Cli.Resources.Remote;
+using Worms.Cli.Resources.Remote.Auth;
+using Worms.Cli.Resources.Remote.Games;
 
 namespace Worms.Cli.Resources.Modules
 {
@@ -31,6 +34,15 @@ namespace Worms.Cli.Resources.Modules
 
             // Gifs
             builder.RegisterType<LocalGifCreator>().As<IResourceCreator<LocalGif, LocalGifCreateParameters>>();
+            
+            // API
+            builder.RegisterType<AccessTokenRefreshService>().As<IAccessTokenRefreshService>();
+            builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
+            builder.RegisterType<WormsServerApi>().As<IWormsServerApi>();
+            
+            // Games
+            builder.RegisterType<RemoteGameRetriever>().As<IResourceRetriever<RemoteGame>>();
+
         }
     }
 }

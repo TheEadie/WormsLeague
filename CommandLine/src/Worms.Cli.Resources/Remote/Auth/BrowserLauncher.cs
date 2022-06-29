@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Worms.Server.Auth
+namespace Worms.Cli.Resources.Remote.Auth
 {
     internal static class BrowserLauncher
     {

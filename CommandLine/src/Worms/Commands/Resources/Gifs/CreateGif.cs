@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -49,7 +48,7 @@ namespace Worms.Commands.Resources.Gifs
 
             try
             {
-                replay = ValidateReplay(Replay, Turn);
+                replay = await ValidateReplay(Replay, Turn);
 
             }
             catch (ConfigurationException exception)
@@ -75,7 +74,7 @@ namespace Worms.Commands.Resources.Gifs
             return 0;
         }
 
-        private LocalReplay ValidateReplay(string replay, uint turn)
+        private async Task<LocalReplay> ValidateReplay(string replay, uint turn)
         {
             if (string.IsNullOrWhiteSpace(replay))
             {
@@ -86,7 +85,7 @@ namespace Worms.Commands.Resources.Gifs
                 throw new ConfigurationException("No turn provided for the Gif being created");
             }
 
-            var replays = _replayRetriever.Get(replay);
+            var replays = await _replayRetriever.Get(replay);
 
             switch (replays.Count)
             {

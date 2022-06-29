@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using RestSharp;
 using Serilog;
 
-namespace Worms.Server.Auth
+namespace Worms.Cli.Resources.Remote.Auth
 {
     public class DeviceCodeLoginService : ILoginService
     {

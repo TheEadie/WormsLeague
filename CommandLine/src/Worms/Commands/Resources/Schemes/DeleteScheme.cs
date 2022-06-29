@@ -22,19 +22,19 @@ namespace Worms.Commands.Resources.Schemes
             _resourceDeleter = resourceDeleter;
         }
 
-        public Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync(IConsole console)
         {
             try
             {
-                _resourceDeleter.Delete(Name);
+                await _resourceDeleter.Delete(Name);
             }
             catch (ConfigurationException exception)
             {
                 Logger.Error(exception.Message);
-                return Task.FromResult(1);
+                return 1;
             }
 
-            return Task.FromResult(0);
+            return 0;
         }
     }
 }

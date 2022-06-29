@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Serilog;
 
-namespace Worms.Server.Auth
+namespace Worms.Cli.Resources.Remote.Auth
 {
     public interface ILoginService
     {

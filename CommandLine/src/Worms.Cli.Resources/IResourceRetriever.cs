@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Worms.Cli.Resources
 {
-    public interface IResourceRetriever<out T>
+    public interface IResourceRetriever<T>
     {
-        IReadOnlyCollection<T> Get(string pattern = "*");
+        Task<IReadOnlyCollection<T>> Get(string pattern = "*");
     }
 }

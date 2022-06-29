@@ -3,7 +3,7 @@ using System.IO.Abstractions;
 using System.Text.Json;
 using Microsoft.AspNetCore.DataProtection;
 
-namespace Worms.Server.Auth
+namespace Worms.Cli.Resources.Remote.Auth
 {
     public class TokenStore : ITokenStore
     {

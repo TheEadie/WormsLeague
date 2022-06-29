@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Worms.Cli.Resources;
 using Worms.Commands;
 
@@ -16,11 +17,11 @@ namespace Worms.Resources
             _printer = printer;
         }
 
-        public void PrintResources(string name, TextWriter writer, int outputMaxWidth)
+        public async Task PrintResources(string name, TextWriter writer, int outputMaxWidth)
         {
             var requestForAll = string.IsNullOrWhiteSpace(name);
             var userSpecifiedName = !requestForAll && !name.Contains('*');
-            var matches = requestForAll ? _retriever.Get() : _retriever.Get(name);
+            var matches = requestForAll ? await _retriever.Get() : await _retriever.Get(name);
 
             if (userSpecifiedName)
             {

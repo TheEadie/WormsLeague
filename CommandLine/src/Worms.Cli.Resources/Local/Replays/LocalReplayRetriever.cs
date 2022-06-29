@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Threading.Tasks;
 using Worms.Armageddon.Resources.Replays;
 using Worms.Armageddon.Resources.Replays.Text;
 
@@ -20,7 +21,7 @@ namespace Worms.Cli.Resources.Local.Replays
             _replayTextReader = replayTextReader;
         }
 
-        public IReadOnlyCollection<LocalReplay> Get(string pattern = "*")
+        public Task<IReadOnlyCollection<LocalReplay>> Get(string pattern = "*")
         {
             var resources = new List<LocalReplay>();
 
@@ -51,7 +52,7 @@ namespace Worms.Cli.Resources.Local.Replays
                 }
             }
 
-            return resources.OrderByDescending(x => x.Details.Date).ToList();
+            return Task.FromResult<IReadOnlyCollection<LocalReplay>>(resources.OrderByDescending(x => x.Details.Date).ToList());
         }
     }
 }

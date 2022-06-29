@@ -22,19 +22,19 @@ namespace Worms.Commands.Resources.Replays
             _resourceDeleter = resourceDeleter;
         }
 
-        public Task<int> OnExecuteAsync()
+        public async Task<int> OnExecuteAsync()
         {
             try
             {
-                _resourceDeleter.Delete(Name);
+                await _resourceDeleter.Delete(Name);
             }
             catch (ConfigurationException exception)
             {
                 Logger.Error(exception.Message);
-                return Task.FromResult(1);
+                return 1;
             }
 
-            return Task.FromResult(0);
+            return 0;
         }
     }
 }
