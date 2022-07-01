@@ -61,7 +61,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [build, build-database]
 
     steps:
     - name: Checkout
@@ -87,3 +87,22 @@ jobs:
     - name: Release
       run: |
         cd Server; make release GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
+  release-database:
+    name: Release Database
+    runs-on: ubuntu-latest
+    needs: [build, build-database]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Flyway Migrate
+      run: >-
+        docker run --rm \
+          --volume ${{ github.workspace }}/database/migrations:/flyway/sql:ro \
+          flyway/flyway:8.5.9-alpine \
+          -url="${{ secrets.PROD_DATABASE_URL }}" \
+          -user="${{ secrets.PROD_DATABASE_USER }}" \
+          -password="${{ secrets.PROD_DATABASE_PASSWORD }}" \
+          migrate
