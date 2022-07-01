@@ -31,6 +31,33 @@ jobs:
       run: | 
         cd Server; make publish
 
+  build-database:
+    name: Build Database
+    runs-on: ubuntu-latest
+    env:
+      SPAWNCTL_ACCESS_TOKEN: ${{ secrets.SPAWN_ACCESS_TOKEN }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Spawn a database
+      id: create-container
+      uses: red-gate/create-spawn-data-container/@v1
+      with:
+        dataImage: worms-hub
+        lifetime: '1h'
+
+    - name: Flyway Migrate
+      run: >-
+        docker run --rm \
+          --volume ${{ github.workspace }}/database/migrations:/flyway/sql:ro \
+          flyway/flyway:8.5.9-alpine \
+          -url="jdbc:postgresql://${{ steps.create-container.outputs.dataContainerHost }}:${{ steps.create-container.outputs.dataContainerPort }}/postgres?sslmode=require" \
+          -user="${{ steps.create-container.outputs.dataContainerUsername }}" \
+          -password="${{ steps.create-container.outputs.dataContainerPassword }}" \
+          migrate
+
   release:
     name: Release
     runs-on: ubuntu-latest
