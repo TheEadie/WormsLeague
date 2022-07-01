@@ -22,6 +22,10 @@ namespace Worms.Gateway
         {
             _env = env;
             _configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .AddEnvironmentVariables("WORMS_");
+            _configuration = builder.Build();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
