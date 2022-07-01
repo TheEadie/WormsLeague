@@ -9,6 +9,7 @@ class WormsHub : Stack
     public WormsHub()
     {
         var stack = Pulumi.Deployment.Instance.StackName;
+        var config = new Config();
 
         
         // Create an Azure Resource Group
@@ -70,6 +71,35 @@ class WormsHub : Stack
                     MinReplicas = 0,
                 },
             }
+        });
+
+        var server = new Pulumi.AzureNative.DBforPostgreSQL.Server("server", new Pulumi.AzureNative.DBforPostgreSQL.ServerArgs
+        {
+            ServerName = "worms",
+            ResourceGroupName = resourceGroup.Name,
+            Location= "eastus",
+            Properties = new Pulumi.AzureNative.DBforPostgreSQL.Inputs.ServerPropertiesForDefaultCreateArgs
+            {
+                AdministratorLogin = config.RequireSecret("database_user"),
+                AdministratorLoginPassword = config.RequireSecret("database_password"),
+                CreateMode = "Default",
+                Version = Pulumi.AzureNative.DBforPostgreSQL.ServerVersion.ServerVersion_11,
+            },
+            Sku = new Pulumi.AzureNative.DBforPostgreSQL.Inputs.SkuArgs
+            {
+                Capacity = 1,
+                Family = "Gen5",
+                Name = "B_Gen5_1",
+                Tier = "Basic",
+            },
+        });
+
+        var database = new  Pulumi.AzureNative.DBforPostgreSQL.Database("database", new  Pulumi.AzureNative.DBforPostgreSQL.DatabaseArgs
+        {
+            DatabaseName = "worms",
+            ResourceGroupName = resourceGroup.Name,
+            Charset = "UTF8",
+            ServerName = server.Name,
         });
 
         Url = Output.Format($"https://{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");
