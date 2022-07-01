@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Worms.Gateway.Auth;
+using Worms.Gateway.Database;
+using Worms.Gateway.Dtos;
 
 namespace Worms.Gateway
 {
@@ -45,6 +47,7 @@ namespace Worms.Gateway
             });
 
             services.AddAuthorization();
+            services.AddSingleton<IRepository<GameDto>, GamesRepository>();
 
             if (_env.IsDevelopment())
             {
