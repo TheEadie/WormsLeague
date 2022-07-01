@@ -1,0 +1,17 @@
+{
+  "version": "2.0",
+  "name": "worms",
+  "id": "a7bc3a93-22da-49dc-8985-cebbe1add3bd",
+  "databaseType": "PostgreSql",
+  "schemas": [
+    "public"
+  ],
+  "development": {
+    "scriptsFolder": "./schema-model"
+  },
+  "deployment": {
+    "flywayConfFiles": [
+      "./flyway.conf"
+    ]
+  }
+}

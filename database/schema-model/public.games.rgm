@@ -1,0 +1,36 @@
+{
+  "objects": [
+    {
+      "objectType": "table",
+      "fullName": "\"public\".\"games\"",
+      "columns": [
+        {
+          "objectType": "column",
+          "fullName": "\"id\"",
+          "type": "int4",
+          "null": "NOT NULL",
+          "default": "nextval('public.games_id_seq'::regclass)"
+        },
+        {
+          "objectType": "column",
+          "fullName": "\"status\"",
+          "type": "text"
+        },
+        {
+          "objectType": "column",
+          "fullName": "\"hostmachine\"",
+          "type": "text"
+        }
+      ],
+      "primaryKeys": [
+        {
+          "objectType": "primaryKey",
+          "fullName": "\"games_pkey\"",
+          "columns": [
+            "\"id\""
+          ]
+        }
+      ]
+    }
+  ]
+}
