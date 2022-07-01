@@ -4,6 +4,7 @@ on:
   push:
     paths:
     - "Server/**"
+    - "database/**"
     - ".github/workflows/server.yml"
 
 jobs:
