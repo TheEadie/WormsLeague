@@ -5,7 +5,7 @@ TAG_PREFIX := server/gateway/v
 GITHUB_REPO := theeadie/WormsLeague
 GITHUB_AUTH_TOKEN := empty
 
-VERSION := $(shell ../build/version.sh $(NEXT_VERSION) $(TAG_PREFIX))
+VERSION := $(shell ../../build/version.sh $(NEXT_VERSION) $(TAG_PREFIX))
 VERSION_MAJOR := $(word 1,$(subst ., ,$(VERSION)))
 VERSION_MINOR := $(word 2,$(subst ., ,$(VERSION)))
 VERSION_PATCH := $(word 2,$(subst ., ,$(VERSION)))

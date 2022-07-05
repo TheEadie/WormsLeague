@@ -7,7 +7,7 @@ IMAGE_NAME = theeadie/wormscli
 NEXT_VERSION := 0.18
 TAG_PREFIX := cli/v
 
-VERSION := $(shell ../build/version.sh $(NEXT_VERSION) $(TAG_PREFIX))
+VERSION := $(shell ../../build/version.sh $(NEXT_VERSION) $(TAG_PREFIX))
 VERSION_MAJOR := $(word 1,$(subst ., ,$(VERSION)))
 VERSION_MINOR := $(word 2,$(subst ., ,$(VERSION)))
 VERSION_PATCH := $(word 2,$(subst ., ,$(VERSION)))
@@ -100,7 +100,7 @@ GitHubAuthToken = empty
 release: | release-github release-dockerhub
 
 release-github:
-	@../build/release-github.sh "CLI v$(VERSION)" "cli/v$(VERSION)" $(GitHubAuthToken) $(GitHubRepo) "$(OUTPUT_DIR)/win-x64"
+	@../../build/release-github.sh "CLI v$(VERSION)" "cli/v$(VERSION)" $(GitHubAuthToken) $(GitHubRepo) "$(OUTPUT_DIR)/win-x64"
 
 release-dockerhub: docker-build
 	@docker push $(IMAGE_NAME) --all-tags
