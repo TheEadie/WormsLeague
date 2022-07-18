@@ -73,33 +73,28 @@ class WormsHub : Stack
             }
         });
 
-        var server = new Pulumi.AzureNative.DBforPostgreSQL.Server("server", new Pulumi.AzureNative.DBforPostgreSQL.ServerArgs
+        var server = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Server("server", new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.ServerArgs
         {
             ServerName = "worms",
             ResourceGroupName = resourceGroup.Name,
-            Location= "eastus",
-            Properties = new Pulumi.AzureNative.DBforPostgreSQL.Inputs.ServerPropertiesForDefaultCreateArgs
+            Version = Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.ServerVersion.ServerVersion_13,
+            AdministratorLogin = config.RequireSecret("database_user"),
+            AdministratorLoginPassword = config.RequireSecret("database_password"),
+            CreateMode = "Default",
+            
+            Sku = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.SkuArgs
             {
-                AdministratorLogin = config.RequireSecret("database_user"),
-                AdministratorLoginPassword = config.RequireSecret("database_password"),
-                CreateMode = "Default",
-                Version = Pulumi.AzureNative.DBforPostgreSQL.ServerVersion.ServerVersion_11,
+                Name = "Standard_B1ms",
+                Tier = "Burstable",
             },
-            Sku = new Pulumi.AzureNative.DBforPostgreSQL.Inputs.SkuArgs
-            {
-                Capacity = 1,
-                Family = "Gen5",
-                Name = "B_Gen5_1",
-                Tier = "Basic",
-            },
-        });
 
-        var database = new  Pulumi.AzureNative.DBforPostgreSQL.Database("database", new  Pulumi.AzureNative.DBforPostgreSQL.DatabaseArgs
-        {
-            DatabaseName = "worms",
-            ResourceGroupName = resourceGroup.Name,
-            Charset = "UTF8",
-            ServerName = server.Name,
+            Storage = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.StorageArgs {
+                StorageSizeGB = 32,
+            },
+
+            Backup = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.BackupArgs {
+                BackupRetentionDays = 7,
+            }
         });
 
         Url = Output.Format($"https://{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");

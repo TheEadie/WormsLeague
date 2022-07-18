@@ -1,5 +1,5 @@
 config:
-  azure-native:location: uksouth
+  azure-native:location: northeurope
   worms.davideadie.dev:database_password:
     secure: AAABAIy41RFiFOpzZR3Z8ep3Eigm9HmZjZbVI2F6LnUj/VAa0LLG8nBj+yHPXvRZC2VXENcITY4WWauV7kSEgmye1Rksu2Zs
   worms.davideadie.dev:database_user:
