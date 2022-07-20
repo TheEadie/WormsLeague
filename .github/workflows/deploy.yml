@@ -48,8 +48,12 @@ jobs:
         docker run --rm \
           --volume ${{ github.workspace }}/src/database/migrations:/flyway/sql:ro \
           flyway/flyway:8.5.9-alpine \
-          -url="${{ secrets.PROD_DATABASE_URL }}" \
+          -url="jdbc:postgresql://${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }}" \
           -user="${{ secrets.PROD_DATABASE_USER }}" \
           -password="${{ secrets.PROD_DATABASE_PASSWORD }}" \
           migrate \
           -target=$(cat deployment/worms.davideadie.dev/database-version.txt)
+
+    - name: Backup Database
+      run: >-
+        pg_dump --dbname=postgresql://${{ secrets.PROD_DATABASE_USER }}:${{ secrets.PROD_DATABASE_PASSWORD }}@${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }} > file.sql
