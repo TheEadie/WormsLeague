@@ -97,6 +97,15 @@ class WormsHub : Stack
             }
         });
 
+        var sqlFwRuleAllowAll = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.FirewallRule("sqlFwRuleAllowAll", new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.FirewallRuleArgs
+        {
+            EndIpAddress = "0.0.0.0",
+            FirewallRuleName = "AllowAllWindowsAzureIps",
+            ResourceGroupName = resourceGroup.Name,
+            ServerName = server.Name,
+            StartIpAddress = "0.0.0.0",
+        });
+
         Url = Output.Format($"https://{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");
     }
 
