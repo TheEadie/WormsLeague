@@ -1,4 +1,4 @@
-name: Deploy - worms.davideadie.dev
+name: Deploy
 
 on:
   push:
@@ -8,8 +8,35 @@ on:
 
 jobs:
 
+  deploy-azure:
+    name: Azure
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.x
+
+    - name: Pulumi up
+      uses: pulumi/actions@v3
+      with:
+        command: up
+        stack-name: prod
+        work-dir: deployment/worms.davideadie.dev
+      env:
+        PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
   deploy-database:
-    name: Deploy Database
+    name: Database
+    needs: deploy-azure
     runs-on: ubuntu-latest
 
     steps:
