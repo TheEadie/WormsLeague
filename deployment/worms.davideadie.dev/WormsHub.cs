@@ -97,6 +97,13 @@ class WormsHub : Stack
             }
         });
 
+        var database = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Database("database", new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.DatabaseArgs
+        {
+            DatabaseName = "worms",
+            ResourceGroupName = resourceGroup.Name,
+            ServerName = server.Name,
+        });
+
         var sqlFwRuleAllowAll = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.FirewallRule("sqlFwRuleAllowAll", new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.FirewallRuleArgs
         {
             EndIpAddress = "0.0.0.0",
