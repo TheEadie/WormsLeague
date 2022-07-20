@@ -1,6 +1,8 @@
-sourceType: empty
+sourceType: backup
 name: worms-hub
 engine: postgresql
-version: 11.0
-tags:
-  - 0.2
+version: 13.2
+backups:
+  - folder: .
+    file: backup.dump
+initialDatabaseName: worms

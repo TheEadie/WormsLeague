@@ -54,7 +54,7 @@ jobs:
         docker run --rm \
           --volume ${{ github.workspace }}/src/database/migrations:/flyway/sql:ro \
           flyway/flyway:8.5.9-alpine \
-          -url="jdbc:postgresql://${{ steps.create-container.outputs.dataContainerHost }}:${{ steps.create-container.outputs.dataContainerPort }}/postgres?sslmode=require" \
+          -url="jdbc:postgresql://${{ steps.create-container.outputs.dataContainerHost }}:${{ steps.create-container.outputs.dataContainerPort }}/${{ secrets.PROD_DATABASE_NAME }}?sslmode=require" \
           -user="${{ steps.create-container.outputs.dataContainerUsername }}" \
           -password="${{ steps.create-container.outputs.dataContainerPassword }}" \
           migrate

@@ -38,10 +38,16 @@ jobs:
     name: Database
     needs: deploy-azure
     runs-on: ubuntu-latest
+    env:
+      SPAWNCTL_ACCESS_TOKEN: ${{ secrets.SPAWN_ACCESS_TOKEN }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name: Get version
+      id: vars
+      run: echo ::set-output name=version::$(cat deployment/worms.davideadie.dev/database-version.txt)
 
     - name: Flyway Migrate
       run: >-
@@ -52,8 +58,17 @@ jobs:
           -user="${{ secrets.PROD_DATABASE_USER }}" \
           -password="${{ secrets.PROD_DATABASE_PASSWORD }}" \
           migrate \
-          -target=$(cat deployment/worms.davideadie.dev/database-version.txt)
+          -target=${{ steps.vars.outputs.version }}
 
     - name: Backup Database
       run: >-
-        pg_dump --dbname=postgresql://${{ secrets.PROD_DATABASE_USER }}:${{ secrets.PROD_DATABASE_PASSWORD }}@${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }} > file.sql
+        pg_dump \
+          --dbname=postgresql://${{ secrets.PROD_DATABASE_USER }}:${{ secrets.PROD_DATABASE_PASSWORD }}@${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }} \
+          --format=custom > src/database/backup.dump
+
+    - name: Update Data Image
+      uses: red-gate/create-spawn-data-image/@v1
+      with:
+        dataImageYaml: src/database/spawn-image.yml
+        tags: "--tag=${{ steps.vars.outputs.version }} --tag=latest"
+        lifetime: "0"
