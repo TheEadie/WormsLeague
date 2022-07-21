@@ -5,6 +5,8 @@ on:
     paths:
     - "deployment/worms.davideadie.dev/**"
     - ".github/workflows/deploy.yml"
+    branches:
+      - master
 
 jobs:
 
