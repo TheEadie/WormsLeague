@@ -64,11 +64,14 @@ jobs:
       run: >-
         pg_dump \
           --dbname=postgresql://${{ secrets.PROD_DATABASE_USER }}:${{ secrets.PROD_DATABASE_PASSWORD }}@${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }} \
-          --format=custom > src/database/backup.dump
+          > src/database/backup.dump
 
     - name: Update Data Image
-      uses: red-gate/create-spawn-data-image/@v1
-      with:
-        dataImageYaml: src/database/spawn-image.yml
-        tags: "--tag=${{ steps.vars.outputs.version }} --tag=latest"
-        lifetime: "0"
+      run: >-
+        docker run --rm \
+          --volume ${{ github.workspace }}/src/database:/spawn/database \
+          -e SPAWNCTL_ACCESS_TOKEN \
+          redgatefoundry/spawnctl \
+          create di -f /spawn/database/spawn-image.yml \
+          --tag=latest --tag=${{ steps.vars.outputs.version }} \
+          -q
