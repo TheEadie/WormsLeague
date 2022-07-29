@@ -59,7 +59,7 @@ jobs:
           --volume ${{ github.workspace }}/src/database/migrations:/flyway/sql:ro \
           --volume ${{ github.workspace }}/src/database/reports:/flyway/reports \
           -e FLYWAY_LICENSE_KEY \
-          redgate/flyway:9-alpine \
+          redgate/flyway:9.0.1-alpine \
           -url="jdbc:postgresql://${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }}" \
           -user="${{ secrets.PROD_DATABASE_USER }}" \
           -password="${{ secrets.PROD_DATABASE_PASSWORD }}" \
@@ -69,6 +69,17 @@ jobs:
           -check.buildPassword="${{ steps.create-container.outputs.dataContainerPassword }}" \
           -target=${{ steps.vars.outputs.version }} \
           -check.reportFilename="/flyway/reports/report.htm"
+
+    - name: Get summary
+      id: summary
+      run: echo ::set-output name=summary::$(build/flyway-summary.sh src/database/reports/report.htm.json)
+
+    - name: Comment PR
+      uses: thollander/actions-comment-pull-request@v1
+      with:
+        message: |
+          ${{ steps.summary.outputs.summary }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload report
       uses: actions/upload-artifact@v3
