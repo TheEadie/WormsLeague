@@ -25,6 +25,7 @@ echo "$CreateReleaseResponse" # Print the message
 
 if [ -z "$ReleaseDir" ]; then
     # Nothing to upload
+    echo "No artifacts to upload"
 else
     AssetUrl=$(echo $CreateReleaseResponse | jq -r '.upload_url' | sed 's/{?name,label}//g')
 

@@ -64,7 +64,7 @@ version:
 release: | release-github docker-push
 
 release-github:
-	@../../build/release-github.sh "Hub v$(VERSION)" "$(TAG_PREFIX)$(VERSION)" $(GitHubAuthToken) $(GitHubRepo)
+	@../../build/release-github.sh "Hub v$(VERSION)" "$(TAG_PREFIX)$(VERSION)" $(GITHUB_AUTH_TOKEN) $(GITHUB_REPO)
 
 docker-push:
 	@docker buildx build . \

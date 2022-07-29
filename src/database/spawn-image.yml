@@ -6,3 +6,4 @@ backups:
   - folder: .
     file: backup.dump
 initialDatabaseName: worms
+
