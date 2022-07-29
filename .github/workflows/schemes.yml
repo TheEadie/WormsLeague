@@ -3,7 +3,7 @@ name: Schemes
 on:
   push:
     paths:
-    - "Schemes/**"
+    - "deployment/schemes/**"
     - "build/**"
     - ".github/workflows/schemes.yml"
 
@@ -17,12 +17,12 @@ jobs:
       with:
         fetch-depth: 0
     - name: Build
-      run: cd Schemes; make schemes
+      run: cd deployment/schemes; make schemes
     - name: Upload build
       uses: actions/upload-artifact@v3
       with:
         name: RGSchemes
-        path: Schemes/.artifacts/
+        path: deployment/schemes/.artifacts/
 
   release:
     name: Release - GitHub
@@ -38,6 +38,6 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: RGSchemes
-        path: Schemes/.artifacts/
+        path: deployment/schemes/.artifacts/
     - name: Release
-      run: cd Schemes; make release-github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
+      run: cd deployment/schemes; make release-github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}

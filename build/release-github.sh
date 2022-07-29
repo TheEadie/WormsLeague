@@ -23,20 +23,25 @@ CreateReleaseResponse=$(curl --request POST \
 
 echo "$CreateReleaseResponse" # Print the message
 
-AssetUrl=$(echo $CreateReleaseResponse | jq -r '.upload_url' | sed 's/{?name,label}//g')
+if [ -z "$ReleaseDir" ]; then
+    # Nothing to upload
+    echo "No artifacts to upload"
+else
+    AssetUrl=$(echo $CreateReleaseResponse | jq -r '.upload_url' | sed 's/{?name,label}//g')
 
-for filename in $ReleaseDir/*; do
-    echo "Uploading $filename"
+    for filename in $ReleaseDir/*; do
+        echo "Uploading $filename"
 
-    name="${filename##*/}"
-    UploadUrl=$AssetUrl?name=$name
-    echo "Calling - $UploadUrl"
+        name="${filename##*/}"
+        UploadUrl=$AssetUrl?name=$name
+        echo "Calling - $UploadUrl"
 
-    curl --request POST \
-    --url $UploadUrl \
-    --header "authorization: Bearer $GitHubToken" \
-    --header "Content-Type: application/octet-stream" \
-    --data-binary "@$filename"
-done
+        curl --request POST \
+        --url $UploadUrl \
+        --header "authorization: Bearer $GitHubToken" \
+        --header "Content-Type: application/octet-stream" \
+        --data-binary "@$filename"
+    done
+fi
 
 echo "GitHub Release created"
