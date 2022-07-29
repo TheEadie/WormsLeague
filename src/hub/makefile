@@ -1,6 +1,6 @@
 IMAGE_NAME := theeadie/worms-server-gateway
 NEXT_VERSION := 0.1
-TAG_PREFIX := server/gateway/v
+TAG_PREFIX := hub/v
 
 GITHUB_REPO := theeadie/WormsLeague
 GITHUB_AUTH_TOKEN := empty
@@ -61,7 +61,10 @@ version:
 	@echo $(VERSION)
 
 ## Release
-release: | docker-push
+release: | release-github docker-push
+
+release-github:
+	@../../build/release-github.sh "Hub v$(VERSION)" "$(TAG_PREFIX)$(VERSION)" $(GitHubAuthToken) $(GitHubRepo)
 
 docker-push:
 	@docker buildx build . \
