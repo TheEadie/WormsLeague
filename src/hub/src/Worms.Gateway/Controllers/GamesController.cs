@@ -27,5 +27,12 @@ namespace Worms.Gateway.Controllers
             var found = _repository.Get().SingleOrDefault(x => x.Id == id);
             return new GameDto(found.Id, found.Status, found.HostMachine);
         }
+        
+        [HttpPost]
+        public ActionResult<GameDto> Post(string hostMachine)
+        {
+            return _repository.Create(new GameDto("0", "Pending", hostMachine));
+            
+        }
     }
 }

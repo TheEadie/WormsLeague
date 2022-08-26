@@ -23,6 +23,16 @@ public class GamesRepository : IRepository<GameDto>
         var dbObjects = connection.Query<GamesDb>("SELECT id, status, hostmachine FROM games");
         return dbObjects.Select(x => new GameDto(x.Id.ToString(), x.Status, x.HostMachine)).ToList();
     }
+
+    public GameDto Create(GameDto game)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        
+        var parameters = new { Staus = game.Status, Host = game.HostMachine };
+        const string sql = "INSERT INTO games (status, hostmachine) VALUES (@Status, @Host) RETURNING id";
+        var created = connection.QuerySingle<string>(sql, parameters);
+        return new GameDto(created, game.Status, game.HostMachine);
+    }
 }
 
 public record GamesDb (int Id, string Status, string HostMachine);

@@ -2,7 +2,8 @@
 
 namespace Worms.Gateway.Database;
 
-public interface IRepository<out T>
+public interface IRepository<T>
 {
     IReadOnlyCollection<T> Get();
+    T Create(T game);
 }
