@@ -29,10 +29,9 @@ namespace Worms.Gateway.Controllers
         }
         
         [HttpPost]
-        public ActionResult<GameDto> Post(string hostMachine)
+        public ActionResult<GameDto> Post(CreateGameDto parameters)
         {
-            return _repository.Create(new GameDto("0", "Pending", hostMachine));
-            
+            return _repository.Create(new GameDto("0", "Pending", parameters.HostMachine));
         }
     }
 }

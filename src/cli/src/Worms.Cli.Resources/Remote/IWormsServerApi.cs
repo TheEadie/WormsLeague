@@ -7,5 +7,5 @@ internal interface IWormsServerApi
 {
     Task<IReadOnlyCollection<WormsServerApi.GamesDtoV1>> GetGames();
 
-    Task<WormsServerApi.GamesDtoV1> CreateGame(string hostMachineName);
+    Task<WormsServerApi.GamesDtoV1> CreateGame(WormsServerApi.CreateGameDtoV1 hostMachineName);
 }

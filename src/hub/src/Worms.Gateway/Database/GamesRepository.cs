@@ -27,11 +27,16 @@ public class GamesRepository : IRepository<GameDto>
     public GameDto Create(GameDto game)
     {
         using var connection = new NpgsqlConnection(_connectionString);
-        
-        var parameters = new { Staus = game.Status, Host = game.HostMachine };
-        const string sql = "INSERT INTO games (status, hostmachine) VALUES (@Status, @Host) RETURNING id";
+        const string sql = "INSERT INTO games (status, hostmachine) VALUES (@status, @hostmachine) RETURNING id";
+
+        var parameters = new
+        {
+            status = game.Status,
+            hostmachine = game.HostMachine
+        };
+
         var created = connection.QuerySingle<string>(sql, parameters);
-        return new GameDto(created, game.Status, game.HostMachine);
+        return game with {Id = created};
     }
 }
 

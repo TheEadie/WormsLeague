@@ -2,9 +2,12 @@ using System;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Armageddon.Game;
+using Worms.Cli.Resources;
+using Worms.Cli.Resources.Remote.Games;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Slack;
@@ -23,8 +26,10 @@ namespace Worms.Commands
         private readonly IConfigManager _configManager;
         private readonly IWormsLocator _wormsLocator;
         private readonly LeagueUpdater _leagueUpdater;
+        private readonly IResourceCreator<RemoteGame, string> _remoteGameCreator;
 
-        [Option(Description = "When set the CLI will print what will happen rather than running the commands", LongName = "dry-run", ShortName = "dr")]
+        [Option(Description = "When set the CLI will print what will happen rather than running the commands",
+            LongName = "dry-run", ShortName = "dr")]
         public bool DryRun { get; }
 
         public Host(
@@ -32,16 +37,18 @@ namespace Worms.Commands
             IWormsRunner wormsRunner,
             ISlackAnnouncer slackAnnouncer,
             IConfigManager configManager,
-            LeagueUpdater leagueUpdater)
+            LeagueUpdater leagueUpdater,
+            IResourceCreator<RemoteGame, string> remoteGameCreator)
         {
             _wormsRunner = wormsRunner;
             _slackAnnouncer = slackAnnouncer;
             _configManager = configManager;
             _wormsLocator = wormsLocator;
             _leagueUpdater = leagueUpdater;
+            _remoteGameCreator = remoteGameCreator;
         }
 
-        public async Task<int> OnExecuteAsync()
+        public async Task<int> OnExecuteAsync(CancellationToken cancellationToken)
         {
             Logger.Verbose("Loading configuration");
             var config = _configManager.Load();
@@ -80,6 +87,12 @@ namespace Worms.Commands
             if (!DryRun)
             {
                 await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, Logger).ConfigureAwait(false);
+            }
+
+            Logger.Information("Announcing game to hub");
+            if (!DryRun)
+            {
+                await _remoteGameCreator.Create(hostIp, Logger, cancellationToken);
             }
 
             await runGame;

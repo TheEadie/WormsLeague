@@ -19,13 +19,14 @@ internal class RemoteGameCreator : IResourceCreator<RemoteGame, string>
     {
         try
         {
-            var apiGame = await _api.CreateGame(parameters);
+            var apiGame = await _api.CreateGame(new WormsServerApi.CreateGameDtoV1(parameters));
             return new RemoteGame(apiGame.Id, apiGame.Status, apiGame.HostMachine);
         }
         catch (HttpRequestException e)
         {
             if (e.StatusCode == HttpStatusCode.Unauthorized)
-                logger.Warning("You don't have access to the Worms League Server. Please run worms auth or contact an admin");
+                logger.Warning(
+                    "You don't have access to the Worms League Server. Please run worms auth or contact an admin");
 
             return new RemoteGame("", "", "");
         }
