@@ -42,7 +42,7 @@ namespace Worms.Cli.Resources.Modules
             
             // Games
             builder.RegisterType<RemoteGameRetriever>().As<IResourceRetriever<RemoteGame>>();
-
+            builder.RegisterType<RemoteGameCreator>().As<IResourceCreator<RemoteGame, string>>();
         }
     }
 }

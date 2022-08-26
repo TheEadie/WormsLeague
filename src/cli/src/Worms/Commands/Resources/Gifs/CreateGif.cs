@@ -63,7 +63,7 @@ namespace Worms.Commands.Resources.Gifs
                 Logger.Information($"Creating gif for {Replay}, turn {Turn} ...");
                 var gif = await _gifCreator.Create(new LocalGifCreateParameters(replay, Turn,
                     TimeSpan.FromSeconds(StartOffset), TimeSpan.FromSeconds(EndOffset),
-                    FramesPerSecond, Speed));
+                    FramesPerSecond, Speed), Logger, cancellationToken);
                 await console.Out.WriteLineAsync(gif.Path);
             }
             catch (FormatException exception)
