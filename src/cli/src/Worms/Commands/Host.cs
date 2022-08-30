@@ -27,6 +27,7 @@ namespace Worms.Commands
         private readonly IWormsLocator _wormsLocator;
         private readonly LeagueUpdater _leagueUpdater;
         private readonly IResourceCreator<RemoteGame, string> _remoteGameCreator;
+        private readonly IRemoteGameUpdater _gameUpdater;
 
         [Option(Description = "When set the CLI will print what will happen rather than running the commands",
             LongName = "dry-run", ShortName = "dr")]
@@ -38,7 +39,8 @@ namespace Worms.Commands
             ISlackAnnouncer slackAnnouncer,
             IConfigManager configManager,
             LeagueUpdater leagueUpdater,
-            IResourceCreator<RemoteGame, string> remoteGameCreator)
+            IResourceCreator<RemoteGame, string> remoteGameCreator,
+            IRemoteGameUpdater gameUpdater)
         {
             _wormsRunner = wormsRunner;
             _slackAnnouncer = slackAnnouncer;
@@ -46,6 +48,7 @@ namespace Worms.Commands
             _wormsLocator = wormsLocator;
             _leagueUpdater = leagueUpdater;
             _remoteGameCreator = remoteGameCreator;
+            _gameUpdater = gameUpdater;
         }
 
         public async Task<int> OnExecuteAsync(CancellationToken cancellationToken)
@@ -90,12 +93,20 @@ namespace Worms.Commands
             }
 
             Logger.Information("Announcing game to hub");
+            RemoteGame game = null;
             if (!DryRun)
             {
-                await _remoteGameCreator.Create(hostIp, Logger, cancellationToken);
+                game = await _remoteGameCreator.Create(hostIp, Logger, cancellationToken);
             }
 
             await runGame;
+
+            Logger.Information("Marking game as complete in hub");
+            if (!DryRun)
+            {
+                await _gameUpdater.SetGameComplete(game, Logger, cancellationToken);
+            }
+
             return 0;
         }
 

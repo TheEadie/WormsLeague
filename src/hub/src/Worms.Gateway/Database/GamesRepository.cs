@@ -24,19 +24,34 @@ public class GamesRepository : IRepository<GameDto>
         return dbObjects.Select(x => new GameDto(x.Id.ToString(), x.Status, x.HostMachine)).ToList();
     }
 
-    public GameDto Create(GameDto game)
+    public GameDto Create(GameDto item)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         const string sql = "INSERT INTO games (status, hostmachine) VALUES (@status, @hostmachine) RETURNING id";
 
         var parameters = new
         {
-            status = game.Status,
-            hostmachine = game.HostMachine
+            status = item.Status,
+            hostmachine = item.HostMachine
         };
 
         var created = connection.QuerySingle<string>(sql, parameters);
-        return game with {Id = created};
+        return item with {Id = created};
+    }
+
+    public void Update(GameDto item)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        const string sql = "UPDATE games SET status = @status, hostmachine = @hostmachine WHERE id = @id";
+
+        var parameters = new
+        {
+            id = int.Parse(item.Id),
+            status = item.Status,
+            hostmachine = item.HostMachine
+        };
+
+        connection.Execute(sql, parameters);
     }
 }
 

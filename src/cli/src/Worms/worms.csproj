@@ -28,8 +28,4 @@
     <ProjectReference Include="..\Worms.Cli.Resources\Worms.Cli.Resources.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Server" />
-  </ItemGroup>
-
 </Project>

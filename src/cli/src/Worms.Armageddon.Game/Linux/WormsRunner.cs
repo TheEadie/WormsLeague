@@ -14,20 +14,23 @@ namespace Worms.Armageddon.Game.Linux
 
         public Task RunWorms(params string[] wormsArgs)
         {
-            var gameInfo = _wormsLocator.Find();
-
-            var args = string.Join(" ", wormsArgs);
-            var processStartInfo = new ProcessStartInfo
+            return Task.Run(() =>
             {
-                FileName = "wine",
-                Arguments = gameInfo.ExeLocation + " " + args,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
+                var gameInfo = _wormsLocator.Find();
 
-            using var process = Process.Start(processStartInfo);
-            process?.WaitForExit();
-            return Task.CompletedTask;
+                var args = string.Join(" ", wormsArgs);
+                var processStartInfo = new ProcessStartInfo
+                {
+                    FileName = "wine",
+                    Arguments = gameInfo.ExeLocation + " " + args,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+
+                using var process = Process.Start(processStartInfo);
+                process?.WaitForExit();
+                return Task.CompletedTask;
+            });
         }
     }
 }

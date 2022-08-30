@@ -43,6 +43,13 @@ internal class WormsServerApi : IWormsServerApi
             await _httpClient.PostAsJsonAsync(path, createParams));
     }
 
+    public async Task UpdateGame(GamesDtoV1 newGameDetails)
+    {
+        var path = new Uri("api/v1/games", UriKind.Relative);
+        await CallApiRefreshAccessTokenIfInvalid(async () =>
+            await _httpClient.PutAsJsonAsync(path, newGameDetails));
+    }
+
     public record GamesDtoV1(
         [property: JsonPropertyName("id")] string Id,
         [property: JsonPropertyName("status")] string Status,
@@ -79,5 +86,26 @@ internal class WormsServerApi : IWormsServerApi
         return result is null
             ? throw new JsonException("The API returned success but the JSON response was empty")
             : (T) result;
+    }
+
+    private async Task CallApiRefreshAccessTokenIfInvalid(Func<Task<HttpResponseMessage>> apiCall)
+    {
+        var accessTokens = _tokenStore.GetAccessTokens();
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
+
+        var response = await apiCall().ConfigureAwait(false);
+
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            // Retry with newer access token
+            accessTokens = await _accessTokenRefreshService.RefreshAccessTokens(accessTokens).ConfigureAwait(false);
+            _tokenStore.StoreAccessTokens(accessTokens);
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
+            response = await apiCall().ConfigureAwait(false);
+        }
+
+        _ = response.EnsureSuccessStatusCode();
     }
 }
