@@ -24,9 +24,16 @@ internal class RemoteGameCreator : IResourceCreator<RemoteGame, string>
         }
         catch (HttpRequestException e)
         {
-            if (e.StatusCode == HttpStatusCode.Unauthorized)
-                logger.Warning(
-                    "You don't have access to the Worms League Server. Please run worms auth or contact an admin");
+            switch (e.StatusCode)
+            {
+                case HttpStatusCode.Unauthorized:
+                    logger.Warning(
+                        "You don't have access to the Worms Hub. Please run worms auth or contact an admin");
+                    break;
+                default:
+                    logger.Error(e, "An error occured calling the Worms Hub API");
+                    break;
+            }
 
             return new RemoteGame("", "", "");
         }
