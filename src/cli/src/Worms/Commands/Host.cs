@@ -33,6 +33,10 @@ namespace Worms.Commands
             LongName = "dry-run", ShortName = "dr")]
         public bool DryRun { get; }
 
+        [Option(Description = "Use legacy local mode to announce to Slack",
+            LongName = "local-mode")]
+        public bool LocalMode { get; }
+
         public Host(
             IWormsLocator wormsLocator,
             IWormsRunner wormsRunner,
@@ -85,29 +89,40 @@ namespace Worms.Commands
             Logger.Information("Starting Worms Armageddon");
             var runGame = !DryRun ? _wormsRunner.RunWorms("wa://") : Task.CompletedTask;
 
-            Logger.Information("Announcing game on Slack");
-            Logger.Verbose($"Host name: {hostIp}");
-            if (!DryRun)
+            if (LocalMode)
             {
-                await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, Logger).ConfigureAwait(false);
-            }
+                Logger.Information("Announcing game on Slack");
+                Logger.Verbose($"Host name: {hostIp}");
+                if (!DryRun)
+                {
+                    await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, Logger)
+                        .ConfigureAwait(false);
+                }
 
-            Logger.Information("Announcing game to hub");
-            RemoteGame game = null;
-            if (!DryRun)
+                Logger.Information("Waiting for game to finish");
+                await runGame;
+                return 0;
+            }
+            else
             {
-                game = await _remoteGameCreator.Create(hostIp, Logger, cancellationToken);
+                Logger.Information("Announcing game to hub");
+                RemoteGame game = null;
+                if (!DryRun)
+                {
+                    game = await _remoteGameCreator.Create(hostIp, Logger, cancellationToken);
+                }
+
+                Logger.Information("Waiting for game to finish");
+                await runGame;
+
+                Logger.Information("Marking game as complete in hub");
+                if (!DryRun)
+                {
+                    await _gameUpdater.SetGameComplete(game, Logger, cancellationToken);
+                }
+
+                return 0;
             }
-
-            await runGame;
-
-            Logger.Information("Marking game as complete in hub");
-            if (!DryRun)
-            {
-                await _gameUpdater.SetGameComplete(game, Logger, cancellationToken);
-            }
-
-            return 0;
         }
 
         private static string GetIpAddress(string domain)
