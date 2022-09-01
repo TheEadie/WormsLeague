@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using Worms.Gateway.Announcers;
+using Worms.Gateway.Announcers.Slack;
 using Worms.Gateway.Auth;
 using Worms.Gateway.Database;
 using Worms.Gateway.Dtos;
@@ -48,6 +50,7 @@ namespace Worms.Gateway
 
             services.AddAuthorization();
             services.AddSingleton<IRepository<GameDto>, GamesRepository>();
+            services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
 
             if (_env.IsDevelopment())
             {

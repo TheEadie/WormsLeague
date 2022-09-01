@@ -23,7 +23,8 @@ namespace Worms.Cli.Resources.Modules
             // Schemes
             builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<LocalScheme>>();
             builder.RegisterType<LocalSchemeCreator>().As<IResourceCreator<LocalScheme, LocalSchemeCreateParameters>>();
-            builder.RegisterType<LocalSchemeRandomCreator>().As<IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>>();
+            builder.RegisterType<LocalSchemeRandomCreator>()
+                .As<IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>>();
             builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<LocalScheme>>();
 
             // Replays
@@ -34,15 +35,16 @@ namespace Worms.Cli.Resources.Modules
 
             // Gifs
             builder.RegisterType<LocalGifCreator>().As<IResourceCreator<LocalGif, LocalGifCreateParameters>>();
-            
+
             // API
             builder.RegisterType<AccessTokenRefreshService>().As<IAccessTokenRefreshService>();
             builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
             builder.RegisterType<WormsServerApi>().As<IWormsServerApi>();
-            
+
             // Games
             builder.RegisterType<RemoteGameRetriever>().As<IResourceRetriever<RemoteGame>>();
-
+            builder.RegisterType<RemoteGameCreator>().As<IResourceCreator<RemoteGame, string>>();
+            builder.RegisterType<RemoteGameUpdater>().As<IRemoteGameUpdater>();
         }
     }
 }

@@ -2,9 +2,12 @@ using System;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Armageddon.Game;
+using Worms.Cli.Resources;
+using Worms.Cli.Resources.Remote.Games;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Slack;
@@ -23,25 +26,36 @@ namespace Worms.Commands
         private readonly IConfigManager _configManager;
         private readonly IWormsLocator _wormsLocator;
         private readonly LeagueUpdater _leagueUpdater;
+        private readonly IResourceCreator<RemoteGame, string> _remoteGameCreator;
+        private readonly IRemoteGameUpdater _gameUpdater;
 
-        [Option(Description = "When set the CLI will print what will happen rather than running the commands", LongName = "dry-run", ShortName = "dr")]
+        [Option(Description = "When set the CLI will print what will happen rather than running the commands",
+            LongName = "dry-run", ShortName = "dr")]
         public bool DryRun { get; }
+
+        [Option(Description = "Use legacy local mode to announce to Slack",
+            LongName = "local-mode")]
+        public bool LocalMode { get; }
 
         public Host(
             IWormsLocator wormsLocator,
             IWormsRunner wormsRunner,
             ISlackAnnouncer slackAnnouncer,
             IConfigManager configManager,
-            LeagueUpdater leagueUpdater)
+            LeagueUpdater leagueUpdater,
+            IResourceCreator<RemoteGame, string> remoteGameCreator,
+            IRemoteGameUpdater gameUpdater)
         {
             _wormsRunner = wormsRunner;
             _slackAnnouncer = slackAnnouncer;
             _configManager = configManager;
             _wormsLocator = wormsLocator;
             _leagueUpdater = leagueUpdater;
+            _remoteGameCreator = remoteGameCreator;
+            _gameUpdater = gameUpdater;
         }
 
-        public async Task<int> OnExecuteAsync()
+        public async Task<int> OnExecuteAsync(CancellationToken cancellationToken)
         {
             Logger.Verbose("Loading configuration");
             var config = _configManager.Load();
@@ -75,15 +89,40 @@ namespace Worms.Commands
             Logger.Information("Starting Worms Armageddon");
             var runGame = !DryRun ? _wormsRunner.RunWorms("wa://") : Task.CompletedTask;
 
-            Logger.Information("Announcing game on Slack");
-            Logger.Verbose($"Host name: {hostIp}");
-            if (!DryRun)
+            if (LocalMode)
             {
-                await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, Logger).ConfigureAwait(false);
-            }
+                Logger.Information("Announcing game on Slack");
+                Logger.Verbose($"Host name: {hostIp}");
+                if (!DryRun)
+                {
+                    await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, Logger)
+                        .ConfigureAwait(false);
+                }
 
-            await runGame;
-            return 0;
+                Logger.Information("Waiting for game to finish");
+                await runGame;
+                return 0;
+            }
+            else
+            {
+                Logger.Information("Announcing game to hub");
+                RemoteGame game = null;
+                if (!DryRun)
+                {
+                    game = await _remoteGameCreator.Create(hostIp, Logger, cancellationToken);
+                }
+
+                Logger.Information("Waiting for game to finish");
+                await runGame;
+
+                Logger.Information("Marking game as complete in hub");
+                if (!DryRun)
+                {
+                    await _gameUpdater.SetGameComplete(game, Logger, cancellationToken);
+                }
+
+                return 0;
+            }
         }
 
         private static string GetIpAddress(string domain)

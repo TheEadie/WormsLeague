@@ -1,7 +1,9 @@
 ﻿using System.IO.Abstractions;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ImageMagick;
+using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Game.Replays;
 
@@ -23,7 +25,7 @@ namespace Worms.Cli.Resources.Local.Gifs
             _fileSystem = fileSystem;
         }
 
-        public async Task<LocalGif> Create(LocalGifCreateParameters parameters)
+        public async Task<LocalGif> Create(LocalGifCreateParameters parameters, ILogger logger, CancellationToken cancellationToken)
         {
             var replayPath = parameters.Replay.Paths.WAgamePath;
             var turn = parameters.Replay.Details.Turns.ElementAt((int) parameters.Turn - 1);

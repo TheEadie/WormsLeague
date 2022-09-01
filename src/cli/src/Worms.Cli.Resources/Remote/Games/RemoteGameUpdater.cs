@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,25 +6,20 @@ using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Games;
 
-internal class RemoteGameRetriever : IResourceRetriever<RemoteGame>
+internal class RemoteGameUpdater : IRemoteGameUpdater
 {
     private readonly IWormsServerApi _api;
 
-    public RemoteGameRetriever(IWormsServerApi api)
+    public RemoteGameUpdater(IWormsServerApi api)
     {
         _api = api;
     }
 
-    public async Task<IReadOnlyCollection<RemoteGame>> Get(ILogger logger, CancellationToken cancellationToken)
-        => await Get("*", logger, cancellationToken);
-
-    public async Task<IReadOnlyCollection<RemoteGame>> Get(string pattern, ILogger logger,
-        CancellationToken cancellationToken)
+    public async Task SetGameComplete(RemoteGame game, ILogger logger, CancellationToken cancellationToken)
     {
         try
         {
-            var apiGames = await _api.GetGames();
-            return apiGames.Select(x => new RemoteGame(x.Id, x.Status, x.HostMachine)).ToList();
+            await _api.UpdateGame(new WormsServerApi.GamesDtoV1(game.Id, "Complete", game.HostMachine));
         }
         catch (HttpRequestException e)
         {
@@ -40,8 +33,6 @@ internal class RemoteGameRetriever : IResourceRetriever<RemoteGame>
                     logger.Error(e, "An error occured calling the Worms Hub API");
                     break;
             }
-
-            return new List<RemoteGame>(0);
         }
     }
 }

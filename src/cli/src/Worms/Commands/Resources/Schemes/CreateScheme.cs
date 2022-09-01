@@ -1,5 +1,6 @@
 using System;
 using System.IO.Abstractions;
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Armageddon.Game;
@@ -40,7 +41,7 @@ namespace Worms.Commands.Resources.Schemes
             _wormsLocator = wormsLocator;
         }
 
-        public async Task<int> OnExecuteAsync(IConsole console)
+        public async Task<int> OnExecuteAsync(IConsole console, CancellationToken cancellationToken)
         {
             string name;
             var outputFolder = ResourceFolder;
@@ -54,13 +55,13 @@ namespace Worms.Commands.Resources.Schemes
                 {
                     var (definition, source) = ValidateSchemeDefinition(console);
                     creator = () =>
-                        _schemeCreator.Create(new LocalSchemeCreateParameters(name, outputFolder, definition));
+                        _schemeCreator.Create(new LocalSchemeCreateParameters(name, outputFolder, definition), Logger, cancellationToken);
                     Logger.Verbose($"Scheme definition being read from {source}");
                 }
                 else
                 {
                     creator = () =>
-                        _randomSchemeCreator.Create(new LocalSchemeCreateRandomParameters(name, outputFolder));
+                        _randomSchemeCreator.Create(new LocalSchemeCreateRandomParameters(name, outputFolder), Logger, cancellationToken);
                 }
             }
             catch (ConfigurationException exception)

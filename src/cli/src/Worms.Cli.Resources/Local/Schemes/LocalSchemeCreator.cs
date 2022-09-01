@@ -1,5 +1,7 @@
 ﻿using System.IO.Abstractions;
+using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using Worms.Armageddon.Resources.Schemes.Binary;
 using Worms.Armageddon.Resources.Schemes.Text;
 
@@ -18,7 +20,7 @@ namespace Worms.Cli.Resources.Local.Schemes
             _fileSystem = fileSystem;
         }
 
-        public Task<LocalScheme> Create(LocalSchemeCreateParameters parameters)
+        public Task<LocalScheme> Create(LocalSchemeCreateParameters parameters, ILogger logger, CancellationToken cancellationToken)
         {
             var scheme = _schemeTextReader.GetModel(parameters.Definition);
             var path = _fileSystem.Path.Combine(parameters.Folder, parameters.Name + ".wsc");

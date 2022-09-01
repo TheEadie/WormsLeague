@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Worms.Gateway
 {
@@ -13,8 +14,10 @@ namespace Worms.Gateway
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((ctx, config) => 
+                .ConfigureLogging((_, builder) => builder.AddConsole())
+                .ConfigureAppConfiguration((_, config) => 
                     config.AddEnvironmentVariables(prefix: "WORMS_"))
+                
                 .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
     }
 }
