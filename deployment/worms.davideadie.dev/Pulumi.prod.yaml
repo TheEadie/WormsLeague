@@ -1,6 +1,10 @@
 config:
   azure-native:location: northeurope
+  worms.davideadie.dev:database_connectionstring:
+    secure: AAABAKzfjrj8Ab4kGFpexdu1MN65mLlRrzqvjAVIhMEQ2mTUZaiK5s8jsmQefHe6ePtE5V6lRcxn9q3kHc7ytNKytJLks0hAvbIUpUFNOIklYCxbakSn9AO0IRN46spFG7yUaYtww/JTAP/JD+Ru5oehMb9Nryuu429B2ZTsXs8cyE2CUtsEMhbJOW23IxFvObfyEwjec52v+EP5HqmR6Ni5zEWGmJU=
   worms.davideadie.dev:database_password:
     secure: AAABAIy41RFiFOpzZR3Z8ep3Eigm9HmZjZbVI2F6LnUj/VAa0LLG8nBj+yHPXvRZC2VXENcITY4WWauV7kSEgmye1Rksu2Zs
   worms.davideadie.dev:database_user:
     secure: AAABAKunOyHZGWVE5kF7RaibYtvYJ6l91mPIiBDNH7x6F2Fqf7JBDmtL
+  worms.davideadie.dev:slack_hook_url:
+    secure: AAABAMBDbCuFxnGggS6osWhsab+EvI++gQGZ6sHowT7s4AlPVjwe3STavCoYRQJ3fhff+OTMvB1JBcUu1g/sVvmY2Q3+KBOOq8E9CDuWuGWxV59kLZ1IZR/+DM8iI9dAO2xzoLUZW7LiX/EqMQ==

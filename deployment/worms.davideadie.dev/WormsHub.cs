@@ -43,6 +43,13 @@ class WormsHub : Stack
             }
         });
 
+        var certificate = GetCertificate.Invoke(new GetCertificateInvokeArgs
+        {
+            CertificateName = "worms.davideadie.dev",
+            EnvironmentName = "Worms-Hub",
+            ResourceGroupName = resourceGroup.Name,
+        });
+
         var containerApp = new ContainerApp("worms-hub-gateway", new ContainerAppArgs
         {
             ContainerAppName = "worms-gateway",
@@ -54,7 +61,26 @@ class WormsHub : Stack
                 {
                     External = true,
                     TargetPort = 80,
+                    CustomDomains = new[]
+                    {
+                        new CustomDomainArgs
+                        {
+                            BindingType = "SniEnabled",
+                            CertificateId = certificate.Apply(x => x.Id),
+                            Name = "worms.davideadie.dev",
+                        },
+                    }
                 },
+                Secrets = new InputList<SecretArgs>() {
+                    new SecretArgs {
+                        Name = "database-connection",
+                        Value = config.RequireSecret("database_connectionstring"),
+                    },
+                    new SecretArgs {
+                        Name = "slack-hook-url",
+                        Value = config.RequireSecret("slack_hook_url"),
+                    }
+                    }
             },
             Template = new TemplateArgs
             {
@@ -63,6 +89,17 @@ class WormsHub : Stack
                     {
                         Name = "gateway",
                         Image = "theeadie/worms-server-gateway:0.2.0",
+                        Env = new InputList<EnvironmentVarArgs>
+                        { 
+                            new EnvironmentVarArgs {
+                                Name = "WORMS_CONNECTIONSTRINGS__DATABASE",
+                                SecretRef = "database-connection",
+                            },
+                            new EnvironmentVarArgs {
+                                Name = "WORMS_SlackWebHookURL",
+                                SecretRef = "slack-hook-url",
+                            }
+                            }
                     }
                 },
                 Scale = new ScaleArgs
