@@ -62,7 +62,7 @@ class WormsHub : Stack
                     new ContainerArgs
                     {
                         Name = "gateway",
-                        Image = "theeadie/worms-server-gateway:0.1.0",
+                        Image = "theeadie/worms-server-gateway:0.2.0",
                     }
                 },
                 Scale = new ScaleArgs
