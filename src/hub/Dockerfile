@@ -1,5 +1,5 @@
 #### Build ####
-FROM mcr.microsoft.com/dotnet/sdk:6.0.401@sha256:2fdad630a59fbdecbfcc6aaf3ccae96eea0e8d24cd4607669fde0de107a94c53 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0.402@sha256:e86848d2834af9afb04eb9f822344178b5aad3b1909a3325be71fb3e98c46be7 AS build
 WORKDIR /app
 
 COPY *.sln ./
@@ -21,7 +21,7 @@ RUN dotnet publish \
         -p:Version=${VERSION}
 
 #### Runtime ####
-FROM mcr.microsoft.com/dotnet/runtime-deps:6.0.9-alpine3.16@sha256:a4cc5aa9352d4a0fc2583f912bc593fd008027aedbd54f71ea27ce081812ea80
+FROM mcr.microsoft.com/dotnet/runtime-deps:6.0.10-alpine3.16@sha256:74122689b26f2e7717634194a7ecdedda4c7a39dd5c96865206513010b2a4379
 WORKDIR /app
 COPY --from=build /app/out .
 ENTRYPOINT ["./Worms.Gateway"]
