@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <RootNamespace>Worms.Armageddon.Resources</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Autofac" Version="6.4.0" />
+      <PackageReference Include="Autofac" Version="6.5.0" />
       <PackageReference Include="Syroot.Worms.Armageddon" Version="4.0.3" />
     </ItemGroup>
 

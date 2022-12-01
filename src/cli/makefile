@@ -24,7 +24,6 @@ windows:
             --self-contained true \
             /p:PublishSingleFile=true \
             /p:Version=$(VERSION) \
-            /p:PublishTrimmed=true \
             /p:DebugType=none
 	@cp *.ps1 $(OUTPUT_DIR)/win-x64/
 	@echo $(VERSION) > $(OUTPUT_DIR)/win-x64/version.txt
@@ -39,7 +38,6 @@ linux:
             --self-contained true \
             /p:PublishSingleFile=true \
             /p:Version=$(VERSION) \
-            /p:PublishTrimmed=true \
             /p:DebugType=none
 	@echo $(VERSION) > $(OUTPUT_DIR)/linux-x64/version.txt
 
@@ -53,7 +51,6 @@ alpine:
             --self-contained true \
             /p:PublishSingleFile=true \
             /p:Version=$(VERSION) \
-            /p:PublishTrimmed=true \
             /p:DebugType=none
 	@echo $(VERSION) > $(OUTPUT_DIR)/linux-musl-x64/version.txt
 
