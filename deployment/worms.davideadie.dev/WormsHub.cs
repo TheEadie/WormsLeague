@@ -11,7 +11,7 @@ class WormsHub : Stack
         var stack = Pulumi.Deployment.Instance.StackName;
         var config = new Config();
 
-        
+
         // Create an Azure Resource Group
         var resourceGroup = new ResourceGroup("worms-hub-resource-group", new ResourceGroupArgs
         {
@@ -35,10 +35,10 @@ class WormsHub : Stack
                 {
                     CustomerId = logAnalytics.CustomerId,
                     SharedKey = GetSharedKeys.Invoke(new GetSharedKeysInvokeArgs
-                        { 
-                            ResourceGroupName = resourceGroup.Name,
-                            WorkspaceName = logAnalytics.Name
-                        }).Apply(x => x.PrimarySharedKey)
+                    {
+                        ResourceGroupName = resourceGroup.Name,
+                        WorkspaceName = logAnalytics.Name
+                    }).Apply(x => x.PrimarySharedKey)
                 }
             }
         });
@@ -88,9 +88,9 @@ class WormsHub : Stack
                     new ContainerArgs
                     {
                         Name = "gateway",
-                        Image = "theeadie/worms-server-gateway:0.2.4",
+                        Image = "theeadie/worms-server-gateway:0.2.10",
                         Env = new InputList<EnvironmentVarArgs>
-                        { 
+                        {
                             new EnvironmentVarArgs {
                                 Name = "WORMS_CONNECTIONSTRINGS__DATABASE",
                                 SecretRef = "database-connection",
@@ -118,18 +118,20 @@ class WormsHub : Stack
             AdministratorLogin = config.RequireSecret("database_user"),
             AdministratorLoginPassword = config.RequireSecret("database_password"),
             CreateMode = "Default",
-            
+
             Sku = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.SkuArgs
             {
                 Name = "Standard_B1ms",
                 Tier = "Burstable",
             },
 
-            Storage = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.StorageArgs {
+            Storage = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.StorageArgs
+            {
                 StorageSizeGB = 32,
             },
 
-            Backup = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.BackupArgs {
+            Backup = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.BackupArgs
+            {
                 BackupRetentionDays = 7,
             }
         });
