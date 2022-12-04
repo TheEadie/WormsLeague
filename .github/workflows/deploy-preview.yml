@@ -75,7 +75,7 @@ jobs:
       run: echo ::set-output name=summary::$(build/flyway-summary.sh src/database/reports/report.htm.json)
 
     - name: Comment PR
-      uses: thollander/actions-comment-pull-request@v1
+      uses: thollander/actions-comment-pull-request@v2
       with:
         message: |
           ${{ steps.summary.outputs.summary }}
