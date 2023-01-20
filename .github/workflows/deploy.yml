@@ -24,7 +24,7 @@ jobs:
         dotnet-version: 6.x
 
     - name: Pulumi up
-      uses: pulumi/actions@v3
+      uses: pulumi/actions@v4
       with:
         command: up
         stack-name: prod
