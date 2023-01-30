@@ -18,21 +18,20 @@ sudo docker run -it --rm --name certbot \
 - You should have two files generated:
     - fullchain.pem
     - privkey.pem
-- Copy them locally
-
-```
-sudo cp /etc/letsencrypt/live/worms.davideadie.dev/* .
-```
 
 - Create a pfx file
 
 ```
-sudo openssl pkcs12 -export -out /etc/letsencrypt/live/worms.davideadie.dev/azure.pfx -inkey /etc/letsencrypt/live/worms.davideadie.dev/privkey.pem -in /etc/letsencrypt/live/worms.davideadie.dev/fullchain.pem
+sudo openssl pkcs12 -export -out /etc/letsencrypt/live/worms.davideadie.dev/azure.pfx -inkey /etc/letsencrypt/live/worms.davideadie.dev/privkey.pem -in /etc/letsencrypt/live/worms.davideadie.dev/fullchain.pem -keypbe PBE-SHA1-3DES -certpbe PBE-SHA1-3DES -macalg SHA1
 ```
 
-- Import the pfx file to windows by right-click install
-- Export the certificate from the Windows store
-- (Yes this is crazy see: https://github.com/microsoft/azure-container-apps/issues/229)
+(3DES-SHA1 should be changed to a better encryption once ACA [supports it](https://github.com/microsoft/azure-container-apps/issues/511))
+
+- Copy the file locally
+
+```
+sudo cp /etc/letsencrypt/live/worms.davideadie.dev/azure.pfx /mnt/c/
+```
 
 - Navigate to the Azure Container App
 - Click Custom Domains
