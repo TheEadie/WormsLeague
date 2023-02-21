@@ -21,7 +21,7 @@ RUN dotnet publish \
         -p:Version=${VERSION}
 
 #### Runtime ####
-FROM mcr.microsoft.com/dotnet/runtime-deps:7.0.3-alpine3.16@sha256:5f5844b325fb93f76534fc0176105d4b3956f7eedf4bcc4d145f24db91d938eb
+FROM mcr.microsoft.com/dotnet/runtime-deps:7.0.3-alpine3.16@sha256:b80940a662df21ba5b0e9d646bc38f6997f7bb850c70027dd3c09088ae4ac846
 WORKDIR /app
 COPY --from=build /app/out .
 ENTRYPOINT ["./Worms.Gateway"]
