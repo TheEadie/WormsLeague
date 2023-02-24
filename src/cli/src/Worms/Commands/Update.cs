@@ -1,45 +1,50 @@
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
 using Octokit;
+using Serilog;
 using Worms.Cli;
 using Worms.Configuration;
 
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
-
 namespace Worms.Commands
 {
-    [Command("update", Description = "Update worms CLI")]
-    internal class Update : CommandBase
+    internal class Update : Command
+    {
+        public Update() : base("update", "Update Worms CLI") { }
+    }
+
+    // ReSharper disable once ClassNeverInstantiated.Global
+    internal class UpdateHandler : ICommandHandler
     {
         private readonly IConfigManager _configManager;
         private readonly CliUpdater _cliUpdater;
+        private readonly ILogger _logger;
 
-        public Update(IConfigManager configManager, CliUpdater cliUpdater)
+        public UpdateHandler(IConfigManager configManager, CliUpdater cliUpdater, ILogger logger)
         {
             _configManager = configManager;
             _cliUpdater = cliUpdater;
+            _logger = logger;
         }
 
-        public async Task<int> OnExecuteAsync()
+        public int Invoke(InvocationContext context) => 
+            Task.Run(async () => await InvokeAsync(context)).Result;
+
+        public async Task<int> InvokeAsync(InvocationContext context)
         {
             try
             {
-                await UpdateComponent().ConfigureAwait(false);
+                var config = _configManager.Load();
+                await _cliUpdater.DownloadLatestUpdate(config, _logger).ConfigureAwait(false);
             }
             catch (RateLimitExceededException)
             {
-                Logger.Error(
+                _logger.Error(
                     "Could not check for updates: GitHub API rate limit has been exceeded. Please run 'worms setup' and provide a personal access token.");
                 return 1;
             }
 
             return 0;
-        }
-
-        private async Task UpdateComponent()
-        {
-            var config = _configManager.Load();
-            await _cliUpdater.DownloadLatestUpdate(config, Logger).ConfigureAwait(false);
         }
     }
 }

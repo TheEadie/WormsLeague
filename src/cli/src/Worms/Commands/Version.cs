@@ -1,32 +1,42 @@
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
+using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Cli;
 
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
-
 namespace Worms.Commands
 {
-    [Command("version", Description = "Get the current version of the worms CLI")]
-    internal class Version : CommandBase
+    internal class Version : Command
+    {
+        public Version() : base("version", "Get the current version of the Worms CLI") { }
+    }
+
+    // ReSharper disable once ClassNeverInstantiated.Global
+    internal class VersionHandler : ICommandHandler
     {
         private readonly IWormsLocator _wormsLocator;
         private readonly CliInfoRetriever _cliInfoRetriever;
+        private readonly ILogger _logger;
 
-        public Version(IWormsLocator wormsLocator, CliInfoRetriever cliInfoRetriever)
+        public VersionHandler(IWormsLocator wormsLocator, CliInfoRetriever cliInfoRetriever, ILogger logger)
         {
             _wormsLocator = wormsLocator;
             _cliInfoRetriever = cliInfoRetriever;
+            _logger = logger;
         }
 
-        public Task<int> OnExecuteAsync()
+        public int Invoke(InvocationContext context) => 
+            Task.Run(async () => await InvokeAsync(context)).Result;
+
+        public Task<int> InvokeAsync(InvocationContext context)
         {
             var cliInfo = _cliInfoRetriever.Get();
-            Logger.Information($"Worms CLI: {cliInfo.Version.ToString(3)}");
+            _logger.Information($"Worms CLI: {cliInfo.Version.ToString(3)}");
 
             var gameInfo = _wormsLocator.Find();
             var gameVersion = gameInfo.IsInstalled ? gameInfo.Version.ToString(4) : "Not Installed";
-            Logger.Information($"Worms Armageddon: {gameVersion}");
+            _logger.Information($"Worms Armageddon: {gameVersion}");
             return Task.FromResult(0);
         }
     }

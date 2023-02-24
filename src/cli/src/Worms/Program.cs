@@ -1,53 +1,72 @@
-﻿using System;
+﻿using System.CommandLine.Builder;
+using System.CommandLine.Hosting;
+using System.CommandLine.Parsing;
+using System.Linq;
+using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
 using Worms.Commands;
+using Worms.Logging;
 using Worms.Modules;
+using Version = Worms.Commands.Version;
 
 namespace Worms
 {
     internal static class Program
     {
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
-            var console = PhysicalConsole.Singleton;
-            var app = new CommandLineApplication<Root>(console, Environment.CurrentDirectory);
-            app.Conventions.UseDefaultConventions().UseConstructorInjection(SetUpDi());
-            ConfigureHelp(app);
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Is(GetLogEventLevel(args))
+                .WriteTo.ColoredConsole()
+                .CreateLogger();
 
-            try
-            {
-                return app.Execute(args);
-            }
-            catch (CommandParsingException ex)
-            {
-                var reporter = new ConsoleReporter(console);
-                reporter.Error($"{ex.Message}{Environment.NewLine}");
-                ex.Command.ShowHelp();
-                return 1;
-            }
+            var runner = BuildCommandLine()
+                .UseHost(_ => new HostBuilder(), (builder) =>
+                {
+                    builder
+                        .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                        .ConfigureContainer<ContainerBuilder>(container =>
+                        {
+                            container.RegisterModule<CliModule>();
+                            container.RegisterInstance<ILogger>(logger);
+                        })
+                        .UseCommandHandler<Version, VersionHandler>()
+                        .UseCommandHandler<Update, UpdateHandler>()
+                        .UseCommandHandler<Setup, SetupHandler>();
+                })
+                .UseDefaults()
+                .Build();
+
+            return await runner.InvokeAsync(args);
         }
 
-        private static void ConfigureHelp(CommandLineApplication cmd)
+        private static CommandLineBuilder BuildCommandLine()
         {
-            cmd.UsePagerForHelpText = false;
-
-            foreach (var subCmd in cmd.Commands)
-            {
-                ConfigureHelp(subCmd);
-            }
+            var rootCommand = new Root();
+            rootCommand.AddCommand(new Version());
+            rootCommand.AddCommand(new Update());
+            rootCommand.AddCommand(new Setup());
+            
+            return new CommandLineBuilder(rootCommand);
         }
-
-        private static IServiceProvider SetUpDi()
+        
+        private static LogEventLevel GetLogEventLevel(string[] args)
         {
-            var builder = new ContainerBuilder();
+            if (args.Contains("-v") || args.Contains("--verbose"))
+            {
+                return LogEventLevel.Verbose;
+            }
 
-            builder.RegisterModule<CliModule>();
+            if (args.Contains("-q") || args.Contains("--quiet"))
+            {
+                return LogEventLevel.Error;
+            }
 
-            var container = builder.Build();
-
-            return new AutofacServiceProvider(container);
+            return LogEventLevel.Information;
         }
     }
 }

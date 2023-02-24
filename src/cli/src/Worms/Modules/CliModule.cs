@@ -10,6 +10,7 @@ using Worms.Cli.Resources.Local.Schemes;
 using Worms.Cli.Resources.Modules;
 using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Resources.Remote.Games;
+using Worms.Commands;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Resources;

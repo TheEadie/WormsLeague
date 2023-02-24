@@ -1,29 +1,14 @@
-using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
-using Worms.Commands.Resources;
-
-// ReSharper disable ClassNeverInstantiated.Global - CLI library loads this as the root command
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
+using System.CommandLine;
 
 namespace Worms.Commands
 {
-    [Command("worms", Description = "Worms CLI")]
-    [Subcommand(typeof(Auth))]
-    [Subcommand(typeof(Get))]
-    [Subcommand(typeof(Create))]
-    [Subcommand(typeof(Delete))]
-    [Subcommand(typeof(Process))]
-    [Subcommand(typeof(View))]
-    [Subcommand(typeof(Version))]
-    [Subcommand(typeof(Update))]
-    [Subcommand(typeof(Host))]
-    [Subcommand(typeof(Setup))]
-    internal class Root : CommandBase
+    internal class Root : RootCommand
     {
-        public Task<int> OnExecuteAsync(CommandLineApplication app)
+        public Root() : base("Worms CLI")
         {
-            app.ShowHelp();
-            return Task.FromResult(1);
+            AddGlobalOption(new Option<bool>(
+                new[] {"--verbose", "-v"}, 
+                "Show more information about the process"));
         }
     }
 }
