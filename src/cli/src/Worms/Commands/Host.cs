@@ -1,10 +1,11 @@
 using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Threading;
 using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
+using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Remote.Games;
@@ -12,14 +13,25 @@ using Worms.Configuration;
 using Worms.League;
 using Worms.Slack;
 
-// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
-// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
-
 namespace Worms.Commands
 {
-    [Command("host", Description = "Host a game of worms using the latest options")]
-    internal class Host : CommandBase
+    internal class Host : Command
+    {
+        public static readonly Option<bool> DryRun = new(
+            new[] { "--dry-run", "-dr" },
+            "When set the CLI will print what will happen rather than running the commands");
+
+        public static readonly Option<bool> LocalMode = new(
+            new[] { "--local-mode" },
+            "Use legacy local mode to announce to Slack");
+        public Host() : base("host", "Host a game of worms using the latest options")
+        {
+            AddOption(DryRun);
+            AddOption(LocalMode);
+        }
+    }
+
+    internal class HostHandler : ICommandHandler
     {
         private readonly IWormsRunner _wormsRunner;
         private readonly ISlackAnnouncer _slackAnnouncer;
@@ -28,23 +40,17 @@ namespace Worms.Commands
         private readonly LeagueUpdater _leagueUpdater;
         private readonly IResourceCreator<RemoteGame, string> _remoteGameCreator;
         private readonly IRemoteGameUpdater _gameUpdater;
+        private readonly ILogger _logger;
 
-        [Option(Description = "When set the CLI will print what will happen rather than running the commands",
-            LongName = "dry-run", ShortName = "dr")]
-        public bool DryRun { get; }
-
-        [Option(Description = "Use legacy local mode to announce to Slack",
-            LongName = "local-mode")]
-        public bool LocalMode { get; }
-
-        public Host(
+        public HostHandler(
             IWormsLocator wormsLocator,
             IWormsRunner wormsRunner,
             ISlackAnnouncer slackAnnouncer,
             IConfigManager configManager,
             LeagueUpdater leagueUpdater,
             IResourceCreator<RemoteGame, string> remoteGameCreator,
-            IRemoteGameUpdater gameUpdater)
+            IRemoteGameUpdater gameUpdater,
+            ILogger logger)
         {
             _wormsRunner = wormsRunner;
             _slackAnnouncer = slackAnnouncer;
@@ -53,11 +59,19 @@ namespace Worms.Commands
             _leagueUpdater = leagueUpdater;
             _remoteGameCreator = remoteGameCreator;
             _gameUpdater = gameUpdater;
+            _logger = logger;
         }
 
-        public async Task<int> OnExecuteAsync(CancellationToken cancellationToken)
+        public int Invoke(InvocationContext context) =>
+            Task.Run(async () => await InvokeAsync(context)).Result;
+
+        public async Task<int> InvokeAsync(InvocationContext context)
         {
-            Logger.Verbose("Loading configuration");
+            var cancellationToken = context.GetCancellationToken();
+            var dryRun = context.ParseResult.GetValueForOption(Host.DryRun);
+            var localMode = context.ParseResult.GetValueForOption(Host.LocalMode);
+
+            _logger.Verbose("Loading configuration");
             var config = _configManager.Load();
 
             string hostIp;
@@ -68,7 +82,7 @@ namespace Worms.Commands
             }
             catch (Exception e)
             {
-                Logger.Error($"IP address could not be found. {e.Message}");
+                _logger.Error($"IP address could not be found. {e.Message}");
                 return 1;
             }
 
@@ -76,49 +90,49 @@ namespace Worms.Commands
 
             if (!gameInfo.IsInstalled)
             {
-                Logger.Error("Worms Armageddon is not installed");
+                _logger.Error("Worms Armageddon is not installed");
                 return 1;
             }
 
-            Logger.Information("Downloading the latest options");
-            if (!DryRun)
+            _logger.Information("Downloading the latest options");
+            if (!dryRun)
             {
-                await _leagueUpdater.Update(config, Logger).ConfigureAwait(false);
+                await _leagueUpdater.Update(config, _logger).ConfigureAwait(false);
             }
 
-            Logger.Information("Starting Worms Armageddon");
-            var runGame = !DryRun ? _wormsRunner.RunWorms("wa://") : Task.CompletedTask;
+            _logger.Information("Starting Worms Armageddon");
+            var runGame = !dryRun ? _wormsRunner.RunWorms("wa://") : Task.CompletedTask;
 
-            if (LocalMode)
+            if (localMode)
             {
-                Logger.Information("Announcing game on Slack");
-                Logger.Verbose($"Host name: {hostIp}");
-                if (!DryRun)
+                _logger.Information("Announcing game on Slack");
+                _logger.Verbose($"Host name: {hostIp}");
+                if (!dryRun)
                 {
-                    await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, Logger)
+                    await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, _logger)
                         .ConfigureAwait(false);
                 }
 
-                Logger.Information("Waiting for game to finish");
+                _logger.Information("Waiting for game to finish");
                 await runGame;
                 return 0;
             }
             else
             {
-                Logger.Information("Announcing game to hub");
+                _logger.Information("Announcing game to hub");
                 RemoteGame game = null;
-                if (!DryRun)
+                if (!dryRun)
                 {
-                    game = await _remoteGameCreator.Create(hostIp, Logger, cancellationToken);
+                    game = await _remoteGameCreator.Create(hostIp, _logger, cancellationToken);
                 }
 
-                Logger.Information("Waiting for game to finish");
+                _logger.Information("Waiting for game to finish");
                 await runGame;
 
-                Logger.Information("Marking game as complete in hub");
-                if (!DryRun)
+                _logger.Information("Marking game as complete in hub");
+                if (!dryRun)
                 {
-                    await _gameUpdater.SetGameComplete(game, Logger, cancellationToken);
+                    await _gameUpdater.SetGameComplete(game, _logger, cancellationToken);
                 }
 
                 return 0;

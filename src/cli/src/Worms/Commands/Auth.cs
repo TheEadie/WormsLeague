@@ -1,27 +1,37 @@
-﻿using System.Threading;
+﻿using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.Threading;
 using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
+using Serilog;
 using Worms.Cli.Resources.Remote.Auth;
-
-// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
-// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
 
 namespace Worms.Commands
 {
-    [Command("auth", "login", Description = "Authenticate with a Worms League Server")]
-    internal class Auth : CommandBase
+    internal class Auth : Command
+    {
+        public Auth() : base("auth", "Authenticate with a Worms League Server")
+        {
+            AddAlias("login");
+        }
+    }
+
+    internal class AuthHandler : ICommandHandler
     {
         private readonly ILoginService _loginService;
+        private readonly ILogger _logger;
 
-        public Auth(ILoginService loginService)
+        public AuthHandler(ILoginService loginService, ILogger logger)
         {
             _loginService = loginService;
+            _logger = logger;
         }
 
-        public async Task<int> OnExecuteAsync(CommandLineApplication app)
+        public int Invoke(InvocationContext context) =>
+            Task.Run(async () => await InvokeAsync(context)).Result;
+
+        public async Task<int> InvokeAsync(InvocationContext context)
         {
-            await _loginService.RequestLogin(Logger, CancellationToken.None);
+            await _loginService.RequestLogin(_logger, CancellationToken.None);
             return 0;
         }
     }

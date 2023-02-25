@@ -34,9 +34,11 @@ namespace Worms
                             container.RegisterModule<CliModule>();
                             container.RegisterInstance<ILogger>(logger);
                         })
+                        .UseCommandHandler<Auth, AuthHandler>()
                         .UseCommandHandler<Version, VersionHandler>()
                         .UseCommandHandler<Update, UpdateHandler>()
-                        .UseCommandHandler<Setup, SetupHandler>();
+                        .UseCommandHandler<Setup, SetupHandler>()
+                        .UseCommandHandler<Commands.Host, HostHandler>();
                 })
                 .UseDefaults()
                 .Build();
@@ -47,13 +49,15 @@ namespace Worms
         private static CommandLineBuilder BuildCommandLine()
         {
             var rootCommand = new Root();
+            rootCommand.AddCommand(new Auth());
             rootCommand.AddCommand(new Version());
             rootCommand.AddCommand(new Update());
             rootCommand.AddCommand(new Setup());
-            
+            rootCommand.AddCommand(new Commands.Host());
+
             return new CommandLineBuilder(rootCommand);
         }
-        
+
         private static LogEventLevel GetLogEventLevel(string[] args)
         {
             if (args.Contains("-v") || args.Contains("--verbose"))
