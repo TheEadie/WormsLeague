@@ -31,6 +31,7 @@ namespace Worms.Commands
         }
     }
 
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal class HostHandler : ICommandHandler
     {
         private readonly IWormsRunner _wormsRunner;

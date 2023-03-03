@@ -9,6 +9,8 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Worms.Commands;
+using Worms.Commands.Resources;
+using Worms.Commands.Resources.Replays;
 using Worms.Logging;
 using Worms.Modules;
 using Version = Worms.Commands.Version;
@@ -38,7 +40,8 @@ namespace Worms
                         .UseCommandHandler<Version, VersionHandler>()
                         .UseCommandHandler<Update, UpdateHandler>()
                         .UseCommandHandler<Setup, SetupHandler>()
-                        .UseCommandHandler<Commands.Host, HostHandler>();
+                        .UseCommandHandler<Commands.Host, HostHandler>()
+                        .UseCommandHandler<ViewReplay, ViewReplayHandler>();
                 })
                 .UseDefaults()
                 .Build();
@@ -54,6 +57,10 @@ namespace Worms
             rootCommand.AddCommand(new Update());
             rootCommand.AddCommand(new Setup());
             rootCommand.AddCommand(new Commands.Host());
+            
+            var viewCommand = new View();
+            viewCommand.AddCommand(new ViewReplay());
+            rootCommand.AddCommand(viewCommand);
 
             return new CommandLineBuilder(rootCommand);
         }

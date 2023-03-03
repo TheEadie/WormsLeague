@@ -15,6 +15,7 @@ namespace Worms.Commands
         }
     }
 
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal class AuthHandler : ICommandHandler
     {
         private readonly ILoginService _loginService;
