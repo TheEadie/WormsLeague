@@ -6,7 +6,7 @@
 
     <ItemGroup>
         <PackageReference Include="System.IO.Abstractions" Version="19.2.4" />
-        <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="12.3.0" />
+        <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.0.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="7.0.3" />
         <PackageReference Include="RestSharp" Version="109.0.1" />
