@@ -41,7 +41,8 @@ namespace Worms
                         .UseCommandHandler<Update, UpdateHandler>()
                         .UseCommandHandler<Setup, SetupHandler>()
                         .UseCommandHandler<Commands.Host, HostHandler>()
-                        .UseCommandHandler<ViewReplay, ViewReplayHandler>();
+                        .UseCommandHandler<ViewReplay, ViewReplayHandler>()
+                        .UseCommandHandler<ProcessReplay, ProcessReplayHandler>();
                 })
                 .UseDefaults()
                 .Build();
@@ -57,10 +58,14 @@ namespace Worms
             rootCommand.AddCommand(new Update());
             rootCommand.AddCommand(new Setup());
             rootCommand.AddCommand(new Commands.Host());
-            
+
             var viewCommand = new View();
             viewCommand.AddCommand(new ViewReplay());
             rootCommand.AddCommand(viewCommand);
+
+            var processCommand = new Process();
+            processCommand.AddCommand(new ProcessReplay());
+            rootCommand.AddCommand(processCommand);
 
             return new CommandLineBuilder(rootCommand);
         }

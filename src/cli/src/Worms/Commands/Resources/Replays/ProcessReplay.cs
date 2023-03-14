@@ -1,47 +1,60 @@
-using System.Threading;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
+using Serilog;
 using Worms.Armageddon.Game.Replays;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 
-// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
-// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
-
 namespace Worms.Commands.Resources.Replays
 {
-    [Command("replay", "replays", "WAgame", Description = "Extract more information from replays (.WAgame files)")]
-    internal class ProcessReplay : CommandBase
+    internal class ProcessReplay : Command
+    {
+        public static readonly Argument<string> ReplayName = new("name",
+            "Optional: The name or search pattern for the Replay to be processed. Wildcards (*) are supported");
+
+
+        public ProcessReplay() : base("replay", "Extract more information from replays (.WAgame files)")
+        {
+            AddAlias("replays");
+            AddAlias("WAgame");
+        }
+    }
+
+    // ReSharper disable once ClassNeverInstantiated.Global
+    internal class ProcessReplayHandler : ICommandHandler
     {
         private readonly IReplayLogGenerator _replayLogGenerator;
         private readonly IResourceRetriever<LocalReplay> _replayRetriever;
+        private readonly ILogger _logger;
 
-        [Argument(
-            0,
-            Name = "name",
-            Description =
-                "Optional: The name or search pattern for the Replay to be processed. Wildcards (*) are supported")]
-        public string Name { get; }
-
-        public ProcessReplay(IReplayLogGenerator replayLogGenerator, IResourceRetriever<LocalReplay> replayRetriever)
+        public ProcessReplayHandler(IReplayLogGenerator replayLogGenerator,
+            IResourceRetriever<LocalReplay> replayRetriever,
+            ILogger logger)
         {
             _replayLogGenerator = replayLogGenerator;
             _replayRetriever = replayRetriever;
+            _logger = logger;
         }
 
-        public async Task<int> OnExecuteAsync(CancellationToken cancellationToken)
+        public int Invoke(InvocationContext context) =>
+            Task.Run(async () => await InvokeAsync(context)).Result;
+
+        public async Task<int> InvokeAsync(InvocationContext context)
         {
+            var name = context.ParseResult.GetValueForArgument(ProcessReplay.ReplayName);
+            var cancellationToken = context.GetCancellationToken();
+
             var pattern = string.Empty;
 
-            if (Name != "*" && !string.IsNullOrEmpty(Name))
+            if (name != "*" && !string.IsNullOrEmpty(name))
             {
-                pattern = Name;
+                pattern = name;
             }
 
-            foreach (var replayPath in await _replayRetriever.Get(pattern, Logger, cancellationToken))
+            foreach (var replayPath in await _replayRetriever.Get(pattern, _logger, cancellationToken))
             {
-                Logger.Information($"Processing: {replayPath.Paths.WAgamePath}");
+                _logger.Information($"Processing: {replayPath.Paths.WAgamePath}");
                 await _replayLogGenerator.GenerateReplayLog(replayPath.Paths.WAgamePath);
             }
 
