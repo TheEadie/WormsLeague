@@ -10,7 +10,9 @@ using Serilog;
 using Serilog.Events;
 using Worms.Commands;
 using Worms.Commands.Resources;
+using Worms.Commands.Resources.Games;
 using Worms.Commands.Resources.Replays;
+using Worms.Commands.Resources.Schemes;
 using Worms.Logging;
 using Worms.Modules;
 using Version = Worms.Commands.Version;
@@ -42,7 +44,10 @@ namespace Worms
                         .UseCommandHandler<Setup, SetupHandler>()
                         .UseCommandHandler<Commands.Host, HostHandler>()
                         .UseCommandHandler<ViewReplay, ViewReplayHandler>()
-                        .UseCommandHandler<ProcessReplay, ProcessReplayHandler>();
+                        .UseCommandHandler<ProcessReplay, ProcessReplayHandler>()
+                        .UseCommandHandler<GetScheme, GetSchemeHandler>()
+                        .UseCommandHandler<GetReplay, GetReplayHandler>()
+                        .UseCommandHandler<GetGame, GetGameHandler>();
                 })
                 .UseDefaults()
                 .Build();
@@ -66,6 +71,12 @@ namespace Worms
             var processCommand = new Process();
             processCommand.AddCommand(new ProcessReplay());
             rootCommand.AddCommand(processCommand);
+
+            var getCommand = new Get();
+            getCommand.AddCommand(new GetScheme());
+            getCommand.AddCommand(new GetReplay());
+            getCommand.AddCommand(new GetGame());
+            rootCommand.AddCommand(getCommand);
 
             return new CommandLineBuilder(rootCommand);
         }

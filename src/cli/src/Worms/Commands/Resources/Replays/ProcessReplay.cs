@@ -13,7 +13,6 @@ namespace Worms.Commands.Resources.Replays
         public static readonly Argument<string> ReplayName = new("name",
             "Optional: The name or search pattern for the Replay to be processed. Wildcards (*) are supported");
 
-
         public ProcessReplay() : base("replay", "Extract more information from replays (.WAgame files)")
         {
             AddAlias("replays");

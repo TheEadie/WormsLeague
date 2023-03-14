@@ -1,3 +1,4 @@
+using System.CommandLine;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Worms.Commands.Resources.Games;
@@ -12,14 +13,10 @@ namespace Worms.Commands.Resources
     [Subcommand(typeof(GetScheme))]
     [Subcommand(typeof(GetReplay))]
     [Subcommand(typeof(GetGame))]
-    internal class Get : CommandBase
+    internal class Get : Command
     {
-        public Task<int> OnExecuteAsync(CommandLineApplication app)
+        public Get() : base("get", "Get a list of resources")
         {
-            Logger.Error("No resource type specified");
-            Logger.Information("");
-            app.ShowHelp();
-            return Task.FromResult(1);
         }
     }
 }
