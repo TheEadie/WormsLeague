@@ -1,74 +1,104 @@
 using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Serilog;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Replays;
 
-// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
-// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
-
 namespace Worms.Commands.Resources.Gifs
 {
     [Command("gif", Description = "Create animated gifs of replays (.gif files)")]
-    internal class CreateGif : CommandBase
+    internal class CreateGif : Command
+    {
+        public static readonly Option<string> ReplayName = new(
+            new[] {"--replay", "-r"},
+            "The replay name");
+
+        public static readonly Option<uint> Turn = new(
+            new[] {"--turn", "-t"},
+            "The turn number");
+
+        public static readonly Option<uint> FramesPerSecond = new(
+            new[] {"--frames-per-second", "-fps"},
+            () => 5,
+            "The number of frames per second");
+
+        public static readonly Option<uint> Speed = new(
+            new[] {"--speed", "-s"},
+            () => 2,
+            "Speed multiplier for the gif");
+
+        public static readonly Option<uint> StartOffset = new(
+            new[] {"--start-offset", "-so"},
+            () => 0,
+            "Offset for the start of the gif in seconds");
+
+        public static readonly Option<uint> EndOffset = new(
+            new[] {"--end-offset", "-eo"},
+            () => 0,
+            "Offset for the end of the gif in seconds");
+
+        public CreateGif() : base("gif", "Create animated gifs of replays (.gif files)")
+        {
+        }
+    }
+
+    internal class CreateGifHandler : ICommandHandler
     {
         private readonly IResourceCreator<LocalGif, LocalGifCreateParameters> _gifCreator;
         private readonly IResourceRetriever<LocalReplay> _replayRetriever;
+        private readonly ILogger _logger;
 
-        [Option(Description = "The replay name", ShortName = "r")]
-        public string Replay { get; }
-
-        [Option(Description = "The turn number", ShortName = "t")]
-        public uint Turn { get; }
-
-        [Option(Description = "The number of frames per second", ShortName = "fps")]
-        public uint FramesPerSecond { get; } = 5;
-
-        [Option(Description = "Speed multiplier for the gif", ShortName = "s")]
-        public uint Speed { get; } = 2;
-
-        [Option(Description = "Offset for the start of the gif in seconds", ShortName = "so")]
-        public uint StartOffset { get; } = 0;
-
-        [Option(Description = "Offset for the end of the gif in seconds", ShortName = "eo")]
-        public uint EndOffset { get; } = 0;
-
-        public CreateGif(IResourceCreator<LocalGif, LocalGifCreateParameters> gifCreator, IResourceRetriever<LocalReplay> replayRetriever)
+        public CreateGifHandler(IResourceCreator<LocalGif, LocalGifCreateParameters> gifCreator,
+            IResourceRetriever<LocalReplay> replayRetriever,
+            ILogger logger)
         {
             _gifCreator = gifCreator;
             _replayRetriever = replayRetriever;
+            _logger = logger;
         }
 
-        public async Task<int> OnExecuteAsync(IConsole console, CancellationToken cancellationToken)
+        public int Invoke(InvocationContext context) =>
+            Task.Run(async () => await InvokeAsync(context)).Result;
+
+        public async Task<int> InvokeAsync(InvocationContext context)
         {
+            var replayName = context.ParseResult.GetValueForOption(CreateGif.ReplayName);
+            var turn = context.ParseResult.GetValueForOption(CreateGif.Turn);
+            var fps = context.ParseResult.GetValueForOption(CreateGif.FramesPerSecond);
+            var speed = context.ParseResult.GetValueForOption(CreateGif.Speed);
+            var startOffset = context.ParseResult.GetValueForOption(CreateGif.StartOffset);
+            var endOffset = context.ParseResult.GetValueForOption(CreateGif.EndOffset);
+            var cancellationToken = context.GetCancellationToken();
+
             LocalReplay replay;
 
             try
             {
-                replay = await ValidateReplay(Replay, Turn, cancellationToken);
-
+                replay = await ValidateReplay(replayName, turn, cancellationToken);
             }
             catch (ConfigurationException exception)
             {
-                Logger.Error(exception.Message);
+                _logger.Error(exception.Message);
                 return 1;
             }
 
             try
             {
-                Logger.Information($"Creating gif for {Replay}, turn {Turn} ...");
-                var gif = await _gifCreator.Create(new LocalGifCreateParameters(replay, Turn,
-                    TimeSpan.FromSeconds(StartOffset), TimeSpan.FromSeconds(EndOffset),
-                    FramesPerSecond, Speed), Logger, cancellationToken);
-                await console.Out.WriteLineAsync(gif.Path);
+                _logger.Information($"Creating gif for {replayName}, turn {turn} ...");
+                var gif = await _gifCreator.Create(new LocalGifCreateParameters(replay, turn,
+                    TimeSpan.FromSeconds(startOffset), TimeSpan.FromSeconds(endOffset),
+                    fps, speed), _logger, cancellationToken);
+                await Console.Out.WriteLineAsync(gif.Path);
             }
             catch (FormatException exception)
             {
-                Logger.Error("Failed to create gif: " + exception.Message);
+                _logger.Error("Failed to create gif: " + exception.Message);
                 return 1;
             }
 
@@ -81,12 +111,13 @@ namespace Worms.Commands.Resources.Gifs
             {
                 throw new ConfigurationException("No replay provided for the Gif being created");
             }
+
             if (turn == default)
             {
                 throw new ConfigurationException("No turn provided for the Gif being created");
             }
 
-            var replays = await _replayRetriever.Get(replay, Logger, cancellationToken);
+            var replays = await _replayRetriever.Get(replay, _logger, cancellationToken);
 
             switch (replays.Count)
             {

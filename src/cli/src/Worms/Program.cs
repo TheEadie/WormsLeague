@@ -11,6 +11,7 @@ using Serilog.Events;
 using Worms.Commands;
 using Worms.Commands.Resources;
 using Worms.Commands.Resources.Games;
+using Worms.Commands.Resources.Gifs;
 using Worms.Commands.Resources.Replays;
 using Worms.Commands.Resources.Schemes;
 using Worms.Logging;
@@ -49,7 +50,9 @@ namespace Worms
                         .UseCommandHandler<GetReplay, GetReplayHandler>()
                         .UseCommandHandler<GetGame, GetGameHandler>()
                         .UseCommandHandler<DeleteScheme, DeleteSchemeHandler>()
-                        .UseCommandHandler<DeleteReplay, DeleteReplayHandler>();
+                        .UseCommandHandler<DeleteReplay, DeleteReplayHandler>()
+                        .UseCommandHandler<CreateScheme, CreateSchemeHandler>()
+                        .UseCommandHandler<CreateGif, CreateGifHandler>();
                 })
                 .UseDefaults()
                 .Build();
@@ -84,6 +87,11 @@ namespace Worms
             deleteCommand.AddCommand(new DeleteScheme());
             deleteCommand.AddCommand(new DeleteReplay());
             rootCommand.AddCommand(deleteCommand);
+
+            var createCommand = new Create();
+            createCommand.AddCommand(new CreateScheme());
+            createCommand.AddCommand(new CreateGif());
+            rootCommand.AddCommand(createCommand);
 
             return new CommandLineBuilder(rootCommand);
         }
