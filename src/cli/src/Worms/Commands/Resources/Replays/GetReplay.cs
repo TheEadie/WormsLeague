@@ -19,7 +19,7 @@ namespace Worms.Commands.Resources.Replays
                 "Retrieves information for Worms replays (.WAgame files)")
         {
             AddAlias("replays");
-            AddAlias("WAGame");
+            AddAlias("WAgame");
         }
     }
 

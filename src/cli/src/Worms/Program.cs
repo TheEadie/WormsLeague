@@ -47,7 +47,9 @@ namespace Worms
                         .UseCommandHandler<ProcessReplay, ProcessReplayHandler>()
                         .UseCommandHandler<GetScheme, GetSchemeHandler>()
                         .UseCommandHandler<GetReplay, GetReplayHandler>()
-                        .UseCommandHandler<GetGame, GetGameHandler>();
+                        .UseCommandHandler<GetGame, GetGameHandler>()
+                        .UseCommandHandler<DeleteScheme, DeleteSchemeHandler>()
+                        .UseCommandHandler<DeleteReplay, DeleteReplayHandler>();
                 })
                 .UseDefaults()
                 .Build();
@@ -77,6 +79,11 @@ namespace Worms
             getCommand.AddCommand(new GetReplay());
             getCommand.AddCommand(new GetGame());
             rootCommand.AddCommand(getCommand);
+
+            var deleteCommand = new Delete();
+            deleteCommand.AddCommand(new DeleteScheme());
+            deleteCommand.AddCommand(new DeleteReplay());
+            rootCommand.AddCommand(deleteCommand);
 
             return new CommandLineBuilder(rootCommand);
         }

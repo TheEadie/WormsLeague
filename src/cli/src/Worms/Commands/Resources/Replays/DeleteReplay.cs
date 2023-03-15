@@ -1,37 +1,51 @@
-using System.Threading;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
+using Serilog;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Resources;
 
-// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
-// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
-
 namespace Worms.Commands.Resources.Replays
 {
-    [Command("replay", "replays", "WAgame", Description = "Delete replays (.WAgame file)")]
-    internal class DeleteReplay : CommandBase
+    internal class DeleteReplay : Command
+    {
+        public static readonly Argument<string> ReplayName =
+            new("name", "The name of the Replay to be deleted");
+
+        public DeleteReplay() : base("replay", "Delete replays (.WAgame files)")
+        {
+            AddAlias("replays");
+            AddAlias("WAgame");
+        }
+    }
+
+    // ReSharper disable once ClassNeverInstantiated.Global
+    internal class DeleteReplayHandler : ICommandHandler
     {
         private readonly ResourceDeleter<LocalReplay> _resourceDeleter;
+        private readonly ILogger _logger;
 
-        [Argument(0, Name = "name", Description = "The name of the Replay to be deleted")]
-        public string Name { get; }
-
-        public DeleteReplay(ResourceDeleter<LocalReplay> resourceDeleter)
+        public DeleteReplayHandler(ResourceDeleter<LocalReplay> resourceDeleter, ILogger logger)
         {
             _resourceDeleter = resourceDeleter;
+            _logger = logger;
         }
 
-        public async Task<int> OnExecuteAsync(CancellationToken cancellationToken)
+        public int Invoke(InvocationContext context) =>
+            Task.Run(async () => await InvokeAsync(context)).Result;
+
+        public async Task<int> InvokeAsync(InvocationContext context)
         {
+            var name = context.ParseResult.GetValueForArgument(GetReplay.ReplayName);
+            var cancellationToken = context.GetCancellationToken();
+
             try
             {
-                await _resourceDeleter.Delete(Name, Logger, cancellationToken);
+                await _resourceDeleter.Delete(name, _logger, cancellationToken);
             }
             catch (ConfigurationException exception)
             {
-                Logger.Error(exception.Message);
+                _logger.Error(exception.Message);
                 return 1;
             }
 
