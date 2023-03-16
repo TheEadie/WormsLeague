@@ -4,7 +4,6 @@ using System.CommandLine.Invocation;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
 using Serilog;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Gifs;
@@ -12,7 +11,6 @@ using Worms.Cli.Resources.Local.Replays;
 
 namespace Worms.Commands.Resources.Gifs
 {
-    [Command("gif", Description = "Create animated gifs of replays (.gif files)")]
     internal class CreateGif : Command
     {
         public static readonly Option<string> ReplayName = new(
