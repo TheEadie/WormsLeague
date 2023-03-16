@@ -12,6 +12,7 @@ namespace Worms.Commands.Resources.Replays
     {
         public static readonly Argument<string> ReplayName =
             new("name",
+                () => "",
                 "Optional: The name or search pattern for the Replay to be retrieved. Wildcards (*) are supported");
 
         public GetReplay() :

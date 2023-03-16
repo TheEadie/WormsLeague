@@ -10,7 +10,6 @@ using Worms.Cli.Resources.Local.Schemes;
 using Worms.Cli.Resources.Modules;
 using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Resources.Remote.Games;
-using Worms.Commands;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Resources;
@@ -32,7 +31,7 @@ namespace Worms.Modules
 
             // Config
             builder.RegisterType<ConfigManager>().As<IConfigManager>();
-            
+
             // Auth
             builder.RegisterType<TokenStore>().As<ITokenStore>();
             builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
@@ -56,7 +55,7 @@ namespace Worms.Modules
 
             // Games
             builder.RegisterType<GameTextPrinter>().As<IResourcePrinter<RemoteGame>>();
-            
+
             builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
             builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
             builder.RegisterGeneric(typeof(ResourceViewer<,>)).As(typeof(ResourceViewer<,>));

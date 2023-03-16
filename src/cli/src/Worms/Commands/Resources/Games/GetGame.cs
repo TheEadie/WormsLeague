@@ -12,6 +12,7 @@ namespace Worms.Commands.Resources.Games
     {
         public static readonly Argument<string> GameName =
             new("name",
+                () => "",
                 "Optional: The name or search pattern for the Game to be retrieved. Wildcards (*) are supported");
 
         public GetGame() : base("game", "Retrieves information for current games")
