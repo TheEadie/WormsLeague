@@ -32,10 +32,16 @@ namespace Worms.Commands.Resources.Schemes
         {
             AddAlias("schemes");
             AddAlias("wsc");
+
+            AddArgument(SchemeName);
+            AddOption(InputFile);
+            AddOption(ResourceFolder);
+            AddOption(Random);
         }
     }
 
-    // ReSharper disable once UnusedType.Global
+
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal class CreateSchemeHandler : ICommandHandler
     {
         private readonly IResourceCreator<LocalScheme, LocalSchemeCreateParameters> _schemeCreator;

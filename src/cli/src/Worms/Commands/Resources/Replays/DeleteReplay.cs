@@ -16,6 +16,7 @@ namespace Worms.Commands.Resources.Replays
         {
             AddAlias("replays");
             AddAlias("WAgame");
+            AddArgument(ReplayName);
         }
     }
 
@@ -36,7 +37,7 @@ namespace Worms.Commands.Resources.Replays
 
         public async Task<int> InvokeAsync(InvocationContext context)
         {
-            var name = context.ParseResult.GetValueForArgument(GetReplay.ReplayName);
+            var name = context.ParseResult.GetValueForArgument(DeleteReplay.ReplayName);
             var cancellationToken = context.GetCancellationToken();
 
             try

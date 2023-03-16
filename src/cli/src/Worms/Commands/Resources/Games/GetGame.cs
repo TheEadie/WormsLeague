@@ -17,9 +17,11 @@ namespace Worms.Commands.Resources.Games
         public GetGame() : base("game", "Retrieves information for current games")
         {
             AddAlias("games");
+            AddArgument(GameName);
         }
     }
 
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal class GetGameHandler : ICommandHandler
     {
         private readonly ResourceGetter<RemoteGame> _gameRetriever;

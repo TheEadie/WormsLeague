@@ -45,6 +45,12 @@ namespace Worms.Commands.Resources.Gifs
 
         public CreateGif() : base("gif", "Create animated gifs of replays (.gif files)")
         {
+            AddOption(ReplayName);
+            AddOption(Turn);
+            AddOption(FramesPerSecond);
+            AddOption(Speed);
+            AddOption(StartOffset);
+            AddOption(EndOffset);
         }
     }
 

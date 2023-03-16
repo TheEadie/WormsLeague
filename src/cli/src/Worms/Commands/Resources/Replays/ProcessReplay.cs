@@ -17,6 +17,7 @@ namespace Worms.Commands.Resources.Replays
         {
             AddAlias("replays");
             AddAlias("WAgame");
+            AddArgument(ReplayName);
         }
     }
 

@@ -9,17 +9,19 @@ namespace Worms.Commands.Resources.Replays
 {
     internal class ViewReplay : Command
     {
-        public static readonly Argument<string> ReplayName = new("name", 
+        public static readonly Argument<string> ReplayName = new("name",
             "The name of the Replay to be viewed");
 
         public static readonly Option<uint> Turn = new(
             new[] {"--turn", "-t"},
             "The turn you wish to start the replay from");
-        
+
         public ViewReplay() : base("replay", "View replays (.WAgame file)")
         {
             AddAlias("replays");
             AddAlias("WAgame");
+            AddArgument(ReplayName);
+            AddOption(Turn);
         }
     }
 
@@ -44,7 +46,7 @@ namespace Worms.Commands.Resources.Replays
         {
             var name = context.ParseResult.GetValueForArgument(ViewReplay.ReplayName);
             var turn = context.ParseResult.GetValueForOption(ViewReplay.Turn);
-            
+
             try
             {
                 await _resourceViewer.View(name,

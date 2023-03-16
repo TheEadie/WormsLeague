@@ -16,6 +16,7 @@ namespace Worms.Commands.Resources.Schemes
         {
             AddAlias("schemes");
             AddAlias("wsc");
+            AddArgument(SchemeName);
         }
     }
 
