@@ -1,23 +1,12 @@
-using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
-using Worms.Commands.Resources.Replays;
-using Worms.Commands.Resources.Schemes;
-
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
+using System.CommandLine;
 
 namespace Worms.Commands.Resources
 {
-    [Command("delete", "rm", Description = "Delete a resource")]
-    [Subcommand(typeof(DeleteScheme))]
-    [Subcommand(typeof(DeleteReplay))]
-    internal class Delete : CommandBase
+    internal class Delete : Command
     {
-        public Task<int> OnExecuteAsync(CommandLineApplication app)
+        public Delete() : base("delete", "Delete a resource")
         {
-            Logger.Error("No resource type specified");
-            Logger.Information("");
-            app.ShowHelp();
-            return Task.FromResult(1);
+            AddAlias("rm");
         }
     }
 }

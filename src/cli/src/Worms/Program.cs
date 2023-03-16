@@ -1,53 +1,79 @@
-﻿using System;
+﻿using System.CommandLine.Builder;
+using System.CommandLine.Hosting;
+using System.CommandLine.Parsing;
+using System.Linq;
+using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
 using Worms.Commands;
+using Worms.Commands.Resources.Games;
+using Worms.Commands.Resources.Gifs;
+using Worms.Commands.Resources.Replays;
+using Worms.Commands.Resources.Schemes;
+using Worms.Logging;
 using Worms.Modules;
+using Version = Worms.Commands.Version;
+using Host = Worms.Commands.Host;
 
 namespace Worms
 {
     internal static class Program
     {
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
-            var console = PhysicalConsole.Singleton;
-            var app = new CommandLineApplication<Root>(console, Environment.CurrentDirectory);
-            app.Conventions.UseDefaultConventions().UseConstructorInjection(SetUpDi());
-            ConfigureHelp(app);
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Is(GetLogEventLevel(args))
+                .WriteTo.ColoredConsole()
+                .CreateLogger();
 
-            try
-            {
-                return app.Execute(args);
-            }
-            catch (CommandParsingException ex)
-            {
-                var reporter = new ConsoleReporter(console);
-                reporter.Error($"{ex.Message}{Environment.NewLine}");
-                ex.Command.ShowHelp();
-                return 1;
-            }
+            var runner = CliStructure.BuildCommandLine()
+                .UseHost(_ => new HostBuilder(), (builder) =>
+                {
+                    builder
+                        .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                        .ConfigureContainer<ContainerBuilder>(container =>
+                        {
+                            container.RegisterModule<CliModule>();
+                            container.RegisterInstance<ILogger>(logger);
+                        })
+                        .UseCommandHandler<Auth, AuthHandler>()
+                        .UseCommandHandler<Version, VersionHandler>()
+                        .UseCommandHandler<Update, UpdateHandler>()
+                        .UseCommandHandler<Setup, SetupHandler>()
+                        .UseCommandHandler<Host, HostHandler>()
+                        .UseCommandHandler<ViewReplay, ViewReplayHandler>()
+                        .UseCommandHandler<ProcessReplay, ProcessReplayHandler>()
+                        .UseCommandHandler<GetScheme, GetSchemeHandler>()
+                        .UseCommandHandler<GetReplay, GetReplayHandler>()
+                        .UseCommandHandler<GetGame, GetGameHandler>()
+                        .UseCommandHandler<DeleteScheme, DeleteSchemeHandler>()
+                        .UseCommandHandler<DeleteReplay, DeleteReplayHandler>()
+                        .UseCommandHandler<CreateScheme, CreateSchemeHandler>()
+                        .UseCommandHandler<CreateGif, CreateGifHandler>();
+                })
+                .UseDefaults()
+                .Build();
+
+            return await runner.InvokeAsync(args);
         }
 
-        private static void ConfigureHelp(CommandLineApplication cmd)
-        {
-            cmd.UsePagerForHelpText = false;
 
-            foreach (var subCmd in cmd.Commands)
+        private static LogEventLevel GetLogEventLevel(string[] args)
+        {
+            if (args.Contains("-v") || args.Contains("--verbose"))
             {
-                ConfigureHelp(subCmd);
+                return LogEventLevel.Verbose;
             }
-        }
 
-        private static IServiceProvider SetUpDi()
-        {
-            var builder = new ContainerBuilder();
+            if (args.Contains("-q") || args.Contains("--quiet"))
+            {
+                return LogEventLevel.Error;
+            }
 
-            builder.RegisterModule<CliModule>();
-
-            var container = builder.Build();
-
-            return new AutofacServiceProvider(container);
+            return LogEventLevel.Information;
         }
     }
 }

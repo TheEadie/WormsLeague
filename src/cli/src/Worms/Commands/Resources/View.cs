@@ -1,21 +1,9 @@
-using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
-using Worms.Commands.Resources.Replays;
-
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
+using System.CommandLine;
 
 namespace Worms.Commands.Resources
 {
-    [Command("view", Description = "View a resource")]
-    [Subcommand(typeof(ViewReplay))]
-    internal class View : CommandBase
+    internal class View : Command
     {
-        public Task<int> OnExecuteAsync(CommandLineApplication app)
-        {
-            Logger.Error("No resource type specified");
-            Logger.Information("");
-            app.ShowHelp();
-            return Task.FromResult(1);
-        }
+        public View() : base("view", "View a resource") { }
     }
 }

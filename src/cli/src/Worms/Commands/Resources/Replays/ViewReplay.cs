@@ -1,40 +1,62 @@
-using System.Threading;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
+using Serilog;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Resources;
 
-// ReSharper disable MemberCanBePrivate.Global - CLI library uses magic to read members
-// ReSharper disable UnassignedGetOnlyAutoProperty - CLI library uses magic to set members
-// ReSharper disable UnusedMember.Global - CLI library uses magic to call OnExecuteAsync()
-
 namespace Worms.Commands.Resources.Replays
 {
-    [Command("replay", "replays", "WAgame", Description = "View replays (.WAgame file)")]
-    internal class ViewReplay : CommandBase
+    internal class ViewReplay : Command
+    {
+        public static readonly Argument<string> ReplayName = new("name",
+            "The name of the Replay to be viewed");
+
+        public static readonly Option<uint> Turn = new(
+            new[] {"--turn", "-t"},
+            "The turn you wish to start the replay from");
+
+        public ViewReplay() : base("replay", "View replays (.WAgame file)")
+        {
+            AddAlias("replays");
+            AddAlias("WAgame");
+            AddArgument(ReplayName);
+            AddOption(Turn);
+        }
+    }
+
+    // ReSharper disable once ClassNeverInstantiated.Global
+    internal class ViewReplayHandler : ICommandHandler
     {
         private readonly ResourceViewer<LocalReplay, LocalReplayViewParameters> _resourceViewer;
+        private readonly ILogger _logger;
 
-        [Argument(0, Name = "name", Description = "The name of the Replay to be viewed")]
-        public string Name { get; }
-
-        [Option(Description = "The turn you wish to start the replay from", ShortName = "t")]
-        public uint Turn { get; }
-
-        public ViewReplay(ResourceViewer<LocalReplay, LocalReplayViewParameters> resourceViewer)
+        public ViewReplayHandler(
+            ResourceViewer<LocalReplay, LocalReplayViewParameters> resourceViewer,
+            ILogger logger)
         {
             _resourceViewer = resourceViewer;
+            _logger = logger;
         }
 
-        public async Task<int> OnExecuteAsync(CancellationToken cancellationToken)
+        public int Invoke(InvocationContext context) =>
+            Task.Run(async () => await InvokeAsync(context)).Result;
+
+        public async Task<int> InvokeAsync(InvocationContext context)
         {
+            var name = context.ParseResult.GetValueForArgument(ViewReplay.ReplayName);
+            var turn = context.ParseResult.GetValueForOption(ViewReplay.Turn);
+
             try
             {
-                await _resourceViewer.View(Name, new LocalReplayViewParameters(Turn), Logger, cancellationToken);
+                await _resourceViewer.View(name,
+                    new LocalReplayViewParameters(turn),
+                    _logger,
+                    context.GetCancellationToken());
             }
             catch (ConfigurationException exception)
             {
-                Logger.Error(exception.Message);
+                _logger.Error(exception.Message);
                 return 1;
             }
 
