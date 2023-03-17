@@ -24,36 +24,40 @@ namespace Worms
     {
         public static async Task<int> Main(string[] args)
         {
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Is(GetLogEventLevel(args))
+            var logger = new LoggerConfiguration().MinimumLevel.Is(GetLogEventLevel(args))
                 .WriteTo.ColoredConsole()
                 .CreateLogger();
 
             var runner = CliStructure.BuildCommandLine()
-                .UseHost(_ => new HostBuilder(), (builder) =>
-                {
-                    builder
-                        .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                        .ConfigureContainer<ContainerBuilder>(container =>
+                .UseHost(
+                    _ => new HostBuilder(),
+                    (builder) =>
                         {
-                            container.RegisterModule<CliModule>();
-                            container.RegisterInstance<ILogger>(logger);
+                            builder.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                                .ConfigureContainer<ContainerBuilder>(
+                                    container =>
+                                        {
+                                            container.RegisterModule<CliModule>();
+                                            container.RegisterInstance<ILogger>(logger);
+                                        })
+                                .UseCommandHandler<Auth, AuthHandler>()
+                                .UseCommandHandler<Version, VersionHandler>()
+                                .UseCommandHandler<Update, UpdateHandler>()
+                                .UseCommandHandler<Setup, SetupHandler>()
+                                .UseCommandHandler<Host, HostHandler>()
+                                .UseCommandHandler<ViewReplay, ViewReplayHandler>()
+                                .UseCommandHandler<ProcessReplay, ProcessReplayHandler>()
+                                .UseCommandHandler<GetScheme, GetSchemeHandler>()
+                                .UseCommandHandler<GetReplay, GetReplayHandler>()
+                                .UseCommandHandler<GetGame, GetGameHandler>()
+                                .UseCommandHandler<DeleteScheme, DeleteSchemeHandler>()
+                                .UseCommandHandler<DeleteReplay, DeleteReplayHandler>()
+                                .UseCommandHandler<CreateScheme, CreateSchemeHandler>()
+                                .UseCommandHandler<CreateGif, CreateGifHandler>()
+                                .UseCommandHandler<BrowseScheme, BrowseSchemeHandler>()
+                                .UseCommandHandler<BrowseReplay, BrowseReplayHandler>()
+                                .UseCommandHandler<BrowseGif, BrowseGifHandler>();
                         })
-                        .UseCommandHandler<Auth, AuthHandler>()
-                        .UseCommandHandler<Version, VersionHandler>()
-                        .UseCommandHandler<Update, UpdateHandler>()
-                        .UseCommandHandler<Setup, SetupHandler>()
-                        .UseCommandHandler<Host, HostHandler>()
-                        .UseCommandHandler<ViewReplay, ViewReplayHandler>()
-                        .UseCommandHandler<ProcessReplay, ProcessReplayHandler>()
-                        .UseCommandHandler<GetScheme, GetSchemeHandler>()
-                        .UseCommandHandler<GetReplay, GetReplayHandler>()
-                        .UseCommandHandler<GetGame, GetGameHandler>()
-                        .UseCommandHandler<DeleteScheme, DeleteSchemeHandler>()
-                        .UseCommandHandler<DeleteReplay, DeleteReplayHandler>()
-                        .UseCommandHandler<CreateScheme, CreateSchemeHandler>()
-                        .UseCommandHandler<CreateGif, CreateGifHandler>();
-                })
                 .UseDefaults()
                 .Build();
 
