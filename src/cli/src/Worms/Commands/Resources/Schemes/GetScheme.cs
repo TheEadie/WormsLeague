@@ -11,6 +11,7 @@ namespace Worms.Commands.Resources.Schemes
     internal class GetScheme : Command
     {
         public static readonly Argument<string> SchemeName = new("name",
+            () => "",
             "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported");
 
         public GetScheme() : base("scheme", "Retrieves information for Worms Schemes (.wsc files)")
