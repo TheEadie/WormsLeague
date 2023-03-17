@@ -43,6 +43,12 @@ internal static class CliStructure
         createCommand.AddCommand(new CreateGif());
         rootCommand.AddCommand(createCommand);
 
+        var browseCommand = new Browse();
+        browseCommand.AddCommand(new BrowseScheme());
+        browseCommand.AddCommand(new BrowseReplay());
+        browseCommand.AddCommand(new BrowseGif());
+        rootCommand.AddCommand(browseCommand);
+
         return new CommandLineBuilder(rootCommand);
     }
 }

@@ -1,6 +1,8 @@
 using System.IO.Abstractions;
+using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Armageddon.Resources.Schemes.Random;
+using Worms.Cli.Resources.Local.Folders;
 using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
@@ -14,6 +16,9 @@ namespace Worms.Cli.Resources.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            // OS Specific
+            RegisterOsModules(builder);
+
             // FileSystem
             builder.RegisterType<FileSystem>().As<IFileSystem>();
 
@@ -45,6 +50,21 @@ namespace Worms.Cli.Resources.Modules
             builder.RegisterType<RemoteGameRetriever>().As<IResourceRetriever<RemoteGame>>();
             builder.RegisterType<RemoteGameCreator>().As<IResourceCreator<RemoteGame, string>>();
             builder.RegisterType<RemoteGameUpdater>().As<IRemoteGameUpdater>();
+        }
+
+        private static void RegisterOsModules(ContainerBuilder builder)
+        {
+            // Windows
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                builder.RegisterType<WindowsFolderOpener>().As<IFolderOpener>();
+            }
+
+            // Linux
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                builder.RegisterType<LinuxFolderOpener>().As<IFolderOpener>();
+            }
         }
     }
 }
