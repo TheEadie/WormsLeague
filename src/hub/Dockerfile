@@ -1,5 +1,5 @@
 #### Build ####
-FROM mcr.microsoft.com/dotnet/sdk:7.0.302@sha256:19c92d0a00d1b66d897bceaa7319bee0dd38a10a851c60bcec9474aa3f01e50f AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0.302@sha256:aa91595042f8e6fbdbdf1add10663e12c8e84eadbf61be14f0a3669d82c46d9f AS build
 WORKDIR /app
 
 COPY *.sln ./
