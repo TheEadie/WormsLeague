@@ -88,7 +88,7 @@ class WormsHub : Stack
                     new ContainerArgs
                     {
                         Name = "gateway",
-                        Image = "theeadie/worms-server-gateway:0.2.10",
+                        Image = "theeadie/worms-server-gateway:0.2.44",
                         Env = new InputList<EnvironmentVarArgs>
                         {
                             new EnvironmentVarArgs {
