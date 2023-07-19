@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -15,12 +16,15 @@ internal class WormsServerApi : IWormsServerApi
 {
     private readonly IAccessTokenRefreshService _accessTokenRefreshService;
     private readonly ITokenStore _tokenStore;
+    private readonly IFileSystem _fileSystem;
     private readonly HttpClient _httpClient;
 
-    public WormsServerApi(IAccessTokenRefreshService accessTokenRefreshService, ITokenStore tokenStore)
+    public WormsServerApi(IAccessTokenRefreshService accessTokenRefreshService, ITokenStore tokenStore,
+        IFileSystem fileSystem)
     {
         _accessTokenRefreshService = accessTokenRefreshService;
         _tokenStore = tokenStore;
+        _fileSystem = fileSystem;
         _httpClient = new HttpClient();
 #if DEBUG
         _httpClient.BaseAddress = new Uri("https://localhost:5001/");
@@ -28,6 +32,16 @@ internal class WormsServerApi : IWormsServerApi
         _httpClient.BaseAddress = new Uri("https://worms.davideadie.dev/");
 #endif
     }
+
+    public record GamesDtoV1(
+        [property: JsonPropertyName("id")] string Id,
+        [property: JsonPropertyName("status")] string Status,
+        [property: JsonPropertyName("hostMachine")]
+        string HostMachine);
+
+    public record CreateGameDtoV1(
+        [property: JsonPropertyName("hostMachine")]
+        string HostMachine);
 
     public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
     {
@@ -50,15 +64,21 @@ internal class WormsServerApi : IWormsServerApi
             await _httpClient.PutAsJsonAsync(path, newGameDetails));
     }
 
-    public record GamesDtoV1(
-        [property: JsonPropertyName("id")] string Id,
-        [property: JsonPropertyName("status")] string Status,
-        [property: JsonPropertyName("hostMachine")]
-        string HostMachine);
+    public record ReplayDtoV1([property: JsonPropertyName("id")] string Id);
 
-    public record CreateGameDtoV1(
-        [property: JsonPropertyName("hostMachine")]
-        string HostMachine);
+    public async Task<ReplayDtoV1> CreateReplay(string replayFilePath)
+    {
+        using var form = new MultipartFormDataContent();
+        using var fileContent = new ByteArrayContent(await _fileSystem.File.ReadAllBytesAsync(replayFilePath));
+        fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+
+        form.Add(fileContent, "replayFile", _fileSystem.Path.GetFileName(replayFilePath));
+
+        var path = new Uri("api/v1/replays", UriKind.Relative);
+        return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(async () =>
+            await _httpClient.PostAsync(path, form));
+    }
+
 
     private async Task<T> CallApiRefreshAccessTokenIfInvalid<T>(Func<Task<HttpResponseMessage>> apiCall)
     {

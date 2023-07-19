@@ -9,4 +9,6 @@ internal interface IWormsServerApi
 
     Task<WormsServerApi.GamesDtoV1> CreateGame(WormsServerApi.CreateGameDtoV1 hostMachineName);
     Task UpdateGame(WormsServerApi.GamesDtoV1 newGameDetails);
+
+    Task<WormsServerApi.ReplayDtoV1> CreateReplay(string replayFilePath);
 }

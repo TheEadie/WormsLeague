@@ -9,6 +9,7 @@ using Worms.Cli.Resources.Local.Schemes;
 using Worms.Cli.Resources.Remote;
 using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Resources.Remote.Games;
+using Worms.Cli.Resources.Remote.Replays;
 
 namespace Worms.Cli.Resources.Modules
 {
@@ -37,6 +38,7 @@ namespace Worms.Cli.Resources.Modules
             builder.RegisterType<LocalReplayRetriever>().As<IResourceRetriever<LocalReplay>>();
             builder.RegisterType<LocalReplayDeleter>().As<IResourceDeleter<LocalReplay>>();
             builder.RegisterType<LocalReplayViewer>().As<IResourceViewer<LocalReplay, LocalReplayViewParameters>>();
+            builder.RegisterType<RemoteReplayCreator>().As<IResourceCreator<RemoteReplay, string>>();
 
             // Gifs
             builder.RegisterType<LocalGifCreator>().As<IResourceCreator<LocalGif, LocalGifCreateParameters>>();
