@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources;
+using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Remote.Replays;
 using Worms.Configuration;
@@ -43,6 +44,7 @@ namespace Worms.Commands
         private readonly LeagueUpdater _leagueUpdater;
         private readonly IResourceCreator<RemoteGame, string> _remoteGameCreator;
         private readonly IRemoteGameUpdater _gameUpdater;
+        private readonly IResourceRetriever<LocalReplay> _localReplayRetriever;
         private readonly IResourceCreator<RemoteReplay, string> _remoteReplayCreator;
         private readonly ILogger _logger;
 
@@ -54,6 +56,7 @@ namespace Worms.Commands
             LeagueUpdater leagueUpdater,
             IResourceCreator<RemoteGame, string> remoteGameCreator,
             IRemoteGameUpdater gameUpdater,
+            IResourceRetriever<LocalReplay> localReplayRetriever,
             IResourceCreator<RemoteReplay, string> remoteReplayCreator,
             ILogger logger)
         {
@@ -64,6 +67,7 @@ namespace Worms.Commands
             _leagueUpdater = leagueUpdater;
             _remoteGameCreator = remoteGameCreator;
             _gameUpdater = gameUpdater;
+            _localReplayRetriever = localReplayRetriever;
             _remoteReplayCreator = remoteReplayCreator;
             _logger = logger;
         }
@@ -142,8 +146,13 @@ namespace Worms.Commands
                 }
 
                 _logger.Information("Uploading replay to hub");
-                await _remoteReplayCreator.Create("test.txt", _logger, cancellationToken);
-
+                var allReplays = await _localReplayRetriever.Get(_logger, cancellationToken);
+                var replay = allReplays.MaxBy(x => x.Details.Date);
+                _logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
+                if (!dryRun)
+                {
+                    await _remoteReplayCreator.Create(replay.Paths.WAgamePath, _logger, cancellationToken);
+                }
 
                 return 0;
             }
