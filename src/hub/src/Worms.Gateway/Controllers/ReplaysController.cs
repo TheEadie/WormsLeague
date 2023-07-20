@@ -20,7 +20,7 @@ public class ReplaysController : V1ApiController
         _configuration = configuration;
         _logger = logger;
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<ReplayDto>> Post(IFormFile replayFile)
     {
@@ -28,9 +28,9 @@ public class ReplaysController : V1ApiController
         await SaveFileToTempLocation(replayFile, fileNameForDisplay);
 
         // TODO Store replay record in database
-        
+
         // TODO Fire event to process replay
-        
+
         return new ReplayDto("0");
     }
 
@@ -46,8 +46,11 @@ public class ReplaysController : V1ApiController
 
         var saveFilePath = Path.Combine(tempReplayFolderPath, generatedFileName);
 
-        _logger.Log(LogLevel.Information, "Saving replay file {fileNameForDisplay} to {saveFilePath}",
-            fileNameForDisplay, saveFilePath);
+        _logger.Log(
+            LogLevel.Information,
+            "Saving replay file {fileNameForDisplay} to {saveFilePath}",
+            fileNameForDisplay,
+            saveFilePath);
 
         await using var stream = System.IO.File.Create(saveFilePath);
         await replayFile.CopyToAsync(stream);
