@@ -1,7 +1,6 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Globalization;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -157,9 +156,7 @@ namespace Worms.Commands
                 //if (!dryRun)
                 {
                     await _remoteReplayCreator.Create(
-                        new RemoteReplayCreateParameters(
-                            replay.Details.Date.ToString(CultureInfo.InvariantCulture),
-                            replay.Paths.WAgamePath),
+                        new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
                         _logger,
                         cancellationToken);
                 }
