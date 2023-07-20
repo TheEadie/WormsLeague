@@ -1,8 +1,35 @@
-version: "3.8"
+version: "3.9"
 services:
-  worms-server:
-    build: .
-    ports:
-      - "5005:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+    database:
+        image: "postgres:15"
+        environment:
+            - POSTGRES_USER=worms
+            - POSTGRES_PASSWORD=worms
+            - POSTGRES_DB=worms
+        ports:
+            - "5432:5432"
+
+    flyway-init:
+        image: flyway/flyway:latest
+        volumes:
+            - ./database/migrations:/flyway/sql
+            - ./database/flyway.conf:/flyway/conf
+        command: ["info", "migrate", "info"]
+        environment:
+            - FLYWAY_URL=jdbc:postgresql://database:5432/worms
+            - FLYWAY_USER=worms
+            - FLYWAY_PASSWORD=worms
+            - FLYWAY_SCHEMAS=worms
+        depends_on:
+            database:
+                condition: service_started
+
+    worms-server:
+        build: .
+        ports:
+            - "5005:80"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+        depends_on:
+            flyway-init:
+                condition: service_completed_successfully
