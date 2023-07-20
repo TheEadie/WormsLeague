@@ -15,7 +15,7 @@ public class GamesRepository : IRepository<GameDto>
     {
         _connectionString = configuration.GetConnectionString("Database");
     }
-    
+
     public IReadOnlyCollection<GameDto> Get()
     {
         using var connection = new NpgsqlConnection(_connectionString);
@@ -36,7 +36,7 @@ public class GamesRepository : IRepository<GameDto>
         };
 
         var created = connection.QuerySingle<string>(sql, parameters);
-        return item with {Id = created};
+        return item with { Id = created };
     }
 
     public void Update(GameDto item)
@@ -55,4 +55,4 @@ public class GamesRepository : IRepository<GameDto>
     }
 }
 
-public record GamesDb (int Id, string Status, string HostMachine);
+public record GamesDb(int Id, string Status, string HostMachine);

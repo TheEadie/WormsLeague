@@ -19,7 +19,9 @@ internal class WormsServerApi : IWormsServerApi
     private readonly IFileSystem _fileSystem;
     private readonly HttpClient _httpClient;
 
-    public WormsServerApi(IAccessTokenRefreshService accessTokenRefreshService, ITokenStore tokenStore,
+    public WormsServerApi(
+        IAccessTokenRefreshService accessTokenRefreshService,
+        ITokenStore tokenStore,
         IFileSystem fileSystem)
     {
         _accessTokenRefreshService = accessTokenRefreshService;
@@ -46,37 +48,43 @@ internal class WormsServerApi : IWormsServerApi
     public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
     {
         var path = new Uri("api/v1/games", UriKind.Relative);
-        return await CallApiRefreshAccessTokenIfInvalid<IReadOnlyCollection<GamesDtoV1>>(async () =>
-            await _httpClient.GetAsync(path));
+        return await CallApiRefreshAccessTokenIfInvalid<IReadOnlyCollection<GamesDtoV1>>(
+            async () => await _httpClient.GetAsync(path));
     }
 
     public async Task<GamesDtoV1> CreateGame(CreateGameDtoV1 createParams)
     {
         var path = new Uri("api/v1/games", UriKind.Relative);
-        return await CallApiRefreshAccessTokenIfInvalid<GamesDtoV1>(async () =>
-            await _httpClient.PostAsJsonAsync(path, createParams));
+        return await CallApiRefreshAccessTokenIfInvalid<GamesDtoV1>(
+            async () => await _httpClient.PostAsJsonAsync(path, createParams));
     }
 
     public async Task UpdateGame(GamesDtoV1 newGameDetails)
     {
         var path = new Uri("api/v1/games", UriKind.Relative);
-        await CallApiRefreshAccessTokenIfInvalid(async () =>
-            await _httpClient.PutAsJsonAsync(path, newGameDetails));
+        await CallApiRefreshAccessTokenIfInvalid(async () => await _httpClient.PutAsJsonAsync(path, newGameDetails));
     }
 
-    public record ReplayDtoV1([property: JsonPropertyName("id")] string Id);
+    public record ReplayDtoV1(
+        [property: JsonPropertyName("id")] string Id,
+        [property: JsonPropertyName("name")] string Name,
+        [property: JsonPropertyName("status")] string Status);
 
-    public async Task<ReplayDtoV1> CreateReplay(string replayFilePath)
+    public record CreateReplayDtoV1(string Name, string ReplayFilePath);
+
+    public async Task<ReplayDtoV1> CreateReplay(CreateReplayDtoV1 createParams)
     {
         using var form = new MultipartFormDataContent();
-        using var fileContent = new ByteArrayContent(await _fileSystem.File.ReadAllBytesAsync(replayFilePath));
+        using var fileContent =
+            new ByteArrayContent(await _fileSystem.File.ReadAllBytesAsync(createParams.ReplayFilePath));
         fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
 
-        form.Add(fileContent, "replayFile", _fileSystem.Path.GetFileName(replayFilePath));
+        form.Add(new StringContent(createParams.Name), "Name");
+        form.Add(fileContent, "ReplayFile", _fileSystem.Path.GetFileName(createParams.ReplayFilePath));
 
         var path = new Uri("api/v1/replays", UriKind.Relative);
-        return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(async () =>
-            await _httpClient.PostAsync(path, form));
+        return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(
+            async () => await _httpClient.PostAsync(path, form));
     }
 
 

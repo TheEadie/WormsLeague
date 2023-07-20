@@ -6,35 +6,43 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Worms.Gateway.Database;
+using Worms.Gateway.Domain;
 using Worms.Gateway.Dtos;
 
 namespace Worms.Gateway.Controllers;
 
 public class ReplaysController : V1ApiController
 {
+    private readonly IRepository<Replay> _repository;
     private readonly IConfiguration _configuration;
     private readonly ILogger<ReplaysController> _logger;
 
-    public ReplaysController(IConfiguration configuration, ILogger<ReplaysController> logger)
+    public ReplaysController(
+        IRepository<Replay> repository,
+        IConfiguration configuration,
+        ILogger<ReplaysController> logger)
     {
+        _repository = repository;
         _configuration = configuration;
         _logger = logger;
     }
 
     [HttpPost]
-    public async Task<ActionResult<ReplayDto>> Post(IFormFile replayFile)
+    public async Task<ActionResult<ReplayDto>> Post([FromForm] CreateReplayDto parameters)
     {
-        var fileNameForDisplay = GetFileNameForDisplay(replayFile);
-        await SaveFileToTempLocation(replayFile, fileNameForDisplay);
-
-        // TODO Store replay record in database
-
-        // TODO Fire event to process replay
-
-        return new ReplayDto("0");
+        _logger.Log(
+            LogLevel.Information,
+            "Received replay file {fileNameForDisplay} with name {name}",
+            GetFileNameForDisplay(parameters.ReplayFile),
+            parameters.Name);
+        var fileNameForDisplay = GetFileNameForDisplay(parameters.ReplayFile);
+        var tempFilename = await SaveFileToTempLocation(parameters.ReplayFile, fileNameForDisplay);
+        var replay = _repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename));
+        return ReplayDto.FromDomain(replay);
     }
 
-    private async Task SaveFileToTempLocation(IFormFile replayFile, string fileNameForDisplay)
+    private async Task<string> SaveFileToTempLocation(IFormFile replayFile, string fileNameForDisplay)
     {
         var generatedFileName = Path.GetRandomFileName();
 
@@ -42,6 +50,11 @@ public class ReplaysController : V1ApiController
         if (tempReplayFolderPath is null)
         {
             throw new Exception("Temp replay folder not configured");
+        }
+
+        if (!Path.Exists(tempReplayFolderPath))
+        {
+            Directory.CreateDirectory(tempReplayFolderPath);
         }
 
         var saveFilePath = Path.Combine(tempReplayFolderPath, generatedFileName);
@@ -54,6 +67,7 @@ public class ReplaysController : V1ApiController
 
         await using var stream = System.IO.File.Create(saveFilePath);
         await replayFile.CopyToAsync(stream);
+        return generatedFileName;
     }
 
     private static string GetFileNameForDisplay(IFormFile replayFile)

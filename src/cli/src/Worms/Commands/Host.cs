@@ -1,6 +1,7 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Globalization;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -20,14 +21,19 @@ namespace Worms.Commands
     internal class Host : Command
     {
         public static readonly Option<bool> DryRun = new(
-            new[] {"--dry-run", "-dr"},
+            new[]
+            {
+                "--dry-run",
+                "-dr"
+            },
             "When set the CLI will print what will happen rather than running the commands");
 
         public static readonly Option<bool> LocalMode = new(
-            new[] {"--local-mode"},
+            new[] { "--local-mode" },
             "Use legacy local mode to announce to Slack");
 
-        public Host() : base("host", "Host a game of worms using the latest options")
+        public Host()
+            : base("host", "Host a game of worms using the latest options")
         {
             AddOption(DryRun);
             AddOption(LocalMode);
@@ -45,7 +51,7 @@ namespace Worms.Commands
         private readonly IResourceCreator<RemoteGame, string> _remoteGameCreator;
         private readonly IRemoteGameUpdater _gameUpdater;
         private readonly IResourceRetriever<LocalReplay> _localReplayRetriever;
-        private readonly IResourceCreator<RemoteReplay, string> _remoteReplayCreator;
+        private readonly IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> _remoteReplayCreator;
         private readonly ILogger _logger;
 
         public HostHandler(
@@ -57,7 +63,7 @@ namespace Worms.Commands
             IResourceCreator<RemoteGame, string> remoteGameCreator,
             IRemoteGameUpdater gameUpdater,
             IResourceRetriever<LocalReplay> localReplayRetriever,
-            IResourceCreator<RemoteReplay, string> remoteReplayCreator,
+            IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> remoteReplayCreator,
             ILogger logger)
         {
             _wormsRunner = wormsRunner;
@@ -72,8 +78,7 @@ namespace Worms.Commands
             _logger = logger;
         }
 
-        public int Invoke(InvocationContext context) =>
-            Task.Run(async () => await InvokeAsync(context)).Result;
+        public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
         public async Task<int> InvokeAsync(InvocationContext context)
         {
@@ -149,9 +154,14 @@ namespace Worms.Commands
                 var allReplays = await _localReplayRetriever.Get(_logger, cancellationToken);
                 var replay = allReplays.MaxBy(x => x.Details.Date);
                 _logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
-                if (!dryRun)
+                //if (!dryRun)
                 {
-                    await _remoteReplayCreator.Create(replay.Paths.WAgamePath, _logger, cancellationToken);
+                    await _remoteReplayCreator.Create(
+                        new RemoteReplayCreateParameters(
+                            replay.Details.Date.ToString(CultureInfo.InvariantCulture),
+                            replay.Paths.WAgamePath),
+                        _logger,
+                        cancellationToken);
                 }
 
                 return 0;
@@ -161,9 +171,8 @@ namespace Worms.Commands
         private static string GetIpAddress(string domain)
         {
             var adapters = NetworkInterface.GetAllNetworkInterfaces();
-            var leagueNetworkAdapter = adapters.FirstOrDefault(x =>
-                x.GetIPProperties().DnsSuffix == domain &&
-                x.OperationalStatus == OperationalStatus.Up);
+            var leagueNetworkAdapter = adapters.FirstOrDefault(
+                x => x.GetIPProperties().DnsSuffix == domain && x.OperationalStatus == OperationalStatus.Up);
 
             if (leagueNetworkAdapter is null)
             {

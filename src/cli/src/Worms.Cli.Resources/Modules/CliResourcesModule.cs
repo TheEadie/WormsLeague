@@ -38,7 +38,8 @@ namespace Worms.Cli.Resources.Modules
             builder.RegisterType<LocalReplayRetriever>().As<IResourceRetriever<LocalReplay>>();
             builder.RegisterType<LocalReplayDeleter>().As<IResourceDeleter<LocalReplay>>();
             builder.RegisterType<LocalReplayViewer>().As<IResourceViewer<LocalReplay, LocalReplayViewParameters>>();
-            builder.RegisterType<RemoteReplayCreator>().As<IResourceCreator<RemoteReplay, string>>();
+            builder.RegisterType<RemoteReplayCreator>()
+                .As<IResourceCreator<RemoteReplay, RemoteReplayCreateParameters>>();
 
             // Gifs
             builder.RegisterType<LocalGifCreator>().As<IResourceCreator<LocalGif, LocalGifCreateParameters>>();

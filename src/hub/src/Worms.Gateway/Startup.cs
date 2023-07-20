@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Worms.Gateway.Announcers;
 using Worms.Gateway.Announcers.Slack;
 using Worms.Gateway.Database;
+using Worms.Gateway.Domain;
 using Worms.Gateway.Dtos;
 
 namespace Worms.Gateway;
@@ -50,6 +51,7 @@ public class Startup
 
         services.AddAuthorization();
         services.AddSingleton<IRepository<GameDto>, GamesRepository>();
+        services.AddSingleton<IRepository<Replay>, ReplaysRepository>();
         services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
 
         if (_env.IsDevelopment())
