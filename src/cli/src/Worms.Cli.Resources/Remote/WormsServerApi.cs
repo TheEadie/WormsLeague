@@ -29,7 +29,7 @@ internal class WormsServerApi : IWormsServerApi
         _fileSystem = fileSystem;
         _httpClient = new HttpClient();
 #if DEBUG
-        _httpClient.BaseAddress = new Uri("https://localhost:5001/");
+        _httpClient.BaseAddress = new Uri("http://127.0.0.1:5005/");
 #else
         _httpClient.BaseAddress = new Uri("https://worms.davideadie.dev/");
 #endif

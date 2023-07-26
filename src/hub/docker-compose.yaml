@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.8"
 services:
     database:
         image: "postgres:15"
@@ -8,21 +8,26 @@ services:
             - POSTGRES_DB=worms
         ports:
             - "5432:5432"
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "worms"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
 
     flyway-init:
-        image: flyway/flyway:latest
+        image: flyway/flyway:9
         volumes:
-            - ./database/migrations:/flyway/sql
-            - ./database/flyway.conf:/flyway/conf
+            - ../database/migrations:/flyway/migrations
+            - ../database:/flyway/conf
         command: ["info", "migrate", "info"]
         environment:
             - FLYWAY_URL=jdbc:postgresql://database:5432/worms
             - FLYWAY_USER=worms
             - FLYWAY_PASSWORD=worms
-            - FLYWAY_SCHEMAS=worms
+            - FLYWAY_SCHEMAS=public
         depends_on:
             database:
-                condition: service_started
+                condition: service_healthy
 
     worms-server:
         build: .
@@ -30,6 +35,7 @@ services:
             - "5005:80"
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
+            - WORMS_CONNECTIONSTRINGS__DATABASE=Server=database;Port=5432;Database=worms;Username=worms;Password=worms
         depends_on:
             flyway-init:
                 condition: service_completed_successfully
