@@ -33,7 +33,7 @@ public class ReplaysController : V1ApiController
     {
         _logger.Log(
             LogLevel.Information,
-            "Received replay file {fileNameForDisplay} with name {name}",
+            "Received replay file {filename} with name {name}",
             GetFileNameForDisplay(parameters.ReplayFile),
             parameters.Name);
         var fileNameForDisplay = GetFileNameForDisplay(parameters.ReplayFile);
@@ -61,7 +61,7 @@ public class ReplaysController : V1ApiController
 
         _logger.Log(
             LogLevel.Information,
-            "Saving replay file {fileNameForDisplay} to {saveFilePath}",
+            "Saving replay file {filename} to {filepath}",
             fileNameForDisplay,
             saveFilePath);
 
