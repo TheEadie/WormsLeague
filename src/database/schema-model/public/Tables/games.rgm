@@ -1,0 +1,23 @@
+table "public"."games" {
+  primaryKey = {
+    columns = [
+      "id"
+    ]
+    name = "games_pkey"
+    objectType = primaryKey
+  }
+  columns = (
+    column "id" {
+      type = integer
+      null = NOT NULL
+      default = nextval('public.games_id_seq'::regclass)
+    }
+    column "status" {
+      type = text
+    }
+    column "hostmachine" {
+      type = text
+    }
+  )
+}
+
