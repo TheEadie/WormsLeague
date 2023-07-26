@@ -18,8 +18,13 @@ services:
         image: flyway/flyway:9
         volumes:
             - ../database/migrations:/flyway/migrations
+            - ../database/local-dev:/flyway/local-dev
             - ../database:/flyway/conf
-        command: ["info", "migrate", "info"]
+        command:
+            - "info"
+            - "migrate"
+            - "info"
+            - "-locations=filesystem:/flyway/migrations,filesystem:/flyway/local-dev"
         environment:
             - FLYWAY_URL=jdbc:postgresql://database:5432/worms
             - FLYWAY_USER=worms

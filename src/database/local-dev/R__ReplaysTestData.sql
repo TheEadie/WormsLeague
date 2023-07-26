@@ -1,0 +1,1 @@
+INSERT INTO public.replays (name, status, tempfilename) VALUES ('2023-01-01', 'To Check', 'asdga.sds');

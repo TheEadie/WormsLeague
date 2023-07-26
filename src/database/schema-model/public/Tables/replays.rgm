@@ -1,9 +1,9 @@
-table "public"."games" {
+table "public"."replays" {
   primaryKey = {
     columns = [
       "id"
     ]
-    name = "games_pkey"
+    name = "replays_pk"
     objectType = primaryKey
   }
   columns = (
@@ -15,7 +15,10 @@ table "public"."games" {
     column "status" {
       type = text
     }
-    column "hostmachine" {
+    column "name" {
+      type = text
+    }
+    column "tempfilename" {
       type = text
     }
   )
