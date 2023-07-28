@@ -9,21 +9,25 @@ using Microsoft.Extensions.Logging;
 using Worms.Gateway.Database;
 using Worms.Gateway.Domain;
 using Worms.Gateway.Dtos;
+using Worms.Gateway.Validators;
 
 namespace Worms.Gateway.Controllers;
 
 public class ReplaysController : V1ApiController
 {
     private readonly IRepository<Replay> _repository;
+    private readonly ReplayFileValidator _replayFileValidator;
     private readonly IConfiguration _configuration;
     private readonly ILogger<ReplaysController> _logger;
 
     public ReplaysController(
         IRepository<Replay> repository,
+        ReplayFileValidator replayFileValidator,
         IConfiguration configuration,
         ILogger<ReplaysController> logger)
     {
         _repository = repository;
+        _replayFileValidator = replayFileValidator;
         _configuration = configuration;
         _logger = logger;
     }
@@ -37,6 +41,12 @@ public class ReplaysController : V1ApiController
             "Received replay file {filename} with name {name}",
             fileNameForDisplay,
             parameters.Name);
+
+        if (!_replayFileValidator.IsValid(parameters.ReplayFile))
+        {
+            return BadRequest("Invalid replay file");
+        }
+
         var tempFilename = await SaveFileToTempLocation(parameters.ReplayFile, fileNameForDisplay);
         var replay = _repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename));
         return ReplayDto.FromDomain(replay);

@@ -27,8 +27,7 @@ internal class RemoteGameCreator : IResourceCreator<RemoteGame, string>
             switch (e.StatusCode)
             {
                 case HttpStatusCode.Unauthorized:
-                    logger.Warning(
-                        "You don't have access to the Worms Hub. Please run worms auth or contact an admin");
+                    logger.Warning("You don't have access to the Worms Hub. Please run worms auth or contact an admin");
                     break;
                 default:
                     logger.Error(e, "An error occured calling the Worms Hub API");

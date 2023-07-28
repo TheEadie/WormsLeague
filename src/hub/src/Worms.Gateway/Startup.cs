@@ -11,6 +11,7 @@ using Worms.Gateway.Announcers.Slack;
 using Worms.Gateway.Database;
 using Worms.Gateway.Domain;
 using Worms.Gateway.Dtos;
+using Worms.Gateway.Validators;
 
 namespace Worms.Gateway;
 
@@ -53,6 +54,7 @@ public class Startup
         services.AddSingleton<IRepository<GameDto>, GamesRepository>();
         services.AddSingleton<IRepository<Replay>, ReplaysRepository>();
         services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
+        services.AddSingleton<ReplayFileValidator>();
 
         if (_env.IsDevelopment())
         {
