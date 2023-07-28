@@ -3,63 +3,72 @@ name: Hub
 on:
   push:
     paths:
-    - "src/hub/**"
-    - "src/database/**"
-    - ".github/workflows/hub.yml"
+      - "src/hub/**"
+      - "src/database/**"
+      - ".github/workflows/hub.yml"
 
 jobs:
-
   build:
     name: Build
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    - name: Expose GitHub Runtime
-      uses: crazy-max/ghaction-github-runtime@v2
+      - name: Expose GitHub Runtime
+        uses: crazy-max/ghaction-github-runtime@v2
 
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    
-    - name: Publish
-      run: | 
-        cd src/hub; make publish
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Publish
+        run: |
+          cd src/hub; make publish
 
   build-database:
     name: Build Database
     runs-on: ubuntu-latest
     env:
-      SPAWNCTL_ACCESS_TOKEN: ${{ secrets.SPAWN_ACCESS_TOKEN }}
       FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      
-    - name: Spawn a database
-      id: create-container
-      uses: red-gate/create-spawn-data-container/@v1
-      with:
-        dataImage: worms-hub
-        lifetime: '1h'
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: worms
+          POSTGRES_PASSWORD: worms
+          POSTGRES_DB: worms
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
-    - name: Flyway Migrate
-      run: >-
-        docker run --rm \
-          --volume ${{ github.workspace }}/src/database/migrations:/flyway/sql:ro \
-          -e FLYWAY_LICENSE_KEY \
-          redgate/flyway:9-alpine \
-          -url="jdbc:postgresql://${{ steps.create-container.outputs.dataContainerHost }}:${{ steps.create-container.outputs.dataContainerPort }}/${{ secrets.PROD_DATABASE_NAME }}?sslmode=require" \
-          -user="${{ steps.create-container.outputs.dataContainerUsername }}" \
-          -password="${{ steps.create-container.outputs.dataContainerPassword }}" \
-          migrate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Test Flyway Migrations
+        uses: docker://redgate/flyway:9
+        with:
+          args: >-
+            -locations="filesystem:/github/workspace/src/database/migrations"
+            -configFiles="/github/workspace/src/database/flyway.conf"
+            -url="jdbc:postgresql://postgres:5432/worms"
+            -user="worms"
+            -password="worms"
+            -schemas="public"
+            info
+            migrate
+            info
 
   release:
     name: Release
@@ -68,26 +77,26 @@ jobs:
     if: github.ref == 'refs/heads/master'
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    - name: Expose GitHub Runtime
-      uses: crazy-max/ghaction-github-runtime@v2
+      - name: Expose GitHub Runtime
+        uses: crazy-max/ghaction-github-runtime@v2
 
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: theeadie
-        password: ${{ secrets.DockerHubAccessToken }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: theeadie
+          password: ${{ secrets.DockerHubAccessToken }}
 
-    - name: Release
-      run: |
-        cd src/hub; make release GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        run: |
+          cd src/hub; make release GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
