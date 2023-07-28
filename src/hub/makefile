@@ -1,5 +1,5 @@
 IMAGE_NAME := theeadie/worms-server-gateway
-NEXT_VERSION := 0.2
+NEXT_VERSION := 0.3
 TAG_PREFIX := hub/v
 
 GITHUB_REPO := theeadie/WormsLeague
