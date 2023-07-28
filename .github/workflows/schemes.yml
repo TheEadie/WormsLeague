@@ -3,26 +3,27 @@ name: Schemes
 on:
   push:
     paths:
-    - "deployment/schemes/**"
-    - "build/**"
-    - ".github/workflows/schemes.yml"
+      - "deployment/schemes/**"
+      - "build/release-github.sh"
+      - "build/version.sh"
+      - ".github/workflows/schemes.yml"
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    - name: Build
-      run: cd deployment/schemes; make schemes
-    - name: Upload build
-      uses: actions/upload-artifact@v3
-      with:
-        name: RGSchemes
-        path: deployment/schemes/.artifacts/
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Build
+        run: cd deployment/schemes; make schemes
+      - name: Upload build
+        uses: actions/upload-artifact@v3
+        with:
+          name: RGSchemes
+          path: deployment/schemes/.artifacts/
 
   release:
     name: Release - GitHub
@@ -30,14 +31,14 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    - name: Download build
-      uses: actions/download-artifact@v3
-      with:
-        name: RGSchemes
-        path: deployment/schemes/.artifacts/
-    - name: Release
-      run: cd deployment/schemes; make release-github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Download build
+        uses: actions/download-artifact@v3
+        with:
+          name: RGSchemes
+          path: deployment/schemes/.artifacts/
+      - name: Release
+        run: cd deployment/schemes; make release-github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}

@@ -40,7 +40,6 @@ jobs:
     needs: deploy-azure
     runs-on: ubuntu-latest
     env:
-      SPAWNCTL_ACCESS_TOKEN: ${{ secrets.SPAWN_ACCESS_TOKEN }}
       FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}
 
     steps:
@@ -49,32 +48,18 @@ jobs:
 
       - name: Get version
         id: vars
-        run: echo ::set-output name=version::$(cat deployment/worms.davideadie.dev/database-version.txt)
+        run: echo "version=$(cat deployment/worms.davideadie.dev/database-version.txt)" >> $GITHUB_OUTPUT
 
-      - name: Flyway Migrate
-        run: >-
-          docker run --rm \
-            --volume ${{ github.workspace }}/src/database/migrations:/flyway/sql:ro \
-            -e FLYWAY_LICENSE_KEY \
-            redgate/flyway:9-alpine \
-            -url="jdbc:postgresql://${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }}" \
-            -user="${{ secrets.PROD_DATABASE_USER }}" \
-            -password="${{ secrets.PROD_DATABASE_PASSWORD }}" \
-            migrate \
+      - name: Run Flyway Report
+        uses: docker://redgate/flyway:9
+        with:
+          args: >-
+            info
+            migrate
+            info
+            -locations="filesystem:/github/workspace/src/database/migrations"
+            -configFiles="/github/workspace/src/database/flyway.conf"
+            -url="jdbc:postgresql://${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }}"
+            -user="${{ secrets.PROD_DATABASE_USER }}"
+            -password="${{ secrets.PROD_DATABASE_PASSWORD }}"
             -target=${{ steps.vars.outputs.version }}
-
-      - name: Backup Database
-        run: >-
-          pg_dump \
-            --dbname=postgresql://${{ secrets.PROD_DATABASE_USER }}:${{ secrets.PROD_DATABASE_PASSWORD }}@${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }} \
-            > src/database/backup.dump
-
-      - name: Update Data Image
-        run: >-
-          docker run --rm \
-            --volume ${{ github.workspace }}/src/database:/spawn/database \
-            -e SPAWNCTL_ACCESS_TOKEN \
-            redgatefoundry/spawnctl \
-            create di -f /spawn/database/spawn-image.yml \
-            --tag=latest --tag=${{ steps.vars.outputs.version }} \
-            -q

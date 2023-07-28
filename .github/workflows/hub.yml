@@ -5,6 +5,8 @@ on:
     paths:
       - "src/hub/**"
       - "src/database/**"
+      - "build/release-github.sh"
+      - "build/version.sh"
       - ".github/workflows/hub.yml"
 
 jobs:
