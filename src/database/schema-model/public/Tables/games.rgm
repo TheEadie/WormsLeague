@@ -1,0 +1,23 @@
+table "public"."games" {
+  primaryKey = {
+    columns = [
+      "id"
+    ]
+    name = "games_pkey"
+    objectType = primaryKey
+  }
+  columns = (
+    column "id" {
+      type = integer
+      null = NOT NULL
+      generatedAsIdentity = ALWAYS
+    }
+    column "status" {
+      type = text
+    }
+    column "hostmachine" {
+      type = text
+    }
+  )
+}
+

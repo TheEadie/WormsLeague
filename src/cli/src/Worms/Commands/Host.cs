@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources;
+using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Remote.Games;
+using Worms.Cli.Resources.Remote.Replays;
 using Worms.Configuration;
 using Worms.League;
 using Worms.Slack;
@@ -18,13 +20,19 @@ namespace Worms.Commands
     internal class Host : Command
     {
         public static readonly Option<bool> DryRun = new(
-            new[] { "--dry-run", "-dr" },
+            new[]
+            {
+                "--dry-run",
+                "-dr"
+            },
             "When set the CLI will print what will happen rather than running the commands");
 
         public static readonly Option<bool> LocalMode = new(
             new[] { "--local-mode" },
             "Use legacy local mode to announce to Slack");
-        public Host() : base("host", "Host a game of worms using the latest options")
+
+        public Host()
+            : base("host", "Host a game of worms using the latest options")
         {
             AddOption(DryRun);
             AddOption(LocalMode);
@@ -41,6 +49,8 @@ namespace Worms.Commands
         private readonly LeagueUpdater _leagueUpdater;
         private readonly IResourceCreator<RemoteGame, string> _remoteGameCreator;
         private readonly IRemoteGameUpdater _gameUpdater;
+        private readonly IResourceRetriever<LocalReplay> _localReplayRetriever;
+        private readonly IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> _remoteReplayCreator;
         private readonly ILogger _logger;
 
         public HostHandler(
@@ -51,6 +61,8 @@ namespace Worms.Commands
             LeagueUpdater leagueUpdater,
             IResourceCreator<RemoteGame, string> remoteGameCreator,
             IRemoteGameUpdater gameUpdater,
+            IResourceRetriever<LocalReplay> localReplayRetriever,
+            IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> remoteReplayCreator,
             ILogger logger)
         {
             _wormsRunner = wormsRunner;
@@ -60,11 +72,12 @@ namespace Worms.Commands
             _leagueUpdater = leagueUpdater;
             _remoteGameCreator = remoteGameCreator;
             _gameUpdater = gameUpdater;
+            _localReplayRetriever = localReplayRetriever;
+            _remoteReplayCreator = remoteReplayCreator;
             _logger = logger;
         }
 
-        public int Invoke(InvocationContext context) =>
-            Task.Run(async () => await InvokeAsync(context)).Result;
+        public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
         public async Task<int> InvokeAsync(InvocationContext context)
         {
@@ -102,7 +115,7 @@ namespace Worms.Commands
             }
 
             _logger.Information("Starting Worms Armageddon");
-            var runGame = !dryRun ? _wormsRunner.RunWorms("wa://") : Task.CompletedTask;
+            var runGame = !dryRun ? _wormsRunner.RunWorms("wa://") : Task.Delay(5000, cancellationToken);
 
             if (localMode)
             {
@@ -136,6 +149,18 @@ namespace Worms.Commands
                     await _gameUpdater.SetGameComplete(game, _logger, cancellationToken);
                 }
 
+                _logger.Information("Uploading replay to hub");
+                var allReplays = await _localReplayRetriever.Get(_logger, cancellationToken);
+                var replay = allReplays.MaxBy(x => x.Details.Date);
+                _logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
+                if (!dryRun)
+                {
+                    await _remoteReplayCreator.Create(
+                        new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
+                        _logger,
+                        cancellationToken);
+                }
+
                 return 0;
             }
         }
@@ -143,9 +168,8 @@ namespace Worms.Commands
         private static string GetIpAddress(string domain)
         {
             var adapters = NetworkInterface.GetAllNetworkInterfaces();
-            var leagueNetworkAdapter = adapters.FirstOrDefault(x =>
-                x.GetIPProperties().DnsSuffix == domain &&
-                x.OperationalStatus == OperationalStatus.Up);
+            var leagueNetworkAdapter = adapters.FirstOrDefault(
+                x => x.GetIPProperties().DnsSuffix == domain && x.OperationalStatus == OperationalStatus.Up);
 
             if (leagueNetworkAdapter is null)
             {

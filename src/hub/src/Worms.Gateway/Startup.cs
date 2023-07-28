@@ -5,75 +5,78 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Worms.Gateway.Announcers;
 using Worms.Gateway.Announcers.Slack;
-using Worms.Gateway.Auth;
 using Worms.Gateway.Database;
+using Worms.Gateway.Domain;
 using Worms.Gateway.Dtos;
+using Worms.Gateway.Validators;
 
-namespace Worms.Gateway
+namespace Worms.Gateway;
+
+public class Startup
 {
-    public class Startup
+    private readonly IWebHostEnvironment _env;
+    private readonly IConfiguration _configuration;
+
+    public Startup(IWebHostEnvironment env, IConfiguration configuration)
     {
-        private readonly IWebHostEnvironment _env;
-        private readonly IConfiguration _configuration;
+        _env = env;
+        _configuration = configuration;
+    }
 
-        public Startup(IWebHostEnvironment env, IConfiguration configuration)
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllers();
+        services.AddApiVersioning();
+
+        services.AddAuthentication(
+                options =>
+                    {
+                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
+            .AddJwtBearer(
+                options =>
+                    {
+                        options.Authority = "https://eadie.eu.auth0.com/";
+                        options.Audience = "worms.davideadie.dev";
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            NameClaimType = ClaimTypes.NameIdentifier,
+                            RoleClaimType = "permissions"
+                        };
+                    });
+
+        services.AddAuthorization();
+        services.AddSingleton<IRepository<GameDto>, GamesRepository>();
+        services.AddSingleton<IRepository<Replay>, ReplaysRepository>();
+        services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
+        services.AddSingleton<ReplayFileValidator>();
+
+        if (_env.IsDevelopment())
         {
-            _env = env;
-            _configuration = configuration;
+            //services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
+        }
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllers();
-            services.AddApiVersioning();
+        app.UseHttpsRedirection();
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.Authority = "https://eadie.eu.auth0.com/";
-                options.Audience = "worms.davideadie.dev";
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    NameClaimType = ClaimTypes.NameIdentifier,
-                    RoleClaimType = "permissions"
-                };
-            });
+        app.UseRouting();
 
-            services.AddAuthorization();
-            services.AddSingleton<IRepository<GameDto>, GamesRepository>();
-            services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-            if (_env.IsDevelopment())
-            {
-                //services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
-            }
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => endpoints.MapControllers());
-        }
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
     }
 }

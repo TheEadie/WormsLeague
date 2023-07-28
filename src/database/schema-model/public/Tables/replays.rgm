@@ -1,0 +1,26 @@
+table "public"."replays" {
+  primaryKey = {
+    columns = [
+      "id"
+    ]
+    name = "replays_pk"
+    objectType = primaryKey
+  }
+  columns = (
+    column "id" {
+      type = integer
+      null = NOT NULL
+      generatedAsIdentity = ALWAYS
+    }
+    column "status" {
+      type = text
+    }
+    column "name" {
+      type = text
+    }
+    column "filename" {
+      type = text
+    }
+  )
+}
+

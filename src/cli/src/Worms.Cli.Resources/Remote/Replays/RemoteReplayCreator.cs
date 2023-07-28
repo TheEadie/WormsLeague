@@ -4,23 +4,27 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 
-namespace Worms.Cli.Resources.Remote.Games;
+namespace Worms.Cli.Resources.Remote.Replays;
 
-internal class RemoteGameCreator : IResourceCreator<RemoteGame, string>
+internal class RemoteReplayCreator : IResourceCreator<RemoteReplay, RemoteReplayCreateParameters>
 {
     private readonly IWormsServerApi _api;
 
-    public RemoteGameCreator(IWormsServerApi api)
+    public RemoteReplayCreator(IWormsServerApi api)
     {
         _api = api;
     }
 
-    public async Task<RemoteGame> Create(string parameters, ILogger logger, CancellationToken cancellationToken)
+    public async Task<RemoteReplay> Create(
+        RemoteReplayCreateParameters parameters,
+        ILogger logger,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var apiGame = await _api.CreateGame(new WormsServerApi.CreateGameDtoV1(parameters));
-            return new RemoteGame(apiGame.Id, apiGame.Status, apiGame.HostMachine);
+            var apiReplay = await _api.CreateReplay(
+                new WormsServerApi.CreateReplayDtoV1(parameters.Name, parameters.FilePath));
+            return new RemoteReplay(apiReplay.Id, apiReplay.Name, apiReplay.Status);
         }
         catch (HttpRequestException e)
         {
@@ -34,7 +38,7 @@ internal class RemoteGameCreator : IResourceCreator<RemoteGame, string>
                     break;
             }
 
-            return new RemoteGame("", "", "");
+            return new RemoteReplay("", "", "");
         }
     }
 }
