@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using Microsoft.Extensions.Configuration;
@@ -21,21 +20,23 @@ public class ReplaysRepository : IRepository<Replay>
     {
         using var connection = new NpgsqlConnection(_connectionString);
 
-        var dbObjects = connection.Query<ReplayDb>("SELECT id, name, status, tempfilename FROM replays");
-        return dbObjects.Select(x => new Replay(x.Id.ToString(), x.Name, x.Status, x.TempFilename)).ToList();
+        var dbObjects = connection.Query<ReplayDb>("SELECT id, name, status, filename FROM replays");
+        return dbObjects.Select(x => new Replay(x.Id.ToString(), x.Name, x.Status, x.Filename)).ToList();
     }
 
     public Replay Create(Replay item)
     {
         using var connection = new NpgsqlConnection(_connectionString);
-        const string sql =
-            "INSERT INTO replays (name, status, tempfilename) VALUES (@name, @status, @tempfilename) RETURNING id";
+        const string sql = "INSERT INTO replays "
+            + "(name, status, filename) "
+            + "VALUES (@name, @status, @filename) "
+            + "RETURNING id";
 
         var parameters = new
         {
             name = item.Name,
             status = item.Status,
-            tempfilename = item.Filename
+            filename = item.Filename
         };
 
         var created = connection.QuerySingle<string>(sql, parameters);
@@ -44,8 +45,23 @@ public class ReplaysRepository : IRepository<Replay>
 
     public void Update(Replay item)
     {
-        throw new NotImplementedException();
+        using var connection = new NpgsqlConnection(_connectionString);
+        const string sql = "UPDATE replays SET "
+            + "name = @name, "
+            + "status = @status, "
+            + "filename = @filename "
+            + "WHERE id = @id";
+
+        var parameters = new
+        {
+            id = int.Parse(item.Id),
+            name = item.Name,
+            status = item.Status,
+            filename = item.Filename
+        };
+
+        connection.Execute(sql, parameters);
     }
 }
 
-public record ReplayDb(int Id, string Name, string Status, string TempFilename);
+public record ReplayDb(int Id, string Name, string Status, string Filename);

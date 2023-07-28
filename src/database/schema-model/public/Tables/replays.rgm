@@ -18,7 +18,7 @@ table "public"."replays" {
     column "name" {
       type = text
     }
-    column "tempfilename" {
+    column "filename" {
       type = text
     }
   )

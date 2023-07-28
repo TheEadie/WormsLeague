@@ -31,12 +31,12 @@ public class ReplaysController : V1ApiController
     [HttpPost]
     public async Task<ActionResult<ReplayDto>> Post([FromForm] CreateReplayDto parameters)
     {
+        var fileNameForDisplay = GetFileNameForDisplay(parameters.ReplayFile);
         _logger.Log(
             LogLevel.Information,
             "Received replay file {filename} with name {name}",
-            GetFileNameForDisplay(parameters.ReplayFile),
+            fileNameForDisplay,
             parameters.Name);
-        var fileNameForDisplay = GetFileNameForDisplay(parameters.ReplayFile);
         var tempFilename = await SaveFileToTempLocation(parameters.ReplayFile, fileNameForDisplay);
         var replay = _repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename));
         return ReplayDto.FromDomain(replay);

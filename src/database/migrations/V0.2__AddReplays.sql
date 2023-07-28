@@ -7,7 +7,7 @@ CREATE TABLE public.replays (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     status text,
     name text,
-    tempfilename text
+    filename text
 );
 ALTER TABLE public.replays ADD CONSTRAINT replays_pk PRIMARY KEY (id);
 
