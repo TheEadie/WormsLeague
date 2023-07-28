@@ -153,7 +153,7 @@ namespace Worms.Commands
                 var allReplays = await _localReplayRetriever.Get(_logger, cancellationToken);
                 var replay = allReplays.MaxBy(x => x.Details.Date);
                 _logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
-                //if (!dryRun)
+                if (!dryRun)
                 {
                     await _remoteReplayCreator.Create(
                         new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
