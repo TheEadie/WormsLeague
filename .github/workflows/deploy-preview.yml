@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "deployment/worms.davideadie.dev/**"
+      - "build/flyway-summary.sh"
       - ".github/workflows/deploy.yml"
 
 jobs:

@@ -4,7 +4,8 @@ on:
   push:
     paths:
       - "src/cli/**"
-      - "build/**"
+      - "build/release-github.sh"
+      - "build/version.sh"
       - ".github/workflows/cli.yml"
 
 jobs:
