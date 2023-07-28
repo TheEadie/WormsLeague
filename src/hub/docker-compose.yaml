@@ -9,7 +9,7 @@ services:
         ports:
             - "5432:5432"
         healthcheck:
-            test: ["CMD", "pg_isready", "-U", "worms"]
+            test: [ "CMD", "pg_isready", "-U", "worms" ]
             interval: 5s
             timeout: 5s
             retries: 5
@@ -38,9 +38,15 @@ services:
         build: .
         ports:
             - "5005:80"
+        volumes:
+            - storage:/data
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
             - WORMS_CONNECTIONSTRINGS__DATABASE=Server=database;Port=5432;Database=worms;Username=worms;Password=worms
+            - WORMS_STORAGE__TEMPREPLAYFOLDER=/data/replays
         depends_on:
             flyway-init:
                 condition: service_completed_successfully
+
+volumes:
+    storage:
