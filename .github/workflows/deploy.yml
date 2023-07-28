@@ -40,7 +40,6 @@ jobs:
     needs: deploy-azure
     runs-on: ubuntu-latest
     env:
-      SPAWNCTL_ACCESS_TOKEN: ${{ secrets.SPAWN_ACCESS_TOKEN }}
       FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}
 
     steps:
