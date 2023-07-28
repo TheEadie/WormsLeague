@@ -60,25 +60,28 @@ jobs:
         id: vars
         run: echo "version=$(cat deployment/worms.davideadie.dev/database-version.txt)" >> $GITHUB_OUTPUT
 
+      - name: Create Reports folder
+        run: mkdir src/database/reports
+
       - name: Run Flyway Report
         uses: docker://redgate/flyway:9
         with:
           args: >-
+            check -changes -drift
             -locations="filesystem:/github/workspace/src/database/migrations"
             -configFiles="/github/workspace/src/database/flyway.conf"
             -url="jdbc:postgresql://${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }}"
             -user="${{ secrets.PROD_DATABASE_USER }}"
-            -password="${{ secrets.PROD_DATABASE_PASSWORD }}""
-            check -changes -drift
+            -password="${{ secrets.PROD_DATABASE_PASSWORD }}"
             -check.buildUrl="jdbc:postgresql://postgres:5432/worms"
             -check.buildUser="worms"
             -check.buildPassword="worms"
             -target=${{ steps.vars.outputs.version }}
-            -check.reportFilename="/flyway/reports/report.htm"
+            -reportFilename="/github/workspace/src/database/reports/report.htm"
 
       - name: Get summary
         id: summary
-        run: echo "summary=$(build/flyway-summary.sh src/database/reports/report.htm.json)" >> $GITHUB_OUTPUT
+        run: echo "summary=$(build/flyway-summary.sh src/database/reports/report.json)" >> $GITHUB_OUTPUT
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
