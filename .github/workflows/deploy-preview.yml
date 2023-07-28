@@ -65,14 +65,14 @@ jobs:
           args: >-
             -locations="filesystem:/github/workspace/src/database/migrations"
             -configFiles="/github/workspace/src/database/flyway.conf"
-            -url="jdbc:postgresql://${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }}" \
-            -user="${{ secrets.PROD_DATABASE_USER }}" \
-            -password="${{ secrets.PROD_DATABASE_PASSWORD }}" \
-            check -changes -drift \
-            -check.buildUrl="jdbc:postgresql://postgres:5432/worms" \
-            -check.buildUser="worms" \
-            -check.buildPassword="worms" \
-            -target=${{ steps.vars.outputs.version }} \
+            -url="jdbc:postgresql://${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }}"
+            -user="${{ secrets.PROD_DATABASE_USER }}"
+            -password="${{ secrets.PROD_DATABASE_PASSWORD }}""
+            check -changes -drift
+            -check.buildUrl="jdbc:postgresql://postgres:5432/worms"
+            -check.buildUser="worms"
+            -check.buildPassword="worms"
+            -target=${{ steps.vars.outputs.version }}
             -check.reportFilename="/flyway/reports/report.htm"
 
       - name: Get summary
