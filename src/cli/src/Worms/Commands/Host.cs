@@ -31,11 +31,16 @@ namespace Worms.Commands
             new[] { "--local-mode" },
             "Use legacy local mode to announce to Slack");
 
+        public static readonly Option<bool> NoUpload = new(
+            new[] { "--no-upload" },
+            "Don't Upload the replay to Worms Hub when the game finishes");
+
         public Host()
             : base("host", "Host a game of worms using the latest options")
         {
             AddOption(DryRun);
             AddOption(LocalMode);
+            AddOption(NoUpload);
         }
     }
 
@@ -84,6 +89,7 @@ namespace Worms.Commands
             var cancellationToken = context.GetCancellationToken();
             var dryRun = context.ParseResult.GetValueForOption(Host.DryRun);
             var localMode = context.ParseResult.GetValueForOption(Host.LocalMode);
+            var noUpload = context.ParseResult.GetValueForOption(Host.NoUpload);
 
             _logger.Verbose("Loading configuration");
             var config = _configManager.Load();
@@ -131,24 +137,25 @@ namespace Worms.Commands
                 await runGame;
                 return 0;
             }
-            else
+
+            _logger.Information("Announcing game to hub");
+            RemoteGame game = null;
+            if (!dryRun)
             {
-                _logger.Information("Announcing game to hub");
-                RemoteGame game = null;
-                if (!dryRun)
-                {
-                    game = await _remoteGameCreator.Create(hostIp, _logger, cancellationToken);
-                }
+                game = await _remoteGameCreator.Create(hostIp, _logger, cancellationToken);
+            }
 
-                _logger.Information("Waiting for game to finish");
-                await runGame;
+            _logger.Information("Waiting for game to finish");
+            await runGame;
 
-                _logger.Information("Marking game as complete in hub");
-                if (!dryRun)
-                {
-                    await _gameUpdater.SetGameComplete(game, _logger, cancellationToken);
-                }
+            _logger.Information("Marking game as complete in hub");
+            if (!dryRun)
+            {
+                await _gameUpdater.SetGameComplete(game, _logger, cancellationToken);
+            }
 
+            if (!noUpload)
+            {
                 _logger.Information("Uploading replay to hub");
                 var allReplays = await _localReplayRetriever.Get(_logger, cancellationToken);
                 var replay = allReplays.MaxBy(x => x.Details.Date);
@@ -160,9 +167,9 @@ namespace Worms.Commands
                         _logger,
                         cancellationToken);
                 }
-
-                return 0;
             }
+
+            return 0;
         }
 
         private static string GetIpAddress(string domain)
