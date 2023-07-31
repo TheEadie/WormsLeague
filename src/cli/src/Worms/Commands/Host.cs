@@ -32,13 +32,17 @@ namespace Worms.Commands
             new[] { "--local-mode" },
             "Use legacy local mode to announce to Slack");
 
+        public static readonly Option<bool> SkipSchemeDownload = new(
+            new[] { "--skip-scheme-download" },
+            "Don't download the latest schemes before starting the game");
+
         public static readonly Option<bool> SkipUpload = new(
             new[] { "--skip-upload" },
             "Don't Upload the replay to Worms Hub when the game finishes");
 
         public static readonly Option<bool> SkipAnnouncement = new(
             new[] { "--skip-announcement" },
-            "Don't Upload the replay to Worms Hub when the game finishes");
+            "Don't announce the game to Slack or Worms Hub");
 
         public Host()
             : base("host", "Host a game of worms using the latest options")
@@ -97,6 +101,7 @@ namespace Worms.Commands
             var localMode = context.ParseResult.GetValueForOption(Host.LocalMode);
             var skipUpload = context.ParseResult.GetValueForOption(Host.SkipUpload);
             var skipAnnouncement = context.ParseResult.GetValueForOption(Host.SkipAnnouncement);
+            var skipSchemeDownload = context.ParseResult.GetValueForOption(Host.SkipSchemeDownload);
 
             _logger.Verbose("Loading configuration");
             var config = _configManager.Load();
@@ -121,7 +126,7 @@ namespace Worms.Commands
                 return 1;
             }
 
-            await DownloadLatestOptions(config, dryRun);
+            await DownloadLatestOptions(skipSchemeDownload, config, dryRun);
             var runGame = StartWorms(dryRun, cancellationToken);
 
             if (localMode)
@@ -235,8 +240,13 @@ namespace Worms.Commands
             return hostIp;
         }
 
-        private async Task DownloadLatestOptions(Config config, bool dryRun)
+        private async Task DownloadLatestOptions(bool skipSchemeDownload, Config config, bool dryRun)
         {
+            if (skipSchemeDownload)
+            {
+                return;
+            }
+
             _logger.Information("Downloading the latest options");
             if (!dryRun)
             {
