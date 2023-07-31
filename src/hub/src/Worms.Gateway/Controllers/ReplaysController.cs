@@ -42,7 +42,7 @@ public class ReplaysController : V1ApiController
             fileNameForDisplay,
             parameters.Name);
 
-        if (!_replayFileValidator.IsValid(parameters.ReplayFile))
+        if (!_replayFileValidator.IsValid(parameters.ReplayFile, fileNameForDisplay))
         {
             return BadRequest("Invalid replay file");
         }

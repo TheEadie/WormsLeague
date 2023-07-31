@@ -1,16 +1,52 @@
 ﻿using System.IO;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Worms.Gateway.Validators;
 
 public class ReplayFileValidator
 {
+    private readonly ILogger<ReplayFileValidator> _logger;
     private const int MaxFileSize = 1024 * 300; // 300KB
     private const string FileExtension = ".wagame";
     private readonly byte[] _fileSignature = "WA"u8.ToArray();
 
-    public bool IsValid(IFormFile replayFile) =>
-        FileHasCorrectExtension(replayFile) && FileHasCorrectSignature(replayFile) && FileIsExpectedSize(replayFile);
+    public ReplayFileValidator(ILogger<ReplayFileValidator> logger)
+    {
+        _logger = logger;
+    }
+
+    public bool IsValid(IFormFile replayFile, string fileNameForDisplay)
+    {
+        if (!FileHasCorrectExtension(replayFile))
+        {
+            _logger.Log(
+                LogLevel.Information,
+                "Invalid Replay Uploaded: {filename} does not have valid extension (.WAGame)",
+                fileNameForDisplay);
+            return false;
+        }
+
+        if (!FileHasCorrectSignature(replayFile))
+        {
+            _logger.Log(
+                LogLevel.Information,
+                "Invalid Replay Uploaded: {filename} does not have valid signature (WA)",
+                fileNameForDisplay);
+            return false;
+        }
+
+        if (!FileIsExpectedSize(replayFile))
+        {
+            _logger.Log(
+                LogLevel.Information,
+                "Invalid Replay Uploaded: {filename} is larger than 300KB",
+                fileNameForDisplay);
+            return false;
+        }
+
+        return true;
+    }
 
     private static bool FileHasCorrectExtension(IFormFile replayFile) =>
         Path.GetExtension(replayFile.FileName).ToLowerInvariant() == FileExtension;
