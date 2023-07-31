@@ -5,7 +5,7 @@ namespace Worms.Gateway.Validators;
 
 public class ReplayFileValidator
 {
-    private const int MaxFileSize = 1024 * 30; // 300KB
+    private const int MaxFileSize = 1024 * 300; // 300KB
     private const string FileExtension = ".wagame";
     private readonly byte[] _fileSignature = "WA"u8.ToArray();
 
