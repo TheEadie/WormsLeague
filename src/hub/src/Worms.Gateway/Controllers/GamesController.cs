@@ -30,6 +30,9 @@ public class GamesController : V1ApiController
     [HttpGet("{id}")]
     public ActionResult<GameDto> Get(string id)
     {
+        var username = User.Identity?.Name ?? "anonymous";
+        _logger.Log(LogLevel.Information, "Get games started by {username}", username);
+
         var found = _repository.Get().SingleOrDefault(x => x.Id == id);
 
         if (found is null)
@@ -37,19 +40,28 @@ public class GamesController : V1ApiController
             return NotFound($"Game with Id = {id} not found");
         }
 
+        _logger.Log(LogLevel.Information, "Getting games complete");
         return new GameDto(found.Id, found.Status, found.HostMachine);
     }
 
     [HttpPost]
     public ActionResult<GameDto> Post(CreateGameDto parameters)
     {
-        _slackAnnouncer.AnnounceGameStarting(parameters.HostMachine, _logger);
+        var username = User.Identity?.Name ?? "anonymous";
+        _logger.Log(LogLevel.Information, "Creating game started by {username}", username);
+
+        _slackAnnouncer.AnnounceGameStarting(parameters.HostMachine);
+
+        _logger.Log(LogLevel.Information, "Creating game complete");
         return _repository.Create(new GameDto("0", "Pending", parameters.HostMachine));
     }
 
     [HttpPut]
     public ActionResult Put(GameDto game)
     {
+        var username = User.Identity?.Name ?? "anonymous";
+        _logger.Log(LogLevel.Information, "Updating game started by {username}", username);
+
         var found = _repository.Get().SingleOrDefault(x => x.Id == game.Id);
         if (found is null)
         {
@@ -58,6 +70,7 @@ public class GamesController : V1ApiController
 
         _repository.Update(game);
 
+        _logger.Log(LogLevel.Information, "Updating game complete");
         return Ok();
     }
 }

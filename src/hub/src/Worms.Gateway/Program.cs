@@ -14,7 +14,7 @@ public static class Program
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
-            .ConfigureLogging((_, builder) => builder.AddConsole())
+            .ConfigureLogging((_, builder) => builder.AddSimpleConsole(options => { options.SingleLine = true; }))
             .ConfigureAppConfiguration((_, config) => config.AddEnvironmentVariables("WORMS_"))
             .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
 }
