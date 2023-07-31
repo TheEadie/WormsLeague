@@ -4,7 +4,7 @@ default: all
 OUTPUT_DIR = .artifacts
 IMAGE_NAME = theeadie/wormscli
 
-NEXT_VERSION := 0.21
+NEXT_VERSION := 0.22
 TAG_PREFIX := cli/v
 
 VERSION := $(shell ../../build/version.sh $(NEXT_VERSION) $(TAG_PREFIX))
