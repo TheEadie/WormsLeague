@@ -32,8 +32,12 @@ namespace Worms.Commands
             new[] { "--local-mode" },
             "Use legacy local mode to announce to Slack");
 
-        public static readonly Option<bool> NoUpload = new(
-            new[] { "--no-upload" },
+        public static readonly Option<bool> SkipUpload = new(
+            new[] { "--skip-upload" },
+            "Don't Upload the replay to Worms Hub when the game finishes");
+
+        public static readonly Option<bool> SkipAnnouncement = new(
+            new[] { "--skip-announcement" },
             "Don't Upload the replay to Worms Hub when the game finishes");
 
         public Host()
@@ -41,7 +45,8 @@ namespace Worms.Commands
         {
             AddOption(DryRun);
             AddOption(LocalMode);
-            AddOption(NoUpload);
+            AddOption(SkipUpload);
+            AddOption(SkipAnnouncement);
         }
     }
 
@@ -90,7 +95,8 @@ namespace Worms.Commands
             var cancellationToken = context.GetCancellationToken();
             var dryRun = context.ParseResult.GetValueForOption(Host.DryRun);
             var localMode = context.ParseResult.GetValueForOption(Host.LocalMode);
-            var noUpload = context.ParseResult.GetValueForOption(Host.NoUpload);
+            var skipUpload = context.ParseResult.GetValueForOption(Host.SkipUpload);
+            var skipAnnouncement = context.ParseResult.GetValueForOption(Host.SkipAnnouncement);
 
             _logger.Verbose("Loading configuration");
             var config = _configManager.Load();
@@ -120,24 +126,29 @@ namespace Worms.Commands
 
             if (localMode)
             {
-                await AnnounceGameLocal(hostIp, config, dryRun);
+                await AnnounceGameLocal(hostIp, skipAnnouncement, config, dryRun);
                 await WaitForGameToClose(runGame);
                 return 0;
             }
 
-            var game = await AnnounceGameToWormsHub(hostIp, dryRun, cancellationToken);
+            var game = await AnnounceGameToWormsHub(hostIp, skipAnnouncement, dryRun, cancellationToken);
             await WaitForGameToClose(runGame);
-            await MarkGameCompleteOnWormsHub(game, dryRun, cancellationToken);
-            await UploadReplayToWormsHub(noUpload, dryRun, cancellationToken);
-
+            await MarkGameCompleteOnWormsHub(game, skipAnnouncement, dryRun, cancellationToken);
+            await UploadReplayToWormsHub(skipUpload, dryRun, cancellationToken);
             return 0;
         }
 
         private async Task<RemoteGame> AnnounceGameToWormsHub(
             string hostIp,
+            bool skipAnnouncement,
             bool dryRun,
             CancellationToken cancellationToken)
         {
+            if (skipAnnouncement)
+            {
+                return new RemoteGame("", "", "");
+            }
+
             _logger.Information("Announcing game to hub");
             RemoteGame game = null;
             if (!dryRun)
@@ -148,8 +159,17 @@ namespace Worms.Commands
             return game;
         }
 
-        private async Task MarkGameCompleteOnWormsHub(RemoteGame game, bool dryRun, CancellationToken cancellationToken)
+        private async Task MarkGameCompleteOnWormsHub(
+            RemoteGame game,
+            bool skipAnnouncement,
+            bool dryRun,
+            CancellationToken cancellationToken)
         {
+            if (skipAnnouncement)
+            {
+                return;
+            }
+
             _logger.Information("Marking game as complete in hub");
             if (!dryRun)
             {
@@ -157,26 +177,33 @@ namespace Worms.Commands
             }
         }
 
-        private async Task UploadReplayToWormsHub(bool noUpload, bool dryRun, CancellationToken cancellationToken)
+        private async Task UploadReplayToWormsHub(bool skipUpload, bool dryRun, CancellationToken cancellationToken)
         {
-            if (!noUpload)
+            if (skipUpload)
             {
-                _logger.Information("Uploading replay to hub");
-                var allReplays = await _localReplayRetriever.Get(_logger, cancellationToken);
-                var replay = allReplays.MaxBy(x => x.Details.Date);
-                _logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
-                if (!dryRun)
-                {
-                    await _remoteReplayCreator.Create(
-                        new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
-                        _logger,
-                        cancellationToken);
-                }
+                return;
+            }
+
+            _logger.Information("Uploading replay to hub");
+            var allReplays = await _localReplayRetriever.Get(_logger, cancellationToken);
+            var replay = allReplays.MaxBy(x => x.Details.Date);
+            _logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
+            if (!dryRun)
+            {
+                await _remoteReplayCreator.Create(
+                    new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
+                    _logger,
+                    cancellationToken);
             }
         }
 
-        private async Task AnnounceGameLocal(string hostIp, Config config, bool dryRun)
+        private async Task AnnounceGameLocal(string hostIp, bool skipAnnouncement, Config config, bool dryRun)
         {
+            if (skipAnnouncement)
+            {
+                return;
+            }
+
             _logger.Information("Announcing game on Slack");
             _logger.Verbose($"Host name: {hostIp}");
             if (!dryRun)
