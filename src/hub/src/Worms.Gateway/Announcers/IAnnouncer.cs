@@ -1,10 +1,8 @@
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
-namespace Worms.Gateway.Announcers
+namespace Worms.Gateway.Announcers;
+
+public interface ISlackAnnouncer
 {
-    public interface ISlackAnnouncer
-    {
-        Task AnnounceGameStarting(string hostName, ILogger log);
-    }
+    Task AnnounceGameStarting(string hostName);
 }

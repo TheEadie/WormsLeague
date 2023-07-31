@@ -50,7 +50,7 @@ public class GamesController : V1ApiController
         var username = User.Identity?.Name ?? "anonymous";
         _logger.Log(LogLevel.Information, "Creating game started by {username}", username);
 
-        _slackAnnouncer.AnnounceGameStarting(parameters.HostMachine, _logger);
+        _slackAnnouncer.AnnounceGameStarting(parameters.HostMachine);
 
         _logger.Log(LogLevel.Information, "Creating game complete");
         return _repository.Create(new GameDto("0", "Pending", parameters.HostMachine));
