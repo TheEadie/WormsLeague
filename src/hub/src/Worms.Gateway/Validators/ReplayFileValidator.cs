@@ -1,8 +1,4 @@
-﻿using System.IO;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-
-namespace Worms.Gateway.Validators;
+﻿namespace Worms.Gateway.Validators;
 
 public class ReplayFileValidator
 {

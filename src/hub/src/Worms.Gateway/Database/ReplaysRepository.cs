@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Dapper;
-using Microsoft.Extensions.Configuration;
+﻿using Dapper;
 using Npgsql;
 using Worms.Gateway.Domain;
 

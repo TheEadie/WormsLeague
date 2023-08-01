@@ -1,9 +1,5 @@
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Worms.Gateway.Announcers.Slack;
 
@@ -36,7 +32,7 @@ internal class SlackAnnouncer : ISlackAnnouncer
 
         _logger.LogInformation("Announcing game starting to Slack");
         using var client = new HttpClient();
-        var slackUrl = new System.Uri(webHookUrl);
+        var slackUrl = new Uri(webHookUrl);
         var body = JsonSerializer.Serialize(slackMessage);
         var content = new StringContent(body, Encoding.UTF8, "application/json");
 
