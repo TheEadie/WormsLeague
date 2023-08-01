@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,12 +23,7 @@ public static class Program
         builder.Configuration.AddEnvironmentVariables("WORMS_");
         builder.Services.AddControllers();
         builder.Services.AddApiVersioning();
-        builder.Services.AddAuthentication(
-                options =>
-                    {
-                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    })
+        builder.Services.AddAuthentication()
             .AddJwtBearer(
                 options =>
                     {
