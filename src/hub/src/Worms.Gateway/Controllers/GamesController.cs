@@ -25,7 +25,14 @@ public class GamesController : V1ApiController
     }
 
     [HttpGet]
-    public ActionResult<IReadOnlyCollection<GameDto>> Get() => _repository.Get().ToList();
+    public ActionResult<IReadOnlyCollection<GameDto>> Get()
+    {
+        var username = User.Identity?.Name ?? "anonymous";
+        _logger.Log(LogLevel.Information, "Get games started by {username}", username);
+        var allGames = _repository.Get().ToList();
+        _logger.Log(LogLevel.Information, "Getting games complete");
+        return allGames;
+    }
 
     [HttpGet("{id}")]
     public ActionResult<GameDto> Get(string id)
