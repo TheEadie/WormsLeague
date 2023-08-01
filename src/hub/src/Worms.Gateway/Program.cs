@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,18 +14,19 @@ using Worms.Gateway.Validators;
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddSimpleConsole(options => { options.SingleLine = true; });
 builder.Configuration.AddEnvironmentVariables("WORMS_");
+
 builder.Services.AddControllers();
 builder.Services.AddApiVersioning();
 builder.Services.AddAuthentication()
     .AddJwtBearer(
         options =>
             {
-                options.Authority = "https://eadie.eu.auth0.com/";
-                options.Audience = "worms.davideadie.dev";
+                options.Authority = builder.Configuration.GetValue<string>("Auth:Authority");
+                options.Audience = builder.Configuration.GetValue<string>("Auth:Audience");
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    NameClaimType = ClaimTypes.NameIdentifier,
-                    RoleClaimType = "permissions"
+                    NameClaimType = builder.Configuration.GetValue<string>("Auth:NameClaim"),
+                    RoleClaimType = builder.Configuration.GetValue<string>("Auth:PermissionsClaim")
                 };
             });
 builder.Services.AddAuthorization();
@@ -36,14 +36,19 @@ builder.Services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
 builder.Services.AddSingleton<ReplayFileValidator>();
 
 var app = builder.Build();
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.MapControllers(); //.AllowAnonymous();
+}
+else
+{
+    app.MapControllers();
+}
+
 app.Run();
