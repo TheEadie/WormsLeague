@@ -9,16 +9,17 @@ namespace Worms.Gateway.Database;
 
 public class GamesRepository : IRepository<GameDto>
 {
-    private readonly string _connectionString;
+    private readonly IConfiguration _configuration;
 
     public GamesRepository(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("Database");
+        _configuration = configuration;
     }
 
     public IReadOnlyCollection<GameDto> Get()
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        var connectionString = _configuration.GetConnectionString("Database");
+        using var connection = new NpgsqlConnection(connectionString);
 
         var dbObjects = connection.Query<GamesDb>("SELECT id, status, hostmachine FROM games");
         return dbObjects.Select(x => new GameDto(x.Id.ToString(), x.Status, x.HostMachine)).ToList();
@@ -26,7 +27,8 @@ public class GamesRepository : IRepository<GameDto>
 
     public GameDto Create(GameDto item)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        var connectionString = _configuration.GetConnectionString("Database");
+        using var connection = new NpgsqlConnection(connectionString);
         const string sql = "INSERT INTO games (status, hostmachine) VALUES (@status, @hostmachine) RETURNING id";
 
         var parameters = new
@@ -41,7 +43,8 @@ public class GamesRepository : IRepository<GameDto>
 
     public void Update(GameDto item)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        var connectionString = _configuration.GetConnectionString("Database");
+        using var connection = new NpgsqlConnection(connectionString);
         const string sql = "UPDATE games SET status = @status, hostmachine = @hostmachine WHERE id = @id";
 
         var parameters = new
