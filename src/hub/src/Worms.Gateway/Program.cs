@@ -38,12 +38,12 @@ app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
-    app.MapControllers(); //.AllowAnonymous();
+    _ = app.UseDeveloperExceptionPage();
+    _ = app.MapControllers(); //.AllowAnonymous();
 }
 else
 {
-    app.MapControllers();
+    _ = app.MapControllers();
 }
 
 app.Run();

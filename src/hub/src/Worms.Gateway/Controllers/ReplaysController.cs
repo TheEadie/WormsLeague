@@ -7,7 +7,7 @@ using Worms.Gateway.Validators;
 
 namespace Worms.Gateway.Controllers;
 
-public class ReplaysController : V1ApiController
+internal sealed class ReplaysController : V1ApiController
 {
     private readonly IRepository<Replay> _repository;
     private readonly ReplayFileValidator _replayFileValidator;
@@ -30,18 +30,18 @@ public class ReplaysController : V1ApiController
     public async Task<ActionResult<ReplayDto>> Post([FromForm] CreateReplayDto parameters)
     {
         var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Upload replay started by {username}", username);
+        _logger.Log(LogLevel.Information, "Upload replay started by {Username}", username);
 
         var fileNameForDisplay = GetFileNameForDisplay(parameters.ReplayFile);
         _logger.Log(
             LogLevel.Information,
-            "Received replay file {name} ({filename})",
+            "Received replay file {Name} ({Filename})",
             parameters.Name,
             fileNameForDisplay);
 
         if (!_replayFileValidator.IsValid(parameters.ReplayFile, fileNameForDisplay))
         {
-            _logger.Log(LogLevel.Warning, "Invalid replay file uploaded by {username}", username);
+            _logger.Log(LogLevel.Warning, "Invalid replay file uploaded by {Username}", username);
             return BadRequest("Invalid replay file");
         }
 
@@ -56,22 +56,19 @@ public class ReplaysController : V1ApiController
     {
         var generatedFileName = Path.GetRandomFileName();
 
-        var tempReplayFolderPath = _configuration["Storage:TempReplayFolder"];
-        if (tempReplayFolderPath is null)
-        {
-            throw new Exception("Temp replay folder not configured");
-        }
+        var tempReplayFolderPath = _configuration["Storage:TempReplayFolder"]
+            ?? throw new ArgumentException("Temp replay folder not configured");
 
         if (!Path.Exists(tempReplayFolderPath))
         {
-            Directory.CreateDirectory(tempReplayFolderPath);
+            _ = Directory.CreateDirectory(tempReplayFolderPath);
         }
 
         var saveFilePath = Path.Combine(tempReplayFolderPath, generatedFileName);
 
         _logger.Log(
             LogLevel.Information,
-            "Saving replay file {filename} to {filepath}",
+            "Saving replay file {Filename} to {Filepath}",
             fileNameForDisplay,
             saveFilePath);
 

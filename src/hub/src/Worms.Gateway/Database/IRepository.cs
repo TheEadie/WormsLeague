@@ -2,7 +2,7 @@
 
 public interface IRepository<T>
 {
-    IReadOnlyCollection<T> Get();
+    IReadOnlyCollection<T> GetAll();
 
     T Create(T item);
 

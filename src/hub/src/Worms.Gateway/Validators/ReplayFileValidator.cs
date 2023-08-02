@@ -1,16 +1,13 @@
 ﻿namespace Worms.Gateway.Validators;
 
-public class ReplayFileValidator
+internal sealed class ReplayFileValidator
 {
     private readonly ILogger<ReplayFileValidator> _logger;
     private const int MaxFileSize = 1024 * 300; // 300KB
     private const string FileExtension = ".wagame";
     private readonly byte[] _fileSignature = "WA"u8.ToArray();
 
-    public ReplayFileValidator(ILogger<ReplayFileValidator> logger)
-    {
-        _logger = logger;
-    }
+    public ReplayFileValidator(ILogger<ReplayFileValidator> logger) => _logger = logger;
 
     public bool IsValid(IFormFile replayFile, string fileNameForDisplay)
     {
@@ -18,7 +15,7 @@ public class ReplayFileValidator
         {
             _logger.Log(
                 LogLevel.Information,
-                "Invalid Replay Uploaded: {filename} does not have valid extension (.WAGame)",
+                "Invalid Replay Uploaded: {Filename} does not have valid extension (.WAGame)",
                 fileNameForDisplay);
             return false;
         }
@@ -27,7 +24,7 @@ public class ReplayFileValidator
         {
             _logger.Log(
                 LogLevel.Information,
-                "Invalid Replay Uploaded: {filename} does not have valid signature (WA)",
+                "Invalid Replay Uploaded: {Filename} does not have valid signature (WA)",
                 fileNameForDisplay);
             return false;
         }
@@ -36,7 +33,7 @@ public class ReplayFileValidator
         {
             _logger.Log(
                 LogLevel.Information,
-                "Invalid Replay Uploaded: {filename} is larger than 300KB",
+                "Invalid Replay Uploaded: {Filename} is larger than 300KB",
                 fileNameForDisplay);
             return false;
         }
@@ -45,7 +42,7 @@ public class ReplayFileValidator
     }
 
     private static bool FileHasCorrectExtension(IFormFile replayFile) =>
-        Path.GetExtension(replayFile.FileName).ToLowerInvariant() == FileExtension;
+        Path.GetExtension(replayFile.FileName).ToUpperInvariant() == FileExtension;
 
     private bool FileHasCorrectSignature(IFormFile replayFile)
     {
@@ -53,12 +50,7 @@ public class ReplayFileValidator
         var buffer = new byte[2];
         var bytesRead = stream.Read(buffer);
 
-        if (bytesRead < 2)
-        {
-            return false;
-        }
-
-        return buffer[0] == _fileSignature[0] && buffer[1] == _fileSignature[1];
+        return bytesRead >= 2 && buffer[0] == _fileSignature[0] && buffer[1] == _fileSignature[1];
     }
 
     private static bool FileIsExpectedSize(IFormFile replayFile) => replayFile.Length <= MaxFileSize;

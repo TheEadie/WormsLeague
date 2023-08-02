@@ -5,7 +5,7 @@ using Worms.Gateway.Dtos;
 
 namespace Worms.Gateway.Controllers;
 
-public class GamesController : V1ApiController
+internal sealed class GamesController : V1ApiController
 {
     private readonly IRepository<GameDto> _repository;
     private readonly ISlackAnnouncer _slackAnnouncer;
@@ -25,8 +25,8 @@ public class GamesController : V1ApiController
     public ActionResult<IReadOnlyCollection<GameDto>> Get()
     {
         var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Get games started by {username}", username);
-        var allGames = _repository.Get().ToList();
+        _logger.Log(LogLevel.Information, "Get games started by {Username}", username);
+        var allGames = _repository.GetAll().ToList();
         _logger.Log(LogLevel.Information, "Getting games complete");
         return allGames;
     }
@@ -35,9 +35,9 @@ public class GamesController : V1ApiController
     public ActionResult<GameDto> Get(string id)
     {
         var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Get games started by {username}", username);
+        _logger.Log(LogLevel.Information, "Get games started by {Username}", username);
 
-        var found = _repository.Get().SingleOrDefault(x => x.Id == id);
+        var found = _repository.GetAll().SingleOrDefault(x => x.Id == id);
 
         if (found is null)
         {
@@ -49,12 +49,12 @@ public class GamesController : V1ApiController
     }
 
     [HttpPost]
-    public ActionResult<GameDto> Post(CreateGameDto parameters)
+    public async Task<ActionResult<GameDto>> Post(CreateGameDto parameters)
     {
         var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Creating game started by {username}", username);
+        _logger.Log(LogLevel.Information, "Creating game started by {Username}", username);
 
-        _slackAnnouncer.AnnounceGameStarting(parameters.HostMachine);
+        await _slackAnnouncer.AnnounceGameStarting(parameters.HostMachine);
 
         _logger.Log(LogLevel.Information, "Creating game complete");
         return _repository.Create(new GameDto("0", "Pending", parameters.HostMachine));
@@ -64,9 +64,9 @@ public class GamesController : V1ApiController
     public ActionResult Put(GameDto game)
     {
         var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Updating game started by {username}", username);
+        _logger.Log(LogLevel.Information, "Updating game started by {Username}", username);
 
-        var found = _repository.Get().SingleOrDefault(x => x.Id == game.Id);
+        var found = _repository.GetAll().SingleOrDefault(x => x.Id == game.Id);
         if (found is null)
         {
             return NotFound($"Game with Id = {game.Id} not found");

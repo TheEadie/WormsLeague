@@ -1,25 +1,24 @@
-﻿using Dapper;
+﻿using System.Globalization;
+using Dapper;
 using Npgsql;
 using Worms.Gateway.Dtos;
 
 namespace Worms.Gateway.Database;
 
-public class GamesRepository : IRepository<GameDto>
+internal sealed class GamesRepository : IRepository<GameDto>
 {
     private readonly IConfiguration _configuration;
 
-    public GamesRepository(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
+    public GamesRepository(IConfiguration configuration) => _configuration = configuration;
 
-    public IReadOnlyCollection<GameDto> Get()
+    public IReadOnlyCollection<GameDto> GetAll()
     {
         var connectionString = _configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
 
         var dbObjects = connection.Query<GamesDb>("SELECT id, status, hostmachine FROM games");
-        return dbObjects.Select(x => new GameDto(x.Id.ToString(), x.Status, x.HostMachine)).ToList();
+        return dbObjects.Select(x => new GameDto(x.Id.ToString(CultureInfo.InvariantCulture), x.Status, x.HostMachine))
+            .ToList();
     }
 
     public GameDto Create(GameDto item)
@@ -46,12 +45,12 @@ public class GamesRepository : IRepository<GameDto>
 
         var parameters = new
         {
-            id = int.Parse(item.Id),
+            id = int.Parse(item.Id, CultureInfo.InvariantCulture),
             status = item.Status,
             hostmachine = item.HostMachine
         };
 
-        connection.Execute(sql, parameters);
+        _ = connection.Execute(sql, parameters);
     }
 }
 

@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Worms.Gateway.Announcers.Slack;
 
-internal class SlackAnnouncer : ISlackAnnouncer
+internal sealed class SlackAnnouncer : ISlackAnnouncer
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<SlackAnnouncer> _logger;
@@ -34,9 +34,9 @@ internal class SlackAnnouncer : ISlackAnnouncer
         using var client = new HttpClient();
         var slackUrl = new Uri(webHookUrl);
         var body = JsonSerializer.Serialize(slackMessage);
-        var content = new StringContent(body, Encoding.UTF8, "application/json");
+        using var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync(slackUrl, content).ConfigureAwait(false);
-        await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await client.PostAsync(slackUrl, content);
+        await response.Content.ReadAsStringAsync();
     }
 }
