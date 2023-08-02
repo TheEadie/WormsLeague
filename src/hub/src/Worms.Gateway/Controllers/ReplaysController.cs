@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Worms.Gateway.Database;
 using Worms.Gateway.Domain;

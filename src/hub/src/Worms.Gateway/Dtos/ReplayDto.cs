@@ -1,4 +1,4 @@
-﻿using Worms.Gateway.Domain;
+using Worms.Gateway.Domain;
 
 namespace Worms.Gateway.Dtos;
 

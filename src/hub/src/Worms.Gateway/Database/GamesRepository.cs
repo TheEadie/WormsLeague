@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Dapper;
 using Npgsql;
 using Worms.Gateway.Dtos;
