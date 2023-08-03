@@ -42,7 +42,7 @@ internal sealed class ReplayFileValidator
     }
 
     private static bool FileHasCorrectExtension(IFormFile replayFile) =>
-        Path.GetExtension(replayFile.FileName).ToUpperInvariant() == FileExtension;
+        string.Equals(Path.GetExtension(replayFile.FileName), FileExtension, StringComparison.OrdinalIgnoreCase);
 
     private bool FileHasCorrectSignature(IFormFile replayFile)
     {
