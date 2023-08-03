@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,28 +18,47 @@ namespace Worms.Armageddon.Game.Windows
 
         public Task RunWorms(params string[] wormsArgs)
         {
-            return Task.Run(() =>
-            {
-                var gameInfo = _wormsLocator.Find();
-
-                var args = string.Join(" ", wormsArgs);
-                using (var process = Process.Start(gameInfo.ExeLocation, args))
-                {
-                    if (process == null)
+            return Task.Run(
+                () =>
                     {
+                        var gameInfo = _wormsLocator.Find();
+
+                        var args = string.Join(" ", wormsArgs);
+                        using (var process = Process.Start(gameInfo.ExeLocation, args))
+                        {
+                            if (process == null)
+                            {
+                                throw new InvalidOperationException("Unable to start worms process");
+                            }
+
+                            process.WaitForExit();
+                        }
+
+                        _steamService.WaitForSteamPrompt();
+
+                        var wormsProcess = FindWormsProcess(gameInfo);
+                        wormsProcess.WaitForExit();
+
                         return Task.CompletedTask;
-                    }
+                    });
+        }
 
-                    process.WaitForExit();
-                }
+        private static Process FindWormsProcess(GameInfo gameInfo)
+        {
+            Process wormsProcess = null;
+            var retryCount = 0;
+            while (wormsProcess is null && retryCount <= 10)
+            {
+                wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
+                retryCount++;
+            }
 
-                _steamService.WaitForSteamPrompt();
+            if (wormsProcess is null)
+            {
+                throw new InvalidOperationException("Unable to find worms process");
+            }
 
-                var wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
-                wormsProcess?.WaitForExit();
-
-                return Task.CompletedTask;
-            });
+            return wormsProcess;
         }
     }
 }
