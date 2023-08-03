@@ -1,7 +1,13 @@
 {
-    "extends": [
-        "config:base",
-        "group:dotNetCore"
-    ],
-    "masterIssue": true
+  "extends": ["config:base", "group:dotNetCore"],
+  "regexManagers": [
+    {
+      "fileMatch": ["^*WormsHub.cs$"],
+      "matchStrings": [
+        "Image = \"(?<depName>.*?):(?<currentValue>.*?)\",( |\\n)"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "masterIssue": true
 }
