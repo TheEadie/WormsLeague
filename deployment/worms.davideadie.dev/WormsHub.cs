@@ -25,6 +25,12 @@ class WormsHub : Stack
             ResourceGroupName = resourceGroup.Name,
         });
 
+        var logAnalyticsSharedKeys = GetSharedKeys.Invoke(new()
+        {
+            ResourceGroupName = resourceGroup.Name,
+            WorkspaceName = logAnalytics.Name
+        });
+
         var kubeEnv = new ManagedEnvironment("worms-hub-managed-environment", new()
         {
             EnvironmentName = "Worms-Hub",
@@ -35,11 +41,7 @@ class WormsHub : Stack
                 LogAnalyticsConfiguration = new LogAnalyticsConfigurationArgs
                 {
                     CustomerId = logAnalytics.CustomerId,
-                    SharedKey = GetSharedKeys.Invoke(new GetSharedKeysInvokeArgs
-                    {
-                        ResourceGroupName = resourceGroup.Name,
-                        WorkspaceName = logAnalytics.Name
-                    }).Apply(x => x.PrimarySharedKey)
+                    SharedKey = logAnalyticsSharedKeys.Apply(x => x.PrimarySharedKey)
                 }
             }
         });
