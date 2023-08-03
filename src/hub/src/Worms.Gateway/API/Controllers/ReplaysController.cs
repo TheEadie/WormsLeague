@@ -1,9 +1,9 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Worms.Gateway.API.DTOs;
-using Worms.Gateway.Database;
+using Worms.Gateway.API.Validators;
 using Worms.Gateway.Domain;
-using Worms.Gateway.Validators;
+using Worms.Gateway.Storage.Database;
 
 namespace Worms.Gateway.API.Controllers;
 

@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace Worms.Gateway.Announcers.Slack;
+namespace Worms.Gateway.Domain.Announcers.Slack;
 
 internal sealed class SlackAnnouncer : ISlackAnnouncer
 {

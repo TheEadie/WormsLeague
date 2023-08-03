@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Worms.Gateway.Announcers;
 using Worms.Gateway.API.DTOs;
-using Worms.Gateway.Database;
+using Worms.Gateway.Domain.Announcers;
+using Worms.Gateway.Storage.Database;
 
 namespace Worms.Gateway.API.Controllers;
 

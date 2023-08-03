@@ -1,11 +1,11 @@
 using Microsoft.IdentityModel.Tokens;
 using Worms.Gateway;
-using Worms.Gateway.Announcers;
-using Worms.Gateway.Announcers.Slack;
 using Worms.Gateway.API.DTOs;
-using Worms.Gateway.Database;
+using Worms.Gateway.API.Validators;
 using Worms.Gateway.Domain;
-using Worms.Gateway.Validators;
+using Worms.Gateway.Domain.Announcers;
+using Worms.Gateway.Domain.Announcers.Slack;
+using Worms.Gateway.Storage.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddSimpleConsole(options => { options.SingleLine = true; });

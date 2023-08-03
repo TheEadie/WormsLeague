@@ -3,7 +3,7 @@ using Dapper;
 using Npgsql;
 using Worms.Gateway.Domain;
 
-namespace Worms.Gateway.Database;
+namespace Worms.Gateway.Storage.Database;
 
 internal sealed class ReplaysRepository : IRepository<Replay>
 {
