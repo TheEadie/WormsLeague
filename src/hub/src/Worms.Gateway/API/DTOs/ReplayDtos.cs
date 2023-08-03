@@ -1,6 +1,6 @@
 using Worms.Gateway.Domain;
 
-namespace Worms.Gateway.Dtos;
+namespace Worms.Gateway.API.DTOs;
 
 public record ReplayDto(string Id, string Name, string Status)
 {

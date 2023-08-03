@@ -2,9 +2,9 @@ using Microsoft.IdentityModel.Tokens;
 using Worms.Gateway;
 using Worms.Gateway.Announcers;
 using Worms.Gateway.Announcers.Slack;
+using Worms.Gateway.API.DTOs;
 using Worms.Gateway.Database;
 using Worms.Gateway.Domain;
-using Worms.Gateway.Dtos;
 using Worms.Gateway.Validators;
 
 var builder = WebApplication.CreateBuilder(args);

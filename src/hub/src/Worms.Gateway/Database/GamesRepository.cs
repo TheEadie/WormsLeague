@@ -1,7 +1,7 @@
 using System.Globalization;
 using Dapper;
 using Npgsql;
-using Worms.Gateway.Dtos;
+using Worms.Gateway.API.DTOs;
 
 namespace Worms.Gateway.Database;
 
