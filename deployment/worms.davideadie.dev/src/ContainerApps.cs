@@ -3,28 +3,11 @@ using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.OperationalInsights;
-using DBforPostgreSQL = Pulumi.AzureNative.DBforPostgreSQL;
 
-class WormsHub : Stack
+public static class ContainerApps
 {
-    public WormsHub()
+    public static ContainerApp Config(ResourceGroup resourceGroup, Config config, Workspace logAnalytics)
     {
-        var stack = Pulumi.Deployment.Instance.StackName;
-        var config = new Config();
-
-
-        // Create an Azure Resource Group
-        var resourceGroup = new ResourceGroup("worms-hub-resource-group", new()
-        {
-            ResourceGroupName = stack == "prod" ? "Worms-Hub" : $"Worms-Hub-{stack}"
-        });
-
-        var logAnalytics = new Workspace("worms-hub-workspace", new()
-        {
-            WorkspaceName = "Worms-Hub",
-            ResourceGroupName = resourceGroup.Name,
-        });
-
         var logAnalyticsSharedKeys = GetSharedKeys.Invoke(new()
         {
             ResourceGroupName = resourceGroup.Name,
@@ -113,51 +96,6 @@ class WormsHub : Stack
             }
         });
 
-        var server = new DBforPostgreSQL.Server("server", new()
-        {
-            ServerName = "worms",
-            ResourceGroupName = resourceGroup.Name,
-            Version = DBforPostgreSQL.ServerVersion.ServerVersion_14,
-            AdministratorLogin = config.RequireSecret("database_user"),
-            AdministratorLoginPassword = config.RequireSecret("database_password"),
-            CreateMode = "Default",
-
-            Sku = new DBforPostgreSQL.Inputs.SkuArgs
-            {
-                Name = "Standard_B1ms",
-                Tier = "Burstable",
-            },
-
-            Storage = new DBforPostgreSQL.Inputs.StorageArgs
-            {
-                StorageSizeGB = 32,
-            },
-
-            Backup = new DBforPostgreSQL.Inputs.BackupArgs
-            {
-                BackupRetentionDays = 7,
-            }
-        });
-
-        var database = new DBforPostgreSQL.Database("database", new()
-        {
-            DatabaseName = "worms",
-            ResourceGroupName = resourceGroup.Name,
-            ServerName = server.Name,
-        });
-
-        var sqlFwRuleAllowAll = new DBforPostgreSQL.FirewallRule("sqlFwRuleAllowAll", new()
-        {
-            EndIpAddress = "0.0.0.0",
-            FirewallRuleName = "AllowAllWindowsAzureIps",
-            ResourceGroupName = resourceGroup.Name,
-            ServerName = server.Name,
-            StartIpAddress = "0.0.0.0",
-        });
-
-        Url = Output.Format($"https://{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");
+        return containerApp;
     }
-
-    [Output("url")] Output<string> Url { get; set; }
-
 }
