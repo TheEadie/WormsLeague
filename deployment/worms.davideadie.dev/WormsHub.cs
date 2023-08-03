@@ -3,6 +3,7 @@ using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.OperationalInsights;
+using DBforPostgreSQL = Pulumi.AzureNative.DBforPostgreSQL;
 
 class WormsHub : Stack
 {
@@ -13,18 +14,18 @@ class WormsHub : Stack
 
 
         // Create an Azure Resource Group
-        var resourceGroup = new ResourceGroup("worms-hub-resource-group", new ResourceGroupArgs
+        var resourceGroup = new ResourceGroup("worms-hub-resource-group", new()
         {
             ResourceGroupName = stack == "prod" ? "Worms-Hub" : $"Worms-Hub-{stack}"
         });
 
-        var logAnalytics = new Workspace("worms-hub-workspace", new WorkspaceArgs
+        var logAnalytics = new Workspace("worms-hub-workspace", new()
         {
             WorkspaceName = "Worms-Hub",
             ResourceGroupName = resourceGroup.Name,
         });
 
-        var kubeEnv = new ManagedEnvironment("worms-hub-managed-environment", new ManagedEnvironmentArgs
+        var kubeEnv = new ManagedEnvironment("worms-hub-managed-environment", new()
         {
             EnvironmentName = "Worms-Hub",
             ResourceGroupName = resourceGroup.Name,
@@ -43,14 +44,14 @@ class WormsHub : Stack
             }
         });
 
-        var certificate = GetCertificate.Invoke(new GetCertificateInvokeArgs
+        var certificate = GetCertificate.Invoke(new()
         {
             CertificateName = "worms.davideadie.dev",
             EnvironmentName = "Worms-Hub",
             ResourceGroupName = resourceGroup.Name,
         });
 
-        var containerApp = new ContainerApp("worms-hub-gateway", new ContainerAppArgs
+        var containerApp = new ContainerApp("worms-hub-gateway", new()
         {
             ContainerAppName = "worms-gateway",
             ResourceGroupName = resourceGroup.Name,
@@ -110,40 +111,40 @@ class WormsHub : Stack
             }
         });
 
-        var server = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Server("server", new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.ServerArgs
+        var server = new DBforPostgreSQL.Server("server", new()
         {
             ServerName = "worms",
             ResourceGroupName = resourceGroup.Name,
-            Version = Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.ServerVersion.ServerVersion_13,
+            Version = DBforPostgreSQL.ServerVersion.ServerVersion_14,
             AdministratorLogin = config.RequireSecret("database_user"),
             AdministratorLoginPassword = config.RequireSecret("database_password"),
             CreateMode = "Default",
 
-            Sku = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.SkuArgs
+            Sku = new DBforPostgreSQL.Inputs.SkuArgs
             {
                 Name = "Standard_B1ms",
                 Tier = "Burstable",
             },
 
-            Storage = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.StorageArgs
+            Storage = new DBforPostgreSQL.Inputs.StorageArgs
             {
                 StorageSizeGB = 32,
             },
 
-            Backup = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs.BackupArgs
+            Backup = new DBforPostgreSQL.Inputs.BackupArgs
             {
                 BackupRetentionDays = 7,
             }
         });
 
-        var database = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Database("database", new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.DatabaseArgs
+        var database = new DBforPostgreSQL.Database("database", new()
         {
             DatabaseName = "worms",
             ResourceGroupName = resourceGroup.Name,
             ServerName = server.Name,
         });
 
-        var sqlFwRuleAllowAll = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.FirewallRule("sqlFwRuleAllowAll", new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.FirewallRuleArgs
+        var sqlFwRuleAllowAll = new DBforPostgreSQL.FirewallRule("sqlFwRuleAllowAll", new()
         {
             EndIpAddress = "0.0.0.0",
             FirewallRuleName = "AllowAllWindowsAzureIps",
