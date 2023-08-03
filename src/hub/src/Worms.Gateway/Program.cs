@@ -1,20 +1,51 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Worms.Gateway;
+using Worms.Gateway.API.DTOs;
+using Worms.Gateway.API.Validators;
+using Worms.Gateway.Domain;
+using Worms.Gateway.Domain.Announcers;
+using Worms.Gateway.Domain.Announcers.Slack;
+using Worms.Gateway.Storage.Database;
 
-namespace Worms.Gateway;
+var builder = WebApplication.CreateBuilder(args);
+builder.Logging.AddSimpleConsole(options => { options.SingleLine = true; });
+builder.Configuration.AddEnvironmentVariables("WORMS_");
 
-public static class Program
+builder.Services.AddControllers()
+    .ConfigureApplicationPartManager(manager => { manager.FeatureProviders.Add(new InternalControllerProvider()); });
+builder.Services.AddApiVersioning();
+builder.Services.AddAuthentication()
+    .AddJwtBearer(
+        options =>
+            {
+                options.Authority = builder.Configuration.GetValue<string>("Auth:Authority");
+                options.Audience = builder.Configuration.GetValue<string>("Auth:Audience");
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = builder.Configuration.GetValue<string>("Auth:NameClaim"),
+                    RoleClaimType = builder.Configuration.GetValue<string>("Auth:PermissionsClaim")
+                };
+            });
+builder.Services.AddAuthorization();
+builder.Services.AddSingleton<IRepository<GameDto>, GamesRepository>();
+builder.Services.AddSingleton<IRepository<Replay>, ReplaysRepository>();
+builder.Services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
+builder.Services.AddSingleton<ReplayFileValidator>();
+
+var app = builder.Build();
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
+if (app.Environment.IsDevelopment())
 {
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
-
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureLogging((_, builder) => builder.AddSimpleConsole(options => { options.SingleLine = true; }))
-            .ConfigureAppConfiguration((_, config) => config.AddEnvironmentVariables("WORMS_"))
-            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+    _ = app.UseDeveloperExceptionPage();
+    _ = app.MapControllers(); //.AllowAnonymous();
 }
+else
+{
+    _ = app.MapControllers();
+}
+
+app.Run();

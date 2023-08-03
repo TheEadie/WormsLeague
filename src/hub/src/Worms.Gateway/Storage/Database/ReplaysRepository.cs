@@ -1,32 +1,31 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
 using Dapper;
-using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Worms.Gateway.Domain;
 
-namespace Worms.Gateway.Database;
+namespace Worms.Gateway.Storage.Database;
 
-public class ReplaysRepository : IRepository<Replay>
+internal sealed class ReplaysRepository : IRepository<Replay>
 {
-    private readonly string _connectionString;
+    private readonly IConfiguration _configuration;
 
-    public ReplaysRepository(IConfiguration configuration)
-    {
-        _connectionString = configuration.GetConnectionString("Database");
-    }
+    public ReplaysRepository(IConfiguration configuration) => _configuration = configuration;
 
-    public IReadOnlyCollection<Replay> Get()
+    public IReadOnlyCollection<Replay> GetAll()
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        var connectionString = _configuration.GetConnectionString("Database");
+        using var connection = new NpgsqlConnection(connectionString);
 
         var dbObjects = connection.Query<ReplayDb>("SELECT id, name, status, filename FROM replays");
-        return dbObjects.Select(x => new Replay(x.Id.ToString(), x.Name, x.Status, x.Filename)).ToList();
+        return dbObjects
+            .Select(x => new Replay(x.Id.ToString(CultureInfo.InvariantCulture), x.Name, x.Status, x.Filename))
+            .ToList();
     }
 
     public Replay Create(Replay item)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        var connectionString = _configuration.GetConnectionString("Database");
+        using var connection = new NpgsqlConnection(connectionString);
         const string sql = "INSERT INTO replays "
             + "(name, status, filename) "
             + "VALUES (@name, @status, @filename) "
@@ -45,7 +44,8 @@ public class ReplaysRepository : IRepository<Replay>
 
     public void Update(Replay item)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        var connectionString = _configuration.GetConnectionString("Database");
+        using var connection = new NpgsqlConnection(connectionString);
         const string sql = "UPDATE replays SET "
             + "name = @name, "
             + "status = @status, "
@@ -54,13 +54,13 @@ public class ReplaysRepository : IRepository<Replay>
 
         var parameters = new
         {
-            id = int.Parse(item.Id),
+            id = int.Parse(item.Id, CultureInfo.InvariantCulture),
             name = item.Name,
             status = item.Status,
             filename = item.Filename
         };
 
-        connection.Execute(sql, parameters);
+        _ = connection.Execute(sql, parameters);
     }
 }
 
