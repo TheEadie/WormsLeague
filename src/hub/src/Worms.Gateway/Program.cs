@@ -1,4 +1,5 @@
 using Microsoft.IdentityModel.Tokens;
+using Worms.Gateway;
 using Worms.Gateway.Announcers;
 using Worms.Gateway.Announcers.Slack;
 using Worms.Gateway.Database;
@@ -10,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddSimpleConsole(options => { options.SingleLine = true; });
 builder.Configuration.AddEnvironmentVariables("WORMS_");
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApplicationPartManager(manager => { manager.FeatureProviders.Add(new InternalControllerProvider()); });
 builder.Services.AddApiVersioning();
 builder.Services.AddAuthentication()
     .AddJwtBearer(
