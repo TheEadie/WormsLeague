@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Worms.Armageddon.Game.Windows
@@ -47,8 +48,9 @@ namespace Worms.Armageddon.Game.Windows
         {
             Process wormsProcess = null;
             var retryCount = 0;
-            while (wormsProcess is null && retryCount <= 10)
+            while (wormsProcess is null && retryCount <= 5)
             {
+                Thread.Sleep(500);
                 wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
                 retryCount++;
             }
