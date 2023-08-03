@@ -49,6 +49,7 @@ namespace Worms.Commands
         {
             AddOption(DryRun);
             AddOption(LocalMode);
+            AddOption(SkipSchemeDownload);
             AddOption(SkipUpload);
             AddOption(SkipAnnouncement);
         }
