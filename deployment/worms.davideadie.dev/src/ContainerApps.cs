@@ -1,8 +1,12 @@
 using Pulumi;
-using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.OperationalInsights;
+using Pulumi.AzureNative.Resources;
+using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
+using GetCertificate = Pulumi.AzureNative.App.GetCertificate;
+
+namespace worms.davideadie.dev;
 
 public static class ContainerApps
 {
@@ -14,7 +18,7 @@ public static class ContainerApps
             WorkspaceName = logAnalytics.Name
         });
 
-        var kubeEnv = new ManagedEnvironment("worms-hub-managed-environment", new()
+        var kubeEnv = new ManagedEnvironment("azure-container-apps-environment", new()
         {
             EnvironmentName = "Worms-Hub",
             ResourceGroupName = resourceGroup.Name,
@@ -29,12 +33,25 @@ public static class ContainerApps
             }
         });
 
-        var certificate = GetCertificate.Invoke(new()
+        var customDomainArgs = new InputList<CustomDomainArgs>();
+
+        // Get the SSL cert when deploying to prod only
+        if (Pulumi.Deployment.Instance.StackName == "prod")
         {
-            CertificateName = "worms.davideadie.dev",
-            EnvironmentName = "Worms-Hub",
-            ResourceGroupName = resourceGroup.Name,
-        });
+            var certificate = GetCertificate.Invoke(new()
+            {
+                CertificateName = "worms.davideadie.dev",
+                EnvironmentName = "Worms-Hub",
+                ResourceGroupName = resourceGroup.Name,
+            });
+            
+            customDomainArgs.Add(new CustomDomainArgs
+            {
+                BindingType = "SniEnabled",
+                CertificateId = certificate.Apply(x => x.Id),
+                Name = "worms.davideadie.dev",
+            });
+        }
 
         var containerApp = new ContainerApp("worms-hub-gateway", new()
         {
@@ -47,15 +64,7 @@ public static class ContainerApps
                 {
                     External = true,
                     TargetPort = 80,
-                    CustomDomains = new[]
-                    {
-                        new CustomDomainArgs
-                        {
-                            BindingType = "SniEnabled",
-                            CertificateId = certificate.Apply(x => x.Id),
-                            Name = "worms.davideadie.dev",
-                        },
-                    }
+                    CustomDomains = customDomainArgs,
                 },
                 Secrets = new InputList<SecretArgs>() {
                     new SecretArgs {
@@ -66,7 +75,7 @@ public static class ContainerApps
                         Name = "slack-hook-url",
                         Value = config.RequireSecret("slack_hook_url"),
                     }
-                    }
+                }
             },
             Template = new TemplateArgs
             {
@@ -85,7 +94,7 @@ public static class ContainerApps
                                 Name = "WORMS_SlackWebHookURL",
                                 SecretRef = "slack-hook-url",
                             }
-                            }
+                        }
                     }
                 },
                 Scale = new ScaleArgs

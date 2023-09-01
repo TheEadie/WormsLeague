@@ -1,35 +1,36 @@
 using Pulumi;
-using Pulumi.AzureNative.Resources;
-using Pulumi.AzureNative.App;
-using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.OperationalInsights;
+using Pulumi.AzureNative.Resources;
 
-class WormsHub : Stack
+namespace worms.davideadie.dev;
+
+public class WormsHub : Stack
 {
     public WormsHub()
     {
-        var stack = Pulumi.Deployment.Instance.StackName;
+        var isProd = Pulumi.Deployment.Instance.StackName == "prod";
         var config = new Config();
 
         // Create an Azure Resource Group
-        var resourceGroup = new ResourceGroup("worms-hub-resource-group", new()
+        var resourceGroup = new ResourceGroup("resource-group", new()
         {
-            ResourceGroupName = stack == "prod" ? "Worms-Hub" : $"Worms-Hub-{stack}"
+            ResourceGroupName = Utils.GetResourceName("Worms-Hub")
         });
 
-        var logAnalytics = new Workspace("worms-hub-workspace", new()
+        var logAnalytics = new Workspace("workspace", new()
         {
             WorkspaceName = "Worms-Hub",
             ResourceGroupName = resourceGroup.Name,
         });
-
-
-        var containerApp = ContainerApps.Config(resourceGroup, config, logAnalytics);
+        
         Database.Config(resourceGroup, config);
+        var containerApp = ContainerApps.Config(resourceGroup, config, logAnalytics);
 
-        Url = Output.Format($"https://{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");
+        var protocol = isProd ? "https://" : "http://";
+        ApiUrl = Output.Format($"{protocol}{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");
     }
 
-    [Output("url")] Output<string> Url { get; set; }
+    [Output("url")] 
+    public Output<string> ApiUrl { get; set; }
 
 }
