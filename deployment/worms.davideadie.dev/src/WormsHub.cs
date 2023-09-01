@@ -22,9 +22,11 @@ public class WormsHub : Stack
             WorkspaceName = "Worms-Hub",
             ResourceGroupName = resourceGroup.Name,
         });
-        
+
+        var storage = StorageAccount.Config(resourceGroup, config);
+        var fileShare = FileShare.Config(resourceGroup, storage, config);
         Database.Config(resourceGroup, config);
-        var containerApp = ContainerApps.Config(resourceGroup, config, logAnalytics);
+        var containerApp = ContainerApps.Config(resourceGroup, config, logAnalytics, storage, fileShare);
 
         var protocol = isProd ? "https://" : "http://";
         ApiUrl = Output.Format($"{protocol}{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");

@@ -3,6 +3,7 @@ using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
+using Storage = Pulumi.AzureNative.Storage;
 using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
 using GetCertificate = Pulumi.AzureNative.App.GetCertificate;
 
@@ -10,7 +11,7 @@ namespace worms.davideadie.dev;
 
 public static class ContainerApps
 {
-    public static ContainerApp Config(ResourceGroup resourceGroup, Config config, Workspace logAnalytics)
+    public static ContainerApp Config(ResourceGroup resourceGroup, Config config, Workspace logAnalytics, Storage.StorageAccount storageAccount, Storage.FileShare fileShare)
     {
         var logAnalyticsSharedKeys = GetSharedKeys.Invoke(new()
         {
@@ -33,6 +34,27 @@ public static class ContainerApps
             }
         });
 
+        var managedEnvironmentsStorage = new ManagedEnvironmentsStorage("azure-container-apps-storage", new()
+        {
+            StorageName = "worms-hub-storage",
+            ResourceGroupName = resourceGroup.Name,
+            EnvironmentName = kubeEnv.Name,
+
+            Properties = new ManagedEnvironmentStoragePropertiesArgs
+            {
+                AzureFile = new AzureFilePropertiesArgs
+                {
+                    AccessMode = AccessMode.ReadWrite,
+                    AccountKey = Storage.ListStorageAccountKeys.Invoke(new()
+                    { ResourceGroupName = resourceGroup.Name, AccountName = storageAccount.Name })
+                        .Apply(x => x.Keys[0].Value),
+                    AccountName = storageAccount.Name,
+                    ShareName = fileShare.Name,
+                },
+            },
+        });
+
+
         var customDomainArgs = new InputList<CustomDomainArgs>();
 
         // Get the SSL cert when deploying to prod only
@@ -44,7 +66,7 @@ public static class ContainerApps
                 EnvironmentName = "Worms-Hub",
                 ResourceGroupName = resourceGroup.Name,
             });
-            
+
             customDomainArgs.Add(new CustomDomainArgs
             {
                 BindingType = "SniEnabled",
@@ -102,6 +124,14 @@ public static class ContainerApps
                     MaxReplicas = 1,
                     MinReplicas = 0,
                 },
+                Volumes = {
+                    new VolumeArgs
+                    {
+                        Name = "worms-hub-volume",
+                        StorageType = StorageType.AzureFile,
+                        StorageName = managedEnvironmentsStorage.Name,
+                    }
+                }
             }
         });
 
