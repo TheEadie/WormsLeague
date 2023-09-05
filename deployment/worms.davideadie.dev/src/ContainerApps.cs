@@ -109,6 +109,10 @@ public static class ContainerApps
                         Env = new InputList<EnvironmentVarArgs>
                         {
                             new EnvironmentVarArgs {
+                                Name = "WORMS_STORAGE__TempReplayFolder",
+                                Value = "/storage",
+                            },
+                            new EnvironmentVarArgs {
                                 Name = "WORMS_CONNECTIONSTRINGS__DATABASE",
                                 SecretRef = "database-connection",
                             },
