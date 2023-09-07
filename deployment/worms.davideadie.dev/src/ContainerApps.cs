@@ -120,6 +120,13 @@ public static class ContainerApps
                                 Name = "WORMS_SlackWebHookURL",
                                 SecretRef = "slack-hook-url",
                             }
+                        },
+                        VolumeMounts = {
+                            new VolumeMountArgs
+                            {
+                                VolumeName = "worms-hub-volume",
+                                MountPath = "/storage",
+                            }
                         }
                     }
                 },
