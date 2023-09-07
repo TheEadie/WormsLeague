@@ -8,34 +8,9 @@ on:
       - ".github/workflows/deploy.yml"
 
 jobs:
-  preview-azure:
-    name: Azure
+  preview:
+    name: Azure Infrastructure
     runs-on: ubuntu-latest
-    env:
-      PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6.x
-      - uses: pulumi/actions@v4
-        with:
-          command: preview
-          stack-name: prod
-          work-dir: deployment/worms.davideadie.dev
-          comment-on-pr: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-  preview-database:
-    name: Database
-    runs-on: ubuntu-latest
-    env:
-      FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}
 
     services:
       postgres:
@@ -53,14 +28,32 @@ jobs:
           - 5432:5432
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.x
 
-      - name: Get version
-        id: vars
+      - name: Preview Azure Infrastructure
+        uses: pulumi/actions@v4
+        id: preview
+        with:
+          command: preview
+          stack-name: test
+          work-dir: deployment/worms.davideadie.dev
+          comment-on-pr: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: Get Database Version
+        id: version
         run: echo "version=$(cat deployment/worms.davideadie.dev/database-version.txt)" >> $GITHUB_OUTPUT
 
-      - name: Create Reports folder
+      - name: Create Reports Folder
         run: mkdir src/database/reports
 
       - name: Run Flyway Report
@@ -70,27 +63,29 @@ jobs:
             check -changes -drift
             -locations="filesystem:/github/workspace/src/database/migrations"
             -configFiles="/github/workspace/src/database/flyway.conf"
-            -url="jdbc:postgresql://${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }}"
-            -user="${{ secrets.PROD_DATABASE_USER }}"
-            -password="${{ secrets.PROD_DATABASE_PASSWORD }}"
+            -url="${{ steps.preview.outputs.database-jdbc }}"
+            -user="${{ steps.preview.outputs.database-user }}"
+            -password="${{ steps.preview.outputs.database-password }}"
             -check.buildUrl="jdbc:postgresql://postgres:5432/worms"
             -check.buildUser="worms"
             -check.buildPassword="worms"
-            -target=${{ steps.vars.outputs.version }}
+            -target=${{ steps.version.outputs.version }}
             -reportFilename="/github/workspace/src/database/reports/report.htm"
+        env:
+          FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}
 
-      - name: Get summary
+      - name: Get Summary
         id: summary
         run: echo "summary=$(build/flyway-summary.sh src/database/reports/report.json)" >> $GITHUB_OUTPUT
 
-      - name: Comment PR
+      - name: Comment on PR
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
             ${{ steps.summary.outputs.summary }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload report
+      - name: Upload Report
         uses: actions/upload-artifact@v3
         with:
           name: Database Report

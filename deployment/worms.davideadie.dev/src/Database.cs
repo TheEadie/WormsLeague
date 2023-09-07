@@ -6,7 +6,7 @@ namespace worms.davideadie.dev;
 
 public static class Database
 {
-    public static void Config(ResourceGroup resourceGroup, Config config)
+    public static (DBForPostgreSQL.Server, DBForPostgreSQL.Database) Config(ResourceGroup resourceGroup, Config config)
     {
         var server = new DBForPostgreSQL.Server("postgres-server", new()
         {
@@ -49,5 +49,7 @@ public static class Database
             ServerName = server.Name,
             StartIpAddress = "0.0.0.0",
         });
+        
+        return (server, database);
     }
 }
