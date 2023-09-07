@@ -9,8 +9,8 @@ on:
       - master
 
 jobs:
-  deploy-azure:
-    name: Azure
+  deploy:
+    name: Azure Infrastructure
     runs-on: ubuntu-latest
 
     steps:
@@ -20,9 +20,10 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 6.x
+          dotnet-version: 7.x
 
-      - name: Pulumi up
+      - name: Pulumi Up
+        id: pulumi-up
         uses: pulumi/actions@v4
         with:
           command: up
@@ -35,22 +36,11 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-  deploy-database:
-    name: Database
-    needs: deploy-azure
-    runs-on: ubuntu-latest
-    env:
-      FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Get version
-        id: vars
+      - name: Get Version
+        id: database-version
         run: echo "version=$(cat deployment/worms.davideadie.dev/database-version.txt)" >> $GITHUB_OUTPUT
 
-      - name: Run Flyway Report
+      - name: Run Flyway Migrate
         uses: docker://redgate/flyway:9
         with:
           args: >-
@@ -59,7 +49,9 @@ jobs:
             info
             -locations="filesystem:/github/workspace/src/database/migrations"
             -configFiles="/github/workspace/src/database/flyway.conf"
-            -url="jdbc:postgresql://${{ secrets.PROD_DATABASE_HOST }}:${{ secrets.PROD_DATABASE_PORT }}/${{ secrets.PROD_DATABASE_NAME }}"
-            -user="${{ secrets.PROD_DATABASE_USER }}"
-            -password="${{ secrets.PROD_DATABASE_PASSWORD }}"
-            -target=${{ steps.vars.outputs.version }}
+            -url="${{ steps.pulumi-up.outputs.database-jdbc }}"
+            -user="${{ steps.pulumi-up.outputs.database-user }}"
+            -password="${{ steps.pulumi-up.outputs.database-password }}"
+            -target=${{ steps.database-version.outputs.version }}
+        env:
+          FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}

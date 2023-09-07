@@ -6,15 +6,21 @@ namespace worms.davideadie.dev;
 
 public static class Database
 {
-    public static (DBForPostgreSQL.Server, DBForPostgreSQL.Database) Config(ResourceGroup resourceGroup, Config config)
+    public static (DBForPostgreSQL.Server, DBForPostgreSQL.Database, Output<string>) Config(ResourceGroup resourceGroup, Config config)
     {
+        var randomPassword = new Pulumi.Random.RandomPassword("database-password", new()
+        {
+            Length = 32,
+            Special = true,
+        });
+        
         var server = new DBForPostgreSQL.Server("postgres-server", new()
         {
             ServerName = Utils.GetResourceName("worms"),
             ResourceGroupName = resourceGroup.Name,
             Version = DBForPostgreSQL.ServerVersion.ServerVersion_14,
-            AdministratorLogin = config.RequireSecret("database_user"),
-            AdministratorLoginPassword = config.RequireSecret("database_password"),
+            AdministratorLogin = "worms_user",
+            AdministratorLoginPassword = randomPassword.Result,
             CreateMode = "Default",
 
             Sku = new DBForPostgreSQL.Inputs.SkuArgs
@@ -50,6 +56,6 @@ public static class Database
             StartIpAddress = "0.0.0.0",
         });
         
-        return (server, database);
+        return (server, database, randomPassword.Result);
     }
 }

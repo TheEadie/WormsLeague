@@ -40,16 +40,18 @@ public class WormsHub : Stack
 
         var storage = StorageAccount.Config(resourceGroup, config);
         var fileShare = FileShare.Config(resourceGroup, storage, config);
-        var (server, database) = Database.Config(resourceGroup, config);
-        var containerApp = ContainerApps.Config(resourceGroup, config, logAnalytics, storage, fileShare);
-
-        var protocol = isProd ? "https://" : "http://";
-        var databasePassword = config.RequireSecret("database_password");
-
-        ApiUrl = Output.Format($"{protocol}{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");
+        var (server, database, databasePassword) = Database.Config(resourceGroup, config);
+        
         DatabaseJdbc = Output.Format($"jdbc:postgresql://{server.FullyQualifiedDomainName}/{database.Name}?user={server.AdministratorLogin}&password={databasePassword}");
         DatabaseAdoNet = Output.Format($"Server={server.FullyQualifiedDomainName};Port=5432;Database={database.Name};User Id={server.AdministratorLogin};Password={databasePassword}");
         DatabaseUser = server.AdministratorLogin;
         DatabasePassword = databasePassword;
+        
+        var containerApp = ContainerApps.Config(resourceGroup, config, logAnalytics, storage, fileShare, DatabaseAdoNet);
+
+        var protocol = isProd ? "https://" : "http://";
+        
+        ApiUrl = Output.Format($"{protocol}{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");
+        
     }
 }

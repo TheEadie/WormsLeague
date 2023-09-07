@@ -11,7 +11,7 @@ namespace worms.davideadie.dev;
 
 public static class ContainerApps
 {
-    public static ContainerApp Config(ResourceGroup resourceGroup, Config config, Workspace logAnalytics, Storage.StorageAccount storageAccount, Storage.FileShare fileShare)
+    public static ContainerApp Config(ResourceGroup resourceGroup, Config config, Workspace logAnalytics, Storage.StorageAccount storageAccount, Storage.FileShare fileShare, Output<string> databaseConnectionString)
     {
         var logAnalyticsSharedKeys = GetSharedKeys.Invoke(new()
         {
@@ -91,7 +91,7 @@ public static class ContainerApps
                 Secrets = new InputList<SecretArgs>() {
                     new SecretArgs {
                         Name = "database-connection",
-                        Value = config.RequireSecret("database_connectionstring"),
+                        Value = databaseConnectionString,
                     },
                     new SecretArgs {
                         Name = "slack-hook-url",
