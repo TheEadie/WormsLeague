@@ -27,31 +27,39 @@ public class WormsHub : Stack
         var config = new Config();
 
         // Create an Azure Resource Group
-        var resourceGroup = new ResourceGroup("resource-group", new()
-        {
-            ResourceGroupName = Utils.GetResourceName("Worms-Hub")
-        });
+        var resourceGroup = new ResourceGroup(
+            "resource-group",
+            new() { ResourceGroupName = Utils.GetResourceName("Worms-Hub") });
 
-        var logAnalytics = new Workspace("workspace", new()
-        {
-            WorkspaceName = "Worms-Hub",
-            ResourceGroupName = resourceGroup.Name,
-        });
+        var logAnalytics = new Workspace(
+            "workspace",
+            new()
+            {
+                WorkspaceName = "Worms-Hub",
+                ResourceGroupName = resourceGroup.Name,
+            });
 
         var storage = StorageAccount.Config(resourceGroup, config);
         var fileShare = FileShare.Config(resourceGroup, storage, config);
         var (server, database, databasePassword) = Database.Config(resourceGroup, config);
 
-        DatabaseJdbc = Output.Format($"jdbc:postgresql://{server.FullyQualifiedDomainName}/{database.Name}?user={server.AdministratorLogin}&password={databasePassword}");
-        DatabaseAdoNet = Output.Format($"Server={server.FullyQualifiedDomainName};Port=5432;Database={database.Name};User Id={server.AdministratorLogin};Password={databasePassword}");
+        DatabaseJdbc = Output.Format(
+            $"jdbc:postgresql://{server.FullyQualifiedDomainName}/{database.Name}?user={server.AdministratorLogin}&password={databasePassword}");
+        DatabaseAdoNet = Output.Format(
+            $"Server={server.FullyQualifiedDomainName};Port=5432;Database={database.Name};User Id={server.AdministratorLogin};Password={databasePassword}");
         DatabaseUser = server.AdministratorLogin;
         DatabasePassword = databasePassword;
 
-        var containerApp = ContainerApps.Config(resourceGroup, config, logAnalytics, storage, fileShare, DatabaseAdoNet);
+        var containerApp = ContainerApps.Config(
+            resourceGroup,
+            config,
+            logAnalytics,
+            storage,
+            fileShare,
+            DatabaseAdoNet);
 
         var protocol = isProd ? "https://" : "http://";
 
         ApiUrl = Output.Format($"{protocol}{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");
-
     }
 }
