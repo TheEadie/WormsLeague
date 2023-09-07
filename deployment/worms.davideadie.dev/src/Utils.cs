@@ -1,4 +1,4 @@
-﻿namespace worms.davideadie.dev;
+namespace worms.davideadie.dev;
 
 public static class Utils
 {

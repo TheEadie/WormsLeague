@@ -1,4 +1,4 @@
-﻿using Pulumi;
+using Pulumi;
 using Pulumi.AzureNative.Resources;
 using Storage = Pulumi.AzureNative.Storage;
 

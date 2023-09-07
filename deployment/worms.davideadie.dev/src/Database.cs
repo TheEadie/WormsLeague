@@ -13,7 +13,7 @@ public static class Database
             Length = 32,
             Special = true,
         });
-        
+
         var server = new DBForPostgreSQL.Server("postgres-server", new()
         {
             ServerName = Utils.GetResourceName("worms"),
@@ -55,7 +55,7 @@ public static class Database
             ServerName = server.Name,
             StartIpAddress = "0.0.0.0",
         });
-        
+
         return (server, database, randomPassword.Result);
     }
 }
