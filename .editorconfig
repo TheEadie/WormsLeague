@@ -70,7 +70,7 @@ csharp_preserve_single_line_blocks = true ;
 #### Language and unnecessary rules ####
 # (https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/language-rules)
 
-# Using directive preferences 
+# Using directive preferences
 file_header_template = unset # (IDE0073)
 csharp_using_directive_placement = outside_namespace # (IDE0065)
 
@@ -281,7 +281,7 @@ dotnet_diagnostic.CA1848.severity = none
 # CA2007 is designed for libraries and it spams to code
 dotnet_diagnostic.CA2007.severity = none
 
-[*.{aiproj,appxmanifest,axml,build,config,csproj,dbml,discomap,DotSettings,dtd,json,jsproj,lsproj,njsproj,nuspec,proj,props,resjson,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
+[*.{yml,aiproj,appxmanifest,axml,build,config,csproj,dbml,discomap,DotSettings,dtd,json,jsproj,lsproj,njsproj,nuspec,proj,props,resjson,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_size = 2
 tab_width = 2
 
