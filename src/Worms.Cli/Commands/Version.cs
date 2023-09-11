@@ -3,9 +3,9 @@ using System.CommandLine.Invocation;
 using System.Threading.Tasks;
 using Serilog;
 using Worms.Armageddon.Game;
-using Worms.Cli;
+using Worms.Cli.CommandLine;
 
-namespace Worms.Commands
+namespace Worms.Cli.Commands
 {
     internal class Version : Command
     {
@@ -26,7 +26,7 @@ namespace Worms.Commands
             _logger = logger;
         }
 
-        public int Invoke(InvocationContext context) => 
+        public int Invoke(InvocationContext context) =>
             Task.Run(async () => await InvokeAsync(context)).Result;
 
         public Task<int> InvokeAsync(InvocationContext context)

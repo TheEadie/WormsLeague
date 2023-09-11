@@ -1,4 +1,4 @@
-namespace Worms.Configuration
+namespace Worms.Cli.Configuration
 {
     public interface IConfigManager
     {

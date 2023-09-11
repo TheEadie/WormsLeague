@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace Worms.Commands.Resources
+namespace Worms.Cli.Commands.Resources
 {
     internal class View : Command
     {

@@ -2,10 +2,10 @@
 using System.IO;
 using System.Linq;
 using Worms.Armageddon.Resources.Replays;
+using Worms.Cli.Logging.TableOutput;
 using Worms.Cli.Resources.Local.Replays;
-using Worms.Logging.TableOutput;
 
-namespace Worms.Resources.Replays
+namespace Worms.Cli.Resources.Replays
 {
     public class ReplayTextPrinter : IResourcePrinter<LocalReplay>
     {

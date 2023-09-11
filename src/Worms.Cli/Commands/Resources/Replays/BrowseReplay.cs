@@ -5,7 +5,7 @@ using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources.Local.Folders;
 
-namespace Worms.Commands.Resources.Replays;
+namespace Worms.Cli.Commands.Resources.Replays;
 
 internal class BrowseReplay : Command
 {

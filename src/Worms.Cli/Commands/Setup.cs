@@ -3,27 +3,27 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
 using Serilog;
-using Worms.Configuration;
+using Worms.Cli.Configuration;
 
-namespace Worms.Commands
+namespace Worms.Cli.Commands
 {
     internal class Setup : Command
     {
         public static readonly Option<string> GitHubToken = new(
-            new []{ "--git-hub-token", "-gh"}, 
+            new []{ "--git-hub-token", "-gh"},
             "A GitHub personal access token. Used to increase the number of API calls available");
 
         public static readonly Option<string> SlackWebHook = new(
-            new []{ "--slack-web-hook", "-s"}, 
+            new []{ "--slack-web-hook", "-s"},
             "A Slack web hook. Used to announce games to Slack when hosting");
-        
+
         public Setup() : base("setup", "Interactively set up Worms CLI")
         {
             AddOption(GitHubToken);
             AddOption(SlackWebHook);
         }
     }
-    
+
     internal class SetupHandler : ICommandHandler
     {
         private readonly IConfigManager _configManager;
@@ -35,14 +35,14 @@ namespace Worms.Commands
             _logger = logger;
         }
 
-        public int Invoke(InvocationContext context) => 
+        public int Invoke(InvocationContext context) =>
             Task.Run(async () => await InvokeAsync(context)).Result;
 
         public Task<int> InvokeAsync(InvocationContext context)
         {
             var githubToken = context.ParseResult.GetValueForOption(Setup.GitHubToken);
             var slackWebHook = context.ParseResult.GetValueForOption(Setup.SlackWebHook);
-            
+
             var config = _configManager.Load();
 
             if (string.IsNullOrWhiteSpace(githubToken))
@@ -53,9 +53,9 @@ namespace Worms.Commands
             }
             else
             {
-                config.GitHubPersonalAccessToken = githubToken;    
+                config.GitHubPersonalAccessToken = githubToken;
             }
-            
+
             if (string.IsNullOrWhiteSpace(slackWebHook))
             {
                 _logger.Information("Slack Web Hook to announce games (Ask the team):");
@@ -63,7 +63,7 @@ namespace Worms.Commands
             }
             else
             {
-                config.SlackWebHook = slackWebHook;    
+                config.SlackWebHook = slackWebHook;
             }
 
             _configManager.Save(config);

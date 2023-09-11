@@ -1,6 +1,6 @@
 ﻿using CredentialManagement;
 
-namespace Worms.Configuration.SecureStorage
+namespace Worms.Cli.Configuration.SecureStorage
 {
     internal class WindowsCredentialStorage : ICredentialStorage
     {

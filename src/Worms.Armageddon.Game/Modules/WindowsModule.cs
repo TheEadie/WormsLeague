@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Versioning;
 using Autofac;
-using Worms.Armageddon.Game.Windows;
+using Worms.Armageddon.Game.Win;
 
 namespace Worms.Armageddon.Game.Modules
 {

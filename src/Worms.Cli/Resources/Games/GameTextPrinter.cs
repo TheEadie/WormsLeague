@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Worms.Armageddon.Resources.Schemes.Text;
+using Worms.Cli.Logging.TableOutput;
 using Worms.Cli.Resources.Remote.Games;
-using Worms.Logging.TableOutput;
 
-namespace Worms.Resources.Games
+namespace Worms.Cli.Resources.Games
 {
     internal class GameTextPrinter : IResourcePrinter<RemoteGame>
     {
@@ -22,7 +22,7 @@ namespace Worms.Resources.Games
             tableBuilder.AddColumn("ID", items.Select(x => x.Id).ToList());
             tableBuilder.AddColumn("HOST", items.Select(x => x.HostMachine).ToList());
             tableBuilder.AddColumn("STATUS", items.Select(x => x.Status).ToList());
-            
+
             var table = tableBuilder.Build();
             TablePrinter.Print(writer, table);
         }

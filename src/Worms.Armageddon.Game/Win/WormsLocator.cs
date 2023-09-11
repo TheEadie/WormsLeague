@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.Versioning;
 using Microsoft.Win32;
 
-namespace Worms.Armageddon.Game.Windows
+namespace Worms.Armageddon.Game.Win
 {
     [SupportedOSPlatform("windows")]
     internal class WormsLocator : IWormsLocator

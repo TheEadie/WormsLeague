@@ -3,22 +3,22 @@ using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Armageddon.Game.Modules;
 using Worms.Armageddon.Resources.Modules;
-using Worms.Cli;
-using Worms.Cli.PackageManagers;
+using Worms.Cli.CommandLine;
+using Worms.Cli.CommandLine.PackageManagers;
+using Worms.Cli.Configuration;
+using Worms.Cli.League;
+using Worms.Cli.Resources;
+using Worms.Cli.Resources.Games;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
 using Worms.Cli.Resources.Modules;
 using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Resources.Remote.Games;
-using Worms.Configuration;
-using Worms.League;
-using Worms.Resources;
-using Worms.Resources.Games;
-using Worms.Resources.Replays;
-using Worms.Resources.Schemes;
-using Worms.Slack;
+using Worms.Cli.Resources.Replays;
+using Worms.Cli.Resources.Schemes;
+using Worms.Cli.Slack;
 
-namespace Worms.Modules
+namespace Worms.Cli.Modules
 {
     public class CliModule : Module
     {

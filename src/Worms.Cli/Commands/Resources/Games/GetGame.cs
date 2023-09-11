@@ -3,10 +3,10 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
 using Serilog;
+using Worms.Cli.Resources;
 using Worms.Cli.Resources.Remote.Games;
-using Worms.Resources;
 
-namespace Worms.Commands.Resources.Games
+namespace Worms.Cli.Commands.Resources.Games
 {
     internal class GetGame : Command
     {

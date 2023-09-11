@@ -3,10 +3,10 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
 using Serilog;
+using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Schemes;
-using Worms.Resources;
 
-namespace Worms.Commands.Resources.Schemes
+namespace Worms.Cli.Commands.Resources.Schemes
 {
     internal class GetScheme : Command
     {

@@ -6,7 +6,7 @@ using Worms.Armageddon.Game.Replays;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 
-namespace Worms.Commands.Resources.Replays
+namespace Worms.Cli.Commands.Resources.Replays
 {
     internal class ProcessReplay : Command
     {

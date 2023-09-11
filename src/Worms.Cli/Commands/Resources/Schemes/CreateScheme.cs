@@ -8,7 +8,7 @@ using Worms.Armageddon.Game;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Schemes;
 
-namespace Worms.Commands.Resources.Schemes
+namespace Worms.Cli.Commands.Resources.Schemes
 {
     internal class CreateScheme : Command
     {

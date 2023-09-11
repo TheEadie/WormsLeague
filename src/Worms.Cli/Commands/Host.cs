@@ -8,15 +8,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using Worms.Armageddon.Game;
+using Worms.Cli.Configuration;
+using Worms.Cli.League;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Remote.Replays;
-using Worms.Configuration;
-using Worms.League;
-using Worms.Slack;
+using Worms.Cli.Slack;
 
-namespace Worms.Commands
+namespace Worms.Cli.Commands
 {
     internal class Host : Command
     {

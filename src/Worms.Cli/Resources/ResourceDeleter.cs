@@ -2,10 +2,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using Worms.Cli.Resources;
-using Worms.Commands;
+using Worms.Cli.Commands;
 
-namespace Worms.Resources
+namespace Worms.Cli.Resources
 {
     public class ResourceDeleter<T>
     {

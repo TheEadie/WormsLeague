@@ -5,7 +5,7 @@ using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources.Local.Folders;
 
-namespace Worms.Commands.Resources.Schemes;
+namespace Worms.Cli.Commands.Resources.Schemes;
 
 internal class BrowseScheme : Command
 {

@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.IO.Abstractions;
 using System.Reflection;
 
-namespace Worms.Cli
+namespace Worms.Cli.CommandLine
 {
     internal class CliInfoRetriever
     {

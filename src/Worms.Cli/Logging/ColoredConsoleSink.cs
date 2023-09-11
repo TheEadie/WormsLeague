@@ -6,7 +6,7 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
 
-namespace Worms.Logging
+namespace Worms.Cli.Logging
 {
     public class ColoredConsoleSink : ILogEventSink
     {

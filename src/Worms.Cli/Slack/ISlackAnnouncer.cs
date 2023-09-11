@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Serilog;
 
-namespace Worms.Slack
+namespace Worms.Cli.Slack
 {
     internal interface ISlackAnnouncer
     {

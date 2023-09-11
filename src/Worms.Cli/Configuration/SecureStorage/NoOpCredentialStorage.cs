@@ -1,4 +1,4 @@
-﻿namespace Worms.Configuration.SecureStorage
+﻿namespace Worms.Cli.Configuration.SecureStorage
 {
     internal class NoOpCredentialStorage : ICredentialStorage
     {

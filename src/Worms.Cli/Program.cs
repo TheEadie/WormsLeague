@@ -8,17 +8,17 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
-using Worms.Commands;
-using Worms.Commands.Resources.Games;
-using Worms.Commands.Resources.Gifs;
-using Worms.Commands.Resources.Replays;
-using Worms.Commands.Resources.Schemes;
-using Worms.Logging;
-using Worms.Modules;
-using Version = Worms.Commands.Version;
-using Host = Worms.Commands.Host;
+using Worms.Cli.Commands;
+using Worms.Cli.Commands.Resources.Games;
+using Worms.Cli.Commands.Resources.Gifs;
+using Worms.Cli.Commands.Resources.Replays;
+using Worms.Cli.Commands.Resources.Schemes;
+using Worms.Cli.Logging;
+using Worms.Cli.Modules;
+using Version = Worms.Cli.Commands.Version;
+using Host = Worms.Cli.Commands.Host;
 
-namespace Worms
+namespace Worms.Cli
 {
     internal static class Program
     {

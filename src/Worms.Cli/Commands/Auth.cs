@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Serilog;
 using Worms.Cli.Resources.Remote.Auth;
 
-namespace Worms.Commands
+namespace Worms.Cli.Commands
 {
     internal class Auth : Command
     {

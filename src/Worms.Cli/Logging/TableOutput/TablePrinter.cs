@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 
-namespace Worms.Logging.TableOutput
+namespace Worms.Cli.Logging.TableOutput
 {
     internal static class TablePrinter
     {

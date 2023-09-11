@@ -1,7 +1,7 @@
 ﻿using Autofac;
-using Worms.Configuration.SecureStorage;
+using Worms.Cli.Configuration.SecureStorage;
 
-namespace Worms.Modules
+namespace Worms.Cli.Modules
 {
     internal class LinuxModule : Module
     {

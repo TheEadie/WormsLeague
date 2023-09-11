@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO.Abstractions;
 using System.Text.Json;
-using Worms.Configuration.SecureStorage;
+using Worms.Cli.Configuration.SecureStorage;
 
-namespace Worms.Configuration
+namespace Worms.Cli.Configuration
 {
     internal class ConfigManager : IConfigManager
     {

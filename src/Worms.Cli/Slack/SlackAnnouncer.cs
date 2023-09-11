@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Serilog;
 
-namespace Worms.Slack
+namespace Worms.Cli.Slack
 {
     internal class SlackAnnouncer : ISlackAnnouncer
     {

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Worms.Slack
+namespace Worms.Cli.Slack
 {
     public sealed class SlackMessage
     {

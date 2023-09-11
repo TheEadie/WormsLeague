@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Worms.Armageddon.Game.Windows
+namespace Worms.Armageddon.Game.Win
 {
     internal class SteamService : ISteamService
     {

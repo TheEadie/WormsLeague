@@ -5,7 +5,7 @@ using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources.Local.Folders;
 
-namespace Worms.Commands.Resources.Gifs;
+namespace Worms.Cli.Commands.Resources.Gifs;
 
 internal class BrowseGif : Command
 {

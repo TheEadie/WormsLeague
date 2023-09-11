@@ -9,7 +9,7 @@ using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Replays;
 
-namespace Worms.Commands.Resources.Gifs
+namespace Worms.Cli.Commands.Resources.Gifs
 {
     internal class CreateGif : Command
     {

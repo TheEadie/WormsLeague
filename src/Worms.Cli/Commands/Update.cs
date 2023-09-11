@@ -3,10 +3,10 @@ using System.CommandLine.Invocation;
 using System.Threading.Tasks;
 using Octokit;
 using Serilog;
-using Worms.Cli;
-using Worms.Configuration;
+using Worms.Cli.CommandLine;
+using Worms.Cli.Configuration;
 
-namespace Worms.Commands
+namespace Worms.Cli.Commands
 {
     internal class Update : Command
     {
@@ -27,7 +27,7 @@ namespace Worms.Commands
             _logger = logger;
         }
 
-        public int Invoke(InvocationContext context) => 
+        public int Invoke(InvocationContext context) =>
             Task.Run(async () => await InvokeAsync(context)).Result;
 
         public async Task<int> InvokeAsync(InvocationContext context)

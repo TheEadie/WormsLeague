@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace Worms.Commands
+namespace Worms.Cli.Commands
 {
     internal class Root : RootCommand
     {

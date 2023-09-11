@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using Syroot.Worms.Armageddon;
 using Worms.Armageddon.Resources.Schemes.Text;
+using Worms.Cli.Logging.TableOutput;
 using Worms.Cli.Resources.Local.Schemes;
-using Worms.Logging.TableOutput;
 
-namespace Worms.Resources.Schemes
+namespace Worms.Cli.Resources.Schemes
 {
     internal class SchemeTextPrinter : IResourcePrinter<LocalScheme>
     {

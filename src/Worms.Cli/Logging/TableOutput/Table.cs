@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Worms.Logging.TableOutput
+namespace Worms.Cli.Logging.TableOutput
 {
     internal record Table(IReadOnlyCollection<TableColumn> Columns, int RowCount);
 }

@@ -1,12 +1,12 @@
 ﻿using System.CommandLine.Builder;
-using Worms.Commands;
-using Worms.Commands.Resources;
-using Worms.Commands.Resources.Games;
-using Worms.Commands.Resources.Gifs;
-using Worms.Commands.Resources.Replays;
-using Worms.Commands.Resources.Schemes;
+using Worms.Cli.Commands;
+using Worms.Cli.Commands.Resources;
+using Worms.Cli.Commands.Resources.Games;
+using Worms.Cli.Commands.Resources.Gifs;
+using Worms.Cli.Commands.Resources.Replays;
+using Worms.Cli.Commands.Resources.Schemes;
 
-namespace Worms;
+namespace Worms.Cli;
 
 internal static class CliStructure
 {

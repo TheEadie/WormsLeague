@@ -1,6 +1,6 @@
 using System;
 
-namespace Worms.Commands
+namespace Worms.Cli.Commands
 {
     public class ConfigurationException : Exception
     {

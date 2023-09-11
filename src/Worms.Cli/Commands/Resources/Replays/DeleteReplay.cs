@@ -2,10 +2,10 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
 using Serilog;
+using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
-using Worms.Resources;
 
-namespace Worms.Commands.Resources.Replays
+namespace Worms.Cli.Commands.Resources.Replays
 {
     internal class DeleteReplay : Command
     {
