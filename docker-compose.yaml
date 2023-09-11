@@ -34,8 +34,8 @@ services:
             database:
                 condition: service_healthy
 
-    worms-server:
-        build: src/hub/.
+    worms-gateway:
+        build: src/Worms.Gateway/.
         ports:
             - "5005:80"
         volumes:
