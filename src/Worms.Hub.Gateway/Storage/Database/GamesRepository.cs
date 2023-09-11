@@ -1,9 +1,9 @@
 using System.Globalization;
 using Dapper;
 using Npgsql;
-using Worms.Gateway.API.DTOs;
+using Worms.Hub.Gateway.API.DTOs;
 
-namespace Worms.Gateway.Storage.Database;
+namespace Worms.Hub.Gateway.Storage.Database;
 
 internal sealed class GamesRepository : IRepository<GameDto>
 {

@@ -1,4 +1,4 @@
-namespace Worms.Gateway.API.Validators;
+namespace Worms.Hub.Gateway.API.Validators;
 
 internal sealed class ReplayFileValidator
 {

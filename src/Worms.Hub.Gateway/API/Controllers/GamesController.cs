@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Worms.Gateway.API.DTOs;
-using Worms.Gateway.Domain.Announcers;
-using Worms.Gateway.Storage.Database;
+using Worms.Hub.Gateway.API.DTOs;
+using Worms.Hub.Gateway.Domain.Announcers;
+using Worms.Hub.Gateway.Storage.Database;
 
-namespace Worms.Gateway.API.Controllers;
+namespace Worms.Hub.Gateway.API.Controllers;
 
 internal sealed class GamesController : V1ApiController
 {

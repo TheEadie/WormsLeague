@@ -35,7 +35,7 @@ services:
                 condition: service_healthy
 
     worms-gateway:
-        build: src/Worms.Gateway/.
+        build: src/Worms.Hub.Gateway/.
         ports:
             - "5005:80"
         volumes:

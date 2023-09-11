@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
-namespace Worms.Gateway;
+namespace Worms.Hub.Gateway;
 
 /// <summary>
 /// Overloads the default detection of controllers in ASP.NET Core to include controllers marked as internal

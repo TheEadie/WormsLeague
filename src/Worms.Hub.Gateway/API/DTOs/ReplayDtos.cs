@@ -1,6 +1,6 @@
-using Worms.Gateway.Domain;
+using Worms.Hub.Gateway.Domain;
 
-namespace Worms.Gateway.API.DTOs;
+namespace Worms.Hub.Gateway.API.DTOs;
 
 public record ReplayDto(string Id, string Name, string Status)
 {

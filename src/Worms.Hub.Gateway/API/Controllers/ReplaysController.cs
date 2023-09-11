@@ -1,11 +1,11 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Worms.Gateway.API.DTOs;
-using Worms.Gateway.API.Validators;
-using Worms.Gateway.Domain;
-using Worms.Gateway.Storage.Database;
+using Worms.Hub.Gateway.API.DTOs;
+using Worms.Hub.Gateway.API.Validators;
+using Worms.Hub.Gateway.Domain;
+using Worms.Hub.Gateway.Storage.Database;
 
-namespace Worms.Gateway.API.Controllers;
+namespace Worms.Hub.Gateway.API.Controllers;
 
 internal sealed class ReplaysController : V1ApiController
 {

@@ -4,11 +4,17 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-
     <AnalysisLevel>latest-All</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <WarningsAsErrors>true</WarningsAsErrors>
   </PropertyGroup>
+
+  <!-- Workaround for https://github.com/dotnet/roslyn/issues/41640 -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.151"/>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10"/>
