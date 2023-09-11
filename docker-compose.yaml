@@ -17,9 +17,9 @@ services:
     flyway-init:
         image: flyway/flyway:9
         volumes:
-            - ../database/migrations:/flyway/migrations
-            - ../database/local-dev:/flyway/local-dev
-            - ../database:/flyway/conf
+            - ./src/database/migrations:/flyway/migrations
+            - ./src/database/local-dev:/flyway/local-dev
+            - ./src/database:/flyway/conf
         command:
             - "info"
             - "migrate"
@@ -35,7 +35,7 @@ services:
                 condition: service_healthy
 
     worms-server:
-        build: .
+        build: src/hub/.
         ports:
             - "5005:80"
         volumes:

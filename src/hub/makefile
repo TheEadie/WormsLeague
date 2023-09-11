@@ -50,13 +50,6 @@ publish:
 		--cache-from=type=gha,scope=build \
 		--cache-to=type=gha,mode=max,scope=publish
 
-start:
-	@docker-compose build --build-arg VERSION=$(VERSION)
-	@docker-compose up -d
-
-stop:
-	@docker-compose down
-
 version:
 	@echo $(VERSION)
 

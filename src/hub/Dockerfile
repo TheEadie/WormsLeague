@@ -1,15 +1,16 @@
 #### Build ####
 FROM mcr.microsoft.com/dotnet/sdk:7.0.400@sha256:bdcfb498261ca18f023ac67615d814ea743aa3288eb880855fa2eb86c6313ccc AS build
 WORKDIR /app
+ARG PROJECT="src/Worms.Gateway/Worms.Gateway.csproj"
 
 COPY *.sln ./
 COPY src/Worms.Gateway/Worms.Gateway.csproj ./src/Worms.Gateway/
-RUN dotnet restore --runtime alpine-x64
+RUN dotnet restore ${PROJECT} --runtime alpine-x64
 
 COPY src/ ./src/
 ARG VERSION=0.0.1
 RUN dotnet publish \
-    "src/Worms.Gateway/Worms.Gateway.csproj" \
+    ${PROJECT} \
     -c Release \
     --runtime alpine-x64 \
     --self-contained \
