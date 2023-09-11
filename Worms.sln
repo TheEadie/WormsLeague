@@ -3,9 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8044B8B1-CC92-4E60-82FB-485E5091F23E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Gateway", "src\Worms.Hub.Gateway\Worms.Hub.Gateway.csproj", "{D35145B4-EB96-4BD5-9444-09B7A5F30406}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Game", "src\Worms.Armageddon.Game\Worms.Armageddon.Game.csproj", "{34C8DD64-AB37-4308-9295-DE1401A02928}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Files", "src\Worms.Armageddon.Files\Worms.Armageddon.Files.csproj", "{6E949043-D505-4B31-8EDA-4118E711EF98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Cli.Resources", "src\Worms.Cli.Resources\Worms.Cli.Resources.csproj", "{E61894BF-6EFD-4BC4-962D-6BA3CF153EB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Cli", "src\Worms.Cli\Worms.Cli.csproj", "{AD5E38E3-0511-469B-93E5-0C3E666AF27E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Files.Tests", "src\Worms.Armageddon.Files.Tests\Worms.Armageddon.Files.Tests.csproj", "{6233FC52-586A-40A0-B369-FA77ADE35E94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,8 +28,27 @@ Global
 		{D35145B4-EB96-4BD5-9444-09B7A5F30406}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D35145B4-EB96-4BD5-9444-09B7A5F30406}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D35145B4-EB96-4BD5-9444-09B7A5F30406}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34C8DD64-AB37-4308-9295-DE1401A02928}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34C8DD64-AB37-4308-9295-DE1401A02928}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34C8DD64-AB37-4308-9295-DE1401A02928}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34C8DD64-AB37-4308-9295-DE1401A02928}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E949043-D505-4B31-8EDA-4118E711EF98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E949043-D505-4B31-8EDA-4118E711EF98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E949043-D505-4B31-8EDA-4118E711EF98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E949043-D505-4B31-8EDA-4118E711EF98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E61894BF-6EFD-4BC4-962D-6BA3CF153EB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E61894BF-6EFD-4BC4-962D-6BA3CF153EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E61894BF-6EFD-4BC4-962D-6BA3CF153EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E61894BF-6EFD-4BC4-962D-6BA3CF153EB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD5E38E3-0511-469B-93E5-0C3E666AF27E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD5E38E3-0511-469B-93E5-0C3E666AF27E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD5E38E3-0511-469B-93E5-0C3E666AF27E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD5E38E3-0511-469B-93E5-0C3E666AF27E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6233FC52-586A-40A0-B369-FA77ADE35E94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6233FC52-586A-40A0-B369-FA77ADE35E94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6233FC52-586A-40A0-B369-FA77ADE35E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6233FC52-586A-40A0-B369-FA77ADE35E94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{D35145B4-EB96-4BD5-9444-09B7A5F30406} = {8044B8B1-CC92-4E60-82FB-485E5091F23E}
 	EndGlobalSection
 EndGlobal
