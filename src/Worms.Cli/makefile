@@ -17,7 +17,7 @@ all: | windows linux alpine
 windows:
 	@rm -rf $(OUTPUT_DIR)/win-x64
 	@dotnet publish \
-            "src/Worms/worms.csproj" \
+            "Worms.Cli.csproj" \
             -c Release \
             -r win-x64 \
             -o $(OUTPUT_DIR)/win-x64 \
@@ -31,7 +31,7 @@ windows:
 linux:
 	@rm -rf $(OUTPUT_DIR)/linux-x64
 	@dotnet publish \
-            "src/Worms/worms.csproj" \
+            "Worms.Cli.csproj" \
             -c Release \
             -r linux-x64 \
             -o $(OUTPUT_DIR)/linux-x64 \
@@ -44,7 +44,7 @@ linux:
 alpine:
 	@rm -rf $(OUTPUT_DIR)/linux-musl-x64
 	@dotnet publish \
-            "src/Worms/worms.csproj" \
+            "Worms.Cli.csproj" \
             -c Release \
             -r linux-musl-x64 \
             -o $(OUTPUT_DIR)/linux-musl-x64 \

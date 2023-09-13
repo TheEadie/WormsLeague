@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
-        <TargetName>worms</TargetName>
+        <AssemblyName>worms</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
