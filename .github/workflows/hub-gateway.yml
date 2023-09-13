@@ -1,13 +1,13 @@
-name: Hub
+name: Hub.Gateway
 
 on:
   push:
     paths:
-      - "src/hub/**"
+      - "src/Worms.Hub.Gateway/**"
       - "src/database/**"
       - "build/release-github.sh"
       - "build/version.sh"
-      - ".github/workflows/hub.yml"
+      - ".github/workflows/hub-gateway.yml"
 
 jobs:
   build:
@@ -31,7 +31,7 @@ jobs:
 
       - name: Publish
         run: |
-          cd src/hub; make publish
+          cd src/Worms.Hub.Gateway; make publish
 
   build-database:
     name: Build Database
@@ -101,4 +101,4 @@ jobs:
 
       - name: Release
         run: |
-          cd src/hub; make release GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          cd src/Worms.Hub.Gateway; make release GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
