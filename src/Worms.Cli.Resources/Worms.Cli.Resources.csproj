@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-    </PropertyGroup>
-
     <ItemGroup>
         <PackageReference Include="System.IO.Abstractions" Version="19.2.69" />
         <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.2.0" />
