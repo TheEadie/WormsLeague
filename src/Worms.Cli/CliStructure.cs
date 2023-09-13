@@ -5,6 +5,7 @@ using Worms.Cli.Commands.Resources.Games;
 using Worms.Cli.Commands.Resources.Gifs;
 using Worms.Cli.Commands.Resources.Replays;
 using Worms.Cli.Commands.Resources.Schemes;
+using Version = Worms.Cli.Commands.Version;
 
 namespace Worms.Cli;
 

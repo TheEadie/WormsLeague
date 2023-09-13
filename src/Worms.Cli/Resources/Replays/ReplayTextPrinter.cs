@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Worms.Armageddon.Files.Replays;
+﻿using Worms.Armageddon.Files.Replays;
 using Worms.Cli.Logging.TableOutput;
 using Worms.Cli.Resources.Local.Replays;
 

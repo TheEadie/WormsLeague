@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Tests.Schemes

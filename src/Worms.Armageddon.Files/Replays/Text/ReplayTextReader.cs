@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Worms.Armageddon.Files.Replays.Text
+﻿namespace Worms.Armageddon.Files.Replays.Text
 {
     internal class ReplayTextReader : IReplayTextReader
     {

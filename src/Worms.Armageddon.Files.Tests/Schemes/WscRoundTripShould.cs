@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Shouldly;
 using Syroot.Worms.Armageddon;
 using Worms.Armageddon.Files.Schemes.Binary;

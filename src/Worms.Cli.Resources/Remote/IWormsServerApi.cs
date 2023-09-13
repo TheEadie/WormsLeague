@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 namespace Worms.Cli.Resources.Remote;
 
 internal interface IWormsServerApi

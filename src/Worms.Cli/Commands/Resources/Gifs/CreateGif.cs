@@ -1,9 +1,5 @@
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Serilog;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Gifs;

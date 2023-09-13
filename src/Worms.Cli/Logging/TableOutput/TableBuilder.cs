@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Worms.Cli.Logging.TableOutput
+﻿namespace Worms.Cli.Logging.TableOutput
 {
     internal class TableBuilder
     {

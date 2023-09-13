@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Serilog;
 
 namespace Worms.Cli.Slack

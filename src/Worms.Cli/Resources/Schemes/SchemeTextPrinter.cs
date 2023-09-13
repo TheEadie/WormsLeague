@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Syroot.Worms.Armageddon;
 using Worms.Armageddon.Files.Schemes.Text;
 using Worms.Cli.Logging.TableOutput;

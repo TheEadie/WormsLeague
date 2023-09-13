@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Worms.Armageddon.Files.Schemes.Text;
 using Worms.Cli.Logging.TableOutput;
 using Worms.Cli.Resources.Remote.Games;

@@ -1,6 +1,5 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Threading.Tasks;
 using Octokit;
 using Serilog;
 using Worms.Cli.CommandLine;

@@ -1,5 +1,3 @@
-using System;
-
 namespace Worms.Cli.Commands
 {
     public class ConfigurationException : Exception

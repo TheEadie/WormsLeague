@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Worms.Cli.Logging.TableOutput
+﻿namespace Worms.Cli.Logging.TableOutput
 {
     internal class TableColumn
     {

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Syroot.Worms.Armageddon;
+﻿using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Schemes.Text
 {

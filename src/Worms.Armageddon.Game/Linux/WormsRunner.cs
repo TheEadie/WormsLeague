@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace Worms.Armageddon.Game.Linux
 {

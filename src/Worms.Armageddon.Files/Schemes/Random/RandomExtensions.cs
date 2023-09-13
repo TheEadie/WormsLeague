@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Worms.Armageddon.Files.Schemes.Random;
 
 internal static class RandomExtensions

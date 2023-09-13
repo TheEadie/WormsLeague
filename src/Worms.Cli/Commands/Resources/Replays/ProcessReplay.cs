@@ -1,6 +1,5 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Threading.Tasks;
 using Serilog;
 using Worms.Armageddon.Game.Replays;
 using Worms.Cli.Resources;

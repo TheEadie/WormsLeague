@@ -1,5 +1,3 @@
-using System;
-
 namespace Worms.Cli.CommandLine
 {
     internal record CliInfo(Version Version, string Path)

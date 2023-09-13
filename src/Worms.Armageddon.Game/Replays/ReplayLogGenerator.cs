@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace Worms.Armageddon.Game.Replays
 {
     public class ReplayLogGenerator : IReplayLogGenerator

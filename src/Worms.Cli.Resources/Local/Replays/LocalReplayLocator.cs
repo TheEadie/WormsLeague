@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.IO.Abstractions;
-using System.Linq;
 using Worms.Armageddon.Game;
 
 namespace Worms.Cli.Resources.Local.Replays

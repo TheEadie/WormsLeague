@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using System.Text.Json;
 using Worms.Cli.Configuration.SecureStorage;
 

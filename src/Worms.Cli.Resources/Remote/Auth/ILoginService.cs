@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Serilog;
+﻿using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Auth
 {

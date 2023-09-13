@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Worms.Armageddon.Files.Replays
 {
     public record ReplayResource(

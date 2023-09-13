@@ -1,5 +1,4 @@
-﻿using System;
-using Worms.Cli.Resources.Local.Replays;
+﻿using Worms.Cli.Resources.Local.Replays;
 
 namespace Worms.Cli.Resources.Local.Gifs
 {

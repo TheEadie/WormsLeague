@@ -1,8 +1,6 @@
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO.Abstractions;
-using System.Threading.Tasks;
 using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources;

@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-
 namespace Worms.Armageddon.Game.Replays
 {
     internal class ReplayFrameExtractor : IReplayFrameExtractor

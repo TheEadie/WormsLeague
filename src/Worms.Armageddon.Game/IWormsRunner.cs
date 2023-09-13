@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Worms.Armageddon.Game
+﻿namespace Worms.Armageddon.Game
 {
     public interface IWormsRunner
     {

@@ -1,7 +1,4 @@
-using System;
 using System.IO.Abstractions;
-using System.Linq;
-using System.Threading.Tasks;
 using Serilog;
 using Worms.Cli.CommandLine.PackageManagers;
 using Worms.Cli.Configuration;

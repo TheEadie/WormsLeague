@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Worms.Cli.Resources.Local.Replays
 {
     internal interface ILocalReplayLocator

@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Cli.CommandLine.PackageManagers;

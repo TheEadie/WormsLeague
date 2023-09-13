@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.IO;
 using Serilog;
 
 namespace Worms.Cli.Resources.Local.Folders;

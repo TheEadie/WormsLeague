@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Serilog;
+﻿using Serilog;
 using Worms.Cli.Commands;
 
 namespace Worms.Cli.Resources

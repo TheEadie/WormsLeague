@@ -1,5 +1,3 @@
-using System;
-
 namespace Worms.Armageddon.Game
 {
     public record GameInfo(
