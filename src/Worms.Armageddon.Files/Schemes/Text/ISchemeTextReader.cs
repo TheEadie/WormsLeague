@@ -1,6 +1,6 @@
 using Syroot.Worms.Armageddon;
 
-namespace Worms.Armageddon.Resources.Schemes.Text
+namespace Worms.Armageddon.Files.Schemes.Text
 {
     public interface ISchemeTextReader
     {

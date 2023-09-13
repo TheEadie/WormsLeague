@@ -3,9 +3,9 @@ using System.IO;
 using NUnit.Framework;
 using Shouldly;
 using Syroot.Worms.Armageddon;
-using Worms.Armageddon.Resources.Schemes.Binary;
+using Worms.Armageddon.Files.Schemes.Binary;
 
-namespace Worms.Armageddon.Resources.Tests.Schemes
+namespace Worms.Armageddon.Files.Tests.Schemes
 {
     public class WscRoundTripShould
     {

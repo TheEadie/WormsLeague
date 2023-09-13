@@ -1,8 +1,8 @@
 ﻿using System.IO.Abstractions;
 using System.Runtime.InteropServices;
 using Autofac;
+using Worms.Armageddon.Files.Modules;
 using Worms.Armageddon.Game.Modules;
-using Worms.Armageddon.Resources.Modules;
 using Worms.Cli.CommandLine;
 using Worms.Cli.CommandLine.PackageManagers;
 using Worms.Cli.Configuration;

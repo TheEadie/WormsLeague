@@ -1,6 +1,6 @@
 using Syroot.Worms.Armageddon;
 
-namespace Worms.Armageddon.Resources.Schemes.Binary
+namespace Worms.Armageddon.Files.Schemes.Binary
 {
     public interface IWscReader
     {

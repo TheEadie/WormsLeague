@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Syroot.Worms.Armageddon;
 
-namespace Worms.Armageddon.Resources.Schemes.Random
+namespace Worms.Armageddon.Files.Schemes.Random
 {
     public class RandomSchemeGenerator : IRandomSchemeGenerator
     {

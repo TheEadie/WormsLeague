@@ -1,7 +1,7 @@
 using System.IO.Abstractions;
 using System.Runtime.InteropServices;
 using Autofac;
-using Worms.Armageddon.Resources.Schemes.Random;
+using Worms.Armageddon.Files.Schemes.Random;
 using Worms.Cli.Resources.Local.Folders;
 using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Replays;

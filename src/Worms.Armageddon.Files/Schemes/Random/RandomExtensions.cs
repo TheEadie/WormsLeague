@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Worms.Armageddon.Resources.Schemes.Random;
+namespace Worms.Armageddon.Files.Schemes.Random;
 
 internal static class RandomExtensions
 {

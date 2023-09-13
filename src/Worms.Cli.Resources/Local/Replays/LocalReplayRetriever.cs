@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using Worms.Armageddon.Resources.Replays;
-using Worms.Armageddon.Resources.Replays.Text;
+using Worms.Armageddon.Files.Replays;
+using Worms.Armageddon.Files.Replays.Text;
 
 namespace Worms.Cli.Resources.Local.Replays
 {
@@ -25,7 +25,7 @@ namespace Worms.Cli.Resources.Local.Replays
 
         public Task<IReadOnlyCollection<LocalReplay>> Get(ILogger logger, CancellationToken cancellationToken)
             => Get("*", logger, cancellationToken);
-        
+
         public Task<IReadOnlyCollection<LocalReplay>> Get(string pattern, ILogger logger, CancellationToken cancellationToken)
         {
             var resources = new List<LocalReplay>();

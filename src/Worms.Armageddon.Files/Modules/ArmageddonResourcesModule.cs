@@ -1,10 +1,10 @@
 ﻿using Autofac;
-using Worms.Armageddon.Resources.Replays.Text;
-using Worms.Armageddon.Resources.Replays.Text.Parsers;
-using Worms.Armageddon.Resources.Schemes.Binary;
-using Worms.Armageddon.Resources.Schemes.Text;
+using Worms.Armageddon.Files.Replays.Text;
+using Worms.Armageddon.Files.Replays.Text.Parsers;
+using Worms.Armageddon.Files.Schemes.Binary;
+using Worms.Armageddon.Files.Schemes.Text;
 
-namespace Worms.Armageddon.Resources.Modules
+namespace Worms.Armageddon.Files.Modules
 {
     public class ArmageddonResourcesModule : Module
     {

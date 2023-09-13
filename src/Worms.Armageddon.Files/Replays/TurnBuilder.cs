@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Worms.Armageddon.Resources.Replays
+namespace Worms.Armageddon.Files.Replays
 {
     internal class TurnBuilder
     {

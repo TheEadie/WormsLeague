@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Worms.Armageddon.Resources.Replays
+namespace Worms.Armageddon.Files.Replays
 {
     internal class ReplayResourceBuilder
     {

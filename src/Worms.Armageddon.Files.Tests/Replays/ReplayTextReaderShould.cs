@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Shouldly;
-using Worms.Armageddon.Resources.Replays;
-using Worms.Armageddon.Resources.Replays.Text;
-using Worms.Armageddon.Resources.Replays.Text.Parsers;
+using Worms.Armageddon.Files.Replays;
+using Worms.Armageddon.Files.Replays.Text;
+using Worms.Armageddon.Files.Replays.Text.Parsers;
 
-namespace Worms.Armageddon.Resources.Tests.Replays
+namespace Worms.Armageddon.Files.Tests.Replays
 {
     public class ReplayTextReaderShould
     {

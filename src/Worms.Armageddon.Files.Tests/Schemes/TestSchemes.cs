@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Syroot.Worms.Armageddon;
 
-namespace Worms.Armageddon.Resources.Tests.Schemes
+namespace Worms.Armageddon.Files.Tests.Schemes
 {
     public static class TestSchemes
     {

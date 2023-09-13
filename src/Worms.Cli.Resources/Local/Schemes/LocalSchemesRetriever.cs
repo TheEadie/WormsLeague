@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using Worms.Armageddon.Game;
-using Worms.Armageddon.Resources.Schemes.Binary;
+using Worms.Armageddon.Files.Schemes.Binary;
 
 namespace Worms.Cli.Resources.Local.Schemes
 {
@@ -20,7 +20,7 @@ namespace Worms.Cli.Resources.Local.Schemes
             _wormsLocator = wormsLocator;
             _fileSystem = fileSystem;
         }
-        
+
         public Task<IReadOnlyCollection<LocalScheme>> Get(ILogger logger, CancellationToken cancellationToken)
             => Get("*", logger, cancellationToken);
 

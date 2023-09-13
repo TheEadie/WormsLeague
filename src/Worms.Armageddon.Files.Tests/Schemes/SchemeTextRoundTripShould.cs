@@ -3,9 +3,9 @@ using System.IO;
 using NUnit.Framework;
 using Shouldly;
 using Syroot.Worms.Armageddon;
-using Worms.Armageddon.Resources.Schemes.Text;
+using Worms.Armageddon.Files.Schemes.Text;
 
-namespace Worms.Armageddon.Resources.Tests.Schemes
+namespace Worms.Armageddon.Files.Tests.Schemes
 {
     public class SchemeTextRoundTripShould
     {

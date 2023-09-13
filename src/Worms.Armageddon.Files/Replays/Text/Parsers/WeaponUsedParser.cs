@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Worms.Armageddon.Resources.Replays.Text.Parsers
+namespace Worms.Armageddon.Files.Replays.Text.Parsers
 {
     internal class WeaponUsedParser : IReplayLineParser
     {

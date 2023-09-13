@@ -1,4 +1,4 @@
-namespace Worms.Armageddon.Resources.Replays.Text
+namespace Worms.Armageddon.Files.Replays.Text
 {
     internal interface IReplayLineParser
     {
