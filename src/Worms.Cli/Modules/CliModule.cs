@@ -18,67 +18,66 @@ using Worms.Cli.Resources.Replays;
 using Worms.Cli.Resources.Schemes;
 using Worms.Cli.Slack;
 
-namespace Worms.Cli.Modules
+namespace Worms.Cli.Modules;
+
+public class CliModule : Module
 {
-    public class CliModule : Module
+    protected override void Load(ContainerBuilder builder)
     {
-        protected override void Load(ContainerBuilder builder)
+        RegisterOsModules(builder);
+
+        // FileSystem
+        _ = builder.RegisterType<FileSystem>().As<IFileSystem>();
+
+        // Config
+        _ = builder.RegisterType<ConfigManager>().As<IConfigManager>();
+
+        // Auth
+        _ = builder.RegisterType<TokenStore>().As<ITokenStore>();
+        _ = builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
+
+        // CLI
+        _ = builder.RegisterType<GitHubReleasePackageManager>();
+        _ = builder.RegisterType<CliUpdater>();
+        _ = builder.RegisterType<CliInfoRetriever>();
+
+        // Announcer
+        _ = builder.RegisterType<SlackAnnouncer>().As<ISlackAnnouncer>();
+
+        // League
+        _ = builder.RegisterType<LeagueUpdater>();
+
+        // Schemes
+        _ = builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<LocalScheme>>();
+
+        // Replays
+        _ = builder.RegisterType<ReplayTextPrinter>().As<IResourcePrinter<LocalReplay>>();
+
+        // Games
+        _ = builder.RegisterType<GameTextPrinter>().As<IResourcePrinter<RemoteGame>>();
+
+        _ = builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
+        _ = builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
+        _ = builder.RegisterGeneric(typeof(ResourceViewer<,>)).As(typeof(ResourceViewer<,>));
+
+        _ = builder.RegisterModule<ArmageddonGameModule>();
+        _ = builder.RegisterModule<ArmageddonResourcesModule>();
+        _ = builder.RegisterModule<CliResourcesModule>();
+
+    }
+
+    private static void RegisterOsModules(ContainerBuilder builder)
+    {
+        // Windows
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            RegisterOsModules(builder);
-
-            // FileSystem
-            builder.RegisterType<FileSystem>().As<IFileSystem>();
-
-            // Config
-            builder.RegisterType<ConfigManager>().As<IConfigManager>();
-
-            // Auth
-            builder.RegisterType<TokenStore>().As<ITokenStore>();
-            builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
-
-            // CLI
-            builder.RegisterType<GitHubReleasePackageManager>();
-            builder.RegisterType<CliUpdater>();
-            builder.RegisterType<CliInfoRetriever>();
-
-            // Announcer
-            builder.RegisterType<SlackAnnouncer>().As<ISlackAnnouncer>();
-
-            // League
-            builder.RegisterType<LeagueUpdater>();
-
-            // Schemes
-            builder.RegisterType<SchemeTextPrinter>().As<IResourcePrinter<LocalScheme>>();
-
-            // Replays
-            builder.RegisterType<ReplayTextPrinter>().As<IResourcePrinter<LocalReplay>>();
-
-            // Games
-            builder.RegisterType<GameTextPrinter>().As<IResourcePrinter<RemoteGame>>();
-
-            builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
-            builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
-            builder.RegisterGeneric(typeof(ResourceViewer<,>)).As(typeof(ResourceViewer<,>));
-
-            builder.RegisterModule<ArmageddonGameModule>();
-            builder.RegisterModule<ArmageddonResourcesModule>();
-            builder.RegisterModule<CliResourcesModule>();
-
+            _ = builder.RegisterModule<WindowsModule>();
         }
 
-        private static void RegisterOsModules(ContainerBuilder builder)
+        // Linux
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            // Windows
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                builder.RegisterModule<WindowsModule>();
-            }
-
-            // Linux
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                builder.RegisterModule<LinuxModule>();
-            }
+            _ = builder.RegisterModule<LinuxModule>();
         }
     }
 }

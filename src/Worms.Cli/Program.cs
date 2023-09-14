@@ -16,66 +16,54 @@ using Worms.Cli.Modules;
 using Version = Worms.Cli.Commands.Version;
 using Host = Worms.Cli.Commands.Host;
 
-namespace Worms.Cli
+namespace Worms.Cli;
+
+internal static class Program
 {
-    internal static class Program
+    public static async Task<int> Main(string[] args)
     {
-        public static async Task<int> Main(string[] args)
-        {
-            var logger = new LoggerConfiguration().MinimumLevel.Is(GetLogEventLevel(args))
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
+        var logger = new LoggerConfiguration().MinimumLevel.Is(GetLogEventLevel(args))
+            .WriteTo.ColoredConsole()
+            .CreateLogger();
 
-            var runner = CliStructure.BuildCommandLine()
-                .UseHost(
-                    _ => new HostBuilder(),
-                    (builder) =>
-                        {
-                            builder.UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                                .ConfigureContainer<ContainerBuilder>(
-                                    container =>
-                                        {
-                                            container.RegisterModule<CliModule>();
-                                            container.RegisterInstance<ILogger>(logger);
-                                        })
-                                .UseCommandHandler<Auth, AuthHandler>()
-                                .UseCommandHandler<Version, VersionHandler>()
-                                .UseCommandHandler<Update, UpdateHandler>()
-                                .UseCommandHandler<Setup, SetupHandler>()
-                                .UseCommandHandler<Host, HostHandler>()
-                                .UseCommandHandler<ViewReplay, ViewReplayHandler>()
-                                .UseCommandHandler<ProcessReplay, ProcessReplayHandler>()
-                                .UseCommandHandler<GetScheme, GetSchemeHandler>()
-                                .UseCommandHandler<GetReplay, GetReplayHandler>()
-                                .UseCommandHandler<GetGame, GetGameHandler>()
-                                .UseCommandHandler<DeleteScheme, DeleteSchemeHandler>()
-                                .UseCommandHandler<DeleteReplay, DeleteReplayHandler>()
-                                .UseCommandHandler<CreateScheme, CreateSchemeHandler>()
-                                .UseCommandHandler<CreateGif, CreateGifHandler>()
-                                .UseCommandHandler<BrowseScheme, BrowseSchemeHandler>()
-                                .UseCommandHandler<BrowseReplay, BrowseReplayHandler>()
-                                .UseCommandHandler<BrowseGif, BrowseGifHandler>();
-                        })
-                .UseDefaults()
-                .Build();
+        var runner = CliStructure.BuildCommandLine()
+            .UseHost(
+                _ => new HostBuilder(),
+                (builder) =>
+                    {
+                        _ = builder.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                            .ConfigureContainer<ContainerBuilder>(
+                                container =>
+                                    {
+                                        _ = container.RegisterModule<CliModule>();
+                                        _ = container.RegisterInstance<ILogger>(logger);
+                                    })
+                            .UseCommandHandler<Auth, AuthHandler>()
+                            .UseCommandHandler<Version, VersionHandler>()
+                            .UseCommandHandler<Update, UpdateHandler>()
+                            .UseCommandHandler<Setup, SetupHandler>()
+                            .UseCommandHandler<Host, HostHandler>()
+                            .UseCommandHandler<ViewReplay, ViewReplayHandler>()
+                            .UseCommandHandler<ProcessReplay, ProcessReplayHandler>()
+                            .UseCommandHandler<GetScheme, GetSchemeHandler>()
+                            .UseCommandHandler<GetReplay, GetReplayHandler>()
+                            .UseCommandHandler<GetGame, GetGameHandler>()
+                            .UseCommandHandler<DeleteScheme, DeleteSchemeHandler>()
+                            .UseCommandHandler<DeleteReplay, DeleteReplayHandler>()
+                            .UseCommandHandler<CreateScheme, CreateSchemeHandler>()
+                            .UseCommandHandler<CreateGif, CreateGifHandler>()
+                            .UseCommandHandler<BrowseScheme, BrowseSchemeHandler>()
+                            .UseCommandHandler<BrowseReplay, BrowseReplayHandler>()
+                            .UseCommandHandler<BrowseGif, BrowseGifHandler>();
+                    })
+            .UseDefaults()
+            .Build();
 
-            return await runner.InvokeAsync(args);
-        }
-
-
-        private static LogEventLevel GetLogEventLevel(string[] args)
-        {
-            if (args.Contains("-v") || args.Contains("--verbose"))
-            {
-                return LogEventLevel.Verbose;
-            }
-
-            if (args.Contains("-q") || args.Contains("--quiet"))
-            {
-                return LogEventLevel.Error;
-            }
-
-            return LogEventLevel.Information;
-        }
+        return await runner.InvokeAsync(args);
     }
+
+
+    private static LogEventLevel GetLogEventLevel(string[] args) =>
+        args.Contains("-v") || args.Contains("--verbose") ? LogEventLevel.Verbose :
+        args.Contains("-q") || args.Contains("--quiet") ? LogEventLevel.Error : LogEventLevel.Information;
 }

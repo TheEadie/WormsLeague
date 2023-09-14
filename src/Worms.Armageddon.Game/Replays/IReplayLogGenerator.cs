@@ -1,7 +1,6 @@
-namespace Worms.Armageddon.Game.Replays
+namespace Worms.Armageddon.Game.Replays;
+
+public interface IReplayLogGenerator
 {
-    public interface IReplayLogGenerator
-    {
-        Task GenerateReplayLog(string replayPath);
-    }
+    Task GenerateReplayLog(string replayPath);
 }

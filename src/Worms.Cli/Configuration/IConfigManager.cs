@@ -1,9 +1,8 @@
-namespace Worms.Cli.Configuration
-{
-    public interface IConfigManager
-    {
-        Config Load();
+namespace Worms.Cli.Configuration;
 
-        void Save(Config config);
-    }
+public interface IConfigManager
+{
+    Config Load();
+
+    void Save(Config config);
 }

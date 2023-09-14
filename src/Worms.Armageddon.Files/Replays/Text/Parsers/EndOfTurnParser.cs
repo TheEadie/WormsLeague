@@ -1,23 +1,22 @@
 using System.Text.RegularExpressions;
 
-namespace Worms.Armageddon.Files.Replays.Text.Parsers
+namespace Worms.Armageddon.Files.Replays.Text.Parsers;
+
+internal class EndOfTurnParser : IReplayLineParser
 {
-    internal class EndOfTurnParser : IReplayLineParser
+    private const string Timestamp = @"\[(\d+:\d+:\d+.\d+)\]";
+    private const string TeamName = @"(.+)";
+    private static readonly Regex EndOfTurn = new($"{Timestamp} (•••|���) {TeamName} .*; time used:.*sec");
+
+    public bool CanParse(string line) => EndOfTurn.IsMatch(line);
+
+    public void Parse(string line, ReplayResourceBuilder builder)
     {
-        private const string Timestamp = @"\[(\d+:\d+:\d+.\d+)\]";
-        private const string TeamName = @"(.+)";
-        private static readonly Regex EndOfTurn = new($"{Timestamp} (•••|���) {TeamName} .*; time used:.*sec");
+        var endOfTurn = EndOfTurn.Match(line);
 
-        public bool CanParse(string line) => EndOfTurn.IsMatch(line);
-
-        public void Parse(string line, ReplayResourceBuilder builder)
+        if (endOfTurn.Success)
         {
-            var endOfTurn = EndOfTurn.Match(line);
-
-            if (endOfTurn.Success)
-            {
-                builder.CurrentTurn.WithEndTime(TimeSpan.Parse(endOfTurn.Groups[1].Value));
-            }
+            _ = builder.CurrentTurn.WithEndTime(TimeSpan.Parse(endOfTurn.Groups[1].Value));
         }
     }
 }

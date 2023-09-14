@@ -1,7 +1,6 @@
-namespace Worms.Cli.Resources
+namespace Worms.Cli.Resources;
+
+public interface IResourceDeleter<in T>
 {
-    public interface IResourceDeleter<in T>
-    {
-        void Delete(T resource);
-    }
+    void Delete(T resource);
 }

@@ -1,9 +1,8 @@
 ﻿using Serilog;
 
-namespace Worms.Cli.Resources
+namespace Worms.Cli.Resources;
+
+public interface IResourceCreator<T, in TParams>
 {
-    public interface IResourceCreator<T, in TParams>
-    {
-        Task<T> Create(TParams parameters, ILogger logger, CancellationToken cancellationToken);
-    }
+    Task<T> Create(TParams parameters, ILogger logger, CancellationToken cancellationToken);
 }

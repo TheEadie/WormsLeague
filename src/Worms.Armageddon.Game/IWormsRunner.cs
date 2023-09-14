@@ -1,7 +1,6 @@
-﻿namespace Worms.Armageddon.Game
+﻿namespace Worms.Armageddon.Game;
+
+public interface IWormsRunner
 {
-    public interface IWormsRunner
-    {
-        Task RunWorms(params string[] wormsArgs);
-    }
+    Task RunWorms(params string[] wormsArgs);
 }

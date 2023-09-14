@@ -1,7 +1,6 @@
-namespace Worms.Cli.Resources.Local.Replays
+namespace Worms.Cli.Resources.Local.Replays;
+
+internal interface ILocalReplayLocator
 {
-    internal interface ILocalReplayLocator
-    {
-        IReadOnlyCollection<ReplayPaths> GetReplayPaths(string searchPattern);
-    }
+    IReadOnlyCollection<ReplayPaths> GetReplayPaths(string searchPattern);
 }

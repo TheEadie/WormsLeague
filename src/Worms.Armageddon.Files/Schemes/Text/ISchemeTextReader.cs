@@ -1,9 +1,8 @@
 using Syroot.Worms.Armageddon;
 
-namespace Worms.Armageddon.Files.Schemes.Text
+namespace Worms.Armageddon.Files.Schemes.Text;
+
+public interface ISchemeTextReader
 {
-    public interface ISchemeTextReader
-    {
-        Scheme GetModel(string definition);
-    }
+    Scheme GetModel(string definition);
 }

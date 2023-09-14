@@ -1,7 +1,6 @@
-﻿namespace Worms.Armageddon.Game.Win
+﻿namespace Worms.Armageddon.Game.Win;
+
+public interface ISteamService
 {
-    public interface ISteamService
-    {
-        void WaitForSteamPrompt();
-    }
+    void WaitForSteamPrompt();
 }

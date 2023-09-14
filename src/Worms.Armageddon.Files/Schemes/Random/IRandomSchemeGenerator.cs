@@ -1,9 +1,8 @@
 using Syroot.Worms.Armageddon;
 
-namespace Worms.Armageddon.Files.Schemes.Random
+namespace Worms.Armageddon.Files.Schemes.Random;
+
+public interface IRandomSchemeGenerator
 {
-    public interface IRandomSchemeGenerator
-    {
-        Scheme Generate();
-    }
+    Scheme Generate();
 }

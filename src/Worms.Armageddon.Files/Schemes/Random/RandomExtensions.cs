@@ -14,7 +14,7 @@ internal static class RandomExtensions
         {
             if (list[i].Equals(item))
             {
-                return (i + 1) / (double)list.Count;
+                return (i + 1) / (double) list.Count;
             }
         }
         return 0;

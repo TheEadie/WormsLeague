@@ -1,9 +1,8 @@
 using Syroot.Worms.Armageddon;
 
-namespace Worms.Armageddon.Files.Schemes.Binary
+namespace Worms.Armageddon.Files.Schemes.Binary;
+
+public interface IWscReader
 {
-    public interface IWscReader
-    {
-        Scheme Read(string path);
-    }
+    Scheme Read(string path);
 }

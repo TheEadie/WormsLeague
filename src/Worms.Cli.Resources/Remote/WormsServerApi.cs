@@ -109,7 +109,7 @@ internal class WormsServerApi : IWormsServerApi
         var result = await JsonSerializer.DeserializeAsync<T>(streamAsync).ConfigureAwait(false);
         return result is null
             ? throw new JsonException("The API returned success but the JSON response was empty")
-            : (T) result;
+            : result;
     }
 
     private async Task CallApiRefreshAccessTokenIfInvalid(Func<Task<HttpResponseMessage>> apiCall)

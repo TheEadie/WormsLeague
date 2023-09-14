@@ -13,8 +13,9 @@ internal class AccessTokenRefreshService : IAccessTokenRefreshService
     {
         var client = new RestClient(Authority);
         var request = new RestRequest("oauth/token", Method.Post);
-        request.AddHeader("content-type", "application/x-www-form-urlencoded");
-        request.AddParameter("application/x-www-form-urlencoded",
+        _ = request.AddHeader("content-type", "application/x-www-form-urlencoded");
+        _ = request.AddParameter(
+            "application/x-www-form-urlencoded",
             $"grant_type=refresh_token&client_id={ClientId}&refresh_token={current.RefreshToken}",
             ParameterType.RequestBody);
         var response = await client.ExecuteAsync(request).ConfigureAwait(false);
@@ -24,13 +25,10 @@ internal class AccessTokenRefreshService : IAccessTokenRefreshService
             throw response.ErrorException ?? throw new Exception(response.ErrorMessage);
         }
 
-        var result = JsonSerializer.Deserialize<TokenResponse>(response.Content!);
-        if (result is null)
-        {
-            throw new JsonException("The API returned success but the JSON response was empty");
-        }
+        var result = JsonSerializer.Deserialize<TokenResponse>(response.Content!)
+            ?? throw new JsonException("The API returned success but the JSON response was empty");
 
-        return current with {AccessToken = result.AccessToken};
+        return current with { AccessToken = result.AccessToken };
     }
 
     private record TokenResponse(

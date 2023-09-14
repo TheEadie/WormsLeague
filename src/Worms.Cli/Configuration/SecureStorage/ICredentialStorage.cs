@@ -1,9 +1,8 @@
-﻿namespace Worms.Cli.Configuration.SecureStorage
-{
-    public interface ICredentialStorage
-    {
-        string Load(string key);
+﻿namespace Worms.Cli.Configuration.SecureStorage;
 
-        void Store(string key, string value);
-    }
+public interface ICredentialStorage
+{
+    string Load(string key);
+
+    void Store(string key, string value);
 }

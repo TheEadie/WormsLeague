@@ -1,13 +1,12 @@
-namespace Worms.Armageddon.Game.Replays
+namespace Worms.Armageddon.Game.Replays;
+
+public interface IReplayFrameExtractor
 {
-    public interface IReplayFrameExtractor
-    {
-        Task ExtractReplayFrames(
-            string replayPath,
-            uint fps,
-            TimeSpan startTime,
-            TimeSpan endTime,
-            int xResolution = 640,
-            int yResolution = 480);
-    }
+    Task ExtractReplayFrames(
+        string replayPath,
+        uint fps,
+        TimeSpan startTime,
+        TimeSpan endTime,
+        int xResolution = 640,
+        int yResolution = 480);
 }

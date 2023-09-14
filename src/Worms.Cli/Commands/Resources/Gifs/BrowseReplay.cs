@@ -9,10 +9,7 @@ namespace Worms.Cli.Commands.Resources.Gifs;
 internal class BrowseGif : Command
 {
     public BrowseGif()
-        : base("gif", "Open the folder containing the local gifs")
-    {
-        AddAlias("gifs");
-    }
+        : base("gif", "Open the folder containing the local gifs") => AddAlias("gifs");
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global

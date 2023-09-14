@@ -1,28 +1,24 @@
-﻿namespace Worms.Armageddon.Files.Replays.Text
+﻿namespace Worms.Armageddon.Files.Replays.Text;
+
+internal class ReplayTextReader : IReplayTextReader
 {
-    internal class ReplayTextReader : IReplayTextReader
+    private readonly IEnumerable<IReplayLineParser> _parsers;
+
+    public ReplayTextReader(IEnumerable<IReplayLineParser> parsers) => _parsers = parsers;
+
+    public ReplayResource GetModel(string definition)
     {
-        private readonly IEnumerable<IReplayLineParser> _parsers;
+        var builder = new ReplayResourceBuilder();
 
-        public ReplayTextReader(IEnumerable<IReplayLineParser> parsers)
+        foreach (var line in definition.Split('\n'))
         {
-            _parsers = parsers;
+            var matchingParsers = _parsers.Where(x => x.CanParse(line));
+            matchingParsers.ToList().ForEach(x => x.Parse(line, builder));
         }
 
-        public ReplayResource GetModel(string definition)
-        {
-            var builder = new ReplayResourceBuilder();
-
-            foreach (var line in definition.Split('\n'))
-            {
-                var matchingParsers = _parsers.Where(x => x.CanParse(line));
-                matchingParsers.ToList().ForEach(x => x.Parse(line, builder));
-            }
-
-            return builder
-                .FinaliseCurrentTurn()
-                .WithFullLog(definition)
-                .Build();
-        }
+        return builder
+            .FinaliseCurrentTurn()
+            .WithFullLog(definition)
+            .Build();
     }
 }

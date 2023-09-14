@@ -2,59 +2,58 @@
 using System.Text.Json;
 using Worms.Cli.Configuration.SecureStorage;
 
-namespace Worms.Cli.Configuration
+namespace Worms.Cli.Configuration;
+
+internal class ConfigManager : IConfigManager
 {
-    internal class ConfigManager : IConfigManager
+    private readonly ICredentialStorage _credentialStorage;
+    private readonly IFileSystem _fileSystem;
+    private readonly string _localConfigPath;
+
+    public ConfigManager(ICredentialStorage credentialStorage, IFileSystem fileSystem)
     {
-        private readonly ICredentialStorage _credentialStorage;
-        private readonly IFileSystem _fileSystem;
-        private readonly string _localConfigPath;
+        _credentialStorage = credentialStorage;
+        _fileSystem = fileSystem;
 
-        public ConfigManager(ICredentialStorage credentialStorage, IFileSystem fileSystem)
+        _localConfigPath = _fileSystem.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "Programs",
+            "Worms",
+            "local.json");
+    }
+
+    public Config Load()
+    {
+        var localConfig = LoadConfigFromFile(_localConfigPath);
+
+        localConfig.GitHubPersonalAccessToken = _credentialStorage.Load("Worms.GitHub.AccessToken");
+
+        return localConfig;
+    }
+
+    private Config LoadConfigFromFile(string configPath)
+    {
+        if (_fileSystem.File.Exists(configPath))
         {
-            _credentialStorage = credentialStorage;
-            _fileSystem = fileSystem;
-
-            _localConfigPath = _fileSystem.Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Programs",
-                "Worms",
-                "local.json");
+            var configContent = _fileSystem.File.ReadAllText(configPath);
+            return JsonSerializer.Deserialize<Config>(configContent);
         }
-
-        public Config Load()
+        else
         {
-            var localConfig = LoadConfigFromFile(_localConfigPath);
-
-            localConfig.GitHubPersonalAccessToken = _credentialStorage.Load("Worms.GitHub.AccessToken");
-
-            return localConfig;
+            return new Config();
         }
+    }
 
-        private Config LoadConfigFromFile(string configPath)
+    public void Save(Config config)
+    {
+        _credentialStorage.Store("Worms.GitHub.AccessToken", config.GitHubPersonalAccessToken);
+
+        var localConfig = new Config
         {
-            if (_fileSystem.File.Exists(configPath))
-            {
-                var configContent = _fileSystem.File.ReadAllText(configPath);
-                return JsonSerializer.Deserialize<Config>(configContent);
-            }
-            else
-            {
-                return new Config();
-            }
-        }
+            GitHubPersonalAccessToken = "***",
+            SlackWebHook = config.SlackWebHook
+        };
 
-        public void Save(Config config)
-        {
-            _credentialStorage.Store("Worms.GitHub.AccessToken", config.GitHubPersonalAccessToken);
-
-            var localConfig = new Config
-            {
-                GitHubPersonalAccessToken = "***",
-                SlackWebHook = config.SlackWebHook
-            };
-
-            _fileSystem.File.WriteAllText(_localConfigPath, JsonSerializer.Serialize(localConfig));
-        }
+        _fileSystem.File.WriteAllText(_localConfigPath, JsonSerializer.Serialize(localConfig));
     }
 }

@@ -1,62 +1,56 @@
 ﻿using System.Diagnostics;
 
-namespace Worms.Armageddon.Game.Win
+namespace Worms.Armageddon.Game.Win;
+
+internal class WormsRunner : IWormsRunner
 {
-    internal class WormsRunner : IWormsRunner
+    private readonly IWormsLocator _wormsLocator;
+    private readonly ISteamService _steamService;
+
+    public WormsRunner(IWormsLocator wormsLocator, ISteamService steamService)
     {
-        private readonly IWormsLocator _wormsLocator;
-        private readonly ISteamService _steamService;
+        _wormsLocator = wormsLocator;
+        _steamService = steamService;
+    }
 
-        public WormsRunner(IWormsLocator wormsLocator, ISteamService steamService)
-        {
-            _wormsLocator = wormsLocator;
-            _steamService = steamService;
-        }
+    public Task RunWorms(params string[] wormsArgs)
+    {
+        return Task.Run(
+            () =>
+                {
+                    var gameInfo = _wormsLocator.Find();
 
-        public Task RunWorms(params string[] wormsArgs)
-        {
-            return Task.Run(
-                () =>
+                    var args = string.Join(" ", wormsArgs);
+                    using (var process = Process.Start(gameInfo.ExeLocation, args))
                     {
-                        var gameInfo = _wormsLocator.Find();
-
-                        var args = string.Join(" ", wormsArgs);
-                        using (var process = Process.Start(gameInfo.ExeLocation, args))
+                        if (process == null)
                         {
-                            if (process == null)
-                            {
-                                throw new InvalidOperationException("Unable to start worms process");
-                            }
-
-                            process.WaitForExit();
+                            throw new InvalidOperationException("Unable to start worms process");
                         }
 
-                        _steamService.WaitForSteamPrompt();
+                        process.WaitForExit();
+                    }
 
-                        var wormsProcess = FindWormsProcess(gameInfo);
-                        wormsProcess.WaitForExit();
+                    _steamService.WaitForSteamPrompt();
 
-                        return Task.CompletedTask;
-                    });
-        }
+                    var wormsProcess = FindWormsProcess(gameInfo);
+                    wormsProcess.WaitForExit();
 
-        private static Process FindWormsProcess(GameInfo gameInfo)
+                    return Task.CompletedTask;
+                });
+    }
+
+    private static Process FindWormsProcess(GameInfo gameInfo)
+    {
+        Process wormsProcess = null;
+        var retryCount = 0;
+        while (wormsProcess is null && retryCount <= 5)
         {
-            Process wormsProcess = null;
-            var retryCount = 0;
-            while (wormsProcess is null && retryCount <= 5)
-            {
-                Thread.Sleep(500);
-                wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
-                retryCount++;
-            }
-
-            if (wormsProcess is null)
-            {
-                throw new InvalidOperationException("Unable to find worms process");
-            }
-
-            return wormsProcess;
+            Thread.Sleep(500);
+            wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
+            retryCount++;
         }
+
+        return wormsProcess ?? throw new InvalidOperationException("Unable to find worms process");
     }
 }

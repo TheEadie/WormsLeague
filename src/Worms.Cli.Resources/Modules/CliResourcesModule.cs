@@ -11,63 +11,62 @@ using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Remote.Replays;
 
-namespace Worms.Cli.Resources.Modules
+namespace Worms.Cli.Resources.Modules;
+
+public class CliResourcesModule : Module
 {
-    public class CliResourcesModule : Module
+    protected override void Load(ContainerBuilder builder)
     {
-        protected override void Load(ContainerBuilder builder)
+        // OS Specific
+        RegisterOsModules(builder);
+
+        // FileSystem
+        _ = builder.RegisterType<FileSystem>().As<IFileSystem>();
+
+        // Random Configurations
+        _ = builder.RegisterType<RandomSchemeGenerator>().As<IRandomSchemeGenerator>();
+
+        // Schemes
+        _ = builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<LocalScheme>>();
+        _ = builder.RegisterType<LocalSchemeCreator>().As<IResourceCreator<LocalScheme, LocalSchemeCreateParameters>>();
+        _ = builder.RegisterType<LocalSchemeRandomCreator>()
+            .As<IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>>();
+        _ = builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<LocalScheme>>();
+
+        // Replays
+        _ = builder.RegisterType<LocalReplayLocator>().As<ILocalReplayLocator>();
+        _ = builder.RegisterType<LocalReplayRetriever>().As<IResourceRetriever<LocalReplay>>();
+        _ = builder.RegisterType<LocalReplayDeleter>().As<IResourceDeleter<LocalReplay>>();
+        _ = builder.RegisterType<LocalReplayViewer>().As<IResourceViewer<LocalReplay, LocalReplayViewParameters>>();
+        _ = builder.RegisterType<RemoteReplayCreator>()
+            .As<IResourceCreator<RemoteReplay, RemoteReplayCreateParameters>>();
+
+        // Gifs
+        _ = builder.RegisterType<LocalGifCreator>().As<IResourceCreator<LocalGif, LocalGifCreateParameters>>();
+
+        // API
+        _ = builder.RegisterType<AccessTokenRefreshService>().As<IAccessTokenRefreshService>();
+        _ = builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
+        _ = builder.RegisterType<WormsServerApi>().As<IWormsServerApi>();
+
+        // Games
+        _ = builder.RegisterType<RemoteGameRetriever>().As<IResourceRetriever<RemoteGame>>();
+        _ = builder.RegisterType<RemoteGameCreator>().As<IResourceCreator<RemoteGame, string>>();
+        _ = builder.RegisterType<RemoteGameUpdater>().As<IRemoteGameUpdater>();
+    }
+
+    private static void RegisterOsModules(ContainerBuilder builder)
+    {
+        // Windows
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            // OS Specific
-            RegisterOsModules(builder);
-
-            // FileSystem
-            builder.RegisterType<FileSystem>().As<IFileSystem>();
-
-            // Random Configurations
-            builder.RegisterType<RandomSchemeGenerator>().As<IRandomSchemeGenerator>();
-
-            // Schemes
-            builder.RegisterType<LocalSchemesRetriever>().As<IResourceRetriever<LocalScheme>>();
-            builder.RegisterType<LocalSchemeCreator>().As<IResourceCreator<LocalScheme, LocalSchemeCreateParameters>>();
-            builder.RegisterType<LocalSchemeRandomCreator>()
-                .As<IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>>();
-            builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<LocalScheme>>();
-
-            // Replays
-            builder.RegisterType<LocalReplayLocator>().As<ILocalReplayLocator>();
-            builder.RegisterType<LocalReplayRetriever>().As<IResourceRetriever<LocalReplay>>();
-            builder.RegisterType<LocalReplayDeleter>().As<IResourceDeleter<LocalReplay>>();
-            builder.RegisterType<LocalReplayViewer>().As<IResourceViewer<LocalReplay, LocalReplayViewParameters>>();
-            builder.RegisterType<RemoteReplayCreator>()
-                .As<IResourceCreator<RemoteReplay, RemoteReplayCreateParameters>>();
-
-            // Gifs
-            builder.RegisterType<LocalGifCreator>().As<IResourceCreator<LocalGif, LocalGifCreateParameters>>();
-
-            // API
-            builder.RegisterType<AccessTokenRefreshService>().As<IAccessTokenRefreshService>();
-            builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
-            builder.RegisterType<WormsServerApi>().As<IWormsServerApi>();
-
-            // Games
-            builder.RegisterType<RemoteGameRetriever>().As<IResourceRetriever<RemoteGame>>();
-            builder.RegisterType<RemoteGameCreator>().As<IResourceCreator<RemoteGame, string>>();
-            builder.RegisterType<RemoteGameUpdater>().As<IRemoteGameUpdater>();
+            _ = builder.RegisterType<WindowsFolderOpener>().As<IFolderOpener>();
         }
 
-        private static void RegisterOsModules(ContainerBuilder builder)
+        // Linux
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            // Windows
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                builder.RegisterType<WindowsFolderOpener>().As<IFolderOpener>();
-            }
-
-            // Linux
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                builder.RegisterType<LinuxFolderOpener>().As<IFolderOpener>();
-            }
+            _ = builder.RegisterType<LinuxFolderOpener>().As<IFolderOpener>();
         }
     }
 }

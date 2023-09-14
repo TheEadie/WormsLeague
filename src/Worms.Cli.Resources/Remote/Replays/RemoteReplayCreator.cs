@@ -7,10 +7,7 @@ internal class RemoteReplayCreator : IResourceCreator<RemoteReplay, RemoteReplay
 {
     private readonly IWormsServerApi _api;
 
-    public RemoteReplayCreator(IWormsServerApi api)
-    {
-        _api = api;
-    }
+    public RemoteReplayCreator(IWormsServerApi api) => _api = api;
 
     public async Task<RemoteReplay> Create(
         RemoteReplayCreateParameters parameters,

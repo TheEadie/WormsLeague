@@ -7,10 +7,7 @@ internal class RemoteGameUpdater : IRemoteGameUpdater
 {
     private readonly IWormsServerApi _api;
 
-    public RemoteGameUpdater(IWormsServerApi api)
-    {
-        _api = api;
-    }
+    public RemoteGameUpdater(IWormsServerApi api) => _api = api;
 
     public async Task SetGameComplete(RemoteGame game, ILogger logger, CancellationToken cancellationToken)
     {

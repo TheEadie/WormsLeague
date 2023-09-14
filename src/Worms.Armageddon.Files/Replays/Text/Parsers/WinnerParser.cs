@@ -1,28 +1,27 @@
 using System.Text.RegularExpressions;
 
-namespace Worms.Armageddon.Files.Replays.Text.Parsers
+namespace Worms.Armageddon.Files.Replays.Text.Parsers;
+
+internal class WinnerParser : IReplayLineParser
 {
-    internal class WinnerParser : IReplayLineParser
+    private const string TeamName = @"(.+)";
+    private static readonly Regex WinnerDraw = new($"The round was drawn.");
+    private static readonly Regex Winner = new($"{TeamName} wins the (match!|round.)");
+
+    public bool CanParse(string line) => WinnerDraw.IsMatch(line) || Winner.IsMatch(line);
+
+    public void Parse(string line, ReplayResourceBuilder builder)
     {
-        private const string TeamName = @"(.+)";
-        private static readonly Regex WinnerDraw = new($"The round was drawn.");
-        private static readonly Regex Winner = new($"{TeamName} wins the (match!|round.)");
+        var winnerDrawMatch = WinnerDraw.Match(line);
+        var winnerMatch = Winner.Match(line);
 
-        public bool CanParse(string line) => WinnerDraw.IsMatch(line) || Winner.IsMatch(line);
-
-        public void Parse(string line, ReplayResourceBuilder builder)
+        if (winnerDrawMatch.Success)
         {
-            var winnerDrawMatch = WinnerDraw.Match(line);
-            var winnerMatch = Winner.Match(line);
-
-            if (winnerDrawMatch.Success)
-            {
-                builder.WithWinner("Draw");
-            }
-            else if (winnerMatch.Success)
-            {
-                builder.WithWinner(winnerMatch.Groups[1].Value);
-            }
+            _ = builder.WithWinner("Draw");
+        }
+        else if (winnerMatch.Success)
+        {
+            _ = builder.WithWinner(winnerMatch.Groups[1].Value);
         }
     }
 }

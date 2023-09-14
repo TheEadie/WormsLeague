@@ -1,4 +1,3 @@
-﻿namespace Worms.Cli.Resources
-{
-    public abstract record ReplayWithContext(string Context);
-}
+﻿namespace Worms.Cli.Resources;
+
+public abstract record ReplayWithContext(string Context);

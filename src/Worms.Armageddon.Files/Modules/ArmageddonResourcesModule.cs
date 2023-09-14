@@ -4,27 +4,26 @@ using Worms.Armageddon.Files.Replays.Text.Parsers;
 using Worms.Armageddon.Files.Schemes.Binary;
 using Worms.Armageddon.Files.Schemes.Text;
 
-namespace Worms.Armageddon.Files.Modules
-{
-    public class ArmageddonResourcesModule : Module
-    {
-        protected override void Load(ContainerBuilder builder)
-        {
-            // Schemes
-            builder.RegisterType<WscReader>().As<IWscReader>();
-            builder.RegisterType<WscWriter>().As<IWscWriter>();
-            builder.RegisterType<SchemeTextReader>().As<ISchemeTextReader>();
-            builder.RegisterType<SchemeTextWriter>().As<ISchemeTextWriter>();
+namespace Worms.Armageddon.Files.Modules;
 
-            // Replays
-            builder.RegisterType<ReplayTextReader>().As<IReplayTextReader>();
-            builder.RegisterType<StartTimeParser>().As<IReplayLineParser>();
-            builder.RegisterType<TeamParser>().As<IReplayLineParser>();
-            builder.RegisterType<WinnerParser>().As<IReplayLineParser>();
-            builder.RegisterType<StartOfTurnParser>().As<IReplayLineParser>();
-            builder.RegisterType<WeaponUsedParser>().As<IReplayLineParser>();
-            builder.RegisterType<DamageParser>().As<IReplayLineParser>();
-            builder.RegisterType<EndOfTurnParser>().As<IReplayLineParser>();
-        }
+public class ArmageddonResourcesModule : Module
+{
+    protected override void Load(ContainerBuilder builder)
+    {
+        // Schemes
+        _ = builder.RegisterType<WscReader>().As<IWscReader>();
+        _ = builder.RegisterType<WscWriter>().As<IWscWriter>();
+        _ = builder.RegisterType<SchemeTextReader>().As<ISchemeTextReader>();
+        _ = builder.RegisterType<SchemeTextWriter>().As<ISchemeTextWriter>();
+
+        // Replays
+        _ = builder.RegisterType<ReplayTextReader>().As<IReplayTextReader>();
+        _ = builder.RegisterType<StartTimeParser>().As<IReplayLineParser>();
+        _ = builder.RegisterType<TeamParser>().As<IReplayLineParser>();
+        _ = builder.RegisterType<WinnerParser>().As<IReplayLineParser>();
+        _ = builder.RegisterType<StartOfTurnParser>().As<IReplayLineParser>();
+        _ = builder.RegisterType<WeaponUsedParser>().As<IReplayLineParser>();
+        _ = builder.RegisterType<DamageParser>().As<IReplayLineParser>();
+        _ = builder.RegisterType<EndOfTurnParser>().As<IReplayLineParser>();
     }
 }

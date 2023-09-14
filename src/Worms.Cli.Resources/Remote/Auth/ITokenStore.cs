@@ -1,8 +1,7 @@
-﻿namespace Worms.Cli.Resources.Remote.Auth
+﻿namespace Worms.Cli.Resources.Remote.Auth;
+
+public interface ITokenStore
 {
-    public interface ITokenStore
-    {
-        AccessTokens GetAccessTokens();
-        void StoreAccessTokens(AccessTokens accessTokens);
-    }
+    AccessTokens GetAccessTokens();
+    void StoreAccessTokens(AccessTokens accessTokens);
 }

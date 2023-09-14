@@ -7,10 +7,7 @@ internal class RemoteGameRetriever : IResourceRetriever<RemoteGame>
 {
     private readonly IWormsServerApi _api;
 
-    public RemoteGameRetriever(IWormsServerApi api)
-    {
-        _api = api;
-    }
+    public RemoteGameRetriever(IWormsServerApi api) => _api = api;
 
     public async Task<IReadOnlyCollection<RemoteGame>> Get(ILogger logger, CancellationToken cancellationToken)
         => await Get("*", logger, cancellationToken);

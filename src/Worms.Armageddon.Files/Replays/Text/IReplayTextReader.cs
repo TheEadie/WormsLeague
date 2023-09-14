@@ -1,7 +1,6 @@
-﻿namespace Worms.Armageddon.Files.Replays.Text
+﻿namespace Worms.Armageddon.Files.Replays.Text;
+
+public interface IReplayTextReader
 {
-    public interface IReplayTextReader
-    {
-        ReplayResource GetModel(string definition);
-    }
+    ReplayResource GetModel(string definition);
 }

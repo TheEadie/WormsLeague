@@ -1,35 +1,34 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Worms.Cli.Resources.Remote.Auth
+namespace Worms.Cli.Resources.Remote.Auth;
+
+internal static class BrowserLauncher
 {
-    internal static class BrowserLauncher
+    public static void OpenBrowser(string url)
     {
-        public static void OpenBrowser(string url)
+        try
         {
-            try
+            _ = Process.Start(url);
+        }
+        catch
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Process.Start(url);
+                url = url.Replace("&", "^&");
+                _ = Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
             }
-            catch
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    Process.Start("xdg-open", url);
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    Process.Start("open", url);
-                }
-                else
-                {
-                    throw;
-                }
+                _ = Process.Start("xdg-open", url);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                _ = Process.Start("open", url);
+            }
+            else
+            {
+                throw;
             }
         }
     }

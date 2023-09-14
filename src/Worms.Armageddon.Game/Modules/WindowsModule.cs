@@ -2,16 +2,15 @@
 using Autofac;
 using Worms.Armageddon.Game.Win;
 
-namespace Worms.Armageddon.Game.Modules
+namespace Worms.Armageddon.Game.Modules;
+
+[SupportedOSPlatform("windows")]
+internal class WindowsModule : Module
 {
-    [SupportedOSPlatform("windows")]
-    internal class WindowsModule : Module
+    protected override void Load(ContainerBuilder builder)
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            builder.RegisterType<SteamService>().As<ISteamService>();
-            builder.RegisterType<WormsLocator>().As<IWormsLocator>();
-            builder.RegisterType<WormsRunner>().As<IWormsRunner>();
-        }
+        _ = builder.RegisterType<SteamService>().As<ISteamService>();
+        _ = builder.RegisterType<WormsLocator>().As<IWormsLocator>();
+        _ = builder.RegisterType<WormsRunner>().As<IWormsRunner>();
     }
 }

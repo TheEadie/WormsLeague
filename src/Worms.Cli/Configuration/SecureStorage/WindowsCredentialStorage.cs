@@ -1,24 +1,23 @@
 ﻿using CredentialManagement;
 
-namespace Worms.Cli.Configuration.SecureStorage
-{
-    internal class WindowsCredentialStorage : ICredentialStorage
-    {
-        public string Load(string key)
-        {
-            var credentialManager = new Credential { Target = key };
-            return credentialManager.Load() ? credentialManager.Password : null;
-        }
+namespace Worms.Cli.Configuration.SecureStorage;
 
-        public void Store(string key, string value)
+internal class WindowsCredentialStorage : ICredentialStorage
+{
+    public string Load(string key)
+    {
+        var credentialManager = new Credential { Target = key };
+        return credentialManager.Load() ? credentialManager.Password : null;
+    }
+
+    public void Store(string key, string value)
+    {
+        var credentialManager = new Credential
         {
-            var credentialManager = new Credential
-            {
-                Target = key,
-                Password = value,
-                PersistanceType = PersistanceType.LocalComputer
-            };
-            credentialManager.Save();
-        }
+            Target = key,
+            Password = value,
+            PersistanceType = PersistanceType.LocalComputer
+        };
+        _ = credentialManager.Save();
     }
 }

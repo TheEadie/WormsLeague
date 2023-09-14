@@ -1,19 +1,16 @@
 ﻿using System.Diagnostics;
 
-namespace Worms.Armageddon.Game.Linux
+namespace Worms.Armageddon.Game.Linux;
+
+internal class WormsRunner : IWormsRunner
 {
-    internal class WormsRunner : IWormsRunner
+    private readonly IWormsLocator _wormsLocator;
+
+    public WormsRunner(IWormsLocator wormsLocator) => _wormsLocator = wormsLocator;
+
+    public Task RunWorms(params string[] wormsArgs)
     {
-        private readonly IWormsLocator _wormsLocator;
-
-        public WormsRunner(IWormsLocator wormsLocator)
-        {
-            _wormsLocator = wormsLocator;
-        }
-
-        public Task RunWorms(params string[] wormsArgs)
-        {
-            return Task.Run(() =>
+        return Task.Run(() =>
             {
                 var gameInfo = _wormsLocator.Find();
 
@@ -30,6 +27,5 @@ namespace Worms.Armageddon.Game.Linux
                 process?.WaitForExit();
                 return Task.CompletedTask;
             });
-        }
     }
 }

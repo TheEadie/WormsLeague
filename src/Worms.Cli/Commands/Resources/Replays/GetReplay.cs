@@ -4,58 +4,57 @@ using Serilog;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 
-namespace Worms.Cli.Commands.Resources.Replays
-{
-    internal class GetReplay : Command
-    {
-        public static readonly Argument<string> ReplayName =
-            new("name",
-                () => "",
-                "Optional: The name or search pattern for the Replay to be retrieved. Wildcards (*) are supported");
+namespace Worms.Cli.Commands.Resources.Replays;
 
-        public GetReplay() :
-            base("replay",
-                "Retrieves information for Worms replays (.WAgame files)")
-        {
-            AddAlias("replays");
-            AddAlias("WAgame");
-            AddArgument(ReplayName);
-        }
+internal class GetReplay : Command
+{
+    public static readonly Argument<string> ReplayName =
+        new("name",
+            () => "",
+            "Optional: The name or search pattern for the Replay to be retrieved. Wildcards (*) are supported");
+
+    public GetReplay() :
+        base("replay",
+            "Retrieves information for Worms replays (.WAgame files)")
+    {
+        AddAlias("replays");
+        AddAlias("WAgame");
+        AddArgument(ReplayName);
+    }
+}
+
+// ReSharper disable once ClassNeverInstantiated.Global
+internal class GetReplayHandler : ICommandHandler
+{
+    private readonly ResourceGetter<LocalReplay> _replayRetriever;
+    private readonly ILogger _logger;
+
+    public GetReplayHandler(ResourceGetter<LocalReplay> replayRetriever, ILogger logger)
+    {
+        _replayRetriever = replayRetriever;
+        _logger = logger;
     }
 
-    // ReSharper disable once ClassNeverInstantiated.Global
-    internal class GetReplayHandler : ICommandHandler
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context)).Result;
+
+    public async Task<int> InvokeAsync(InvocationContext context)
     {
-        private readonly ResourceGetter<LocalReplay> _replayRetriever;
-        private readonly ILogger _logger;
+        var name = context.ParseResult.GetValueForArgument(GetReplay.ReplayName);
+        var cancellationToken = context.GetCancellationToken();
 
-        public GetReplayHandler(ResourceGetter<LocalReplay> replayRetriever, ILogger logger)
+        try
         {
-            _replayRetriever = replayRetriever;
-            _logger = logger;
+            var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
+            await _replayRetriever.PrintResources(name, Console.Out, windowWidth, _logger,
+                cancellationToken);
+        }
+        catch (ConfigurationException exception)
+        {
+            _logger.Error(exception.Message);
+            return 1;
         }
 
-        public int Invoke(InvocationContext context) =>
-            Task.Run(async () => await InvokeAsync(context)).Result;
-
-        public async Task<int> InvokeAsync(InvocationContext context)
-        {
-            var name = context.ParseResult.GetValueForArgument(GetReplay.ReplayName);
-            var cancellationToken = context.GetCancellationToken();
-
-            try
-            {
-                var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-                await _replayRetriever.PrintResources(name, Console.Out, windowWidth, _logger,
-                    cancellationToken);
-            }
-            catch (ConfigurationException exception)
-            {
-                _logger.Error(exception.Message);
-                return 1;
-            }
-
-            return 0;
-        }
+        return 0;
     }
 }

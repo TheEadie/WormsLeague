@@ -3,43 +3,42 @@ using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Files.Schemes.Binary;
 
-namespace Worms.Cli.Resources.Local.Schemes
+namespace Worms.Cli.Resources.Local.Schemes;
+
+internal class LocalSchemesRetriever : IResourceRetriever<LocalScheme>
 {
-    internal class LocalSchemesRetriever : IResourceRetriever<LocalScheme>
+    private readonly IWscReader _wscReader;
+    private readonly IWormsLocator _wormsLocator;
+    private readonly IFileSystem _fileSystem;
+
+    public LocalSchemesRetriever(IWscReader wscReader, IWormsLocator wormsLocator, IFileSystem fileSystem)
     {
-        private readonly IWscReader _wscReader;
-        private readonly IWormsLocator _wormsLocator;
-        private readonly IFileSystem _fileSystem;
+        _wscReader = wscReader;
+        _wormsLocator = wormsLocator;
+        _fileSystem = fileSystem;
+    }
 
-        public LocalSchemesRetriever(IWscReader wscReader, IWormsLocator wormsLocator, IFileSystem fileSystem)
+    public Task<IReadOnlyCollection<LocalScheme>> Get(ILogger logger, CancellationToken cancellationToken)
+        => Get("*", logger, cancellationToken);
+
+    public Task<IReadOnlyCollection<LocalScheme>> Get(string pattern, ILogger logger, CancellationToken cancellationToken)
+    {
+        var gameInfo = _wormsLocator.Find();
+
+        if (!gameInfo.IsInstalled)
         {
-            _wscReader = wscReader;
-            _wormsLocator = wormsLocator;
-            _fileSystem = fileSystem;
+            return Task.FromResult<IReadOnlyCollection<LocalScheme>>(new List<LocalScheme>(0));
         }
 
-        public Task<IReadOnlyCollection<LocalScheme>> Get(ILogger logger, CancellationToken cancellationToken)
-            => Get("*", logger, cancellationToken);
+        var schemes = new List<LocalScheme>();
 
-        public Task<IReadOnlyCollection<LocalScheme>> Get(string pattern, ILogger logger, CancellationToken cancellationToken)
+        foreach (var scheme in _fileSystem.Directory.GetFiles(gameInfo.SchemesFolder, $"{pattern}.wsc"))
         {
-            var gameInfo = _wormsLocator.Find();
-
-            if (!gameInfo.IsInstalled)
-            {
-                return Task.FromResult<IReadOnlyCollection<LocalScheme>>(new List<LocalScheme>(0));
-            }
-
-            var schemes = new List<LocalScheme>();
-
-            foreach (var scheme in _fileSystem.Directory.GetFiles(gameInfo.SchemesFolder, $"{pattern}.wsc"))
-            {
-                var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);
-                var details = _wscReader.Read(scheme);
-                schemes.Add(new LocalScheme(scheme, fileName, details));
-            }
-
-            return Task.FromResult<IReadOnlyCollection<LocalScheme>>(schemes);
+            var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);
+            var details = _wscReader.Read(scheme);
+            schemes.Add(new LocalScheme(scheme, fileName, details));
         }
+
+        return Task.FromResult<IReadOnlyCollection<LocalScheme>>(schemes);
     }
 }

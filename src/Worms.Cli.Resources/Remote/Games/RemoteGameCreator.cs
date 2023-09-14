@@ -7,10 +7,7 @@ internal class RemoteGameCreator : IResourceCreator<RemoteGame, string>
 {
     private readonly IWormsServerApi _api;
 
-    public RemoteGameCreator(IWormsServerApi api)
-    {
-        _api = api;
-    }
+    public RemoteGameCreator(IWormsServerApi api) => _api = api;
 
     public async Task<RemoteGame> Create(string parameters, ILogger logger, CancellationToken cancellationToken)
     {
