@@ -2,7 +2,7 @@ using Worms.Armageddon.Game.Replays;
 
 namespace Worms.Cli.Resources.Local.Replays;
 
-internal class LocalReplayViewer : IResourceViewer<LocalReplay, LocalReplayViewParameters>
+internal sealed class LocalReplayViewer : IResourceViewer<LocalReplay, LocalReplayViewParameters>
 {
     private readonly IReplayPlayer _replayPlayer;
 

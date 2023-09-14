@@ -1,6 +1,8 @@
+using System.Globalization;
+
 namespace Worms.Armageddon.Game.Replays;
 
-internal class ReplayFrameExtractor : IReplayFrameExtractor
+internal sealed class ReplayFrameExtractor : IReplayFrameExtractor
 {
     private readonly IWormsRunner _wormsRunner;
     private const string TimeFormatString = @"hh\:mm\:ss\.ff";
@@ -15,16 +17,16 @@ internal class ReplayFrameExtractor : IReplayFrameExtractor
         int xResolution = 640,
         int yResolution = 480)
     {
-        var start = startTime.ToString(TimeFormatString);
-        var end = endTime.ToString(TimeFormatString);
+        var start = startTime.ToString(TimeFormatString, CultureInfo.CurrentCulture);
+        var end = endTime.ToString(TimeFormatString, CultureInfo.CurrentCulture);
 
         await _wormsRunner.RunWorms("/getvideo",
             $"\"{replayPath}\"",
-            fps.ToString(),
+            fps.ToString(CultureInfo.CurrentCulture),
             start,
             end,
-            xResolution.ToString(),
-            yResolution.ToString(),
+            xResolution.ToString(CultureInfo.CurrentCulture),
+            yResolution.ToString(CultureInfo.CurrentCulture),
             "/quiet");
     }
 }

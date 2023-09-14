@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
@@ -18,7 +19,7 @@ internal class DamageParser : IReplayLineParser
 
         if (damageDealt.Success)
         {
-            _ = builder.CurrentTurn.WithEndTime(TimeSpan.Parse(damageDealt.Groups[1].Value));
+            _ = builder.CurrentTurn.WithEndTime(TimeSpan.Parse(damageDealt.Groups[1].Value, CultureInfo.CurrentCulture));
 
             var damageDetails = damageDealt.Groups[3].Value.Split(',');
             foreach (var damageDetail in damageDetails)
@@ -29,14 +30,14 @@ internal class DamageParser : IReplayLineParser
                 if (damageWithNoKills.Success)
                 {
                     var teamName = GetTeamNameFromText(damageWithNoKills.Groups[2].Value);
-                    var damageDone = uint.Parse(damageWithNoKills.Groups[1].Value);
+                    var damageDone = uint.Parse(damageWithNoKills.Groups[1].Value, CultureInfo.CurrentCulture);
                     _ = builder.CurrentTurn.WithDamage(new Damage(builder.GetTeamByName(teamName), damageDone, 0));
                 }
                 else if (damageWithKills.Success)
                 {
                     var teamName = GetTeamNameFromText(damageWithKills.Groups[3].Value);
-                    var damageDone = uint.Parse(damageWithKills.Groups[1].Value);
-                    var kills = uint.Parse(damageWithKills.Groups[2].Value);
+                    var damageDone = uint.Parse(damageWithKills.Groups[1].Value, CultureInfo.CurrentCulture);
+                    var kills = uint.Parse(damageWithKills.Groups[2].Value, CultureInfo.CurrentCulture);
                     _ = builder.CurrentTurn.WithDamage(new Damage(builder.GetTeamByName(teamName), damageDone, kills));
                 }
             }

@@ -7,7 +7,7 @@ using Serilog.Formatting.Display;
 
 namespace Worms.Cli.Logging;
 
-public class ColoredConsoleSink : ILogEventSink
+internal sealed class ColoredConsoleSink : ILogEventSink
 {
     private readonly ConsoleColor _defaultForeground = Console.ForegroundColor;
     private readonly ConsoleColor _defaultBackground = Console.BackgroundColor;
@@ -48,7 +48,7 @@ public class ColoredConsoleSink : ILogEventSink
     }
 }
 
-public static class ColoredConsoleSinkExtensions
+internal static class ColoredConsoleSinkExtensions
 {
     public static LoggerConfiguration ColoredConsole(
         this LoggerSinkConfiguration loggerConfiguration,

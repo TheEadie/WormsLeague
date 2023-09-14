@@ -1,24 +1,27 @@
-﻿using Worms.Armageddon.Files.Replays;
+﻿using System.Globalization;
+using Worms.Armageddon.Files.Replays;
 using Worms.Cli.Logging.TableOutput;
 using Worms.Cli.Resources.Local.Replays;
 
 namespace Worms.Cli.Resources.Replays;
 
-public class ReplayTextPrinter : IResourcePrinter<LocalReplay>
+internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
 {
-    public void Print(TextWriter writer, IReadOnlyCollection<LocalReplay> items, int outputMaxWidth)
+    public void Print(TextWriter writer, IReadOnlyCollection<LocalReplay> resources, int outputMaxWidth)
     {
         var tableBuilder = new TableBuilder(outputMaxWidth);
 
-        tableBuilder.AddColumn("NAME", items.Select(x => x.Details.Date.ToString("yyyy-MM-dd HH.mm.ss")).ToList());
-        tableBuilder.AddColumn("CONTEXT", items.Select(x => x.Context).ToList());
-        tableBuilder.AddColumn("PROCESSED", items.Select(x => x.Details.Processed.ToString()).ToList());
+        tableBuilder.AddColumn(
+            "NAME",
+            resources.Select(x => x.Details.Date.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture)).ToList());
+        tableBuilder.AddColumn("CONTEXT", resources.Select(x => x.Context).ToList());
+        tableBuilder.AddColumn("PROCESSED", resources.Select(x => x.Details.Processed.ToString()).ToList());
         tableBuilder.AddColumn(
             "WINNER",
-            items.Select(x => x.Details.Winner != null ? x.Details.Winner.ToString() : "").ToList());
+            resources.Select(x => x.Details.Winner != null ? x.Details.Winner.ToString() : "").ToList());
         tableBuilder.AddColumn(
             "TEAMS",
-            items.Select(x => string.Join(", ", x.Details.Teams.Select(t => t.Name))).ToList());
+            resources.Select(x => string.Join(", ", x.Details.Teams.Select(t => t.Name))).ToList());
 
         var table = tableBuilder.Build();
         TablePrinter.Print(writer, table);
@@ -47,7 +50,9 @@ public class ReplayTextPrinter : IResourcePrinter<LocalReplay>
 
             writer.WriteLine("Turns:");
             var turnsTable = new TableBuilder(outputMaxWidth);
-            turnsTable.AddColumn("NUM", resource.Details.Turns.Select((_, i) => (i + 1).ToString()).ToList());
+            turnsTable.AddColumn(
+                "NUM",
+                resource.Details.Turns.Select((_, i) => (i + 1).ToString(CultureInfo.CurrentCulture)).ToList());
             turnsTable.AddColumn("TEAM", resource.Details.Turns.Select(x => x.Team.Name).ToList());
             turnsTable.AddColumn(
                 "WEAPONS",

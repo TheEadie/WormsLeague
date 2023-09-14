@@ -1,3 +1,4 @@
+using System.Globalization;
 using Syroot.Worms.Armageddon;
 using Worms.Armageddon.Files.Schemes.Text;
 using Worms.Cli.Logging.TableOutput;
@@ -5,26 +6,28 @@ using Worms.Cli.Resources.Local.Schemes;
 
 namespace Worms.Cli.Resources.Schemes;
 
-internal class SchemeTextPrinter : IResourcePrinter<LocalScheme>
+internal sealed class SchemeTextPrinter : IResourcePrinter<LocalScheme>
 {
     private readonly ISchemeTextWriter _schemeTextWriter;
 
     public SchemeTextPrinter(ISchemeTextWriter schemeTextWriter) => _schemeTextWriter = schemeTextWriter;
 
-    public void Print(TextWriter writer, IReadOnlyCollection<LocalScheme> items, int outputMaxWidth)
+    public void Print(TextWriter writer, IReadOnlyCollection<LocalScheme> resources, int outputMaxWidth)
     {
         var tableBuilder = new TableBuilder(outputMaxWidth);
-        tableBuilder.AddColumn("NAME", items.Select(x => x.Name).ToList());
-        tableBuilder.AddColumn("CONTEXT", items.Select(x => x.Context).ToList());
-        tableBuilder.AddColumn("HEALTH", items.Select(x => x.Details.WormEnergy.ToString()).ToList());
+        tableBuilder.AddColumn("NAME", resources.Select(x => x.Name).ToList());
+        tableBuilder.AddColumn("CONTEXT", resources.Select(x => x.Context).ToList());
+        tableBuilder.AddColumn(
+            "HEALTH",
+            resources.Select(x => x.Details.WormEnergy.ToString(CultureInfo.CurrentCulture)).ToList());
         tableBuilder.AddColumn(
             "TURN-TIME",
-            items.Select(x => GetTurnTime(x.Details.TurnTimeInfinite, x.Details.TurnTime)).ToList());
+            resources.Select(x => GetTurnTime(x.Details.TurnTimeInfinite, x.Details.TurnTime)).ToList());
         tableBuilder.AddColumn(
             "ROUND-TIME",
-            items.Select(x => GetRoundTime(x.Details.RoundTimeMinutes, x.Details.RoundTimeSeconds)).ToList());
-        tableBuilder.AddColumn("WORM-SELECT", items.Select(x => x.Details.WormSelect.ToString()).ToList());
-        tableBuilder.AddColumn("WEAPONS", items.Select(x => GetWeaponSummary(x.Details.Weapons)).ToList());
+            resources.Select(x => GetRoundTime(x.Details.RoundTimeMinutes, x.Details.RoundTimeSeconds)).ToList());
+        tableBuilder.AddColumn("WORM-SELECT", resources.Select(x => x.Details.WormSelect.ToString()).ToList());
+        tableBuilder.AddColumn("WEAPONS", resources.Select(x => GetWeaponSummary(x.Details.Weapons)).ToList());
 
         var table = tableBuilder.Build();
         TablePrinter.Print(writer, table);

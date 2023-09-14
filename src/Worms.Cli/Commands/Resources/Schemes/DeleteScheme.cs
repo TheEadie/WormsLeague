@@ -6,7 +6,7 @@ using Worms.Cli.Resources.Local.Schemes;
 
 namespace Worms.Cli.Commands.Resources.Schemes;
 
-internal class DeleteScheme : Command
+internal sealed class DeleteScheme : Command
 {
     public static readonly Argument<string> SchemeName = new("name",
         "The name of the Scheme to be deleted");
@@ -20,7 +20,7 @@ internal class DeleteScheme : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class DeleteSchemeHandler : ICommandHandler
+internal sealed class DeleteSchemeHandler : ICommandHandler
 {
     private readonly ResourceDeleter<LocalScheme> _resourceDeleter;
     private readonly ILogger _logger;

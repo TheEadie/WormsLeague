@@ -1,4 +1,5 @@
-﻿using Syroot.Worms.Armageddon;
+﻿using System.Globalization;
+using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Schemes.Text;
 
@@ -180,17 +181,17 @@ internal class SchemeTextReader : ISchemeTextReader
         return string.IsNullOrEmpty(value) ? null : bool.Parse(value);
     }
 
-    private static int GetInt(TextReader b) => int.Parse(GetValue(b.ReadLine()));
+    private static int GetInt(TextReader b) => int.Parse(GetValue(b.ReadLine()), CultureInfo.CurrentCulture);
 
-    private static float GetFloat(TextReader b) => float.Parse(GetValue(b.ReadLine()));
+    private static float GetFloat(TextReader b) => float.Parse(GetValue(b.ReadLine()), CultureInfo.CurrentCulture);
 
     private static (sbyte, byte, sbyte, sbyte) GetWeaponDetails(TextReader b)
     {
         var line = b.ReadLine();
-        var ammo = (sbyte) int.Parse(GetValue(line[..44]));
-        var power = (byte) int.Parse(GetValue(line.Substring(44, 10)));
-        var delay = (sbyte) int.Parse(GetValue(line.Substring(55, 20)));
-        var prob = (sbyte) int.Parse(GetValue(line[75..]));
+        var ammo = (sbyte) int.Parse(GetValue(line[..44]), CultureInfo.CurrentCulture);
+        var power = (byte) int.Parse(GetValue(line.Substring(44, 10)), CultureInfo.CurrentCulture);
+        var delay = (sbyte) int.Parse(GetValue(line.Substring(55, 20)), CultureInfo.CurrentCulture);
+        var prob = (sbyte) int.Parse(GetValue(line[75..]), CultureInfo.CurrentCulture);
 
         return (ammo, power, delay, prob);
     }
@@ -201,8 +202,8 @@ internal class SchemeTextReader : ISchemeTextReader
 
     private static string GetValue(string text)
     {
-        var startIndex = text.IndexOf('[') + 1;
-        var endIndex = text.IndexOf(']');
+        var startIndex = text.IndexOf('[', StringComparison.CurrentCulture) + 1;
+        var endIndex = text.IndexOf(']', StringComparison.CurrentCulture);
         var substring = text[startIndex..endIndex];
         return substring;
     }

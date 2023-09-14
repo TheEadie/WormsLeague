@@ -7,7 +7,7 @@ using Worms.Cli.Resources.Local.Replays;
 
 namespace Worms.Cli.Commands.Resources.Replays;
 
-internal class ProcessReplay : Command
+internal sealed class ProcessReplay : Command
 {
     public static readonly Argument<string> ReplayName = new("name",
         () => "",
@@ -22,7 +22,7 @@ internal class ProcessReplay : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class ProcessReplayHandler : ICommandHandler
+internal sealed class ProcessReplayHandler : ICommandHandler
 {
     private readonly IReplayLogGenerator _replayLogGenerator;
     private readonly IResourceRetriever<LocalReplay> _replayRetriever;
@@ -52,7 +52,7 @@ internal class ProcessReplayHandler : ICommandHandler
             pattern = name;
         }
 
-        foreach (var replayPath in await _replayRetriever.Get(pattern, _logger, cancellationToken))
+        foreach (var replayPath in await _replayRetriever.Retrieve(pattern, _logger, cancellationToken))
         {
             _logger.Information($"Processing: {replayPath.Paths.WAgamePath}");
             await _replayLogGenerator.GenerateReplayLog(replayPath.Paths.WAgamePath);

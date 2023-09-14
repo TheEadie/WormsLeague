@@ -1,6 +1,7 @@
 ﻿using System.CommandLine.Builder;
 using System.CommandLine.Hosting;
 using System.CommandLine.Parsing;
+using System.Globalization;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,8 +23,9 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        var logger = new LoggerConfiguration().MinimumLevel.Is(GetLogEventLevel(args))
-            .WriteTo.ColoredConsole()
+        var logger = new LoggerConfiguration()
+            .MinimumLevel.Is(GetLogEventLevel(args))
+            .WriteTo.ColoredConsole(formatProvider: CultureInfo.CurrentCulture)
             .CreateLogger();
 
         var runner = CliStructure.BuildCommandLine()

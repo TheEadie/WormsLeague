@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Worms.Cli.CommandLine;
 
-internal class CliInfoRetriever
+internal sealed class CliInfoRetriever
 {
     private readonly IFileSystem _fileSystem;
 

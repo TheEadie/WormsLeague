@@ -5,13 +5,13 @@ using Worms.Cli.Resources.Remote.Auth;
 
 namespace Worms.Cli.Commands;
 
-internal class Auth : Command
+internal sealed class Auth : Command
 {
     public Auth() : base("auth", "Authenticate with a Worms League Server") => AddAlias("login");
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class AuthHandler : ICommandHandler
+internal sealed class AuthHandler : ICommandHandler
 {
     private readonly ILoginService _loginService;
     private readonly ILogger _logger;

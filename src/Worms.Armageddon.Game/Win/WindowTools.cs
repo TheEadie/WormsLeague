@@ -1,14 +1,11 @@
 ﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Game.Win;
 
 public static class WindowTools
 {
-    [SuppressMessage("FalsePositive", "RCS1163", Justification = "Unused params are needed by the win32.dll code")]
     public static IntPtr[] GetWindowsWithTitleMatching(Regex pattern)
     {
         var results = new List<IntPtr>();
@@ -21,8 +18,8 @@ public static class WindowTools
                 return true;
             }
 
-            var builder = new StringBuilder(length + 1);
-            _ = GetWindowText(hWnd, builder, builder.Capacity);
+            var builder = new char[length + 1];
+            _ = GetWindowText(hWnd, builder, builder.Length);
             if (pattern.IsMatch(builder.ToString()))
             {
                 results.Add(hWnd);
@@ -59,17 +56,22 @@ public static class WindowTools
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static extern int GetWindowText(IntPtr hWnd, char[] lpString, int nMaxCount);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static extern int GetWindowTextLength(IntPtr hWnd);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static extern IntPtr SetFocus(IntPtr hWnd);
 }

@@ -3,7 +3,7 @@ using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Games;
 
-internal class RemoteGameUpdater : IRemoteGameUpdater
+internal sealed class RemoteGameUpdater : IRemoteGameUpdater
 {
     private readonly IWormsServerApi _api;
 

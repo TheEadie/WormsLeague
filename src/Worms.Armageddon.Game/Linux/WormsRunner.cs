@@ -2,7 +2,7 @@
 
 namespace Worms.Armageddon.Game.Linux;
 
-internal class WormsRunner : IWormsRunner
+internal sealed class WormsRunner : IWormsRunner
 {
     private readonly IWormsLocator _wormsLocator;
 

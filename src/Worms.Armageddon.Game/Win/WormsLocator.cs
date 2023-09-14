@@ -5,7 +5,7 @@ using Microsoft.Win32;
 namespace Worms.Armageddon.Game.Win;
 
 [SupportedOSPlatform("windows")]
-internal class WormsLocator : IWormsLocator
+internal sealed class WormsLocator : IWormsLocator
 {
     public GameInfo Find()
     {

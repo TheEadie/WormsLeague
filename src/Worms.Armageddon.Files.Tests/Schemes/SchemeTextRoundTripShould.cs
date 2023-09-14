@@ -26,7 +26,7 @@ public class SchemeTextRoundTripShould
 
     private Scheme RoundTrip(Scheme scheme)
     {
-        var output = new StringWriter();
+        using var output = new StringWriter();
         _writer.Write(scheme, output);
         var input = output.ToString();
         var result = _reader.GetModel(input);

@@ -8,7 +8,7 @@ using Worms.Cli.Resources.Local.Schemes;
 
 namespace Worms.Cli.Commands.Resources.Schemes;
 
-internal class CreateScheme : Command
+internal sealed class CreateScheme : Command
 {
     public static readonly Argument<string> SchemeName = new("name", "The name of the Scheme to be created");
 
@@ -44,7 +44,7 @@ internal class CreateScheme : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class CreateSchemeHandler : ICommandHandler
+internal sealed class CreateSchemeHandler : ICommandHandler
 {
     private readonly IResourceCreator<LocalScheme, LocalSchemeCreateParameters> _schemeCreator;
     private readonly IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters> _randomSchemeCreator;

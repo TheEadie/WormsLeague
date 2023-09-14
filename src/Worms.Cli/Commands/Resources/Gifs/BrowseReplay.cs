@@ -6,14 +6,14 @@ using Worms.Cli.Resources.Local.Folders;
 
 namespace Worms.Cli.Commands.Resources.Gifs;
 
-internal class BrowseGif : Command
+internal sealed class BrowseGif : Command
 {
     public BrowseGif()
         : base("gif", "Open the folder containing the local gifs") => AddAlias("gifs");
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class BrowseGifHandler : ICommandHandler
+internal sealed class BrowseGifHandler : ICommandHandler
 {
     private readonly IWormsLocator _wormsLocator;
     private readonly IFolderOpener _folderOpener;

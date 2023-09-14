@@ -5,7 +5,7 @@ using Worms.Cli.Configuration;
 
 namespace Worms.Cli.League;
 
-internal class LeagueUpdater
+internal sealed class LeagueUpdater
 {
     private readonly GitHubReleasePackageManager _packageManager;
     private readonly IWormsLocator _wormsLocator;

@@ -6,7 +6,7 @@ using Worms.Cli.Resources.Local.Folders;
 
 namespace Worms.Cli.Commands.Resources.Schemes;
 
-internal class BrowseScheme : Command
+internal sealed class BrowseScheme : Command
 {
     public BrowseScheme()
         : base("scheme", "Open the folder containing the local schemes")
@@ -17,7 +17,7 @@ internal class BrowseScheme : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class BrowseSchemeHandler : ICommandHandler
+internal sealed class BrowseSchemeHandler : ICommandHandler
 {
     private readonly IWormsLocator _wormsLocator;
     private readonly IFolderOpener _folderOpener;

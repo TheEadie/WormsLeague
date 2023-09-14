@@ -4,14 +4,14 @@ using RestSharp;
 
 namespace Worms.Cli.Resources.Remote.Auth;
 
-internal class AccessTokenRefreshService : IAccessTokenRefreshService
+internal sealed class AccessTokenRefreshService : IAccessTokenRefreshService
 {
     private const string Authority = "https://eadie.eu.auth0.com";
     private const string ClientId = "0dBbKeIKO2UAzWfBh6LuGwWYSWGZPFHB";
 
     public async Task<AccessTokens> RefreshAccessTokens(AccessTokens current)
     {
-        var client = new RestClient(Authority);
+        using var client = new RestClient(Authority);
         var request = new RestRequest("oauth/token", Method.Post);
         _ = request.AddHeader("content-type", "application/x-www-form-urlencoded");
         _ = request.AddParameter(
@@ -22,7 +22,7 @@ internal class AccessTokenRefreshService : IAccessTokenRefreshService
 
         if (!response.IsSuccessful)
         {
-            throw response.ErrorException ?? throw new Exception(response.ErrorMessage);
+            throw response.ErrorException ?? throw new HttpRequestException(response.ErrorMessage);
         }
 
         var result = JsonSerializer.Deserialize<TokenResponse>(response.Content!)
@@ -31,7 +31,7 @@ internal class AccessTokenRefreshService : IAccessTokenRefreshService
         return current with { AccessToken = result.AccessToken };
     }
 
-    private record TokenResponse(
+    private sealed record TokenResponse(
         [property: JsonPropertyName("access_token")]
         string AccessToken,
         [property: JsonPropertyName("refresh_token")]

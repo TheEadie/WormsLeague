@@ -6,7 +6,7 @@ using Worms.Cli.Resources.Local.Replays;
 
 namespace Worms.Cli.Commands.Resources.Replays;
 
-internal class DeleteReplay : Command
+internal sealed class DeleteReplay : Command
 {
     public static readonly Argument<string> ReplayName =
         new("name", "The name of the Replay to be deleted");
@@ -20,7 +20,7 @@ internal class DeleteReplay : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class DeleteReplayHandler : ICommandHandler
+internal sealed class DeleteReplayHandler : ICommandHandler
 {
     private readonly ResourceDeleter<LocalReplay> _resourceDeleter;
     private readonly ILogger _logger;

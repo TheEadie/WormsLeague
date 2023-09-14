@@ -5,7 +5,7 @@ using Worms.Cli.Configuration;
 
 namespace Worms.Cli.Commands;
 
-internal class Setup : Command
+internal sealed class Setup : Command
 {
     public static readonly Option<string> GitHubToken = new(
         new[]
@@ -31,7 +31,7 @@ internal class Setup : Command
     }
 }
 
-internal class SetupHandler : ICommandHandler
+internal sealed class SetupHandler : ICommandHandler
 {
     private readonly IConfigManager _configManager;
     private readonly ILogger _logger;

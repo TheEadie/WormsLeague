@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
@@ -14,7 +15,7 @@ internal class StartTimeParser : IReplayLineParser
         var match = StartTime.Match(line);
         if (match.Success)
         {
-            _ = builder.WithStartTime(DateTime.Parse(match.Groups[1].Value));
+            _ = builder.WithStartTime(DateTime.Parse(match.Groups[1].Value, CultureInfo.CurrentCulture));
         }
     }
 }

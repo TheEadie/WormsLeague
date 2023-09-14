@@ -5,7 +5,7 @@ using Worms.Armageddon.Files.Schemes.Text;
 
 namespace Worms.Cli.Resources.Local.Schemes;
 
-public class LocalSchemeCreator : IResourceCreator<LocalScheme, LocalSchemeCreateParameters>
+internal sealed class LocalSchemeCreator : IResourceCreator<LocalScheme, LocalSchemeCreateParameters>
 {
     private readonly ISchemeTextReader _schemeTextReader;
     private readonly IWscWriter _wscWriter;

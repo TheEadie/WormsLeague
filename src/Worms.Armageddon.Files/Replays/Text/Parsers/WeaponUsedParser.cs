@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
@@ -31,7 +32,7 @@ internal class WeaponUsedParser : IReplayLineParser
             _ = builder.CurrentTurn.WithWeapon(
                 new Weapon(
                     weaponUsedWithFuseAndModifier.Groups[4].Value.Trim(),
-                    uint.Parse(weaponUsedWithFuseAndModifier.Groups[5].Value),
+                    uint.Parse(weaponUsedWithFuseAndModifier.Groups[5].Value, CultureInfo.CurrentCulture),
                     weaponUsedWithFuseAndModifier.Groups[6].Value));
         }
         else if (weaponUsedWithFuse.Success)
@@ -39,7 +40,7 @@ internal class WeaponUsedParser : IReplayLineParser
             _ = builder.CurrentTurn.WithWeapon(
                 new Weapon(
                     weaponUsedWithFuse.Groups[4].Value.Trim(),
-                    uint.Parse(weaponUsedWithFuse.Groups[5].Value),
+                    uint.Parse(weaponUsedWithFuse.Groups[5].Value, CultureInfo.CurrentCulture),
                     null));
         }
         else if (weaponUsedWithModifier.Success)

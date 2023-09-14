@@ -3,7 +3,7 @@ using Worms.Armageddon.Game;
 
 namespace Worms.Cli.Resources.Local.Replays;
 
-internal class LocalReplayLocator : ILocalReplayLocator
+internal sealed class LocalReplayLocator : ILocalReplayLocator
 {
     private readonly IWormsLocator _wormsLocator;
     private readonly IFileSystem _fileSystem;

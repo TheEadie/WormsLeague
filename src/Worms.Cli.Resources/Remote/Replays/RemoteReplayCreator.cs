@@ -3,7 +3,7 @@ using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Replays;
 
-internal class RemoteReplayCreator : IResourceCreator<RemoteReplay, RemoteReplayCreateParameters>
+internal sealed class RemoteReplayCreator : IResourceCreator<RemoteReplay, RemoteReplayCreateParameters>
 {
     private readonly IWormsServerApi _api;
 

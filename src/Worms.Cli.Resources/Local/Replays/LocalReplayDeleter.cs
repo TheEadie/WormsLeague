@@ -2,7 +2,7 @@ using System.IO.Abstractions;
 
 namespace Worms.Cli.Resources.Local.Replays;
 
-internal class LocalReplayDeleter : IResourceDeleter<LocalReplay>
+internal sealed class LocalReplayDeleter : IResourceDeleter<LocalReplay>
 {
     private readonly IFileSystem _fileSystem;
 

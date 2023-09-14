@@ -4,7 +4,7 @@ using Worms.Cli.Configuration.SecureStorage;
 
 namespace Worms.Cli.Configuration;
 
-internal class ConfigManager : IConfigManager
+internal sealed class ConfigManager : IConfigManager
 {
     private readonly ICredentialStorage _credentialStorage;
     private readonly IFileSystem _fileSystem;

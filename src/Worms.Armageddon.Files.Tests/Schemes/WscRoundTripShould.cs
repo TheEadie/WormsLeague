@@ -41,7 +41,7 @@ public class WscRoundTripShould
 
     [Test]
     // This setting has the wrong default value in the underlying library
-    public void SetFiringPausesTimerToTrue_WhenSchemeIsVersion1()
+    public void SetFiringPausesTimerToTrueWhenSchemeIsVersion1()
     {
         var input = new Scheme
         {

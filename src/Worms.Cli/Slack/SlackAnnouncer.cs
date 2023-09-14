@@ -4,7 +4,7 @@ using Serilog;
 
 namespace Worms.Cli.Slack;
 
-internal class SlackAnnouncer : ISlackAnnouncer
+internal sealed class SlackAnnouncer : ISlackAnnouncer
 {
     public async Task AnnounceGameStarting(string hostName, string webHookUrl, ILogger log)
     {
@@ -19,7 +19,7 @@ internal class SlackAnnouncer : ISlackAnnouncer
         using var client = new HttpClient();
         var slackUrl = new System.Uri(webHookUrl);
         var body = JsonSerializer.Serialize(slackMessage);
-        var content = new StringContent(body, Encoding.UTF8, "application/json");
+        using var content = new StringContent(body, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync(slackUrl, content).ConfigureAwait(false);
         _ = await response.Content.ReadAsStringAsync().ConfigureAwait(false);

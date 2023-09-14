@@ -5,7 +5,7 @@ using Worms.Cli.Configuration;
 
 namespace Worms.Cli.CommandLine;
 
-internal class CliUpdater
+internal sealed class CliUpdater
 {
     private readonly CliInfoRetriever _cliInfoRetriever;
     private readonly GitHubReleasePackageManager _packageManager;

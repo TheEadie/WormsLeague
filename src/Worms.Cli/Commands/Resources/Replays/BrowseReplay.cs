@@ -6,7 +6,7 @@ using Worms.Cli.Resources.Local.Folders;
 
 namespace Worms.Cli.Commands.Resources.Replays;
 
-internal class BrowseReplay : Command
+internal sealed class BrowseReplay : Command
 {
     public BrowseReplay()
         : base("replay", "Open the folder containing the local replays")
@@ -17,7 +17,7 @@ internal class BrowseReplay : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class BrowseReplayHandler : ICommandHandler
+internal sealed class BrowseReplayHandler : ICommandHandler
 {
     private readonly IWormsLocator _wormsLocator;
     private readonly IFolderOpener _folderOpener;

@@ -12,7 +12,6 @@ using Worms.Cli.Resources.Games;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
 using Worms.Cli.Resources.Modules;
-using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Replays;
 using Worms.Cli.Resources.Schemes;
@@ -31,10 +30,6 @@ public class CliModule : Module
 
         // Config
         _ = builder.RegisterType<ConfigManager>().As<IConfigManager>();
-
-        // Auth
-        _ = builder.RegisterType<TokenStore>().As<ITokenStore>();
-        _ = builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
 
         // CLI
         _ = builder.RegisterType<GitHubReleasePackageManager>();

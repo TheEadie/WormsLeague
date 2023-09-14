@@ -2,7 +2,7 @@
 
 namespace Worms.Armageddon.Game.Linux;
 
-internal class WormsLocator : IWormsLocator
+internal sealed class WormsLocator : IWormsLocator
 {
     public GameInfo Find()
     {

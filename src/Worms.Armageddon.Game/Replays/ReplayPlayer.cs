@@ -1,6 +1,6 @@
 namespace Worms.Armageddon.Game.Replays;
 
-internal class ReplayPlayer : IReplayPlayer
+internal sealed class ReplayPlayer : IReplayPlayer
 {
     private readonly IWormsRunner _wormsRunner;
 

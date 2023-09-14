@@ -4,18 +4,18 @@ using Worms.Cli.Resources.Remote.Games;
 
 namespace Worms.Cli.Resources.Games;
 
-internal class GameTextPrinter : IResourcePrinter<RemoteGame>
+internal sealed class GameTextPrinter : IResourcePrinter<RemoteGame>
 {
     private readonly ISchemeTextWriter _schemeTextWriter;
 
     public GameTextPrinter(ISchemeTextWriter schemeTextWriter) => _schemeTextWriter = schemeTextWriter;
 
-    public void Print(TextWriter writer, IReadOnlyCollection<RemoteGame> items, int outputMaxWidth)
+    public void Print(TextWriter writer, IReadOnlyCollection<RemoteGame> resources, int outputMaxWidth)
     {
         var tableBuilder = new TableBuilder(outputMaxWidth);
-        tableBuilder.AddColumn("ID", items.Select(x => x.Id).ToList());
-        tableBuilder.AddColumn("HOST", items.Select(x => x.HostMachine).ToList());
-        tableBuilder.AddColumn("STATUS", items.Select(x => x.Status).ToList());
+        tableBuilder.AddColumn("ID", resources.Select(x => x.Id).ToList());
+        tableBuilder.AddColumn("HOST", resources.Select(x => x.HostMachine).ToList());
+        tableBuilder.AddColumn("STATUS", resources.Select(x => x.Status).ToList());
 
         var table = tableBuilder.Build();
         TablePrinter.Print(writer, table);

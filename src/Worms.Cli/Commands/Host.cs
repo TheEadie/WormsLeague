@@ -14,7 +14,7 @@ using Worms.Cli.Slack;
 
 namespace Worms.Cli.Commands;
 
-internal class Host : Command
+internal sealed class Host : Command
 {
     public static readonly Option<bool> DryRun = new(
         new[]
@@ -52,7 +52,7 @@ internal class Host : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class HostHandler : ICommandHandler
+internal sealed class HostHandler : ICommandHandler
 {
     private readonly IWormsRunner _wormsRunner;
     private readonly ISlackAnnouncer _slackAnnouncer;
@@ -109,7 +109,7 @@ internal class HostHandler : ICommandHandler
             const string domain = "red-gate.com";
             hostIp = GetIpAddress(domain);
         }
-        catch (Exception e)
+        catch (ConfigurationException e)
         {
             _logger.Error($"IP address could not be found. {e.Message}");
             return 1;
@@ -187,7 +187,7 @@ internal class HostHandler : ICommandHandler
         }
 
         _logger.Information("Uploading replay to hub");
-        var allReplays = await _localReplayRetriever.Get(_logger, cancellationToken);
+        var allReplays = await _localReplayRetriever.Retrieve(_logger, cancellationToken);
         var replay = allReplays.MaxBy(x => x.Details.Date);
         _logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
         if (!dryRun)
@@ -219,13 +219,13 @@ internal class HostHandler : ICommandHandler
         var adapters = NetworkInterface.GetAllNetworkInterfaces();
         var leagueNetworkAdapter = adapters.FirstOrDefault(
                 x => x.GetIPProperties().DnsSuffix == domain && x.OperationalStatus == OperationalStatus.Up)
-            ?? throw new Exception($"No network adapter for domain: {domain}");
+            ?? throw new ConfigurationException($"No network adapter for domain: {domain}");
 
         var hostIp =
             (leagueNetworkAdapter.GetIPProperties()
                 .UnicastAddresses.FirstOrDefault(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
                 ?.Address.ToString())
-            ?? throw new Exception($"No IPv4 address found for network adapter: {leagueNetworkAdapter.Name}");
+            ?? throw new ConfigurationException($"No IPv4 address found for network adapter: {leagueNetworkAdapter.Name}");
 
         return hostIp;
     }

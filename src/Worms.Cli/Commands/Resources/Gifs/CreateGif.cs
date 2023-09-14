@@ -7,7 +7,7 @@ using Worms.Cli.Resources.Local.Replays;
 
 namespace Worms.Cli.Commands.Resources.Gifs;
 
-internal class CreateGif : Command
+internal sealed class CreateGif : Command
 {
     public static readonly Option<string> ReplayName = new(
         new[]
@@ -73,7 +73,7 @@ internal class CreateGif : Command
     }
 }
 
-internal class CreateGifHandler : ICommandHandler
+internal sealed class CreateGifHandler : ICommandHandler
 {
     private readonly IResourceCreator<LocalGif, LocalGifCreateParameters> _gifCreator;
     private readonly IResourceRetriever<LocalReplay> _replayRetriever;
@@ -149,7 +149,7 @@ internal class CreateGifHandler : ICommandHandler
             throw new ConfigurationException("No turn provided for the Gif being created");
         }
 
-        var replays = await _replayRetriever.Get(replay, _logger, cancellationToken);
+        var replays = await _replayRetriever.Retrieve(replay, _logger, cancellationToken);
 
         switch (replays.Count)
         {

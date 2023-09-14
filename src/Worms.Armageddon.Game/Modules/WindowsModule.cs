@@ -5,7 +5,7 @@ using Worms.Armageddon.Game.Win;
 namespace Worms.Armageddon.Game.Modules;
 
 [SupportedOSPlatform("windows")]
-internal class WindowsModule : Module
+internal sealed class WindowsModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {

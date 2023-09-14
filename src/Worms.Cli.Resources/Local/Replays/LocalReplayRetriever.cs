@@ -5,7 +5,7 @@ using Worms.Armageddon.Files.Replays.Text;
 
 namespace Worms.Cli.Resources.Local.Replays;
 
-internal class LocalReplayRetriever : IResourceRetriever<LocalReplay>
+internal sealed class LocalReplayRetriever : IResourceRetriever<LocalReplay>
 {
     private readonly ILocalReplayLocator _localReplayLocator;
     private readonly IFileSystem _fileSystem;
@@ -18,10 +18,10 @@ internal class LocalReplayRetriever : IResourceRetriever<LocalReplay>
         _replayTextReader = replayTextReader;
     }
 
-    public Task<IReadOnlyCollection<LocalReplay>> Get(ILogger logger, CancellationToken cancellationToken)
-        => Get("*", logger, cancellationToken);
+    public Task<IReadOnlyCollection<LocalReplay>> Retrieve(ILogger logger, CancellationToken cancellationToken)
+        => Retrieve("*", logger, cancellationToken);
 
-    public Task<IReadOnlyCollection<LocalReplay>> Get(string pattern, ILogger logger, CancellationToken cancellationToken)
+    public Task<IReadOnlyCollection<LocalReplay>> Retrieve(string pattern, ILogger logger, CancellationToken cancellationToken)
     {
         var resources = new List<LocalReplay>();
 
@@ -36,7 +36,7 @@ internal class LocalReplayRetriever : IResourceRetriever<LocalReplay>
             else
             {
                 var fileName = _fileSystem.Path.GetFileNameWithoutExtension(paths.WAgamePath);
-                var startIndex = fileName.IndexOf('[');
+                var startIndex = fileName.IndexOf('[', StringComparison.InvariantCulture);
                 var dateString = fileName[..(startIndex - 1)];
                 var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);
                 resources.Add(

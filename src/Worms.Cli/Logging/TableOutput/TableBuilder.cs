@@ -1,6 +1,6 @@
 ﻿namespace Worms.Cli.Logging.TableOutput;
 
-internal class TableBuilder
+internal sealed class TableBuilder
 {
     private readonly int _outputWidth;
     private readonly List<TableColumn> _columns = new();

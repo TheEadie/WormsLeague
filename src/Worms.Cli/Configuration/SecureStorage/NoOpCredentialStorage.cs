@@ -1,6 +1,6 @@
 ﻿namespace Worms.Cli.Configuration.SecureStorage;
 
-internal class NoOpCredentialStorage : ICredentialStorage
+internal sealed class NoOpCredentialStorage : ICredentialStorage
 {
     public string Load(string key) => null;
 

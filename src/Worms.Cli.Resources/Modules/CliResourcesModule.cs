@@ -45,6 +45,8 @@ public class CliResourcesModule : Module
         _ = builder.RegisterType<LocalGifCreator>().As<IResourceCreator<LocalGif, LocalGifCreateParameters>>();
 
         // API
+        _ = builder.RegisterType<TokenStore>().As<ITokenStore>();
+        _ = builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
         _ = builder.RegisterType<AccessTokenRefreshService>().As<IAccessTokenRefreshService>();
         _ = builder.RegisterType<DeviceCodeLoginService>().As<ILoginService>();
         _ = builder.RegisterType<WormsServerApi>().As<IWormsServerApi>();

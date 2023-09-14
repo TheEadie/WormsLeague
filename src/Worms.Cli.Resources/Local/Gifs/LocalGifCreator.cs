@@ -6,7 +6,7 @@ using Worms.Armageddon.Game.Replays;
 
 namespace Worms.Cli.Resources.Local.Gifs;
 
-public class LocalGifCreator : IResourceCreator<LocalGif, LocalGifCreateParameters>
+internal sealed class LocalGifCreator : IResourceCreator<LocalGif, LocalGifCreateParameters>
 {
     private readonly IReplayFrameExtractor _replayFrameExtractor;
     private readonly IWormsLocator _wormsLocator;

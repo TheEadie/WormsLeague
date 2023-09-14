@@ -6,7 +6,7 @@ using Worms.Cli.Resources.Remote.Games;
 
 namespace Worms.Cli.Commands.Resources.Games;
 
-internal class GetGame : Command
+internal sealed class GetGame : Command
 {
     public static readonly Argument<string> GameName =
         new("name",
@@ -21,7 +21,7 @@ internal class GetGame : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class GetGameHandler : ICommandHandler
+internal sealed class GetGameHandler : ICommandHandler
 {
     private readonly ResourceGetter<RemoteGame> _gameRetriever;
     private readonly ILogger _logger;

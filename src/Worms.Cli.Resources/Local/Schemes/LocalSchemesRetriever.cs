@@ -5,7 +5,7 @@ using Worms.Armageddon.Files.Schemes.Binary;
 
 namespace Worms.Cli.Resources.Local.Schemes;
 
-internal class LocalSchemesRetriever : IResourceRetriever<LocalScheme>
+internal sealed class LocalSchemesRetriever : IResourceRetriever<LocalScheme>
 {
     private readonly IWscReader _wscReader;
     private readonly IWormsLocator _wormsLocator;
@@ -18,10 +18,10 @@ internal class LocalSchemesRetriever : IResourceRetriever<LocalScheme>
         _fileSystem = fileSystem;
     }
 
-    public Task<IReadOnlyCollection<LocalScheme>> Get(ILogger logger, CancellationToken cancellationToken)
-        => Get("*", logger, cancellationToken);
+    public Task<IReadOnlyCollection<LocalScheme>> Retrieve(ILogger logger, CancellationToken cancellationToken)
+        => Retrieve("*", logger, cancellationToken);
 
-    public Task<IReadOnlyCollection<LocalScheme>> Get(string pattern, ILogger logger, CancellationToken cancellationToken)
+    public Task<IReadOnlyCollection<LocalScheme>> Retrieve(string pattern, ILogger logger, CancellationToken cancellationToken)
     {
         var gameInfo = _wormsLocator.Find();
 

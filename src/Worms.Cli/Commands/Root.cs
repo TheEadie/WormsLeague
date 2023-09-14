@@ -2,7 +2,7 @@ using System.CommandLine;
 
 namespace Worms.Cli.Commands;
 
-internal class Root : RootCommand
+internal sealed class Root : RootCommand
 {
     public Root() : base("Worms CLI")
     {

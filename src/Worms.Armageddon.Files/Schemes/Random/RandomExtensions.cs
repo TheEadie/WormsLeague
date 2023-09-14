@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Worms.Armageddon.Files.Schemes.Random;
 
+[SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Not used for security purposes")]
 internal static class RandomExtensions
 {
     public static T RandomChoice<T>(this IReadOnlyList<T> list, System.Random rng)

@@ -5,7 +5,7 @@ using Worms.Armageddon.Files.Schemes.Random;
 
 namespace Worms.Cli.Resources.Local.Schemes;
 
-public class LocalSchemeRandomCreator : IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>
+internal sealed class LocalSchemeRandomCreator : IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>
 {
     private readonly IRandomSchemeGenerator _randomSchemeGenerator;
     private readonly IWscWriter _wscWriter;

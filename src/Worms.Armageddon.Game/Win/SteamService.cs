@@ -2,7 +2,7 @@
 
 namespace Worms.Armageddon.Game.Win;
 
-internal class SteamService : ISteamService
+internal sealed class SteamService : ISteamService
 {
     private const string ProcessName = "Steam";
 

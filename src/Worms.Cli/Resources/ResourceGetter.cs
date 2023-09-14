@@ -17,8 +17,8 @@ public class ResourceGetter<T>
     public async Task PrintResources(string name, TextWriter writer, int outputMaxWidth, ILogger logger, CancellationToken cancellationToken)
     {
         var requestForAll = string.IsNullOrWhiteSpace(name);
-        var userSpecifiedName = !requestForAll && !name.Contains('*');
-        var matches = requestForAll ? await _retriever.Get(logger, cancellationToken) : await _retriever.Get(name, logger, cancellationToken);
+        var userSpecifiedName = !requestForAll && !name.Contains('*', StringComparison.InvariantCulture);
+        var matches = requestForAll ? await _retriever.Retrieve(logger, cancellationToken) : await _retriever.Retrieve(name, logger, cancellationToken);
 
         if (userSpecifiedName)
         {

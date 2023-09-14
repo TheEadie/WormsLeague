@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
@@ -16,7 +17,7 @@ internal class EndOfTurnParser : IReplayLineParser
 
         if (endOfTurn.Success)
         {
-            _ = builder.CurrentTurn.WithEndTime(TimeSpan.Parse(endOfTurn.Groups[1].Value));
+            _ = builder.CurrentTurn.WithEndTime(TimeSpan.Parse(endOfTurn.Groups[1].Value, CultureInfo.CurrentCulture));
         }
     }
 }

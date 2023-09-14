@@ -2,7 +2,7 @@
 
 namespace Worms.Armageddon.Game.Win;
 
-internal class WormsRunner : IWormsRunner
+internal sealed class WormsRunner : IWormsRunner
 {
     private readonly IWormsLocator _wormsLocator;
     private readonly ISteamService _steamService;

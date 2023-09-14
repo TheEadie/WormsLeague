@@ -5,7 +5,7 @@ using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Auth;
 
-public class DeviceCodeLoginService : ILoginService
+internal sealed class DeviceCodeLoginService : ILoginService
 {
     private const string Authority = "https://eadie.eu.auth0.com";
     private const string ClientId = "0dBbKeIKO2UAzWfBh6LuGwWYSWGZPFHB";
@@ -43,7 +43,7 @@ public class DeviceCodeLoginService : ILoginService
         ILogger logger,
         CancellationToken cancellationToken)
     {
-        var client = new RestClient(Authority);
+        using var client = new RestClient(Authority);
         const string scopes = "openid%20profile%20offline_access";
 
         var request = new RestRequest("oauth/device/code");
@@ -60,10 +60,10 @@ public class DeviceCodeLoginService : ILoginService
         }
 
         logger.Error($"Error requesting device code: {response.ErrorMessage}");
-        throw response.ErrorException ?? throw new Exception(response.ErrorMessage);
+        throw response.ErrorException ?? throw new HttpRequestException(response.ErrorMessage);
     }
 
-    private record DeviceAuthorizationResponse(
+    private sealed record DeviceAuthorizationResponse(
         [property: JsonPropertyName("device_code")]
         string DeviceCode,
         [property: JsonPropertyName("user_code")]
@@ -88,7 +88,7 @@ public class DeviceCodeLoginService : ILoginService
 
         logger.Verbose($"Checking if code has been confirmed... (Timeout: {timeout.TotalMinutes} mins)");
 
-        var client = new RestClient(Authority);
+        using var client = new RestClient(Authority);
 
         while (!cancellationTokenSource.Token.IsCancellationRequested)
         {
@@ -108,7 +108,8 @@ public class DeviceCodeLoginService : ILoginService
             }
 
             if (response.Content is not null
-                && (response.Content.Contains("authorization_pending") || response.Content.Contains("slow_down")))
+                && (response.Content.Contains("authorization_pending", StringComparison.InvariantCulture)
+                    || response.Content.Contains("slow_down", StringComparison.InvariantCulture)))
             {
                 logger.Verbose($"Code not yet confirmed. Retrying in {deviceCodeResponse.Interval} seconds");
                 await Task.Delay(deviceCodeResponse.Interval * 1000, cancellationToken);
@@ -116,7 +117,7 @@ public class DeviceCodeLoginService : ILoginService
             else
             {
                 logger.Error($"Error logging in: {response.ErrorMessage}");
-                throw response.ErrorException ?? throw new Exception(response.ErrorMessage);
+                throw response.ErrorException ?? throw new HttpRequestException(response.ErrorMessage);
             }
         }
 
@@ -124,7 +125,7 @@ public class DeviceCodeLoginService : ILoginService
         return null;
     }
 
-    private record TokenResponse(
+    private sealed record TokenResponse(
         [property: JsonPropertyName("access_token")]
         string AccessToken,
         [property: JsonPropertyName("refresh_token")]

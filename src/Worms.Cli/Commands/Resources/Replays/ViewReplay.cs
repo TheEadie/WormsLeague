@@ -6,7 +6,7 @@ using Worms.Cli.Resources.Local.Replays;
 
 namespace Worms.Cli.Commands.Resources.Replays;
 
-internal class ViewReplay : Command
+internal sealed class ViewReplay : Command
 {
     public static readonly Argument<string> ReplayName = new("name", "The name of the Replay to be viewed");
 
@@ -29,7 +29,7 @@ internal class ViewReplay : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class ViewReplayHandler : ICommandHandler
+internal sealed class ViewReplayHandler : ICommandHandler
 {
     private readonly ResourceViewer<LocalReplay, LocalReplayViewParameters> _resourceViewer;
     private readonly ILogger _logger;

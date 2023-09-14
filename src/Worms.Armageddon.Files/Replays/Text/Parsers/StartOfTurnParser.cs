@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
@@ -16,7 +17,7 @@ internal class StartOfTurnParser : IReplayLineParser
 
         if (startOfTurn.Success)
         {
-            var startTimeTurn = TimeSpan.Parse(startOfTurn.Groups[1].Value);
+            var startTimeTurn = TimeSpan.Parse(startOfTurn.Groups[1].Value, CultureInfo.CurrentCulture);
             var teamName = GetTeamNameFromText(startOfTurn.Groups[3].Value);
 
             _ = builder.FinaliseCurrentTurn();

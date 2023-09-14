@@ -6,7 +6,7 @@ using Worms.Cli.Resources.Local.Schemes;
 
 namespace Worms.Cli.Commands.Resources.Schemes;
 
-internal class GetScheme : Command
+internal sealed class GetScheme : Command
 {
     public static readonly Argument<string> SchemeName = new("name",
         () => "",
@@ -21,7 +21,7 @@ internal class GetScheme : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class GetSchemeHandler : ICommandHandler
+internal sealed class GetSchemeHandler : ICommandHandler
 {
     private readonly ResourceGetter<LocalScheme> _schemesRetriever;
     private readonly ILogger _logger;

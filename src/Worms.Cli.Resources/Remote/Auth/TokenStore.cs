@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace Worms.Cli.Resources.Remote.Auth;
 
-public class TokenStore : ITokenStore
+internal sealed class TokenStore : ITokenStore
 {
     private readonly IFileSystem _fileSystem;
     private readonly IDataProtector _dataProtector;

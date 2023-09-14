@@ -3,7 +3,7 @@ using Worms.Armageddon.Game;
 
 namespace Worms.Cli.Resources.Local.Schemes;
 
-internal class LocalSchemeDeleter : IResourceDeleter<LocalScheme>
+internal sealed class LocalSchemeDeleter : IResourceDeleter<LocalScheme>
 {
     private readonly IWormsLocator _wormsLocator;
     private readonly IFileSystem _fileSystem;

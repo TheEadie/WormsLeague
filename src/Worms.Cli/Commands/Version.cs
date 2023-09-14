@@ -6,13 +6,13 @@ using Worms.Cli.CommandLine;
 
 namespace Worms.Cli.Commands;
 
-internal class Version : Command
+internal sealed class Version : Command
 {
     public Version() : base("version", "Get the current version of the Worms CLI") { }
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class VersionHandler : ICommandHandler
+internal sealed class VersionHandler : ICommandHandler
 {
     private readonly IWormsLocator _wormsLocator;
     private readonly CliInfoRetriever _cliInfoRetriever;

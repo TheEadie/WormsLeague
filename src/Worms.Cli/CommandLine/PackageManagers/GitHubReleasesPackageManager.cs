@@ -28,8 +28,9 @@ public class GitHubReleasePackageManager
     public async Task<IEnumerable<Version>> GetAvailableVersions()
     {
         var releases = await _gitHubClient.Repository.Release.GetAll(_repoOwner, _repoName).ConfigureAwait(false);
-        var matching = releases.Where(x => x.TagName.StartsWith(_tagPrefix));
-        var tagVersions = matching.Select(x => x.TagName.Replace(_tagPrefix, string.Empty));
+        var matching = releases.Where(x => x.TagName.StartsWith(_tagPrefix, StringComparison.InvariantCulture));
+        var tagVersions = matching.Select(
+            x => x.TagName.Replace(_tagPrefix, string.Empty, StringComparison.InvariantCulture));
 
         var versions = new List<Version>();
         foreach (var tagVersion in tagVersions)

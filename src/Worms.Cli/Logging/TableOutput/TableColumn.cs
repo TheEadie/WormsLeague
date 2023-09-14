@@ -1,6 +1,6 @@
 ﻿namespace Worms.Cli.Logging.TableOutput;
 
-internal class TableColumn
+internal sealed class TableColumn
 {
     public string Heading { get; }
     public IReadOnlyCollection<string> Rows { get; }

@@ -7,14 +7,14 @@ using Worms.Cli.Configuration;
 
 namespace Worms.Cli.Commands;
 
-internal class Update : Command
+internal sealed class Update : Command
 {
     public Update()
         : base("update", "Update Worms CLI") { }
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class UpdateHandler : ICommandHandler
+internal sealed class UpdateHandler : ICommandHandler
 {
     private readonly IConfigManager _configManager;
     private readonly CliUpdater _cliUpdater;

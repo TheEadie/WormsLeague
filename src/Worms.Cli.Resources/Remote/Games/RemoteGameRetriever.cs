@@ -3,16 +3,16 @@ using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Games;
 
-internal class RemoteGameRetriever : IResourceRetriever<RemoteGame>
+internal sealed class RemoteGameRetriever : IResourceRetriever<RemoteGame>
 {
     private readonly IWormsServerApi _api;
 
     public RemoteGameRetriever(IWormsServerApi api) => _api = api;
 
-    public async Task<IReadOnlyCollection<RemoteGame>> Get(ILogger logger, CancellationToken cancellationToken)
-        => await Get("*", logger, cancellationToken);
+    public async Task<IReadOnlyCollection<RemoteGame>> Retrieve(ILogger logger, CancellationToken cancellationToken)
+        => await Retrieve("*", logger, cancellationToken);
 
-    public async Task<IReadOnlyCollection<RemoteGame>> Get(string pattern, ILogger logger,
+    public async Task<IReadOnlyCollection<RemoteGame>> Retrieve(string pattern, ILogger logger,
         CancellationToken cancellationToken)
     {
         try

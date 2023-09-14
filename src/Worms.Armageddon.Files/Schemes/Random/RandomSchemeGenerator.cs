@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Schemes.Random;
 
+[SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Not used for security")]
 public class RandomSchemeGenerator : IRandomSchemeGenerator
 {
     private readonly System.Random _rng = new();
