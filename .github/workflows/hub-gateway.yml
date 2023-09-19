@@ -5,6 +5,8 @@ on:
     paths:
       - "src/Worms.Hub.Gateway/**"
       - "src/database/**"
+      - "builds/docker/makefile"
+      - "build/docker/gateway/**"
       - "build/release-github.sh"
       - "build/version.sh"
       - ".github/workflows/hub-gateway.yml"
@@ -31,7 +33,7 @@ jobs:
 
       - name: Publish
         run: |
-          cd src/Worms.Hub.Gateway; make publish
+          make gateway.publish
 
   build-database:
     name: Build Database
@@ -101,4 +103,4 @@ jobs:
 
       - name: Release
         run: |
-          cd src/Worms.Hub.Gateway; make release GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          make release GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}

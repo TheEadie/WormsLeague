@@ -3,10 +3,12 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0.400@sha256:bdcfb498261ca18f023ac67615d814e
 WORKDIR /app
 ARG PROJECT="Worms.Hub.Gateway.csproj"
 
-COPY ${PROJECT} ./${PROJECT}
+COPY src/Directory.Build.props .
+COPY .editorconfig .
+COPY src/Worms.Hub.Gateway/${PROJECT} ./${PROJECT}
 RUN dotnet restore ${PROJECT} --runtime alpine-x64
 
-COPY . .
+COPY src/Worms.Hub.Gateway .
 ARG VERSION=0.0.1
 RUN dotnet publish \
     ${PROJECT} \
@@ -18,6 +20,9 @@ RUN dotnet publish \
     --no-restore \
     -p:AssemblyVersion=${VERSION} \
     -p:Version=${VERSION}
+
+FROM build as test
+RUN dotnet test --no-restore --no-build --verbosity normal
 
 #### Runtime ####
 FROM mcr.microsoft.com/dotnet/runtime-deps:7.0.4-alpine3.16@sha256:d05253254e0923267bb900607e5adddaa7131343b62d3951c81f8a34f0c1bcc9

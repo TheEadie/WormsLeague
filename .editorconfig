@@ -285,3 +285,7 @@ dotnet_diagnostic.CA2007.severity = none
 indent_size = 2
 tab_width = 2
 
+[{*.makefile,makefile}]
+indent_style = tab
+indent_size = tab
+

@@ -1,0 +1,9 @@
+# Ignore everything
+**
+
+# Except for these files
+!/src
+!.editorconfig
+
+**/bin
+**/obj
