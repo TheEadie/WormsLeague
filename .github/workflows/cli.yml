@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - "src/Worms.Cli/**"
+      - "src/Worms.Cli.*/**"
+      - "src/Worms.Armageddon.*/**"
+      - "build/cli/**"
       - "build/release-github.sh"
       - "build/version.sh"
       - ".github/workflows/cli.yml"
@@ -22,11 +25,10 @@ jobs:
         with:
           dotnet-version: 7.0.x
       - name: Run tests
-        run: cd src/Worms.Cli; dotnet test
+        run: make cli.test.unit
 
-  build-cli-windows:
-    name: Build - Windows
-    needs: unit-tests
+  package-cli-windows:
+    name: Package - Windows
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,16 +40,15 @@ jobs:
         with:
           dotnet-version: 7.0.x
       - name: Build
-        run: cd src/Worms.Cli; make windows
+        run: make cli.package.windows
       - name: Upload build
         uses: actions/upload-artifact@v3
         with:
           name: win-x64
-          path: src/Worms.Cli/.artifacts/win-x64/
+          path: .artifacts/win-x64/
 
-  build-cli-linux-x64:
-    name: Build - Linux
-    needs: unit-tests
+  package-cli-linux-x64:
+    name: Package - Linux
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -59,16 +60,15 @@ jobs:
         with:
           dotnet-version: 7.0.x
       - name: Build
-        run: cd src/Worms.Cli; make linux
+        run: make cli.package.linux
       - name: Upload build
         uses: actions/upload-artifact@v3
         with:
           name: linux-x64
-          path: src/Worms.Cli/.artifacts/linux-x64/
+          path: .artifacts/linux-x64/
 
-  build-cli-linux-musl-x64:
-    name: Build - Alpine
-    needs: unit-tests
+  package-cli-linux-musl-x64:
+    name: Package - Alpine
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -80,16 +80,16 @@ jobs:
         with:
           dotnet-version: 7.0.x
       - name: Build
-        run: cd src/Worms.Cli; make alpine
+        run: make cli.package.alpine
       - name: Upload build
         uses: actions/upload-artifact@v3
         with:
           name: linux-musl-x64
-          path: src/Worms.Cli/.artifacts/linux-musl-x64/
+          path: .artifacts/linux-musl-x64/
 
-  build-cli-docker:
-    name: Build - Docker
-    needs: build-cli-linux-musl-x64
+  package-cli-docker:
+    name: Package - Docker
+    needs: package-cli-linux-musl-x64
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -100,13 +100,26 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: linux-musl-x64
-          path: src/Worms.Cli/.artifacts/linux-musl-x64/
+          path: .artifacts/linux-musl-x64/
       - name: Build
-        run: cd src/Worms.Cli; make docker-build
+        run: make cli.build.docker
+
+  overall-build:
+    name: Overall Build
+    needs:
+      - unit-tests
+      - package-cli-windows
+      - package-cli-linux-x64
+      - package-cli-linux-musl-x64
+      - package-cli-docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: echo "Checked"
 
   release-cli-github:
     name: Release - GitHub
-    needs: build-cli-windows
+    needs: overall-build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
@@ -118,13 +131,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: win-x64
-          path: src/Worms.Cli/.artifacts/win-x64/
+          path: .artifacts/win-x64/
       - name: Release
-        run: cd src/Worms.Cli; make release-github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
+        run: make cli.release.github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
 
   release-cli-dockerhub:
     name: Release - DockerHub
-    needs: build-cli-docker
+    needs: overall-build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
@@ -136,11 +149,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: linux-musl-x64
-          path: src/Worms.Cli/.artifacts/linux-musl-x64/
+          path: .artifacts/linux-musl-x64/
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: theeadie
           password: ${{ secrets.DockerHubAccessToken }}
       - name: Release
-        run: cd src/Worms.Cli; make release-dockerhub
+        run: make cli.release.dockerhub

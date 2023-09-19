@@ -11,3 +11,5 @@ stop:
 	@docker-compose down
 
 include build/docker/makefile
+include build/cli/makefile
+
