@@ -1,5 +1,5 @@
 #### Build ####
-FROM mcr.microsoft.com/dotnet/sdk:7.0.400@sha256:bdcfb498261ca18f023ac67615d814ea743aa3288eb880855fa2eb86c6313ccc AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0.401@sha256:2dd6fa19392967b26d59228af0ec481c652b98346ced56a4db1c66416b4c947f AS build
 WORKDIR /app
 ARG PROJECT="Worms.Hub.Gateway.csproj"
 
