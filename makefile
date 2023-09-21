@@ -1,7 +1,7 @@
 GITHUB_REPO := theeadie/WormsLeague
 GITHUB_AUTH_TOKEN := empty
 
-default: publish
+default: package
 
 start:
 	@docker-compose build --build-arg VERSION=0.0.1

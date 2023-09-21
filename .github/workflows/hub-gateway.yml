@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Package - Gateway
     runs-on: ubuntu-latest
 
     steps:
@@ -31,12 +31,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Publish
+      - name: Package
         run: |
-          make gateway.publish
+          make gateway.package
 
   build-database:
-    name: Build Database
+    name: Build - Database
     runs-on: ubuntu-latest
     env:
       FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}
@@ -95,7 +95,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
+      - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: theeadie

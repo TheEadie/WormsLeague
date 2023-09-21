@@ -1,5 +1,9 @@
 include build/cli/config.mk
 
+package:: cli.package
+build:: cli.build
+test:: cli.test
+
 cli_VERSION := $(shell build/version.sh $(cli_NEXT_VERSION) $(cli_TAG_PREFIX))
 cli_VERSION_MAJOR := $(word 1,$(subst ., ,$(cli_VERSION)))
 cli_VERSION_MINOR := $(word 2,$(subst ., ,$(cli_VERSION)))
@@ -7,7 +11,7 @@ cli_VERSION_PATCH := $(word 2,$(subst ., ,$(cli_VERSION)))
 
 ## Build
 
-cli.build: cli.build.exe cli.build.docker
+cli.build: cli.build.exe
 
 cli.build.exe:
 	@dotnet build "src/Worms.Cli/Worms.Cli.csproj"
