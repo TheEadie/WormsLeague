@@ -1,0 +1,151 @@
+﻿using System.IO.Abstractions;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Worms.Cli.Resources.Remote.Auth;
+
+namespace Worms.Cli.Resources.Remote;
+
+internal sealed class WormsServerApi : IWormsServerApi
+{
+    private readonly IAccessTokenRefreshService _accessTokenRefreshService;
+    private readonly ITokenStore _tokenStore;
+    private readonly IFileSystem _fileSystem;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly Uri _baseUri;
+
+    public WormsServerApi(
+        IAccessTokenRefreshService accessTokenRefreshService,
+        ITokenStore tokenStore,
+        IFileSystem fileSystem,
+        IHttpClientFactory httpClientFactory)
+    {
+        _accessTokenRefreshService = accessTokenRefreshService;
+        _tokenStore = tokenStore;
+        _fileSystem = fileSystem;
+        _httpClientFactory = httpClientFactory;
+#if DEBUG
+        _baseUri = new Uri("https://localhost:5001/");
+#else
+        _baseUri = new Uri("https://worms.davideadie.dev/");
+#endif
+    }
+
+    public sealed record GamesDtoV1(
+        [property: JsonPropertyName("id")] string Id,
+        [property: JsonPropertyName("status")] string Status,
+        [property: JsonPropertyName("hostMachine")]
+        string HostMachine);
+
+    public sealed record CreateGameDtoV1(
+        [property: JsonPropertyName("hostMachine")]
+        string HostMachine);
+
+    public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        httpClient.BaseAddress = _baseUri;
+        var path = new Uri("api/v1/games", UriKind.Relative);
+        return await CallApiRefreshAccessTokenIfInvalid<IReadOnlyCollection<GamesDtoV1>>(
+            async () => await httpClient.GetAsync(path));
+    }
+
+    public async Task<GamesDtoV1> CreateGame(CreateGameDtoV1 createParams)
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        httpClient.BaseAddress = _baseUri;
+        var path = new Uri("api/v1/games", UriKind.Relative);
+        return await CallApiRefreshAccessTokenIfInvalid<GamesDtoV1>(
+            async () => await httpClient.PostAsJsonAsync(path, createParams));
+    }
+
+    public async Task UpdateGame(GamesDtoV1 newGameDetails)
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        httpClient.BaseAddress = _baseUri;
+        var path = new Uri("api/v1/games", UriKind.Relative);
+        await CallApiRefreshAccessTokenIfInvalid(
+            async () => await httpClient.PutAsJsonAsync(path, newGameDetails));
+    }
+
+    public sealed record ReplayDtoV1(
+        [property: JsonPropertyName("id")] string Id,
+        [property: JsonPropertyName("name")] string Name,
+        [property: JsonPropertyName("status")] string Status);
+
+    public sealed record CreateReplayDtoV1(string Name, string ReplayFilePath);
+
+    public async Task<ReplayDtoV1> CreateReplay(CreateReplayDtoV1 createParams)
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        httpClient.BaseAddress = _baseUri;
+        using var form = new MultipartFormDataContent();
+        using var fileContent =
+            new ByteArrayContent(await _fileSystem.File.ReadAllBytesAsync(createParams.ReplayFilePath));
+        fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+        using var content = new StringContent(createParams.Name);
+
+        form.Add(content, "Name");
+        form.Add(fileContent, "ReplayFile", _fileSystem.Path.GetFileName(createParams.ReplayFilePath));
+
+        var path = new Uri("api/v1/replays", UriKind.Relative);
+        return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(
+            async () => await httpClient.PostAsync(path, form));
+    }
+
+
+    private async Task<T> CallApiRefreshAccessTokenIfInvalid<T>(Func<Task<HttpResponseMessage>> apiCall)
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        httpClient.BaseAddress = _baseUri;
+        var accessTokens = _tokenStore.GetAccessTokens();
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
+
+        var response = await apiCall().ConfigureAwait(false);
+
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            // Retry with newer access token
+            accessTokens = await _accessTokenRefreshService.RefreshAccessTokens(accessTokens).ConfigureAwait(false);
+            _tokenStore.StoreAccessTokens(accessTokens);
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
+            response = await apiCall().ConfigureAwait(false);
+        }
+
+        _ = response.EnsureSuccessStatusCode();
+
+        var streamAsync = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+        await using var stream = streamAsync.ConfigureAwait(false);
+        var result = await JsonSerializer.DeserializeAsync<T>(streamAsync).ConfigureAwait(false);
+        return result is null
+            ? throw new JsonException("The API returned success but the JSON response was empty")
+            : result;
+    }
+
+    private async Task CallApiRefreshAccessTokenIfInvalid(Func<Task<HttpResponseMessage>> apiCall)
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        httpClient.BaseAddress = _baseUri;
+        var accessTokens = _tokenStore.GetAccessTokens();
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
+
+        var response = await apiCall().ConfigureAwait(false);
+
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            // Retry with newer access token
+            accessTokens = await _accessTokenRefreshService.RefreshAccessTokens(accessTokens).ConfigureAwait(false);
+            _tokenStore.StoreAccessTokens(accessTokens);
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
+            response = await apiCall().ConfigureAwait(false);
+        }
+
+        _ = response.EnsureSuccessStatusCode();
+    }
+}
