@@ -35,7 +35,9 @@ services:
                 condition: service_healthy
 
     worms-gateway:
-        build: src/Worms.Hub.Gateway/.
+        build:
+            dockerfile: build/docker/gateway/Dockerfile
+            context: .
         ports:
             - "5005:80"
         volumes:

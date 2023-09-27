@@ -2,7 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <NoWarn>$(NoWarn);IL2104;IL2026;</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
