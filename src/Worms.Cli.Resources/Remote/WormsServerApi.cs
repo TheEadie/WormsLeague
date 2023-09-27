@@ -27,7 +27,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         _fileSystem = fileSystem;
         _httpClientFactory = httpClientFactory;
 #if DEBUG
-        _baseUri = new Uri("https://localhost:5001/");
+        _baseUri = new Uri("http://localhost:5005/");
 #else
         _baseUri = new Uri("https://worms.davideadie.dev/");
 #endif
@@ -46,27 +46,27 @@ internal sealed class WormsServerApi : IWormsServerApi
     public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
     {
         using var httpClient = _httpClientFactory.CreateClient();
-        httpClient.BaseAddress = _baseUri;
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<IReadOnlyCollection<GamesDtoV1>>(
+            httpClient,
             async () => await httpClient.GetAsync(path));
     }
 
     public async Task<GamesDtoV1> CreateGame(CreateGameDtoV1 createParams)
     {
         using var httpClient = _httpClientFactory.CreateClient();
-        httpClient.BaseAddress = _baseUri;
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<GamesDtoV1>(
+            httpClient,
             async () => await httpClient.PostAsJsonAsync(path, createParams));
     }
 
     public async Task UpdateGame(GamesDtoV1 newGameDetails)
     {
         using var httpClient = _httpClientFactory.CreateClient();
-        httpClient.BaseAddress = _baseUri;
         var path = new Uri("api/v1/games", UriKind.Relative);
         await CallApiRefreshAccessTokenIfInvalid(
+            httpClient,
             async () => await httpClient.PutAsJsonAsync(path, newGameDetails));
     }
 
@@ -80,7 +80,6 @@ internal sealed class WormsServerApi : IWormsServerApi
     public async Task<ReplayDtoV1> CreateReplay(CreateReplayDtoV1 createParams)
     {
         using var httpClient = _httpClientFactory.CreateClient();
-        httpClient.BaseAddress = _baseUri;
         using var form = new MultipartFormDataContent();
         using var fileContent =
             new ByteArrayContent(await _fileSystem.File.ReadAllBytesAsync(createParams.ReplayFilePath));
@@ -92,17 +91,18 @@ internal sealed class WormsServerApi : IWormsServerApi
 
         var path = new Uri("api/v1/replays", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(
+            httpClient,
             async () => await httpClient.PostAsync(path, form));
     }
 
 
-    private async Task<T> CallApiRefreshAccessTokenIfInvalid<T>(Func<Task<HttpResponseMessage>> apiCall)
+    private async Task<T> CallApiRefreshAccessTokenIfInvalid<T>(
+        HttpClient client,
+        Func<Task<HttpResponseMessage>> apiCall)
     {
-        using var httpClient = _httpClientFactory.CreateClient();
-        httpClient.BaseAddress = _baseUri;
+        client.BaseAddress = _baseUri;
         var accessTokens = _tokenStore.GetAccessTokens();
-        httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
 
         var response = await apiCall().ConfigureAwait(false);
 
@@ -111,7 +111,7 @@ internal sealed class WormsServerApi : IWormsServerApi
             // Retry with newer access token
             accessTokens = await _accessTokenRefreshService.RefreshAccessTokens(accessTokens).ConfigureAwait(false);
             _tokenStore.StoreAccessTokens(accessTokens);
-            httpClient.DefaultRequestHeaders.Authorization =
+            client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
             response = await apiCall().ConfigureAwait(false);
         }
@@ -126,13 +126,11 @@ internal sealed class WormsServerApi : IWormsServerApi
             : result;
     }
 
-    private async Task CallApiRefreshAccessTokenIfInvalid(Func<Task<HttpResponseMessage>> apiCall)
+    private async Task CallApiRefreshAccessTokenIfInvalid(HttpClient client, Func<Task<HttpResponseMessage>> apiCall)
     {
-        using var httpClient = _httpClientFactory.CreateClient();
-        httpClient.BaseAddress = _baseUri;
+        client.BaseAddress = _baseUri;
         var accessTokens = _tokenStore.GetAccessTokens();
-        httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
 
         var response = await apiCall().ConfigureAwait(false);
 
@@ -141,7 +139,7 @@ internal sealed class WormsServerApi : IWormsServerApi
             // Retry with newer access token
             accessTokens = await _accessTokenRefreshService.RefreshAccessTokens(accessTokens).ConfigureAwait(false);
             _tokenStore.StoreAccessTokens(accessTokens);
-            httpClient.DefaultRequestHeaders.Authorization =
+            client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
             response = await apiCall().ConfigureAwait(false);
         }
