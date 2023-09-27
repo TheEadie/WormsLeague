@@ -6,10 +6,4 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-
-  <!-- Workaround for https://github.com/dotnet/roslyn/issues/41640 -->
-  <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
-  </PropertyGroup>
 </Project>
