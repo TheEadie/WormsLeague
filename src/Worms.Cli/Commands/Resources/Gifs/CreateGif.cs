@@ -151,12 +151,14 @@ internal sealed class CreateGifHandler : ICommandHandler
 
         var replays = await _replayRetriever.Retrieve(replay, _logger, cancellationToken);
 
-        switch (replays.Count)
+        if (replays.Count == 0)
         {
-            case 0:
-                throw new ConfigurationException($"No replays found with name: {replay}");
-            case > 1:
-                throw new ConfigurationException($"More than one replay found matching pattern: {replay}");
+            throw new ConfigurationException($"No replays found with name: {replay}");
+        }
+
+        if (replays.Count > 1)
+        {
+            throw new ConfigurationException($"More than one replay found matching pattern: {replay}");
         }
 
         var foundReplay = replays.Single();
