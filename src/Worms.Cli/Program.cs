@@ -4,6 +4,7 @@ using System.CommandLine.Parsing;
 using System.Globalization;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
@@ -23,8 +24,7 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        var logger = new LoggerConfiguration()
-            .MinimumLevel.Is(GetLogEventLevel(args))
+        var logger = new LoggerConfiguration().MinimumLevel.Is(GetLogEventLevel(args))
             .WriteTo.ColoredConsole(formatProvider: CultureInfo.CurrentCulture)
             .CreateLogger();
 
@@ -33,6 +33,7 @@ internal static class Program
                 _ => new HostBuilder(),
                 (builder) =>
                     {
+                        _ = builder.ConfigureServices(x => x.AddHttpClient());
                         _ = builder.UseServiceProviderFactory(new AutofacServiceProviderFactory())
                             .ConfigureContainer<ContainerBuilder>(
                                 container =>

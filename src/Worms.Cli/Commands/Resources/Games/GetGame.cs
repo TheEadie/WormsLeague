@@ -8,12 +8,13 @@ namespace Worms.Cli.Commands.Resources.Games;
 
 internal sealed class GetGame : Command
 {
-    public static readonly Argument<string> GameName =
-        new("name",
-            () => "",
-            "Optional: The name or search pattern for the Game to be retrieved. Wildcards (*) are supported");
+    public static readonly Argument<string> GameName = new(
+        "name",
+        () => "",
+        "Optional: The name or search pattern for the Game to be retrieved. Wildcards (*) are supported");
 
-    public GetGame() : base("game", "Retrieves information for current games")
+    public GetGame()
+        : base("game", "Retrieves information for current games")
     {
         AddAlias("games");
         AddArgument(GameName);
@@ -32,8 +33,7 @@ internal sealed class GetGameHandler : ICommandHandler
         _logger = logger;
     }
 
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
