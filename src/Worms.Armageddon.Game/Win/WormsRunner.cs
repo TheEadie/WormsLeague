@@ -34,7 +34,7 @@ internal sealed class WormsRunner : IWormsRunner
                     _steamService.WaitForSteamPrompt();
 
                     var wormsProcess = FindWormsProcess(gameInfo);
-                    wormsProcess.WaitForExit();
+                    wormsProcess?.WaitForExit();
 
                     return Task.CompletedTask;
                 });
@@ -51,6 +51,6 @@ internal sealed class WormsRunner : IWormsRunner
             retryCount++;
         }
 
-        return wormsProcess ?? throw new InvalidOperationException("Unable to find worms process");
+        return wormsProcess;
     }
 }
