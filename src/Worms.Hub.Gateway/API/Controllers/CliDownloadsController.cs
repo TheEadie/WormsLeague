@@ -27,9 +27,11 @@ internal sealed class CliDownloadsController : V1ApiController
         _logger.Log(LogLevel.Information, "Get latest CLI version started by {Username}", username);
 
         var latestDetails = await _cliArtifacts.GetLatest();
+        var availablePlatforms = latestDetails.PlatformFiles.Keys.Select(x => x.ToString().ToLowerInvariant())
+            .ToDictionary(x => x, x => Url.Action(action: "Get", controller: "CliDownloads") + "/" + x);
 
         _logger.Log(LogLevel.Information, "Get latest CLI version complete");
-        return new CliInfoDto(latestDetails.Version);
+        return new CliInfoDto(latestDetails.Version, availablePlatforms);
     }
 
     [AllowAnonymous]
@@ -45,7 +47,7 @@ internal sealed class CliDownloadsController : V1ApiController
 
         var latestDetails = await _cliArtifacts.GetLatest();
 
-        if (!Enum.TryParse<Platform>(platform, out var platformChecked)
+        if (!Enum.TryParse<Platform>(platform, true, out var platformChecked)
             || !latestDetails.PlatformFiles.ContainsKey(platformChecked))
         {
             return NotFound();
