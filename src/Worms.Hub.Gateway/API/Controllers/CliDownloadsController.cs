@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Worms.Hub.Gateway.API.DTOs;
@@ -6,19 +7,20 @@ using Worms.Hub.Gateway.Storage.Files;
 
 namespace Worms.Hub.Gateway.API.Controllers;
 
-internal sealed class CliController : V1ApiController
+[Route("~/api/v{version:apiVersion}/downloads/cli")]
+internal sealed class CliDownloadsController : V1ApiController
 {
-    private readonly ILogger<CliController> _logger;
+    private readonly ILogger<CliDownloadsController> _logger;
     private readonly CliArtifacts _cliArtifacts;
 
-    public CliController(CliArtifacts cliArtifacts, ILogger<CliController> logger)
+    public CliDownloadsController(CliArtifacts cliArtifacts, ILogger<CliDownloadsController> logger)
     {
         _cliArtifacts = cliArtifacts;
         _logger = logger;
     }
 
     [AllowAnonymous]
-    [HttpGet("latest")]
+    [HttpGet]
     public async Task<ActionResult<CliInfoDto>> Get()
     {
         var username = User.Identity?.Name ?? "anonymous";
@@ -31,7 +33,11 @@ internal sealed class CliController : V1ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("download/{platform}")]
+    [HttpGet("{platform}")]
+    [SuppressMessage(
+        "Security",
+        "CA3003:Review code for file path injection vulnerabilities",
+        Justification = "Platform is validated against the enum before being used in the path")]
     public async Task<ActionResult<CliInfoDto>> Get(string platform)
     {
         var username = User.Identity?.Name ?? "anonymous";
@@ -46,9 +52,7 @@ internal sealed class CliController : V1ApiController
         }
 
         var filePath = latestDetails.PlatformFiles[platformChecked];
-#pragma warning disable CA3003 // values for filePath can only be from the pre-defined list in CliArtifacts
         var fileContents = await System.IO.File.ReadAllBytesAsync(filePath);
-#pragma warning restore CA3003
         var filename = Path.GetFileName(filePath);
         _logger.Log(LogLevel.Information, "Get latest CLI version complete");
         return File(fileContents, "application/zip", filename);
