@@ -126,13 +126,18 @@ public static class ContainerApps
                         new ContainerArgs
                         {
                             Name = "gateway",
-                            Image = "theeadie/worms-server-gateway:0.3.9",
+                            Image = "theeadie/worms-server-gateway:0.3.21",
                             Env = new InputList<EnvironmentVarArgs>
                             {
                                 new EnvironmentVarArgs
                                 {
                                     Name = "WORMS_STORAGE__TempReplayFolder",
-                                    Value = "/storage",
+                                    Value = "/storage/temp-replays",
+                                },
+                                new EnvironmentVarArgs
+                                {
+                                    Name = "WORMS_STORAGE__CliFolder",
+                                    Value = "/storage/cli",
                                 },
                                 new EnvironmentVarArgs
                                 {
