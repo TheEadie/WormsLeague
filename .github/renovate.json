@@ -2,10 +2,8 @@
   "extends": ["config:base", "group:dotNetCore"],
   "regexManagers": [
     {
-      "fileMatch": ["^*WormsHub.cs$"],
-      "matchStrings": [
-        "Image = \"(?<depName>.*?):(?<currentValue>.*?)\",( |\\n)"
-      ],
+      "fileMatch": ["(^|/)ContainerApps\\.cs$"],
+      "matchStrings": ["Image = \"(?<depName>.*?):(?<currentValue>.*?)\",( |\\n)"],
       "datasourceTemplate": "docker"
     }
   ],
