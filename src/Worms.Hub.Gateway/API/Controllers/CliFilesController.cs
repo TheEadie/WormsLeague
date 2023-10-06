@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Worms.Hub.Gateway.API.DTOs;
@@ -78,7 +77,7 @@ internal sealed class CliFilesController : V1ApiController
             return BadRequest("Unknown platform");
         }
 
-        var fileNameForDisplay = GetFileNameForDisplay(parameters.File);
+        var fileNameForDisplay = UploadUtils.GetFileNameForDisplay(parameters.File);
         _logger.Log(
             LogLevel.Information,
             "Received CLI file for {Platform} ({Filename})",
@@ -95,11 +94,5 @@ internal sealed class CliFilesController : V1ApiController
 
         _logger.Log(LogLevel.Information, "Upload CLI complete");
         return await Get();
-    }
-
-    private static string GetFileNameForDisplay(IFormFile file)
-    {
-        var untrustedFileName = Path.GetFileName(file.FileName);
-        return WebUtility.HtmlEncode(untrustedFileName);
     }
 }
