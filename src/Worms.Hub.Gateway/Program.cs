@@ -1,6 +1,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Worms.Hub.Gateway;
 using Worms.Hub.Gateway.API.DTOs;
+using Worms.Hub.Gateway.API.Middleware;
 using Worms.Hub.Gateway.API.Validators;
 using Worms.Hub.Gateway.Domain;
 using Worms.Hub.Gateway.Domain.Announcers;
@@ -50,5 +51,7 @@ else
 {
     _ = app.MapControllers();
 }
+
+app.UseRequestLogging();
 
 app.Run();
