@@ -1,4 +1,3 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Worms.Hub.Gateway.API.DTOs;
 using Worms.Hub.Gateway.API.Validators;
@@ -32,7 +31,7 @@ internal sealed class ReplaysController : V1ApiController
         var username = User.Identity?.Name ?? "anonymous";
         _logger.Log(LogLevel.Information, "Upload replay started by {Username}", username);
 
-        var fileNameForDisplay = GetFileNameForDisplay(parameters.ReplayFile);
+        var fileNameForDisplay = UploadUtils.GetFileNameForDisplay(parameters.ReplayFile);
         _logger.Log(
             LogLevel.Information,
             "Received replay file {Name} ({Filename})",
@@ -75,11 +74,5 @@ internal sealed class ReplaysController : V1ApiController
         await using var stream = System.IO.File.Create(saveFilePath);
         await replayFile.CopyToAsync(stream);
         return generatedFileName;
-    }
-
-    private static string GetFileNameForDisplay(IFormFile replayFile)
-    {
-        var untrustedFileName = Path.GetFileName(replayFile.FileName);
-        return WebUtility.HtmlEncode(untrustedFileName);
     }
 }

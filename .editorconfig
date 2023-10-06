@@ -280,8 +280,11 @@ dotnet_diagnostic.CA1812.severity = none
 dotnet_diagnostic.CA1848.severity = none
 # CA2007 is designed for libraries and it spams the code
 dotnet_diagnostic.CA2007.severity = none
+# CA1308 tries to make user facing string upper case
+dotnet_diagnostic.CA1308.severity = none
 # Workaround for https://github.com/dotnet/roslyn/issues/41640
 dotnet_diagnostic.IDE0005.severity = suggestion
+
 
 [*.{yml,aiproj,appxmanifest,axml,build,config,csproj,dbml,discomap,DotSettings,dtd,json,jsproj,lsproj,njsproj,nuspec,proj,props,resjson,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_size = 2

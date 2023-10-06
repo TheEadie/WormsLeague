@@ -6,6 +6,7 @@ using Worms.Hub.Gateway.Domain;
 using Worms.Hub.Gateway.Domain.Announcers;
 using Worms.Hub.Gateway.Domain.Announcers.Slack;
 using Worms.Hub.Gateway.Storage.Database;
+using Worms.Hub.Gateway.Storage.Files;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddSimpleConsole(options => { options.SingleLine = true; });
@@ -31,6 +32,8 @@ builder.Services.AddSingleton<IRepository<GameDto>, GamesRepository>();
 builder.Services.AddSingleton<IRepository<Replay>, ReplaysRepository>();
 builder.Services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
 builder.Services.AddSingleton<ReplayFileValidator>();
+builder.Services.AddSingleton<CliFileValidator>();
+builder.Services.AddSingleton<CliFiles>();
 
 var app = builder.Build();
 app.UseHttpsRedirection();
