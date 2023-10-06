@@ -66,6 +66,7 @@ internal sealed class CliFilesController : V1ApiController
 
     [Authorize(Roles = "write:cli")]
     [HttpPost]
+    [RequestSizeLimit(50_000_000)]
     public async Task<ActionResult<CliFileDto>> Post([FromForm] UploadCliFileDto parameters)
     {
         var username = User.Identity?.Name ?? "anonymous";
