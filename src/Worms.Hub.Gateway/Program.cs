@@ -32,7 +32,7 @@ builder.Services.AddSingleton<IRepository<GameDto>, GamesRepository>();
 builder.Services.AddSingleton<IRepository<Replay>, ReplaysRepository>();
 builder.Services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
 builder.Services.AddSingleton<ReplayFileValidator>();
-builder.Services.AddSingleton<CliArtifacts>();
+builder.Services.AddSingleton<CliFiles>();
 
 var app = builder.Build();
 app.UseHttpsRedirection();

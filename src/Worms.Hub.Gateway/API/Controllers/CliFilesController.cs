@@ -9,36 +9,33 @@ using Worms.Hub.Gateway.Storage.Files;
 
 namespace Worms.Hub.Gateway.API.Controllers;
 
-[Route("~/api/v{version:apiVersion}/downloads/cli")]
-internal sealed class CliDownloadsController : V1ApiController
+[Route("~/api/v{version:apiVersion}/files/cli")]
+internal sealed class CliFilesController : V1ApiController
 {
-    private readonly ILogger<CliDownloadsController> _logger;
-    private readonly CliArtifacts _cliArtifacts;
+    private readonly ILogger<CliFilesController> _logger;
+    private readonly CliFiles _cliFiles;
     private readonly CliFileValidator _cliFileValidator;
 
-    public CliDownloadsController(
-        CliArtifacts cliArtifacts,
-        CliFileValidator cliFileValidator,
-        ILogger<CliDownloadsController> logger)
+    public CliFilesController(CliFiles cliFiles, CliFileValidator cliFileValidator, ILogger<CliFilesController> logger)
     {
-        _cliArtifacts = cliArtifacts;
+        _cliFiles = cliFiles;
         _cliFileValidator = cliFileValidator;
         _logger = logger;
     }
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<CliInfoDto>> Get()
+    public async Task<ActionResult<CliFileDto>> Get()
     {
         var username = User.Identity?.Name ?? "anonymous";
         _logger.Log(LogLevel.Information, "Get latest CLI version started by {Username}", username);
 
-        var latestDetails = await _cliArtifacts.GetLatestDetails();
+        var latestDetails = await _cliFiles.GetLatestDetails();
         var availablePlatforms = latestDetails.PlatformFiles.Keys.Select(x => x.ToString().ToLowerInvariant())
-            .ToDictionary(x => x, x => Url.Action(action: "Get", controller: "CliDownloads") + "/" + x);
+            .ToDictionary(x => x, x => Url.Action(action: "Get", controller: "CliFiles") + "/" + x);
 
         _logger.Log(LogLevel.Information, "Get latest CLI version complete");
-        return new CliInfoDto(latestDetails.Version, availablePlatforms);
+        return new CliFileDto(latestDetails.Version, availablePlatforms);
     }
 
     [AllowAnonymous]
@@ -47,12 +44,12 @@ internal sealed class CliDownloadsController : V1ApiController
         "Reliability",
         "CA2000:Dispose objects before losing scope",
         Justification = "Stream is disposed by File object")]
-    public async Task<ActionResult<CliInfoDto>> Get(string platform)
+    public async Task<ActionResult<CliFileDto>> Get(string platform)
     {
         var username = User.Identity?.Name ?? "anonymous";
         _logger.Log(LogLevel.Information, "Download CLI for {Platform} started by {Username}", platform, username);
 
-        var latestDetails = await _cliArtifacts.GetLatestDetails();
+        var latestDetails = await _cliFiles.GetLatestDetails();
 
         if (!Enum.TryParse<Platform>(platform, true, out var platformChecked)
             || !latestDetails.PlatformFiles.ContainsKey(platformChecked))
@@ -60,7 +57,7 @@ internal sealed class CliDownloadsController : V1ApiController
             return NotFound("Unknown platform");
         }
 
-        var fileStream = _cliArtifacts.GetFileContents(platformChecked);
+        var fileStream = _cliFiles.GetFileContents(platformChecked);
         var filename = latestDetails.PlatformFiles[platformChecked];
 
         _logger.Log(LogLevel.Information, "Get latest CLI version complete");
@@ -69,7 +66,7 @@ internal sealed class CliDownloadsController : V1ApiController
 
     [Authorize(Roles = "write:cli")]
     [HttpPost]
-    public async Task<ActionResult<CliInfoDto>> Post([FromForm] UploadCliDto parameters)
+    public async Task<ActionResult<CliFileDto>> Post([FromForm] UploadCliFileDto parameters)
     {
         var username = User.Identity?.Name ?? "anonymous";
         _logger.Log(LogLevel.Information, "Upload CLI started by {Username}", username);
@@ -80,20 +77,20 @@ internal sealed class CliDownloadsController : V1ApiController
             return BadRequest("Unknown platform");
         }
 
-        var fileNameForDisplay = GetFileNameForDisplay(parameters.CliFile);
+        var fileNameForDisplay = GetFileNameForDisplay(parameters.File);
         _logger.Log(
             LogLevel.Information,
             "Received CLI file for {Platform} ({Filename})",
             parameters.Platform,
             fileNameForDisplay);
 
-        if (!_cliFileValidator.IsValid(parameters.CliFile, fileNameForDisplay))
+        if (!_cliFileValidator.IsValid(parameters.File, fileNameForDisplay))
         {
             _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded by {Username}", username);
             return BadRequest("Invalid CLI file");
         }
 
-        await _cliArtifacts.SaveFileContents(parameters.CliFile.OpenReadStream(), platformChecked);
+        await _cliFiles.SaveFileContents(parameters.File.OpenReadStream(), platformChecked);
 
         _logger.Log(LogLevel.Information, "Upload CLI complete");
         return await Get();

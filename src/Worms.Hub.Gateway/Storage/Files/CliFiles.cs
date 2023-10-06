@@ -2,7 +2,7 @@ using Worms.Hub.Gateway.Domain;
 
 namespace Worms.Hub.Gateway.Storage.Files;
 
-internal sealed class CliArtifacts
+internal sealed class CliFiles
 {
     private const string WindowsFilename = "worms-cli-windows.zip";
     private const string LinuxFilename = "worms-cli-linux.tar.gz";
@@ -10,7 +10,7 @@ internal sealed class CliArtifacts
 
     private readonly IConfiguration _configuration;
 
-    public CliArtifacts(IConfiguration configuration) => _configuration = configuration;
+    public CliFiles(IConfiguration configuration) => _configuration = configuration;
 
     public async Task<CliInfo> GetLatestDetails()
     {
@@ -46,15 +46,15 @@ internal sealed class CliArtifacts
 
     private (string versionFilePath, IDictionary<Platform, string> platformFilePaths) GetFilesPaths()
     {
-        var cliArtifactsFolder = _configuration["Storage:CliFolder"]
-            ?? throw new ArgumentException("CLI artifact folder not configured");
+        var cliFilesFolder = _configuration["Storage:CliFolder"]
+            ?? throw new ArgumentException("CLI folder not configured");
 
         var possiblePlatforms = new Dictionary<Platform, string>
         {
-            { Platform.Windows, Path.Combine(cliArtifactsFolder, WindowsFilename) },
-            { Platform.Linux, Path.Combine(cliArtifactsFolder, LinuxFilename) }
+            { Platform.Windows, Path.Combine(cliFilesFolder, WindowsFilename) },
+            { Platform.Linux, Path.Combine(cliFilesFolder, LinuxFilename) }
         };
 
-        return (Path.Combine(cliArtifactsFolder, VersionFilename), possiblePlatforms);
+        return (Path.Combine(cliFilesFolder, VersionFilename), possiblePlatforms);
     }
 }

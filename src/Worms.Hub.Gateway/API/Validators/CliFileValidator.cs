@@ -19,7 +19,7 @@ internal sealed class CliFileValidator
         {
             _logger.Log(
                 LogLevel.Information,
-                "Invalid CLI Artifact Uploaded: {Filename} does not have valid extension (.WAGame)",
+                "Invalid CLI Uploaded: {Filename} does not have valid extension (.zip or .tar.gz)",
                 fileNameForDisplay);
             return false;
         }
@@ -28,7 +28,7 @@ internal sealed class CliFileValidator
         {
             _logger.Log(
                 LogLevel.Information,
-                "Invalid CLI Artifact Uploaded: {Filename} is larger than 50MB",
+                "Invalid CLI Uploaded: {Filename} is larger than 50MB",
                 fileNameForDisplay);
             return false;
         }
