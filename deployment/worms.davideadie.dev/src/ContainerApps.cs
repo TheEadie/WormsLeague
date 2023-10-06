@@ -132,7 +132,12 @@ public static class ContainerApps
                                 new EnvironmentVarArgs
                                 {
                                     Name = "WORMS_STORAGE__TempReplayFolder",
-                                    Value = "/storage",
+                                    Value = "/storage/temp-replays",
+                                },
+                                new EnvironmentVarArgs
+                                {
+                                    Name = "WORMS_STORAGE__CliFolder",
+                                    Value = "/storage/cli",
                                 },
                                 new EnvironmentVarArgs
                                 {
