@@ -26,14 +26,9 @@ internal sealed class CliFilesController : V1ApiController
     [HttpGet]
     public async Task<ActionResult<CliFileDto>> Get()
     {
-        var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Get latest CLI version started by {Username}", username);
-
         var latestDetails = await _cliFiles.GetLatestDetails();
         var availablePlatforms = latestDetails.PlatformFiles.Keys.Select(x => x.ToString().ToLowerInvariant())
             .ToDictionary(x => x, x => Url.Action(action: "Get", controller: "CliFiles") + "/" + x);
-
-        _logger.Log(LogLevel.Information, "Get latest CLI version complete");
         return new CliFileDto(latestDetails.Version, availablePlatforms);
     }
 
@@ -45,21 +40,17 @@ internal sealed class CliFilesController : V1ApiController
         Justification = "Stream is disposed by File object")]
     public async Task<ActionResult<CliFileDto>> Get(string platform)
     {
-        var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Download CLI for {Platform} started by {Username}", platform, username);
-
         var latestDetails = await _cliFiles.GetLatestDetails();
 
         if (!Enum.TryParse<Platform>(platform, true, out var platformChecked)
             || !latestDetails.PlatformFiles.ContainsKey(platformChecked))
         {
+            _logger.Log(LogLevel.Information, "Unknown CLI platform requested");
             return NotFound("Unknown platform");
         }
 
         var fileStream = _cliFiles.GetFileContents(platformChecked);
         var filename = latestDetails.PlatformFiles[platformChecked];
-
-        _logger.Log(LogLevel.Information, "Get latest CLI version complete");
         return File(fileStream, "application/zip", filename);
     }
 
@@ -68,12 +59,9 @@ internal sealed class CliFilesController : V1ApiController
     [RequestSizeLimit(50_000_000)]
     public async Task<ActionResult<CliFileDto>> Post([FromForm] UploadCliFileDto parameters)
     {
-        var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Upload CLI started by {Username}", username);
-
         if (!Enum.TryParse<Platform>(parameters.Platform, true, out var platformChecked))
         {
-            _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded by {Username}", username);
+            _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded");
             return BadRequest("Unknown platform");
         }
 
@@ -86,13 +74,11 @@ internal sealed class CliFilesController : V1ApiController
 
         if (!_cliFileValidator.IsValid(parameters.File, fileNameForDisplay))
         {
-            _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded by {Username}", username);
+            _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded");
             return BadRequest("Invalid CLI file");
         }
 
         await _cliFiles.SaveFileContents(parameters.File.OpenReadStream(), platformChecked);
-
-        _logger.Log(LogLevel.Information, "Upload CLI complete");
         return await Get();
     }
 }

@@ -28,9 +28,6 @@ internal sealed class ReplaysController : V1ApiController
     [HttpPost]
     public async Task<ActionResult<ReplayDto>> Post([FromForm] CreateReplayDto parameters)
     {
-        var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Upload replay started by {Username}", username);
-
         var fileNameForDisplay = UploadUtils.GetFileNameForDisplay(parameters.ReplayFile);
         _logger.Log(
             LogLevel.Information,
@@ -40,14 +37,12 @@ internal sealed class ReplaysController : V1ApiController
 
         if (!_replayFileValidator.IsValid(parameters.ReplayFile, fileNameForDisplay))
         {
-            _logger.Log(LogLevel.Warning, "Invalid replay file uploaded by {Username}", username);
+            _logger.Log(LogLevel.Warning, "Invalid replay file uploaded");
             return BadRequest("Invalid replay file");
         }
 
         var tempFilename = await SaveFileToTempLocation(parameters.ReplayFile, fileNameForDisplay);
         var replay = _repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename));
-
-        _logger.Log(LogLevel.Information, "Upload of replay complete");
         return ReplayDto.FromDomain(replay);
     }
 

@@ -22,59 +22,40 @@ internal sealed class GamesController : V1ApiController
     }
 
     [HttpGet]
-    public ActionResult<IReadOnlyCollection<GameDto>> Get()
-    {
-        var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Get games started by {Username}", username);
-        var allGames = _repository.GetAll().ToList();
-        _logger.Log(LogLevel.Information, "Getting games complete");
-        return allGames;
-    }
+    public ActionResult<IReadOnlyCollection<GameDto>> Get() => _repository.GetAll().ToList();
 
     [HttpGet("{id}")]
     public ActionResult<GameDto> Get(string id)
     {
-        var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Get games started by {Username}", username);
-
         var found = _repository.GetAll().SingleOrDefault(x => x.Id == id);
 
         if (found is null)
         {
+            _logger.Log(LogLevel.Information, "Game with Id = {Id} not found", id);
             return NotFound($"Game with Id = {id} not found");
         }
 
-        _logger.Log(LogLevel.Information, "Getting games complete");
         return new GameDto(found.Id, found.Status, found.HostMachine);
     }
 
     [HttpPost]
     public async Task<ActionResult<GameDto>> Post(CreateGameDto parameters)
     {
-        var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Creating game started by {Username}", username);
-
         await _slackAnnouncer.AnnounceGameStarting(parameters.HostMachine);
-
-        _logger.Log(LogLevel.Information, "Creating game complete");
         return _repository.Create(new GameDto("0", "Pending", parameters.HostMachine));
     }
 
     [HttpPut]
     public ActionResult Put(GameDto game)
     {
-        var username = User.Identity?.Name ?? "anonymous";
-        _logger.Log(LogLevel.Information, "Updating game started by {Username}", username);
-
         var found = _repository.GetAll().SingleOrDefault(x => x.Id == game.Id);
         if (found is null)
         {
+            _logger.Log(LogLevel.Information, "Game with Id = {Id} not found", game.Id);
             return NotFound($"Game with Id = {game.Id} not found");
         }
 
         _repository.Update(game);
-
-        _logger.Log(LogLevel.Information, "Updating game complete");
         return Ok();
     }
 }
