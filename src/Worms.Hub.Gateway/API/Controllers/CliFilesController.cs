@@ -61,7 +61,7 @@ internal sealed class CliFilesController : V1ApiController
     {
         if (!Enum.TryParse<Platform>(parameters.Platform, true, out var platformChecked))
         {
-            _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded");
+            _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded - unknown platform");
             return BadRequest("Unknown platform");
         }
 
@@ -74,7 +74,7 @@ internal sealed class CliFilesController : V1ApiController
 
         if (!_cliFileValidator.IsValid(parameters.File, fileNameForDisplay))
         {
-            _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded");
+            _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded - invalid file");
             return BadRequest("Invalid CLI file");
         }
 
