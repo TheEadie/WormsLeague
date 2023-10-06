@@ -1,7 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Worms.Hub.Gateway.API.DTOs;
+using Worms.Hub.Gateway.API.Validators;
 using Worms.Hub.Gateway.Domain;
 using Worms.Hub.Gateway.Storage.Files;
 
@@ -12,10 +14,15 @@ internal sealed class CliDownloadsController : V1ApiController
 {
     private readonly ILogger<CliDownloadsController> _logger;
     private readonly CliArtifacts _cliArtifacts;
+    private readonly CliFileValidator _cliFileValidator;
 
-    public CliDownloadsController(CliArtifacts cliArtifacts, ILogger<CliDownloadsController> logger)
+    public CliDownloadsController(
+        CliArtifacts cliArtifacts,
+        CliFileValidator cliFileValidator,
+        ILogger<CliDownloadsController> logger)
     {
         _cliArtifacts = cliArtifacts;
+        _cliFileValidator = cliFileValidator;
         _logger = logger;
     }
 
@@ -69,12 +76,32 @@ internal sealed class CliDownloadsController : V1ApiController
 
         if (!Enum.TryParse<Platform>(parameters.Platform, true, out var platformChecked))
         {
+            _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded by {Username}", username);
             return BadRequest("Unknown platform");
+        }
+
+        var fileNameForDisplay = GetFileNameForDisplay(parameters.CliFile);
+        _logger.Log(
+            LogLevel.Information,
+            "Received CLI file for {Platform} ({Filename})",
+            parameters.Platform,
+            fileNameForDisplay);
+
+        if (!_cliFileValidator.IsValid(parameters.CliFile, fileNameForDisplay))
+        {
+            _logger.Log(LogLevel.Warning, "Invalid CLI file uploaded by {Username}", username);
+            return BadRequest("Invalid CLI file");
         }
 
         await _cliArtifacts.SaveFileContents(parameters.CliFile.OpenReadStream(), platformChecked);
 
         _logger.Log(LogLevel.Information, "Upload CLI complete");
         return await Get();
+    }
+
+    private static string GetFileNameForDisplay(IFormFile file)
+    {
+        var untrustedFileName = Path.GetFileName(file.FileName);
+        return WebUtility.HtmlEncode(untrustedFileName);
     }
 }
