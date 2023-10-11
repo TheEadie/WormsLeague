@@ -7,7 +7,7 @@ Repo containing tooling and config for the Redgate worms league
 ### Windows
 
 ```
-$script = Invoke-WebRequest https://raw.githubusercontent.com/TheEadie/WormsLeague/master/InstallCli.ps1
+$script = Invoke-WebRequest https://raw.githubusercontent.com/TheEadie/WormsLeague/main/InstallCli.ps1
 Invoke-Expression $($script.content)
 ```
 

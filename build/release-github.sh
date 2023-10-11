@@ -14,7 +14,7 @@ CreateReleaseResponse=$(curl --request POST \
     --header "content-type: application/json" \
     --data '{
                 "tag_name": "'"$Tag"'",
-                "target_commitish": "master",
+                "target_commitish": "main",
                 "name": "'"$ReleaseName"'",
                 "body": "",
                 "draft": false,

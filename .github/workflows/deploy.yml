@@ -6,7 +6,7 @@ on:
       - "deployment/worms.davideadie.dev/**"
       - ".github/workflows/deploy.yml"
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
