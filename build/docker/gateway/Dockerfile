@@ -1,5 +1,5 @@
 #### Build ####
-FROM mcr.microsoft.com/dotnet/sdk:7.0.401@sha256:2dd6fa19392967b26d59228af0ec481c652b98346ced56a4db1c66416b4c947f AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0.402@sha256:3eca0aedc1b20e3cc167e5059e42a79d326bad1f5df99c4ba42f1356caa80d28 AS build
 WORKDIR /app
 ARG PROJECT="Worms.Hub.Gateway.csproj"
 
@@ -23,7 +23,7 @@ FROM build as test
 RUN dotnet test --no-restore --no-build --verbosity normal
 
 #### Runtime ####
-FROM mcr.microsoft.com/dotnet/aspnet:7.0.11@sha256:933ae169296fe093776749cc47fd60e0a6e85bde607651a3fc6cd97bb5bc1ce0
+FROM mcr.microsoft.com/dotnet/aspnet:7.0.12@sha256:04e7d36207e51716142721f73e843bb5bc274314378cb22f65a2d858366f709e
 WORKDIR /app
 COPY --from=build /app/out .
 ENTRYPOINT ["./Worms.Hub.Gateway"]
