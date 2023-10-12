@@ -204,7 +204,7 @@ internal class SchemeTextWriter : ISchemeTextWriter
         WriteItem(textWriter, "Double Time Stack Limit", definition.Extended.DoubleTimeCount);
     }
 
-    private static void WriteItem(TextWriter writer, string description, object value, string comment = null)
+    private static void WriteItem(TextWriter writer, string description, object? value, string? comment = null)
     {
         var output = $"{description}: ".PadRight(40) + "[" + value + "]";
 
