@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>worms</AssemblyName>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="System.IO.Abstractions" Version="19.2.69"/>
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.3.0"/>
