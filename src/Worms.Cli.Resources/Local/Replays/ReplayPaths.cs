@@ -1,3 +1,3 @@
 namespace Worms.Cli.Resources.Local.Replays;
 
-public record ReplayPaths(string WAgamePath, string LogPath);
+public record ReplayPaths(string WAgamePath, string? LogPath);
