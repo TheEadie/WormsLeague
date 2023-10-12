@@ -20,7 +20,7 @@ public static class WindowTools
 
             var builder = new char[length + 1];
             _ = GetWindowText(hWnd, builder, builder.Length);
-            if (pattern.IsMatch(builder.ToString()))
+            if (pattern.IsMatch(builder.ToString()!))
             {
                 results.Add(hWnd);
             }
@@ -33,7 +33,7 @@ public static class WindowTools
         return results.ToArray();
     }
 
-    public static Process GetProcessForWindow(IntPtr hWnd)
+    public static Process? GetProcessForWindow(IntPtr hWnd)
     {
         if (hWnd == IntPtr.Zero)
         {
