@@ -8,7 +8,8 @@ namespace Worms.Cli.Commands;
 
 internal sealed class Version : Command
 {
-    public Version() : base("version", "Get the current version of the Worms CLI") { }
+    public Version()
+        : base("version", "Get the current version of the Worms CLI") { }
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
@@ -25,12 +26,11 @@ internal sealed class VersionHandler : ICommandHandler
         _logger = logger;
     }
 
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
     public Task<int> InvokeAsync(InvocationContext context)
     {
-        var cliInfo = _cliInfoRetriever.Get();
+        var cliInfo = _cliInfoRetriever.Get(_logger);
         _logger.Information($"Worms CLI: {cliInfo.Version.ToString(3)}");
 
         var gameInfo = _wormsLocator.Find();

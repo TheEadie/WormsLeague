@@ -5,5 +5,5 @@ namespace Worms.Cli.Slack;
 public sealed class SlackMessage
 {
     [JsonPropertyName("text")]
-    public string Text { get; set; }
+    public string Text { get; set; } = string.Empty;
 }

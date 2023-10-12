@@ -137,7 +137,7 @@ internal sealed class CreateGifHandler : ICommandHandler
         return 0;
     }
 
-    private async Task<LocalReplay> ValidateReplay(string replay, uint turn, CancellationToken cancellationToken)
+    private async Task<LocalReplay> ValidateReplay(string? replay, uint turn, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(replay))
         {

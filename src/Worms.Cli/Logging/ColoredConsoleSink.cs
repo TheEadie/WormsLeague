@@ -52,9 +52,9 @@ internal static class ColoredConsoleSinkExtensions
 {
     public static LoggerConfiguration ColoredConsole(
         this LoggerSinkConfiguration loggerConfiguration,
+        IFormatProvider formatProvider,
         LogEventLevel minimumLevel = LogEventLevel.Verbose,
-        string outputTemplate = "{Message:lj}{NewLine}{Exception}",
-        IFormatProvider formatProvider = null) =>
+        string outputTemplate = "{Message:lj}{NewLine}{Exception}") =>
         loggerConfiguration.Sink(
             new ColoredConsoleSink(new MessageTemplateTextFormatter(outputTemplate, formatProvider)),
             minimumLevel);

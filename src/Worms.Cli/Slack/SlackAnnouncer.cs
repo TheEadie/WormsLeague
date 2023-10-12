@@ -6,7 +6,7 @@ namespace Worms.Cli.Slack;
 
 internal sealed class SlackAnnouncer : ISlackAnnouncer
 {
-    public async Task AnnounceGameStarting(string hostName, string webHookUrl, ILogger log)
+    public async Task AnnounceGameStarting(string hostName, string? webHookUrl, ILogger log)
     {
         if (string.IsNullOrWhiteSpace(webHookUrl))
         {

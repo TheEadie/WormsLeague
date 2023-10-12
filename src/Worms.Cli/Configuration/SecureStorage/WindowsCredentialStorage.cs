@@ -4,7 +4,7 @@ namespace Worms.Cli.Configuration.SecureStorage;
 
 internal sealed class WindowsCredentialStorage : ICredentialStorage
 {
-    public string Load(string key)
+    public string? Load(string key)
     {
         using var credentialManager = new Credential();
         credentialManager.Target = key;

@@ -122,7 +122,7 @@ internal sealed class CreateSchemeHandler : ICommandHandler
         return 0;
     }
 
-    private string ValidateOutputFolder(string outputFolder)
+    private string ValidateOutputFolder(string? outputFolder)
     {
         if (string.IsNullOrWhiteSpace(outputFolder))
         {
@@ -148,7 +148,7 @@ internal sealed class CreateSchemeHandler : ICommandHandler
         return outputFolder;
     }
 
-    private (string, string) ValidateSchemeDefinition(string filename) =>
+    private (string, string) ValidateSchemeDefinition(string? filename) =>
         !string.IsNullOrWhiteSpace(filename) ? (_fileSystem.File.ReadAllText(filename), $"file: + {filename}") :
         Console.IsInputRedirected ? (Console.In.ReadToEnd(), "std in") :
         throw new ConfigurationException(

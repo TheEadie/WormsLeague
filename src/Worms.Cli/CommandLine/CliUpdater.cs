@@ -8,16 +8,16 @@ namespace Worms.Cli.CommandLine;
 internal sealed class CliUpdater
 {
     private readonly CliInfoRetriever _cliInfoRetriever;
-    private readonly GitHubReleasePackageManager _packageManager;
+    private readonly IGitHubReleasePackageManagerFactory _packageManagerFactory;
     private readonly IFileSystem _fileSystem;
 
     public CliUpdater(
         CliInfoRetriever cliInfoRetriever,
-        GitHubReleasePackageManager packageManager,
+        IGitHubReleasePackageManagerFactory packageManagerFactory,
         IFileSystem fileSystem)
     {
         _cliInfoRetriever = cliInfoRetriever;
-        _packageManager = packageManager;
+        _packageManagerFactory = packageManagerFactory;
         _fileSystem = fileSystem;
     }
 
@@ -25,16 +25,26 @@ internal sealed class CliUpdater
     {
         logger.Verbose("Starting update");
 
-        var cliInfo = _cliInfoRetriever.Get();
+        var cliInfo = _cliInfoRetriever.Get(logger);
         logger.Verbose(cliInfo.ToString());
 
-        _packageManager.Connect("TheEadie", "WormsLeague", "cli/v", config.GitHubPersonalAccessToken);
+        var packageManager = _packageManagerFactory.Create(
+            "TheEadie",
+            "WormsLeague",
+            "cli/v",
+            config.GitHubPersonalAccessToken);
 
-        var versions = (await _packageManager.GetAvailableVersions().ConfigureAwait(false)).ToList();
+        var versions = (await packageManager.GetAvailableVersions().ConfigureAwait(false)).ToList();
         logger.Verbose($"Available versions: {string.Join(", ", versions)}");
 
-        var latestVersion = versions.OrderByDescending(x => x).FirstOrDefault();
+        var latestVersion = versions.MaxBy(x => x);
         logger.Verbose($"Latest version: {latestVersion}");
+
+        if (latestVersion is null)
+        {
+            logger.Warning("No versions of Worms CLI available");
+            return;
+        }
 
         if (cliInfo.Version > latestVersion)
         {
@@ -52,7 +62,7 @@ internal sealed class CliUpdater
 
         EnsureFolderExistsAndIsEmpty(updateFolder);
 
-        await _packageManager.DownloadVersion(latestVersion, updateFolder).ConfigureAwait(false);
+        await packageManager.DownloadVersion(latestVersion, updateFolder).ConfigureAwait(false);
         logger.Warning("Update available - To install the update run Install-WormsCli");
     }
 

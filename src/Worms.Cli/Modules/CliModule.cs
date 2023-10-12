@@ -32,7 +32,7 @@ public class CliModule : Module
         _ = builder.RegisterType<ConfigManager>().As<IConfigManager>();
 
         // CLI
-        _ = builder.RegisterType<GitHubReleasePackageManager>();
+        _ = builder.RegisterType<GitHubReleasePackageManagerFactory>().As<IGitHubReleasePackageManagerFactory>();
         _ = builder.RegisterType<CliUpdater>();
         _ = builder.RegisterType<CliInfoRetriever>();
 
@@ -58,7 +58,6 @@ public class CliModule : Module
         _ = builder.RegisterModule<ArmageddonGameModule>();
         _ = builder.RegisterModule<ArmageddonResourcesModule>();
         _ = builder.RegisterModule<CliResourcesModule>();
-
     }
 
     private static void RegisterOsModules(ContainerBuilder builder)

@@ -36,17 +36,19 @@ internal sealed class ConfigManager : IConfigManager
         if (_fileSystem.File.Exists(configPath))
         {
             var configContent = _fileSystem.File.ReadAllText(configPath);
-            return JsonSerializer.Deserialize<Config>(configContent);
+            var config = JsonSerializer.Deserialize<Config>(configContent);
+            return config ?? new Config();
         }
-        else
-        {
-            return new Config();
-        }
+
+        return new Config();
     }
 
     public void Save(Config config)
     {
-        _credentialStorage.Store("Worms.GitHub.AccessToken", config.GitHubPersonalAccessToken);
+        if (config.GitHubPersonalAccessToken is not null)
+        {
+            _credentialStorage.Store("Worms.GitHub.AccessToken", config.GitHubPersonalAccessToken);
+        }
 
         var localConfig = new Config
         {
