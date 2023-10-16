@@ -7,5 +7,12 @@
       "datasourceTemplate": "docker"
     }
   ],
+  "packageRules": [
+    {
+      "extends": "monorepo:dotnet",
+      "groupName": ".NET",
+      "additionalBranchPrefix": ""
+    },
+  ],
   "masterIssue": true
 }
