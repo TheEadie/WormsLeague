@@ -140,7 +140,7 @@ internal sealed class HostHandler : ICommandHandler
         return 0;
     }
 
-    private async Task<RemoteGame> AnnounceGameToWormsHub(
+    private async Task<RemoteGame?> AnnounceGameToWormsHub(
         string hostIp,
         bool skipAnnouncement,
         bool dryRun,
@@ -152,7 +152,7 @@ internal sealed class HostHandler : ICommandHandler
         }
 
         _logger.Information("Announcing game to hub");
-        RemoteGame game = null;
+        RemoteGame? game = null;
         if (!dryRun)
         {
             game = await _remoteGameCreator.Create(hostIp, _logger, cancellationToken);
@@ -162,7 +162,7 @@ internal sealed class HostHandler : ICommandHandler
     }
 
     private async Task MarkGameCompleteOnWormsHub(
-        RemoteGame game,
+        RemoteGame? game,
         bool skipAnnouncement,
         bool dryRun,
         CancellationToken cancellationToken)
@@ -175,7 +175,7 @@ internal sealed class HostHandler : ICommandHandler
         _logger.Information("Marking game as complete in hub");
         if (!dryRun)
         {
-            await _gameUpdater.SetGameComplete(game, _logger, cancellationToken);
+            await _gameUpdater.SetGameComplete(game!, _logger, cancellationToken);
         }
     }
 
@@ -189,6 +189,13 @@ internal sealed class HostHandler : ICommandHandler
         _logger.Information("Uploading replay to hub");
         var allReplays = await _localReplayRetriever.Retrieve(_logger, cancellationToken);
         var replay = allReplays.MaxBy(x => x.Details.Date);
+
+        if (replay is null)
+        {
+            _logger.Warning("No replay found to upload");
+            return;
+        }
+
         _logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
         if (!dryRun)
         {
@@ -225,7 +232,8 @@ internal sealed class HostHandler : ICommandHandler
             (leagueNetworkAdapter.GetIPProperties()
                 .UnicastAddresses.FirstOrDefault(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
                 ?.Address.ToString())
-            ?? throw new ConfigurationException($"No IPv4 address found for network adapter: {leagueNetworkAdapter.Name}");
+            ?? throw new ConfigurationException(
+                $"No IPv4 address found for network adapter: {leagueNetworkAdapter.Name}");
 
         return hostIp;
     }

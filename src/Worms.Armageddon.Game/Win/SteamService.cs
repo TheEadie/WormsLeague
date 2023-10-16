@@ -6,9 +6,7 @@ internal sealed class SteamService : ISteamService
 {
     private const string ProcessName = "Steam";
 
-    private static readonly Regex LaunchGamePromptRegex = new(
-        "Allow game launch\\?",
-        RegexOptions.IgnoreCase);
+    private static readonly Regex LaunchGamePromptRegex = new("Allow game launch\\?", RegexOptions.IgnoreCase);
 
     public void WaitForSteamPrompt()
     {
@@ -26,6 +24,6 @@ internal sealed class SteamService : ISteamService
     private static IntPtr GetSteamPromptWindow()
     {
         var windows = WindowTools.GetWindowsWithTitleMatching(LaunchGamePromptRegex);
-        return Array.Find(windows, w => WindowTools.GetProcessForWindow(w).ProcessName == ProcessName);
+        return Array.Find(windows, w => WindowTools.GetProcessForWindow(w)?.ProcessName == ProcessName);
     }
 }

@@ -11,17 +11,23 @@ internal sealed class LocalReplayRetriever : IResourceRetriever<LocalReplay>
     private readonly IFileSystem _fileSystem;
     private readonly IReplayTextReader _replayTextReader;
 
-    public LocalReplayRetriever(ILocalReplayLocator localReplayLocator, IFileSystem fileSystem, IReplayTextReader replayTextReader)
+    public LocalReplayRetriever(
+        ILocalReplayLocator localReplayLocator,
+        IFileSystem fileSystem,
+        IReplayTextReader replayTextReader)
     {
         _localReplayLocator = localReplayLocator;
         _fileSystem = fileSystem;
         _replayTextReader = replayTextReader;
     }
 
-    public Task<IReadOnlyCollection<LocalReplay>> Retrieve(ILogger logger, CancellationToken cancellationToken)
-        => Retrieve("*", logger, cancellationToken);
+    public Task<IReadOnlyCollection<LocalReplay>> Retrieve(ILogger logger, CancellationToken cancellationToken) =>
+        Retrieve("*", logger, cancellationToken);
 
-    public Task<IReadOnlyCollection<LocalReplay>> Retrieve(string pattern, ILogger logger, CancellationToken cancellationToken)
+    public Task<IReadOnlyCollection<LocalReplay>> Retrieve(
+        string pattern,
+        ILogger logger,
+        CancellationToken cancellationToken)
     {
         var resources = new List<LocalReplay>();
 
@@ -29,9 +35,8 @@ internal sealed class LocalReplayRetriever : IResourceRetriever<LocalReplay>
         {
             if (_fileSystem.File.Exists(paths.LogPath))
             {
-                resources.Add(new LocalReplay(
-                    paths,
-                    _replayTextReader.GetModel(_fileSystem.File.ReadAllText(paths.LogPath))));
+                resources.Add(
+                    new LocalReplay(paths, _replayTextReader.GetModel(_fileSystem.File.ReadAllText(paths.LogPath))));
             }
             else
             {
@@ -40,18 +45,19 @@ internal sealed class LocalReplayRetriever : IResourceRetriever<LocalReplay>
                 var dateString = fileName[..(startIndex - 1)];
                 var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);
                 resources.Add(
-                    new LocalReplay(paths,
+                    new LocalReplay(
+                        paths,
                         new ReplayResource(
                             date,
                             false,
                             new List<Team>(0),
-                            null,
+                            string.Empty,
                             new List<Turn>(0),
-                            string.Empty)
-                    ));
+                            string.Empty)));
             }
         }
 
-        return Task.FromResult<IReadOnlyCollection<LocalReplay>>(resources.OrderByDescending(x => x.Details.Date).ToList());
+        return Task.FromResult<IReadOnlyCollection<LocalReplay>>(
+            resources.OrderByDescending(x => x.Details.Date).ToList());
     }
 }

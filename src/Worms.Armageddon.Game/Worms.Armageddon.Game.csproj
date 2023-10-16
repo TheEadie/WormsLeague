@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <ItemGroup>
-      <PackageReference Include="Autofac" Version="7.1.0" />
-      <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="7.1.0"/>
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0"/>
+  </ItemGroup>
 
 </Project>

@@ -40,9 +40,9 @@ internal sealed class WormsRunner : IWormsRunner
                 });
     }
 
-    private static Process FindWormsProcess(GameInfo gameInfo)
+    private static Process? FindWormsProcess(GameInfo gameInfo)
     {
-        Process wormsProcess = null;
+        Process? wormsProcess = null;
         var retryCount = 0;
         while (wormsProcess is null && retryCount <= 5)
         {

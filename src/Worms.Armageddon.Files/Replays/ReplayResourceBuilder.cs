@@ -5,8 +5,8 @@ internal class ReplayResourceBuilder
     private DateTime _start;
     private readonly List<Team> _teams = new();
     private readonly List<Turn> _turns = new();
-    private string _winner;
-    private string _fullLog;
+    private string _winner = string.Empty;
+    private string _fullLog = string.Empty;
 
     public TurnBuilder CurrentTurn { get; private set; } = new();
 

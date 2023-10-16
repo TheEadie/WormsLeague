@@ -13,6 +13,7 @@ internal sealed class LocalReplayLocator : ILocalReplayLocator
         _wormsLocator = wormsLocator;
         _fileSystem = fileSystem;
     }
+
     public IReadOnlyCollection<ReplayPaths> GetReplayPaths(string pattern)
     {
         var gameInfo = _wormsLocator.Find();
@@ -26,10 +27,16 @@ internal sealed class LocalReplayLocator : ILocalReplayLocator
         return waGamePaths.Select(x => new ReplayPaths(x, GetLogPath(x))).ToList();
     }
 
-    private string GetLogPath(string waGamePath)
+    private string? GetLogPath(string waGamePath)
     {
         var fileName = _fileSystem.Path.GetFileNameWithoutExtension(waGamePath);
         var folder = _fileSystem.Path.GetDirectoryName(waGamePath);
+
+        if (folder is null)
+        {
+            return null;
+        }
+
         var logPath = _fileSystem.Path.Combine(folder, fileName + ".log");
         return _fileSystem.File.Exists(logPath) ? logPath : null;
     }

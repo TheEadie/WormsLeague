@@ -2,9 +2,9 @@ namespace Worms.Armageddon.Files.Replays;
 
 internal class TurnBuilder
 {
-    private Team _team;
-    private TimeSpan _start;
-    private TimeSpan _end;
+    private Team? _team;
+    private TimeSpan? _start;
+    private TimeSpan? _end;
     private readonly HashSet<Weapon> _weapons = new();
     private readonly List<Damage> _damage = new();
 
@@ -38,7 +38,10 @@ internal class TurnBuilder
         return this;
     }
 
-    public Turn Build() => new(_start, _end, _team, _weapons, _damage);
+    public Turn Build() =>
+        HasRequiredDetails()
+            ? new Turn(_start!.Value, _end!.Value, _team!, _weapons, _damage)
+            : throw new InvalidOperationException("Missing required details to create a turn");
 
-    public bool HasRequiredDetails() => _end != default;
+    public bool HasRequiredDetails() => _team != null && _start != null && _end != null;
 }

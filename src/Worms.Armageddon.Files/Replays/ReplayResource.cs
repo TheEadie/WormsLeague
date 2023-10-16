@@ -25,8 +25,13 @@ public enum TeamColour
     Cyan
 }
 
-public record Turn(TimeSpan Start, TimeSpan End, Team Team, IReadOnlyCollection<Weapon> Weapons, IReadOnlyCollection<Damage> Damage);
+public record Turn(
+    TimeSpan Start,
+    TimeSpan End,
+    Team Team,
+    IReadOnlyCollection<Weapon> Weapons,
+    IReadOnlyCollection<Damage> Damage);
 
-public record Weapon(string Name, uint? Fuse, string Modifier);
+public record Weapon(string Name, uint? Fuse, string? Modifier);
 
 public record Damage(Team Team, uint HealthLost, uint WormsKilled);

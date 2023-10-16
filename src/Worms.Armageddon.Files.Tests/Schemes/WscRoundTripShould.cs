@@ -5,15 +5,14 @@ using Worms.Armageddon.Files.Schemes.Binary;
 
 namespace Worms.Armageddon.Files.Tests.Schemes;
 
-public class WscRoundTripShould
+public sealed class WscRoundTripShould : IDisposable
 {
-    private IWscWriter _writer;
-    private IWscReader _reader;
-    private string _tempDirectory;
-    private string _file;
+    private readonly IWscWriter _writer;
+    private readonly IWscReader _reader;
+    private readonly string _tempDirectory;
+    private readonly string _file;
 
-    [SetUp]
-    public void SetUp()
+    public WscRoundTripShould()
     {
         _writer = new WscWriter();
         _reader = new WscReader();
@@ -24,14 +23,8 @@ public class WscRoundTripShould
         _ = Directory.CreateDirectory(_tempDirectory);
     }
 
-    [TearDown]
-    public void TearDown()
-    {
-        File.Delete(_file);
-        Directory.Delete(_tempDirectory);
-    }
-
-    [Test, TestCaseSource(nameof(Schemes))]
+    [Test]
+    [TestCaseSource(nameof(Schemes))]
     public void NotLoseInformation(Scheme input)
     {
         _writer.Write(input, _file);
@@ -55,4 +48,10 @@ public class WscRoundTripShould
     }
 
     private static IEnumerable<TestCaseData> Schemes => TestSchemes.Schemes();
+
+    public void Dispose()
+    {
+        File.Delete(_file);
+        Directory.Delete(_tempDirectory);
+    }
 }

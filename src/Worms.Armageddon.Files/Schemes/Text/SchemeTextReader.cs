@@ -13,10 +13,10 @@ internal class SchemeTextReader : ISchemeTextReader
         scheme.Version = SchemeVersion.Version3;
 
         // Skip over some heading lines
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
 
         scheme.HotSeatTime = GetByte(b);
         scheme.RetreatTime = GetByte(b);
@@ -59,13 +59,13 @@ internal class SchemeTextReader : ISchemeTextReader
         scheme.SuperWeapons = GetBool(b);
 
         // Skip over the middle heading
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
 
         foreach (var weaponName in (Weapon[]) Enum.GetValues(typeof(Weapon)))
         {
@@ -77,13 +77,13 @@ internal class SchemeTextReader : ISchemeTextReader
         }
 
         // Skip over the heading
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
-        _ = b.ReadLine();
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
+        _ = ReadNextLine(b);
 
         scheme.Extended.ConstantWind = GetBool(b);
         scheme.Extended.Wind = GetSbyte(b);
@@ -165,29 +165,29 @@ internal class SchemeTextReader : ISchemeTextReader
 
     private static byte? GetNullableByte(TextReader b)
     {
-        var value = GetValue(b.ReadLine());
+        var value = GetValue(ReadNextLine(b));
 
         return string.IsNullOrEmpty(value) ? null : (byte) GetInt(b);
     }
 
     private static sbyte GetSbyte(TextReader b) => (sbyte) GetInt(b);
 
-    private static bool GetBool(TextReader b) => bool.Parse(GetValue(b.ReadLine()));
+    private static bool GetBool(TextReader b) => bool.Parse(GetValue(ReadNextLine(b)));
 
     private static bool? GetNullableBool(TextReader b)
     {
-        var value = GetValue(b.ReadLine());
+        var value = GetValue(ReadNextLine(b));
 
         return string.IsNullOrEmpty(value) ? null : bool.Parse(value);
     }
 
-    private static int GetInt(TextReader b) => int.Parse(GetValue(b.ReadLine()), CultureInfo.CurrentCulture);
+    private static int GetInt(TextReader b) => int.Parse(GetValue(ReadNextLine(b)), CultureInfo.CurrentCulture);
 
-    private static float GetFloat(TextReader b) => float.Parse(GetValue(b.ReadLine()), CultureInfo.CurrentCulture);
+    private static float GetFloat(TextReader b) => float.Parse(GetValue(ReadNextLine(b)), CultureInfo.CurrentCulture);
 
     private static (sbyte, byte, sbyte, sbyte) GetWeaponDetails(TextReader b)
     {
-        var line = b.ReadLine();
+        var line = ReadNextLine(b);
         var ammo = (sbyte) int.Parse(GetValue(line[..44]), CultureInfo.CurrentCulture);
         var power = (byte) int.Parse(GetValue(line.Substring(44, 10)), CultureInfo.CurrentCulture);
         var delay = (sbyte) int.Parse(GetValue(line.Substring(55, 20)), CultureInfo.CurrentCulture);
@@ -198,7 +198,10 @@ internal class SchemeTextReader : ISchemeTextReader
 
     private static T GetEnum<T>(TextReader b)
         where T : struct =>
-        Enum.Parse<T>(GetValue(b.ReadLine()));
+        Enum.Parse<T>(GetValue(ReadNextLine(b)));
+
+    private static string ReadNextLine(TextReader b) =>
+        b.ReadLine() ?? throw new ArgumentException("Unexpected end of definition");
 
     private static string GetValue(string text)
     {

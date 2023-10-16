@@ -12,6 +12,7 @@ internal static class RandomExtensions
     }
 
     public static double FractionThrough<T>(this IReadOnlyList<T> list, T item)
+        where T : notnull
     {
         for (var i = 0; i < list.Count; ++i)
         {
@@ -20,6 +21,7 @@ internal static class RandomExtensions
                 return (i + 1) / (double) list.Count;
             }
         }
+
         return 0;
     }
 
@@ -31,6 +33,7 @@ internal static class RandomExtensions
             var swapIndex = rng.Next(i, arr.Length);
             (arr[i], arr[swapIndex]) = (arr[swapIndex], arr[i]);
         }
+
         return arr;
     }
 

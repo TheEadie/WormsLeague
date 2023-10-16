@@ -6,9 +6,19 @@ using Worms.Armageddon.Files.Replays.Text.Parsers;
 
 namespace Worms.Armageddon.Files.Tests.Replays;
 
-public class ReplayTextReaderShould
+public sealed class ReplayTextReaderShould
 {
-    private IReplayTextReader _replayTextReader;
+    private readonly IReplayTextReader _replayTextReader = new ReplayTextReader(
+        new List<IReplayLineParser>()
+        {
+            new StartTimeParser(),
+            new TeamParser(),
+            new WinnerParser(),
+            new StartOfTurnParser(),
+            new WeaponUsedParser(),
+            new DamageParser(),
+            new EndOfTurnParser()
+        });
 
     private readonly Team _redTeam = new("Red Team", "local", TeamColour.Red);
     private readonly Team _blueTeam = new("Blue Team", "local", TeamColour.Blue);
@@ -17,27 +27,10 @@ public class ReplayTextReaderShould
     private readonly Team _magentaTeam = new("Test Team", "local", TeamColour.Magenta);
     private readonly Team _cyanTeam = new("Last Team Name", "local", TeamColour.Cyan);
 
-    [SetUp]
-    public void Setup()
-    {
-        _replayTextReader = new ReplayTextReader(
-            new List<IReplayLineParser>()
-            {
-                new StartTimeParser(),
-                new TeamParser(),
-                new WinnerParser(),
-                new StartOfTurnParser(),
-                new WeaponUsedParser(),
-                new DamageParser(),
-                new EndOfTurnParser()
-            });
-    }
-
     [Test]
     public void ReadStartTimeFromReplay()
     {
-        const string log =
-            "Game Started at 2019-01-11 12:58:40 GMT";
+        const string log = "Game Started at 2019-01-11 12:58:40 GMT";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -47,13 +40,18 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadTeamsForOfflineMatch()
     {
-        var log =
-            $"Red: \"{_redTeam.Name}\"" + Environment.NewLine +
-            $"Blue: \"{_blueTeam.Name}\"" + Environment.NewLine +
-            $"Green: \"{_greenTeam.Name}\"" + Environment.NewLine +
-            $"Yellow: \"{_yellowTeam.Name}\"" + Environment.NewLine +
-            $"Magenta: \"{_magentaTeam.Name}\"" + Environment.NewLine +
-            $"Cyan: \"{_cyanTeam.Name}\"" + Environment.NewLine;
+        var log = $"Red: \"{_redTeam.Name}\""
+            + Environment.NewLine
+            + $"Blue: \"{_blueTeam.Name}\""
+            + Environment.NewLine
+            + $"Green: \"{_greenTeam.Name}\""
+            + Environment.NewLine
+            + $"Yellow: \"{_yellowTeam.Name}\""
+            + Environment.NewLine
+            + $"Magenta: \"{_magentaTeam.Name}\""
+            + Environment.NewLine
+            + $"Cyan: \"{_cyanTeam.Name}\""
+            + Environment.NewLine;
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -69,13 +67,18 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadTeamsForOnlineMatch()
     {
-        var log =
-            $"Red: \"{_redTeam.Machine}\"     as \"{_redTeam.Name}\"" + Environment.NewLine +
-            $"Blue: \"{_blueTeam.Machine}\"    as \"{_blueTeam.Name}\"" + Environment.NewLine +
-            $"Green: \"{_greenTeam.Machine}\"   as \"{_greenTeam.Name}\"" + Environment.NewLine +
-            $"Yellow: \"{_yellowTeam.Machine}\"  as \"{_yellowTeam.Name}\"" + Environment.NewLine +
-            $"Magenta: \"{_magentaTeam.Machine}\" as \"{_magentaTeam.Name}\"" + Environment.NewLine +
-            $"Cyan: \"{_cyanTeam.Machine}\"    as \"{_cyanTeam.Name}\"" + Environment.NewLine;
+        var log = $"Red: \"{_redTeam.Machine}\"     as \"{_redTeam.Name}\""
+            + Environment.NewLine
+            + $"Blue: \"{_blueTeam.Machine}\"    as \"{_blueTeam.Name}\""
+            + Environment.NewLine
+            + $"Green: \"{_greenTeam.Machine}\"   as \"{_greenTeam.Name}\""
+            + Environment.NewLine
+            + $"Yellow: \"{_yellowTeam.Machine}\"  as \"{_yellowTeam.Name}\""
+            + Environment.NewLine
+            + $"Magenta: \"{_magentaTeam.Machine}\" as \"{_magentaTeam.Name}\""
+            + Environment.NewLine
+            + $"Cyan: \"{_cyanTeam.Machine}\"    as \"{_cyanTeam.Name}\""
+            + Environment.NewLine;
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -121,11 +124,13 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadTurnTeamFromOnlineGame()
     {
-        var log =
-            "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
-            "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+        var log = "Red: \"a person\" as \"Some Team\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team (a person) starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team (a person) fires Shotgun"
+            + Environment.NewLine
+            + "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -139,11 +144,13 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadTurnTeamFromOfflineGame()
     {
-        var log =
-            "Red: \"Some Team\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team fires Shotgun" + Environment.NewLine +
-            "[00:07:26.60] ••• Some Team ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+        var log = "Red: \"Some Team\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team fires Shotgun"
+            + Environment.NewLine
+            + "[00:07:26.60] ••• Some Team ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -156,15 +163,21 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadMultipleTurns()
     {
-        var log =
-            "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
-            "Blue: \"another person\" as \"Team 2\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
-            "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat" + Environment.NewLine +
-            "[00:09:59.08] ••• Team 2 (another person) starts turn" + Environment.NewLine +
-            "[00:10:08.26] ••• Team 2 (another person) fires Shotgun" + Environment.NewLine +
-            "[00:11:26.60] ••• Team 3 (another person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+        var log = "Red: \"a person\" as \"Some Team\""
+            + Environment.NewLine
+            + "Blue: \"another person\" as \"Team 2\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team (a person) starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team (a person) fires Shotgun"
+            + Environment.NewLine
+            + "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat"
+            + Environment.NewLine
+            + "[00:09:59.08] ••• Team 2 (another person) starts turn"
+            + Environment.NewLine
+            + "[00:10:08.26] ••• Team 2 (another person) fires Shotgun"
+            + Environment.NewLine
+            + "[00:11:26.60] ••• Team 3 (another person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -176,12 +189,15 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadEndOfTurnWithLossOfControl()
     {
-        var log =
-            "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
-            "Blue: \"another person\" as \"Team 2\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
-            "[00:07:26.60] ••• Some Team (a person) loses turn due to loss of control; time used: 40.94 sec turn, 0.00 sec retreat";
+        var log = "Red: \"a person\" as \"Some Team\""
+            + Environment.NewLine
+            + "Blue: \"another person\" as \"Team 2\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team (a person) starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team (a person) fires Shotgun"
+            + Environment.NewLine
+            + "[00:07:26.60] ••• Some Team (a person) loses turn due to loss of control; time used: 40.94 sec turn, 0.00 sec retreat";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -194,11 +210,13 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadWeaponDetails()
     {
-        var log =
-            "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
-            "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+        var log = "Red: \"a person\" as \"Some Team\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team (a person) starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team (a person) fires Shotgun"
+            + Environment.NewLine
+            + "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -212,11 +230,13 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadWeaponDetailsForGrenades()
     {
-        var log =
-            "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team (a person) fires Grenade (3 sec, min bounce)" + Environment.NewLine +
-            "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+        var log = "Red: \"a person\" as \"Some Team\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team (a person) starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team (a person) fires Grenade (3 sec, min bounce)"
+            + Environment.NewLine
+            + "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -230,11 +250,13 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadWeaponDetailsForBananaBomb()
     {
-        var log =
-            "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team (a person) fires Banana Bomb (3 sec)" + Environment.NewLine +
-            "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+        var log = "Red: \"a person\" as \"Some Team\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team (a person) starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team (a person) fires Banana Bomb (3 sec)"
+            + Environment.NewLine
+            + "[00:07:26.60] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -248,12 +270,15 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadWeaponDetailsWhenMultipleWeaponsUsed()
     {
-        var log =
-            "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team (a person) fires Ninja Rope" + Environment.NewLine +
-            "[00:07:45.34] ••• Some Team (a person) fires Banana Bomb (3 sec)" + Environment.NewLine +
-            "[00:08:35.87] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
+        var log = "Red: \"a person\" as \"Some Team\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team (a person) starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team (a person) fires Ninja Rope"
+            + Environment.NewLine
+            + "[00:07:45.34] ••• Some Team (a person) fires Banana Bomb (3 sec)"
+            + Environment.NewLine
+            + "[00:08:35.87] ••• Some Team (a person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -270,12 +295,15 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadDamageToSingleTeam()
     {
-        var log =
-            "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
-            "Blue: \"another person\" as \"Team 2\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
-            "[00:07:26.60] ••• Damage dealt: 45 to Team 2 (another person)";
+        var log = "Red: \"a person\" as \"Some Team\""
+            + Environment.NewLine
+            + "Blue: \"another person\" as \"Team 2\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team (a person) starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team (a person) fires Shotgun"
+            + Environment.NewLine
+            + "[00:07:26.60] ••• Damage dealt: 45 to Team 2 (another person)";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -289,12 +317,15 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadDamageToSingleTeamWithDeaths()
     {
-        var log =
-            "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
-            "Blue: \"another person\" as \"Team 2\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
-            "[00:07:26.60] ••• Damage dealt: 100 (1 kill) to Team 2 (another person)";
+        var log = "Red: \"a person\" as \"Some Team\""
+            + Environment.NewLine
+            + "Blue: \"another person\" as \"Team 2\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team (a person) starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team (a person) fires Shotgun"
+            + Environment.NewLine
+            + "[00:07:26.60] ••• Damage dealt: 100 (1 kill) to Team 2 (another person)";
 
         var replay = _replayTextReader.GetModel(log);
 
@@ -308,12 +339,15 @@ public class ReplayTextReaderShould
     [Test]
     public void ReadDamageToMultipleTeams()
     {
-        var log =
-            "Red: \"a person\" as \"Some Team\"" + Environment.NewLine +
-            "Blue: \"another person\" as \"Team 2\"" + Environment.NewLine +
-            "[00:06:59.08] ••• Some Team (a person) starts turn" + Environment.NewLine +
-            "[00:07:08.26] ••• Some Team (a person) fires Shotgun" + Environment.NewLine +
-            "[00:07:26.60] ••• Damage dealt: 42 to Some Team (a person), 100 (1 kill) to Team 2 (another person)";
+        var log = "Red: \"a person\" as \"Some Team\""
+            + Environment.NewLine
+            + "Blue: \"another person\" as \"Team 2\""
+            + Environment.NewLine
+            + "[00:06:59.08] ••• Some Team (a person) starts turn"
+            + Environment.NewLine
+            + "[00:07:08.26] ••• Some Team (a person) fires Shotgun"
+            + Environment.NewLine
+            + "[00:07:26.60] ••• Damage dealt: 42 to Some Team (a person), 100 (1 kill) to Team 2 (another person)";
 
         var replay = _replayTextReader.GetModel(log);
 

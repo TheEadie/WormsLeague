@@ -21,9 +21,7 @@ internal sealed class TokenStore : ITokenStore
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Programs",
             "Worms");
-        _tokenStorePath = _fileSystem.Path.Combine(
-            _tokenStoreFolder,
-            "tokens.json");
+        _tokenStorePath = _fileSystem.Path.Combine(_tokenStoreFolder, "tokens.json");
     }
 
     public AccessTokens GetAccessTokens()
@@ -32,8 +30,18 @@ internal sealed class TokenStore : ITokenStore
         {
             var fileContent = _fileSystem.File.ReadAllText(_tokenStorePath);
             var protectedTokens = JsonSerializer.Deserialize<AccessTokens>(fileContent);
-            var accessToken = _dataProtector.Unprotect(protectedTokens.AccessToken);
-            var refreshToken = _dataProtector.Unprotect(protectedTokens.RefreshToken);
+
+            if (protectedTokens is null)
+            {
+                return new AccessTokens(null, null);
+            }
+
+            var accessToken = protectedTokens.AccessToken is not null
+                ? _dataProtector.Unprotect(protectedTokens.AccessToken)
+                : null;
+            var refreshToken = protectedTokens.RefreshToken is not null
+                ? _dataProtector.Unprotect(protectedTokens.RefreshToken)
+                : null;
             return new AccessTokens(accessToken, refreshToken);
         }
         else
@@ -44,8 +52,12 @@ internal sealed class TokenStore : ITokenStore
 
     public void StoreAccessTokens(AccessTokens accessTokens)
     {
-        var accessToken = _dataProtector.Protect(accessTokens.AccessToken);
-        var refreshToken = _dataProtector.Protect(accessTokens.RefreshToken);
+        var accessToken = accessTokens.AccessToken is not null
+            ? _dataProtector.Protect(accessTokens.AccessToken)
+            : null;
+        var refreshToken = accessTokens.RefreshToken is not null
+            ? _dataProtector.Protect(accessTokens.RefreshToken)
+            : null;
         var protectedTokens = new AccessTokens(accessToken, refreshToken);
 
         if (!_fileSystem.Directory.Exists(_tokenStoreFolder))

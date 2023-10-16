@@ -55,7 +55,7 @@ internal sealed class SetupHandler : ICommandHandler
         {
             _logger.Information(
                 "GitHub Personal Access Token (Scopes: 'public_repo' only) (https://github.com/settings/tokens):");
-            config.GitHubPersonalAccessToken = Console.ReadLine();
+            config.GitHubPersonalAccessToken = Console.ReadLine()!;
         }
         else
         {
@@ -65,7 +65,7 @@ internal sealed class SetupHandler : ICommandHandler
         if (string.IsNullOrWhiteSpace(slackWebHook))
         {
             _logger.Information("Slack Web Hook to announce games (Ask the team):");
-            config.SlackWebHook = Console.ReadLine();
+            config.SlackWebHook = Console.ReadLine()!;
         }
         else
         {

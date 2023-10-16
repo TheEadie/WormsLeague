@@ -5,19 +5,13 @@ using Worms.Armageddon.Files.Schemes.Text;
 
 namespace Worms.Armageddon.Files.Tests.Schemes;
 
-public class SchemeTextRoundTripShould
+public sealed class SchemeTextRoundTripShould
 {
-    private SchemeTextWriter _writer;
-    private SchemeTextReader _reader;
+    private readonly SchemeTextWriter _writer = new();
+    private readonly SchemeTextReader _reader = new();
 
-    [SetUp]
-    public void SetUp()
-    {
-        _writer = new SchemeTextWriter();
-        _reader = new SchemeTextReader();
-    }
-
-    [Test, TestCaseSource(nameof(Schemes))]
+    [Test]
+    [TestCaseSource(nameof(Schemes))]
     public void NotLoseInformation(Scheme input)
     {
         var result = RoundTrip(input);

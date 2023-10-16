@@ -5,12 +5,12 @@ namespace Worms.Cli.CommandLine.PackageManagers;
 
 public class GitHubReleasePackageManager
 {
-    private GitHubClient _gitHubClient;
-    private string _repoOwner;
-    private string _repoName;
-    private string _tagPrefix;
+    private readonly GitHubClient _gitHubClient;
+    private readonly string _repoOwner;
+    private readonly string _repoName;
+    private readonly string _tagPrefix;
 
-    public void Connect(string repoOwner, string repoName, string tagPrefix, string accessToken)
+    public GitHubReleasePackageManager(string repoOwner, string repoName, string tagPrefix, string? accessToken)
     {
         _gitHubClient = string.IsNullOrEmpty(accessToken)
             ? new GitHubClient(new ProductHeaderValue("worms-cli"))

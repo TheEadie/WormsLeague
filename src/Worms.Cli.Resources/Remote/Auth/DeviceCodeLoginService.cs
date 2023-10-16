@@ -56,7 +56,14 @@ internal sealed class DeviceCodeLoginService : ILoginService
 
         if (response.IsSuccessful)
         {
-            return JsonSerializer.Deserialize<DeviceAuthorizationResponse>(response.Content!);
+            var jsonResponse = JsonSerializer.Deserialize<DeviceAuthorizationResponse>(response.Content!);
+            if (jsonResponse is null)
+            {
+                logger.Error("Error requesting device code: No response content");
+                throw new HttpRequestException("No response content");
+            }
+
+            return jsonResponse;
         }
 
         logger.Error($"Error requesting device code: {response.ErrorMessage}");
@@ -77,7 +84,7 @@ internal sealed class DeviceCodeLoginService : ILoginService
         [property: JsonPropertyName("verification_uri_complete")]
         Uri VerificationUriComplete);
 
-    private static async Task<TokenResponse> RequestTokenAsync(
+    private static async Task<TokenResponse?> RequestTokenAsync(
         DeviceAuthorizationResponse deviceCodeResponse,
         ILogger logger,
         CancellationToken cancellationToken)
