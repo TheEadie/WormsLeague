@@ -103,5 +103,5 @@ cli.release.dockerhub: cli.build.docker cli.version
 	@echo ""
 
 cli.release.wormshub: cli.version
-	@build/release-wormshub.sh $(WormsHubClientId) $(WormsHubClientSecret) ".artifacts"
+	@build/release-wormshub.sh $(WormsHubClientId) $(WormsHubClientSecret) $(cli_VERSION)
 	@echo ""

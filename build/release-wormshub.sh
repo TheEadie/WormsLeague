@@ -3,6 +3,7 @@ set -euo pipefail
 
 ClientId=$1
 ClientSecret=$2
+Version=$3
 AuthServerUrl=https://eadie.eu.auth0.com/oauth/token
 TokenAudience=worms.davideadie.dev
 
@@ -31,6 +32,7 @@ curl --request POST \
     --header "authorization: Bearer $AuthToken" \
     --form "file=@".artifacts/worms-cli-windows.zip"" \
     --form "platform="windows"" \
+    --form "version="$Version"" \
     --fail-with-body
 
 echo "Uploading Linux release..."
@@ -40,4 +42,5 @@ curl --request POST \
     --header "authorization: Bearer $AuthToken" \
     --form "file=@".artifacts/worms-cli-linux.tar.gz"" \
     --form "platform="linux"" \
+    --form "version="$Version"" \
     --fail-with-body

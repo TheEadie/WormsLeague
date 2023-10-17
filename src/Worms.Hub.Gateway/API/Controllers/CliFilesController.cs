@@ -68,8 +68,9 @@ internal sealed class CliFilesController : V1ApiController
         var fileNameForDisplay = UploadUtils.GetFileNameForDisplay(parameters.File);
         _logger.Log(
             LogLevel.Information,
-            "Received CLI file for {Platform} ({Filename})",
+            "Received CLI file for {Platform}, version: {Version} ({Filename})",
             parameters.Platform,
+            parameters.Version,
             fileNameForDisplay);
 
         if (!_cliFileValidator.IsValid(parameters.File, fileNameForDisplay))
@@ -78,6 +79,7 @@ internal sealed class CliFilesController : V1ApiController
             return BadRequest("Invalid CLI file");
         }
 
+        await _cliFiles.SaveLatestVersion(parameters.Version);
         await _cliFiles.SaveFileContents(parameters.File.OpenReadStream(), platformChecked);
         return await Get();
     }

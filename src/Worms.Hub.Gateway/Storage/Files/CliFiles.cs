@@ -44,6 +44,12 @@ internal sealed class CliFiles
         await fileContentsStream.CopyToAsync(fileStream);
     }
 
+    public async Task SaveLatestVersion(Version version)
+    {
+        var (filePath, _) = GetFilesPaths();
+        await File.WriteAllTextAsync(filePath, version.ToString());
+    }
+
     private (string versionFilePath, IDictionary<Platform, string> platformFilePaths) GetFilesPaths()
     {
         var cliFilesFolder = _configuration["Storage:CliFolder"]
