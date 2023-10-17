@@ -101,3 +101,7 @@ cli.release.github: cli.version
 cli.release.dockerhub: cli.build.docker cli.version
 	@docker push $(cli_IMAGE_NAME) --all-tags
 	@echo ""
+
+cli.release.wormshub: cli.version
+	@build/release-wormshub.sh $(WormsHubClientId) $(WormsHubClientSecret) ".artifacts"
+	@echo ""
