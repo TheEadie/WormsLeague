@@ -8,7 +8,7 @@ internal sealed class CliFileValidator
     private readonly string[] _fileExtensions =
     {
         ".zip",
-        ".tar.gz"
+        ".gz"
     };
 
     public CliFileValidator(ILogger<CliFileValidator> logger) => _logger = logger;
