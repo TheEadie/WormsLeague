@@ -65,7 +65,6 @@ internal static class Program
         return await runner.InvokeAsync(args);
     }
 
-
     private static LogEventLevel GetLogEventLevel(string[] args) =>
         args.Contains("-v") || args.Contains("--verbose") ? LogEventLevel.Verbose :
         args.Contains("-q") || args.Contains("--quiet") ? LogEventLevel.Error : LogEventLevel.Information;
