@@ -33,6 +33,21 @@ internal sealed class WormsServerApi : IWormsServerApi
 #endif
     }
 
+    public sealed record LatestCliDtoV1(
+        [property: JsonPropertyName("latestVersion")]
+        string LatestVersion,
+        [property: JsonPropertyName("fileLocations")]
+        IReadOnlyCollection<IReadOnlyDictionary<string, string>> FileLocations);
+
+    public async Task<LatestCliDtoV1> GetLatestCliDetails()
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        var path = new Uri("api/v1/files/cli", UriKind.Relative);
+        return await CallApiRefreshAccessTokenIfInvalid<LatestCliDtoV1>(
+            httpClient,
+            async () => await httpClient.GetAsync(path));
+    }
+
     public sealed record GamesDtoV1(
         [property: JsonPropertyName("id")] string Id,
         [property: JsonPropertyName("status")] string Status,
