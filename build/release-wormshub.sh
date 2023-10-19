@@ -8,8 +8,8 @@ AuthServerUrl=https://eadie.eu.auth0.com/oauth/token
 TokenAudience=worms.davideadie.dev
 
 echo "Compressing artifacts..."
-
-zip -r .artifacts/worms-cli-windows.zip ./.artifacts/win-x64/*
+rm -f .artifacts/worms-cli-windows.zip .artifacts/worms-cli-linux.tar.gz
+zip -rj .artifacts/worms-cli-windows.zip ./.artifacts/win-x64/*
 tar -czvf .artifacts/worms-cli-linux.tar.gz ./.artifacts/linux-x64/*
 
 echo "Getting auth token..."
