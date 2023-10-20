@@ -35,9 +35,9 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public sealed record LatestCliDtoV1(
         [property: JsonPropertyName("latestVersion")]
-        string LatestVersion,
+        Version LatestVersion,
         [property: JsonPropertyName("fileLocations")]
-        IReadOnlyCollection<IReadOnlyDictionary<string, string>> FileLocations);
+        IReadOnlyDictionary<string, string> FileLocations);
 
     public async Task<LatestCliDtoV1> GetLatestCliDetails()
     {
@@ -46,6 +46,13 @@ internal sealed class WormsServerApi : IWormsServerApi
         return await CallApiRefreshAccessTokenIfInvalid<LatestCliDtoV1>(
             httpClient,
             async () => await httpClient.GetAsync(path));
+    }
+
+    public async Task<byte[]> DownloadLatestCli(string platform)
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        var path = new Uri($"api/v1/files/cli/{platform}", UriKind.Relative);
+        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, async () => await httpClient.GetAsync(path));
     }
 
     public sealed record GamesDtoV1(
@@ -115,24 +122,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         HttpClient client,
         Func<Task<HttpResponseMessage>> apiCall)
     {
-        client.BaseAddress = _baseUri;
-        var accessTokens = _tokenStore.GetAccessTokens();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
-
-        var response = await apiCall().ConfigureAwait(false);
-
-        if (response.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            // Retry with newer access token
-            accessTokens = await _accessTokenRefreshService.RefreshAccessTokens(accessTokens).ConfigureAwait(false);
-            _tokenStore.StoreAccessTokens(accessTokens);
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
-            response = await apiCall().ConfigureAwait(false);
-        }
-
-        _ = response.EnsureSuccessStatusCode();
-
+        var response = await CallApiWithAuthRetry(client, apiCall);
         var streamAsync = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         await using var stream = streamAsync.ConfigureAwait(false);
         var result = await JsonSerializer.DeserializeAsync<T>(streamAsync).ConfigureAwait(false);
@@ -141,7 +131,20 @@ internal sealed class WormsServerApi : IWormsServerApi
             : result;
     }
 
-    private async Task CallApiRefreshAccessTokenIfInvalid(HttpClient client, Func<Task<HttpResponseMessage>> apiCall)
+    private Task CallApiRefreshAccessTokenIfInvalid(HttpClient client, Func<Task<HttpResponseMessage>> apiCall) =>
+        Task.FromResult(_ = CallApiWithAuthRetry(client, apiCall));
+
+    private async Task<byte[]> CallApiBinaryRefreshAccessTokenIfInvalid(
+        HttpClient client,
+        Func<Task<HttpResponseMessage>> apiCall)
+    {
+        var response = await CallApiWithAuthRetry(client, apiCall);
+        return await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+    }
+
+    private async Task<HttpResponseMessage> CallApiWithAuthRetry(
+        HttpClient client,
+        Func<Task<HttpResponseMessage>> apiCall)
     {
         client.BaseAddress = _baseUri;
         var accessTokens = _tokenStore.GetAccessTokens();
@@ -160,5 +163,6 @@ internal sealed class WormsServerApi : IWormsServerApi
         }
 
         _ = response.EnsureSuccessStatusCode();
+        return response;
     }
 }

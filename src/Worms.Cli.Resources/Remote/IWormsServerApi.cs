@@ -4,6 +4,8 @@ internal interface IWormsServerApi
 {
     Task<WormsServerApi.LatestCliDtoV1> GetLatestCliDetails();
 
+    Task<byte[]> DownloadLatestCli(string platform);
+
     Task<IReadOnlyCollection<WormsServerApi.GamesDtoV1>> GetGames();
 
     Task<WormsServerApi.GamesDtoV1> CreateGame(WormsServerApi.CreateGameDtoV1 hostMachineName);
