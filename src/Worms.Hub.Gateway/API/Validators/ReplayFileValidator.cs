@@ -1,19 +1,16 @@
 namespace Worms.Hub.Gateway.API.Validators;
 
-internal sealed class ReplayFileValidator
+internal sealed class ReplayFileValidator(ILogger<ReplayFileValidator> logger)
 {
-    private readonly ILogger<ReplayFileValidator> _logger;
     private const int MaxFileSize = 1024 * 300; // 300KB
     private const string FileExtension = ".wagame";
     private readonly byte[] _fileSignature = "WA"u8.ToArray();
-
-    public ReplayFileValidator(ILogger<ReplayFileValidator> logger) => _logger = logger;
 
     public bool IsValid(IFormFile replayFile, string fileNameForDisplay)
     {
         if (!FileHasCorrectExtension(replayFile))
         {
-            _logger.Log(
+            logger.Log(
                 LogLevel.Information,
                 "Invalid Replay Uploaded: {Filename} does not have valid extension (.WAGame)",
                 fileNameForDisplay);
@@ -22,7 +19,7 @@ internal sealed class ReplayFileValidator
 
         if (!FileHasCorrectSignature(replayFile))
         {
-            _logger.Log(
+            logger.Log(
                 LogLevel.Information,
                 "Invalid Replay Uploaded: {Filename} does not have valid signature (WA)",
                 fileNameForDisplay);
@@ -31,7 +28,7 @@ internal sealed class ReplayFileValidator
 
         if (!FileIsExpectedSize(replayFile))
         {
-            _logger.Log(
+            logger.Log(
                 LogLevel.Information,
                 "Invalid Replay Uploaded: {Filename} is larger than 300KB",
                 fileNameForDisplay);

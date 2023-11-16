@@ -7,8 +7,8 @@ namespace Worms.Armageddon.Files.Tests.Schemes;
 
 public sealed class WscRoundTripShould : IDisposable
 {
-    private readonly IWscWriter _writer;
-    private readonly IWscReader _reader;
+    private readonly WscWriter _writer;
+    private readonly WscReader _reader;
     private readonly string _tempDirectory;
     private readonly string _file;
 

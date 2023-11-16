@@ -4,13 +4,22 @@ namespace Worms.Cli.Commands;
 
 internal sealed class Root : RootCommand
 {
-    public Root() : base("Worms CLI")
+    private static readonly string[] VerboseArgs =
     {
-        AddGlobalOption(new Option<bool>(
-            new[] { "--verbose", "-v" },
-            "Show more information about the process"));
-        AddGlobalOption(new Option<bool>(
-            new[] { "--quiet", "-q" },
-            "Only show errors"));
+        "--verbose",
+        "-v"
+    };
+
+    private static readonly string[] QuietArgs =
+    {
+        "--quiet",
+        "-q"
+    };
+
+    public Root()
+        : base("Worms CLI")
+    {
+        AddGlobalOption(new Option<bool>(VerboseArgs, "Show more information about the process"));
+        AddGlobalOption(new Option<bool>(QuietArgs, "Only show errors"));
     }
 }

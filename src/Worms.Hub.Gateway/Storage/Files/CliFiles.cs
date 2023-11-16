@@ -2,15 +2,11 @@ using Worms.Hub.Gateway.Domain;
 
 namespace Worms.Hub.Gateway.Storage.Files;
 
-internal sealed class CliFiles
+internal sealed class CliFiles(IConfiguration configuration)
 {
     private const string WindowsFilename = "worms-cli-windows.zip";
     private const string LinuxFilename = "worms-cli-linux.tar.gz";
     private const string VersionFilename = "version.txt";
-
-    private readonly IConfiguration _configuration;
-
-    public CliFiles(IConfiguration configuration) => _configuration = configuration;
 
     public async Task<CliInfo> GetLatestDetails()
     {
@@ -52,7 +48,7 @@ internal sealed class CliFiles
 
     private (string versionFilePath, IDictionary<Platform, string> platformFilePaths) GetFilesPaths()
     {
-        var cliFilesFolder = _configuration["Storage:CliFolder"]
+        var cliFilesFolder = configuration["Storage:CliFolder"]
             ?? throw new ArgumentException("CLI folder not configured");
 
         var possiblePlatforms = new Dictionary<Platform, string>

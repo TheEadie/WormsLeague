@@ -5,14 +5,11 @@ using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Auth;
 
-internal sealed class DeviceCodeLoginService : ILoginService
+internal sealed class DeviceCodeLoginService(ITokenStore tokenStore) : ILoginService
 {
     private const string Authority = "https://eadie.eu.auth0.com";
     private const string ClientId = "0dBbKeIKO2UAzWfBh6LuGwWYSWGZPFHB";
     private const string Audience = "worms.davideadie.dev";
-    private readonly ITokenStore _tokenStore;
-
-    public DeviceCodeLoginService(ITokenStore tokenStore) => _tokenStore = tokenStore;
 
     public async Task RequestLogin(ILogger logger, CancellationToken cancellationToken)
     {
@@ -30,7 +27,7 @@ internal sealed class DeviceCodeLoginService : ILoginService
         if (tokenResponse != null)
         {
             logger.Verbose("Saving tokens...");
-            _tokenStore.StoreAccessTokens(new AccessTokens(tokenResponse.AccessToken, tokenResponse.RefreshToken));
+            tokenStore.StoreAccessTokens(new AccessTokens(tokenResponse.AccessToken, tokenResponse.RefreshToken));
 
             logger.Information("Logged in successfully");
             return;

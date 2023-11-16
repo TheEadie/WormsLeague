@@ -5,20 +5,13 @@ using Worms.Cli.Configuration;
 
 namespace Worms.Cli.League;
 
-internal sealed class LeagueUpdater
+internal sealed class LeagueUpdater(
+    IGitHubReleasePackageManagerFactory packageManagerFactory,
+    IWormsLocator wormsLocator)
 {
-    private readonly IGitHubReleasePackageManagerFactory _packageManagerFactory;
-    private readonly IWormsLocator _wormsLocator;
-
-    public LeagueUpdater(IGitHubReleasePackageManagerFactory packageManagerFactory, IWormsLocator wormsLocator)
-    {
-        _packageManagerFactory = packageManagerFactory;
-        _wormsLocator = wormsLocator;
-    }
-
     public async Task Update(Config config, ILogger logger)
     {
-        var packageManager = _packageManagerFactory.Create(
+        var packageManager = packageManagerFactory.Create(
             "TheEadie",
             "WormsLeague",
             "schemes/v",
@@ -38,7 +31,7 @@ internal sealed class LeagueUpdater
 
         logger.Information($"Downloading Schemes: {latestVersion}");
 
-        var schemesFolder = _wormsLocator.Find().SchemesFolder;
+        var schemesFolder = wormsLocator.Find().SchemesFolder;
 
         await packageManager.DownloadVersion(latestVersion, schemesFolder).ConfigureAwait(false);
     }

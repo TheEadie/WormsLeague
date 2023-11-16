@@ -1,4 +1,3 @@
-using Worms.Armageddon.Files.Schemes.Text;
 using Worms.Cli.Logging.TableOutput;
 using Worms.Cli.Resources.Remote.Games;
 
@@ -6,10 +5,6 @@ namespace Worms.Cli.Resources.Games;
 
 internal sealed class GameTextPrinter : IResourcePrinter<RemoteGame>
 {
-    private readonly ISchemeTextWriter _schemeTextWriter;
-
-    public GameTextPrinter(ISchemeTextWriter schemeTextWriter) => _schemeTextWriter = schemeTextWriter;
-
     public void Print(TextWriter writer, IReadOnlyCollection<RemoteGame> resources, int outputMaxWidth)
     {
         var tableBuilder = new TableBuilder(outputMaxWidth);

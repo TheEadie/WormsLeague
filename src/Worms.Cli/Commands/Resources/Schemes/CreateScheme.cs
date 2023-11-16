@@ -44,28 +44,13 @@ internal sealed class CreateScheme : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class CreateSchemeHandler : ICommandHandler
+internal sealed class CreateSchemeHandler(
+    IResourceCreator<LocalScheme, LocalSchemeCreateParameters> schemeCreator,
+    IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters> randomSchemeCreator,
+    IFileSystem fileSystem,
+    IWormsLocator wormsLocator,
+    ILogger logger) : ICommandHandler
 {
-    private readonly IResourceCreator<LocalScheme, LocalSchemeCreateParameters> _schemeCreator;
-    private readonly IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters> _randomSchemeCreator;
-    private readonly IFileSystem _fileSystem;
-    private readonly IWormsLocator _wormsLocator;
-    private readonly ILogger _logger;
-
-    public CreateSchemeHandler(
-        IResourceCreator<LocalScheme, LocalSchemeCreateParameters> schemeCreator,
-        IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters> randomSchemeCreator,
-        IFileSystem fileSystem,
-        IWormsLocator wormsLocator,
-        ILogger logger)
-    {
-        _schemeCreator = schemeCreator;
-        _randomSchemeCreator = randomSchemeCreator;
-        _fileSystem = fileSystem;
-        _wormsLocator = wormsLocator;
-        _logger = logger;
-    }
-
     public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
@@ -86,27 +71,27 @@ internal sealed class CreateSchemeHandler : ICommandHandler
             if (!random)
             {
                 var (definition, source) = ValidateSchemeDefinition(inputFile);
-                creator = () => _schemeCreator.Create(
+                creator = () => schemeCreator.Create(
                     new LocalSchemeCreateParameters(validatedName, outputFolder, definition),
-                    _logger,
+                    logger,
                     cancellationToken);
-                _logger.Verbose($"Scheme definition being read from {source}");
+                logger.Verbose($"Scheme definition being read from {source}");
             }
             else
             {
-                creator = () => _randomSchemeCreator.Create(
+                creator = () => randomSchemeCreator.Create(
                     new LocalSchemeCreateRandomParameters(validatedName, outputFolder),
-                    _logger,
+                    logger,
                     cancellationToken);
             }
         }
         catch (ConfigurationException exception)
         {
-            _logger.Error(exception.Message);
+            logger.Error(exception.Message);
             return 1;
         }
 
-        _logger.Information($"Writing Scheme to {outputFolder}");
+        logger.Information($"Writing Scheme to {outputFolder}");
 
         try
         {
@@ -115,7 +100,7 @@ internal sealed class CreateSchemeHandler : ICommandHandler
         }
         catch (FormatException exception)
         {
-            _logger.Error("Failed to read Scheme definition: " + exception.Message);
+            logger.Error("Failed to read Scheme definition: " + exception.Message);
             return 1;
         }
 
@@ -126,7 +111,7 @@ internal sealed class CreateSchemeHandler : ICommandHandler
     {
         if (string.IsNullOrWhiteSpace(outputFolder))
         {
-            var gameInfo = _wormsLocator.Find();
+            var gameInfo = wormsLocator.Find();
 
             if (!gameInfo.IsInstalled)
             {
@@ -137,19 +122,19 @@ internal sealed class CreateSchemeHandler : ICommandHandler
             outputFolder = gameInfo.SchemesFolder;
         }
 
-        if (_fileSystem.Directory.Exists(outputFolder))
+        if (fileSystem.Directory.Exists(outputFolder))
         {
             return outputFolder;
         }
 
-        _logger.Information($"Output folder ({outputFolder}) does not exit. It will be created.");
-        _ = _fileSystem.Directory.CreateDirectory(outputFolder);
+        logger.Information($"Output folder ({outputFolder}) does not exit. It will be created.");
+        _ = fileSystem.Directory.CreateDirectory(outputFolder);
 
         return outputFolder;
     }
 
     private (string, string) ValidateSchemeDefinition(string? filename) =>
-        !string.IsNullOrWhiteSpace(filename) ? (_fileSystem.File.ReadAllText(filename), $"file: + {filename}") :
+        !string.IsNullOrWhiteSpace(filename) ? (fileSystem.File.ReadAllText(filename), $"file: + {filename}") :
         Console.IsInputRedirected ? (Console.In.ReadToEnd(), "std in") :
         throw new ConfigurationException(
             "No Scheme definition provided. Provide the definition using std in or the --file option");

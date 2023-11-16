@@ -29,17 +29,10 @@ internal sealed class ViewReplay : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class ViewReplayHandler : ICommandHandler
+internal sealed class ViewReplayHandler(
+    ResourceViewer<LocalReplay, LocalReplayViewParameters> resourceViewer,
+    ILogger logger) : ICommandHandler
 {
-    private readonly ResourceViewer<LocalReplay, LocalReplayViewParameters> _resourceViewer;
-    private readonly ILogger _logger;
-
-    public ViewReplayHandler(ResourceViewer<LocalReplay, LocalReplayViewParameters> resourceViewer, ILogger logger)
-    {
-        _resourceViewer = resourceViewer;
-        _logger = logger;
-    }
-
     public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
@@ -49,15 +42,15 @@ internal sealed class ViewReplayHandler : ICommandHandler
 
         try
         {
-            await _resourceViewer.View(
+            await resourceViewer.View(
                 name,
                 new LocalReplayViewParameters(turn),
-                _logger,
+                logger,
                 context.GetCancellationToken());
         }
         catch (ConfigurationException exception)
         {
-            _logger.Error(exception.Message);
+            logger.Error(exception.Message);
             return 1;
         }
 

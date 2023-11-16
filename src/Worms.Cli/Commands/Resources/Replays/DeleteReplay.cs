@@ -8,10 +8,10 @@ namespace Worms.Cli.Commands.Resources.Replays;
 
 internal sealed class DeleteReplay : Command
 {
-    public static readonly Argument<string> ReplayName =
-        new("name", "The name of the Replay to be deleted");
+    public static readonly Argument<string> ReplayName = new("name", "The name of the Replay to be deleted");
 
-    public DeleteReplay() : base("replay", "Delete replays (.WAgame files)")
+    public DeleteReplay()
+        : base("replay", "Delete replays (.WAgame files)")
     {
         AddAlias("replays");
         AddAlias("WAgame");
@@ -20,19 +20,10 @@ internal sealed class DeleteReplay : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class DeleteReplayHandler : ICommandHandler
+internal sealed class DeleteReplayHandler
+    (ResourceDeleter<LocalReplay> resourceDeleter, ILogger logger) : ICommandHandler
 {
-    private readonly ResourceDeleter<LocalReplay> _resourceDeleter;
-    private readonly ILogger _logger;
-
-    public DeleteReplayHandler(ResourceDeleter<LocalReplay> resourceDeleter, ILogger logger)
-    {
-        _resourceDeleter = resourceDeleter;
-        _logger = logger;
-    }
-
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -41,11 +32,11 @@ internal sealed class DeleteReplayHandler : ICommandHandler
 
         try
         {
-            await _resourceDeleter.Delete(name, _logger, cancellationToken);
+            await resourceDeleter.Delete(name, logger, cancellationToken);
         }
         catch (ConfigurationException exception)
         {
-            _logger.Error(exception.Message);
+            logger.Error(exception.Message);
             return 1;
         }
 

@@ -1,31 +1,22 @@
 namespace Worms.Hub.Gateway.API.Middleware;
 
-internal sealed class LoggingMiddleware
+internal sealed class LoggingMiddleware(RequestDelegate next, ILogger<LoggingMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<LoggingMiddleware> _logger;
-
-    public LoggingMiddleware(RequestDelegate next, ILogger<LoggingMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         var username = context.User.Identity?.Name ?? "anonymous";
         var request = context.Request;
-        _logger.Log(
+        logger.Log(
             LogLevel.Information,
             "Request: {Method} {Path} by {Username}",
             request.Method,
             request.Path,
             username);
 
-        await _next(context);
+        await next(context);
 
         var response = context.Response;
-        _logger.Log(
+        logger.Log(
             LogLevel.Information,
             "Response: {Method} {Path} by {Username}: {Code}",
             request.Method,

@@ -73,22 +73,11 @@ internal sealed class CreateGif : Command
     }
 }
 
-internal sealed class CreateGifHandler : ICommandHandler
+internal sealed class CreateGifHandler(
+    IResourceCreator<LocalGif, LocalGifCreateParameters> gifCreator,
+    IResourceRetriever<LocalReplay> replayRetriever,
+    ILogger logger) : ICommandHandler
 {
-    private readonly IResourceCreator<LocalGif, LocalGifCreateParameters> _gifCreator;
-    private readonly IResourceRetriever<LocalReplay> _replayRetriever;
-    private readonly ILogger _logger;
-
-    public CreateGifHandler(
-        IResourceCreator<LocalGif, LocalGifCreateParameters> gifCreator,
-        IResourceRetriever<LocalReplay> replayRetriever,
-        ILogger logger)
-    {
-        _gifCreator = gifCreator;
-        _replayRetriever = replayRetriever;
-        _logger = logger;
-    }
-
     public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
@@ -109,14 +98,14 @@ internal sealed class CreateGifHandler : ICommandHandler
         }
         catch (ConfigurationException exception)
         {
-            _logger.Error(exception.Message);
+            logger.Error(exception.Message);
             return 1;
         }
 
         try
         {
-            _logger.Information($"Creating gif for {replayName}, turn {turn} ...");
-            var gif = await _gifCreator.Create(
+            logger.Information($"Creating gif for {replayName}, turn {turn} ...");
+            var gif = await gifCreator.Create(
                 new LocalGifCreateParameters(
                     replay,
                     turn,
@@ -124,13 +113,13 @@ internal sealed class CreateGifHandler : ICommandHandler
                     TimeSpan.FromSeconds(endOffset),
                     fps,
                     speed),
-                _logger,
+                logger,
                 cancellationToken);
             await Console.Out.WriteLineAsync(gif.Path);
         }
         catch (FormatException exception)
         {
-            _logger.Error("Failed to create gif: " + exception.Message);
+            logger.Error("Failed to create gif: " + exception.Message);
             return 1;
         }
 
@@ -149,7 +138,7 @@ internal sealed class CreateGifHandler : ICommandHandler
             throw new ConfigurationException("No turn provided for the Gif being created");
         }
 
-        var replays = await _replayRetriever.Retrieve(replay, _logger, cancellationToken);
+        var replays = await replayRetriever.Retrieve(replay, logger, cancellationToken);
 
         if (replays.Count == 0)
         {

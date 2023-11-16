@@ -5,25 +5,18 @@ using Worms.Armageddon.Files.Schemes.Binary;
 
 namespace Worms.Cli.Resources.Local.Schemes;
 
-internal sealed class LocalSchemesRetriever : IResourceRetriever<LocalScheme>
+internal sealed class LocalSchemesRetriever
+    (IWscReader wscReader, IWormsLocator wormsLocator, IFileSystem fileSystem) : IResourceRetriever<LocalScheme>
 {
-    private readonly IWscReader _wscReader;
-    private readonly IWormsLocator _wormsLocator;
-    private readonly IFileSystem _fileSystem;
+    public Task<IReadOnlyCollection<LocalScheme>> Retrieve(ILogger logger, CancellationToken cancellationToken) =>
+        Retrieve("*", logger, cancellationToken);
 
-    public LocalSchemesRetriever(IWscReader wscReader, IWormsLocator wormsLocator, IFileSystem fileSystem)
+    public Task<IReadOnlyCollection<LocalScheme>> Retrieve(
+        string pattern,
+        ILogger logger,
+        CancellationToken cancellationToken)
     {
-        _wscReader = wscReader;
-        _wormsLocator = wormsLocator;
-        _fileSystem = fileSystem;
-    }
-
-    public Task<IReadOnlyCollection<LocalScheme>> Retrieve(ILogger logger, CancellationToken cancellationToken)
-        => Retrieve("*", logger, cancellationToken);
-
-    public Task<IReadOnlyCollection<LocalScheme>> Retrieve(string pattern, ILogger logger, CancellationToken cancellationToken)
-    {
-        var gameInfo = _wormsLocator.Find();
+        var gameInfo = wormsLocator.Find();
 
         if (!gameInfo.IsInstalled)
         {
@@ -32,10 +25,10 @@ internal sealed class LocalSchemesRetriever : IResourceRetriever<LocalScheme>
 
         var schemes = new List<LocalScheme>();
 
-        foreach (var scheme in _fileSystem.Directory.GetFiles(gameInfo.SchemesFolder, $"{pattern}.wsc"))
+        foreach (var scheme in fileSystem.Directory.GetFiles(gameInfo.SchemesFolder, $"{pattern}.wsc"))
         {
-            var fileName = _fileSystem.Path.GetFileNameWithoutExtension(scheme);
-            var details = _wscReader.Read(scheme);
+            var fileName = fileSystem.Path.GetFileNameWithoutExtension(scheme);
+            var details = wscReader.Read(scheme);
             schemes.Add(new LocalScheme(scheme, fileName, details));
         }
 

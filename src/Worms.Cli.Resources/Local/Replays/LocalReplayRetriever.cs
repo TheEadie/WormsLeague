@@ -5,42 +5,31 @@ using Worms.Armageddon.Files.Replays.Text;
 
 namespace Worms.Cli.Resources.Local.Replays;
 
-internal sealed class LocalReplayRetriever : IResourceRetriever<LocalReplay>
+internal sealed class LocalReplayRetriever(
+    ILocalReplayLocator localReplayLocator,
+    IFileSystem fileSystem,
+    IReplayTextReader replayTextReader) : IResourceRetriever<LocalReplay>
 {
-    private readonly ILocalReplayLocator _localReplayLocator;
-    private readonly IFileSystem _fileSystem;
-    private readonly IReplayTextReader _replayTextReader;
-
-    public LocalReplayRetriever(
-        ILocalReplayLocator localReplayLocator,
-        IFileSystem fileSystem,
-        IReplayTextReader replayTextReader)
-    {
-        _localReplayLocator = localReplayLocator;
-        _fileSystem = fileSystem;
-        _replayTextReader = replayTextReader;
-    }
-
     public Task<IReadOnlyCollection<LocalReplay>> Retrieve(ILogger logger, CancellationToken cancellationToken) =>
         Retrieve("*", logger, cancellationToken);
 
-    public Task<IReadOnlyCollection<LocalReplay>> Retrieve(
+    public async Task<IReadOnlyCollection<LocalReplay>> Retrieve(
         string pattern,
         ILogger logger,
         CancellationToken cancellationToken)
     {
         var resources = new List<LocalReplay>();
 
-        foreach (var paths in _localReplayLocator.GetReplayPaths(pattern))
+        foreach (var paths in localReplayLocator.GetReplayPaths(pattern))
         {
-            if (_fileSystem.File.Exists(paths.LogPath))
+            if (fileSystem.File.Exists(paths.LogPath))
             {
-                resources.Add(
-                    new LocalReplay(paths, _replayTextReader.GetModel(_fileSystem.File.ReadAllText(paths.LogPath))));
+                var content = await fileSystem.File.ReadAllTextAsync(paths.LogPath, cancellationToken);
+                resources.Add(new LocalReplay(paths, replayTextReader.GetModel(content)));
             }
             else
             {
-                var fileName = _fileSystem.Path.GetFileNameWithoutExtension(paths.WAgamePath);
+                var fileName = fileSystem.Path.GetFileNameWithoutExtension(paths.WAgamePath);
                 var startIndex = fileName.IndexOf('[', StringComparison.InvariantCulture);
                 var dateString = fileName[..(startIndex - 1)];
                 var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);
@@ -57,7 +46,6 @@ internal sealed class LocalReplayRetriever : IResourceRetriever<LocalReplay>
             }
         }
 
-        return Task.FromResult<IReadOnlyCollection<LocalReplay>>(
-            resources.OrderByDescending(x => x.Details.Date).ToList());
+        return resources.OrderByDescending(x => x.Details.Date).ToList();
     }
 }

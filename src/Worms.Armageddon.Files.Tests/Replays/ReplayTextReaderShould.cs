@@ -8,8 +8,8 @@ namespace Worms.Armageddon.Files.Tests.Replays;
 
 public sealed class ReplayTextReaderShould
 {
-    private readonly IReplayTextReader _replayTextReader = new ReplayTextReader(
-        new List<IReplayLineParser>()
+    private readonly ReplayTextReader _replayTextReader = new(
+        new List<IReplayLineParser>
         {
             new StartTimeParser(),
             new TeamParser(),

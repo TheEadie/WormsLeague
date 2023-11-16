@@ -5,12 +5,8 @@ using Serilog;
 
 namespace Worms.Cli.CommandLine;
 
-internal sealed class CliInfoRetriever
+internal sealed class CliInfoRetriever(IFileSystem fileSystem)
 {
-    private readonly IFileSystem _fileSystem;
-
-    public CliInfoRetriever(IFileSystem fileSystem) => _fileSystem = fileSystem;
-
     public CliInfo Get(ILogger logger)
     {
         var assembly = Assembly.GetEntryAssembly();
@@ -21,7 +17,7 @@ internal sealed class CliInfoRetriever
             version = new Version(0, 0, 0);
         }
 
-        var cliFolder = _fileSystem.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName);
+        var cliFolder = fileSystem.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName);
         if (cliFolder is null)
         {
             logger.Warning("Could not get folder of Worms CLI from assembly info");

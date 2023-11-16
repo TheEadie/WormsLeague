@@ -1,12 +1,9 @@
 namespace Worms.Armageddon.Game.Replays;
 
-internal sealed class ReplayPlayer : IReplayPlayer
+internal sealed class ReplayPlayer(IWormsRunner wormsRunner) : IReplayPlayer
 {
-    private readonly IWormsRunner _wormsRunner;
+    public async Task Play(string replayPath) => await wormsRunner.RunWorms("/play", $"\"{replayPath}\"", "/quiet");
 
-    public ReplayPlayer(IWormsRunner wormsRunner) => _wormsRunner = wormsRunner;
-
-    public async Task Play(string replayPath) => await _wormsRunner.RunWorms("/play", $"\"{replayPath}\"", "/quiet");
-
-    public async Task Play(string replayPath, TimeSpan startTime) => await _wormsRunner.RunWorms("/playat", $"\"{replayPath}\"", startTime.ToString(), "/quiet");
+    public async Task Play(string replayPath, TimeSpan startTime) =>
+        await wormsRunner.RunWorms("/playat", $"\"{replayPath}\"", startTime.ToString(), "/quiet");
 }

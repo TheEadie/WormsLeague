@@ -5,30 +5,19 @@ using Worms.Cli.Configuration;
 
 namespace Worms.Cli.CommandLine;
 
-internal sealed class CliUpdater
+internal sealed class CliUpdater(
+    CliInfoRetriever cliInfoRetriever,
+    IGitHubReleasePackageManagerFactory packageManagerFactory,
+    IFileSystem fileSystem)
 {
-    private readonly CliInfoRetriever _cliInfoRetriever;
-    private readonly IGitHubReleasePackageManagerFactory _packageManagerFactory;
-    private readonly IFileSystem _fileSystem;
-
-    public CliUpdater(
-        CliInfoRetriever cliInfoRetriever,
-        IGitHubReleasePackageManagerFactory packageManagerFactory,
-        IFileSystem fileSystem)
-    {
-        _cliInfoRetriever = cliInfoRetriever;
-        _packageManagerFactory = packageManagerFactory;
-        _fileSystem = fileSystem;
-    }
-
     public async Task DownloadLatestUpdate(Config config, ILogger logger)
     {
         logger.Verbose("Starting update");
 
-        var cliInfo = _cliInfoRetriever.Get(logger);
+        var cliInfo = cliInfoRetriever.Get(logger);
         logger.Verbose(cliInfo.ToString());
 
-        var packageManager = _packageManagerFactory.Create(
+        var packageManager = packageManagerFactory.Create(
             "TheEadie",
             "WormsLeague",
             "cli/v",
@@ -54,7 +43,7 @@ internal sealed class CliUpdater
 
         logger.Information($"Downloading Worms CLI {latestVersion}");
 
-        var updateFolder = _fileSystem.Path.Combine(
+        var updateFolder = fileSystem.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Programs",
             "Worms",
@@ -68,11 +57,11 @@ internal sealed class CliUpdater
 
     private void EnsureFolderExistsAndIsEmpty(string updateFolder)
     {
-        if (_fileSystem.Directory.Exists(updateFolder))
+        if (fileSystem.Directory.Exists(updateFolder))
         {
-            _fileSystem.Directory.Delete(updateFolder, true);
+            fileSystem.Directory.Delete(updateFolder, true);
         }
 
-        _ = _fileSystem.Directory.CreateDirectory(updateFolder);
+        _ = fileSystem.Directory.CreateDirectory(updateFolder);
     }
 }
