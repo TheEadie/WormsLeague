@@ -131,8 +131,11 @@ internal sealed class WormsServerApi : IWormsServerApi
             : result;
     }
 
-    private Task CallApiRefreshAccessTokenIfInvalid(HttpClient client, Func<Task<HttpResponseMessage>> apiCall) =>
-        Task.FromResult(_ = CallApiWithAuthRetry(client, apiCall));
+    private Task CallApiRefreshAccessTokenIfInvalid(HttpClient client, Func<Task<HttpResponseMessage>> apiCall)
+    {
+        _ = CallApiWithAuthRetry(client, apiCall);
+        return Task.CompletedTask;
+    }
 
     private async Task<byte[]> CallApiBinaryRefreshAccessTokenIfInvalid(
         HttpClient client,

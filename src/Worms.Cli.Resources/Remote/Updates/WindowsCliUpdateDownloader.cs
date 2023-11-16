@@ -1,15 +1,25 @@
+using System.IO.Abstractions;
+using System.IO.Compression;
+
 namespace Worms.Cli.Resources.Remote.Updates;
 
-internal sealed class WindowsCliUpdateDownloader : ICliUpdateDownloader
+internal sealed class WindowsCliUpdateDownloader(IWormsServerApi api, IFileSystem fileSystem) : ICliUpdateDownloader
 {
-    private readonly IWormsServerApi _api;
-
-    public WindowsCliUpdateDownloader(IWormsServerApi api) => _api = api;
-
     public async Task DownloadLatestCli(string updateFolder)
     {
-        var bytes = await _api.DownloadLatestCli("windows");
-        await File.WriteAllBytesAsync(Path.Combine(updateFolder, "update.zip"), bytes);
-        // TODO: Unzip
+        const string downloadFileName = "update.zip";
+        var archiveFilePath = Path.Combine(updateFolder, downloadFileName);
+
+        // Download file
+        var bytes = await api.DownloadLatestCli("windows");
+        await File.WriteAllBytesAsync(archiveFilePath, bytes);
+
+        // Unzip file
+        using var zip = ZipFile.OpenRead(archiveFilePath);
+        zip.ExtractToDirectory(updateFolder);
+        zip.Dispose();
+
+        // Delete zip file
+        fileSystem.File.Delete(archiveFilePath);
     }
 }
