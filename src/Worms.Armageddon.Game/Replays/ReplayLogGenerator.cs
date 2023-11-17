@@ -1,10 +1,7 @@
 namespace Worms.Armageddon.Game.Replays;
 
-public class ReplayLogGenerator : IReplayLogGenerator
+public class ReplayLogGenerator(IWormsRunner wormsRunner) : IReplayLogGenerator
 {
-    private readonly IWormsRunner _wormsRunner;
-
-    public ReplayLogGenerator(IWormsRunner wormsRunner) => _wormsRunner = wormsRunner;
-
-    public async Task GenerateReplayLog(string replayPath) => await _wormsRunner.RunWorms("/getlog", $"\"{replayPath}\"", "/quiet");
+    public async Task GenerateReplayLog(string replayPath) =>
+        await wormsRunner.RunWorms("/getlog", $"\"{replayPath}\"", "/quiet");
 }

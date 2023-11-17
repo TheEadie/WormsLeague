@@ -3,17 +3,13 @@ using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Games;
 
-internal sealed class RemoteGameUpdater : IRemoteGameUpdater
+internal sealed class RemoteGameUpdater(IWormsServerApi api) : IRemoteGameUpdater
 {
-    private readonly IWormsServerApi _api;
-
-    public RemoteGameUpdater(IWormsServerApi api) => _api = api;
-
     public async Task SetGameComplete(RemoteGame game, ILogger logger, CancellationToken cancellationToken)
     {
         try
         {
-            await _api.UpdateGame(new WormsServerApi.GamesDtoV1(game.Id, "Complete", game.HostMachine));
+            await api.UpdateGame(new WormsServerApi.GamesDtoV1(game.Id, "Complete", game.HostMachine));
         }
         catch (HttpRequestException e)
         {

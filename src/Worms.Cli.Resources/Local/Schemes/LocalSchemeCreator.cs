@@ -5,24 +5,19 @@ using Worms.Armageddon.Files.Schemes.Text;
 
 namespace Worms.Cli.Resources.Local.Schemes;
 
-internal sealed class LocalSchemeCreator : IResourceCreator<LocalScheme, LocalSchemeCreateParameters>
+internal sealed class LocalSchemeCreator(
+    ISchemeTextReader schemeTextReader,
+    IWscWriter wscWriter,
+    IFileSystem fileSystem) : IResourceCreator<LocalScheme, LocalSchemeCreateParameters>
 {
-    private readonly ISchemeTextReader _schemeTextReader;
-    private readonly IWscWriter _wscWriter;
-    private readonly IFileSystem _fileSystem;
-
-    public LocalSchemeCreator(ISchemeTextReader schemeTextReader, IWscWriter wscWriter, IFileSystem fileSystem)
+    public Task<LocalScheme> Create(
+        LocalSchemeCreateParameters parameters,
+        ILogger logger,
+        CancellationToken cancellationToken)
     {
-        _schemeTextReader = schemeTextReader;
-        _wscWriter = wscWriter;
-        _fileSystem = fileSystem;
-    }
-
-    public Task<LocalScheme> Create(LocalSchemeCreateParameters parameters, ILogger logger, CancellationToken cancellationToken)
-    {
-        var scheme = _schemeTextReader.GetModel(parameters.Definition);
-        var path = _fileSystem.Path.Combine(parameters.Folder, parameters.Name + ".wsc");
-        _wscWriter.Write(scheme, path);
+        var scheme = schemeTextReader.GetModel(parameters.Definition);
+        var path = fileSystem.Path.Combine(parameters.Folder, parameters.Name + ".wsc");
+        wscWriter.Write(scheme, path);
 
         return Task.FromResult(new LocalScheme(path, parameters.Name, scheme));
     }

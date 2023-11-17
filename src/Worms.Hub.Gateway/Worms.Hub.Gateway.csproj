@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.21"/>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.13"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0"/>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0"/>
     <PackageReference Include="Npgsql" Version="7.0.6"/>
   </ItemGroup>

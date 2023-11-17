@@ -3,27 +3,18 @@ using Worms.Cli.Commands;
 
 namespace Worms.Cli.Resources;
 
-public class ResourceDeleter<T>
+public class ResourceDeleter<T>(IResourceRetriever<T> retriever, IResourceDeleter<T> deleter)
 {
-    private readonly IResourceRetriever<T> _retriever;
-    private readonly IResourceDeleter<T> _deleter;
-
-    public ResourceDeleter(IResourceRetriever<T> retriever, IResourceDeleter<T> deleter)
-    {
-        _retriever = retriever;
-        _deleter = deleter;
-    }
-
     public async Task Delete(string name, ILogger logger, CancellationToken cancellationToken)
     {
         name = ValidateName(name);
         var resource = await GetResource(name, logger, cancellationToken);
-        _deleter.Delete(resource);
+        deleter.Delete(resource);
     }
 
     private async Task<T> GetResource(string name, ILogger logger, CancellationToken cancellationToken)
     {
-        var resourcesFound = await _retriever.Retrieve(name, logger, cancellationToken);
+        var resourcesFound = await retriever.Retrieve(name, logger, cancellationToken);
 
         return resourcesFound.Count == 0
             ? throw new ConfigurationException($"No resource found with name: {name}")

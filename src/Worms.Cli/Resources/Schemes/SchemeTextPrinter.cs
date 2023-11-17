@@ -6,12 +6,8 @@ using Worms.Cli.Resources.Local.Schemes;
 
 namespace Worms.Cli.Resources.Schemes;
 
-internal sealed class SchemeTextPrinter : IResourcePrinter<LocalScheme>
+internal sealed class SchemeTextPrinter(ISchemeTextWriter schemeTextWriter) : IResourcePrinter<LocalScheme>
 {
-    private readonly ISchemeTextWriter _schemeTextWriter;
-
-    public SchemeTextPrinter(ISchemeTextWriter schemeTextWriter) => _schemeTextWriter = schemeTextWriter;
-
     public void Print(TextWriter writer, IReadOnlyCollection<LocalScheme> resources, int outputMaxWidth)
     {
         var tableBuilder = new TableBuilder(outputMaxWidth);
@@ -34,7 +30,7 @@ internal sealed class SchemeTextPrinter : IResourcePrinter<LocalScheme>
     }
 
     public void Print(TextWriter writer, LocalScheme resource, int outputMaxWidth) =>
-        _schemeTextWriter.Write(resource.Details, writer);
+        schemeTextWriter.Write(resource.Details, writer);
 
     private static string GetTurnTime(bool infinite, byte seconds) => infinite ? "Infinite" : seconds + " secs";
 

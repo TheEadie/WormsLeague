@@ -1,8 +1,7 @@
 namespace Worms.Hub.Gateway.API.Validators;
 
-internal sealed class CliFileValidator
+internal sealed class CliFileValidator(ILogger<CliFileValidator> logger)
 {
-    private readonly ILogger<CliFileValidator> _logger;
     private const int MaxFileSize = 1024 * 1024 * 50; // 50MB
 
     private readonly string[] _fileExtensions =
@@ -11,13 +10,11 @@ internal sealed class CliFileValidator
         ".gz"
     };
 
-    public CliFileValidator(ILogger<CliFileValidator> logger) => _logger = logger;
-
     public bool IsValid(IFormFile replayFile, string fileNameForDisplay)
     {
         if (!FileHasCorrectExtension(replayFile))
         {
-            _logger.Log(
+            logger.Log(
                 LogLevel.Information,
                 "Invalid CLI Uploaded: {Filename} does not have valid extension (.zip or .tar.gz)",
                 fileNameForDisplay);
@@ -26,7 +23,7 @@ internal sealed class CliFileValidator
 
         if (!FileIsExpectedSize(replayFile))
         {
-            _logger.Log(
+            logger.Log(
                 LogLevel.Information,
                 "Invalid CLI Uploaded: {Filename} is larger than 50MB",
                 fileNameForDisplay);

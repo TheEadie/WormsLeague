@@ -6,43 +6,30 @@ using Worms.Hub.Gateway.Storage.Database;
 
 namespace Worms.Hub.Gateway.API.Controllers;
 
-internal sealed class ReplaysController : V1ApiController
+internal sealed class ReplaysController(
+    IRepository<Replay> repository,
+    ReplayFileValidator replayFileValidator,
+    IConfiguration configuration,
+    ILogger<ReplaysController> logger) : V1ApiController
 {
-    private readonly IRepository<Replay> _repository;
-    private readonly ReplayFileValidator _replayFileValidator;
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<ReplaysController> _logger;
-
-    public ReplaysController(
-        IRepository<Replay> repository,
-        ReplayFileValidator replayFileValidator,
-        IConfiguration configuration,
-        ILogger<ReplaysController> logger)
-    {
-        _repository = repository;
-        _replayFileValidator = replayFileValidator;
-        _configuration = configuration;
-        _logger = logger;
-    }
-
     [HttpPost]
     public async Task<ActionResult<ReplayDto>> Post([FromForm] CreateReplayDto parameters)
     {
         var fileNameForDisplay = UploadUtils.GetFileNameForDisplay(parameters.ReplayFile);
-        _logger.Log(
+        logger.Log(
             LogLevel.Information,
             "Received replay file {Name} ({Filename})",
             parameters.Name,
             fileNameForDisplay);
 
-        if (!_replayFileValidator.IsValid(parameters.ReplayFile, fileNameForDisplay))
+        if (!replayFileValidator.IsValid(parameters.ReplayFile, fileNameForDisplay))
         {
-            _logger.Log(LogLevel.Warning, "Invalid replay file uploaded");
+            logger.Log(LogLevel.Warning, "Invalid replay file uploaded");
             return BadRequest("Invalid replay file");
         }
 
         var tempFilename = await SaveFileToTempLocation(parameters.ReplayFile, fileNameForDisplay);
-        var replay = _repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename));
+        var replay = repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename));
         return ReplayDto.FromDomain(replay);
     }
 
@@ -50,7 +37,7 @@ internal sealed class ReplaysController : V1ApiController
     {
         var generatedFileName = Path.GetRandomFileName();
 
-        var tempReplayFolderPath = _configuration["Storage:TempReplayFolder"]
+        var tempReplayFolderPath = configuration["Storage:TempReplayFolder"]
             ?? throw new ArgumentException("Temp replay folder not configured");
 
         if (!Path.Exists(tempReplayFolderPath))
@@ -60,7 +47,7 @@ internal sealed class ReplaysController : V1ApiController
 
         var saveFilePath = Path.Combine(tempReplayFolderPath, generatedFileName);
 
-        _logger.Log(
+        logger.Log(
             LogLevel.Information,
             "Saving replay file {Filename} to {Filepath}",
             fileNameForDisplay,

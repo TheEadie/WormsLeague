@@ -13,29 +13,21 @@ internal sealed class Version : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class VersionHandler : ICommandHandler
+internal sealed class VersionHandler(
+    IWormsLocator wormsLocator,
+    CliInfoRetriever cliInfoRetriever,
+    ILogger logger) : ICommandHandler
 {
-    private readonly IWormsLocator _wormsLocator;
-    private readonly CliInfoRetriever _cliInfoRetriever;
-    private readonly ILogger _logger;
-
-    public VersionHandler(IWormsLocator wormsLocator, CliInfoRetriever cliInfoRetriever, ILogger logger)
-    {
-        _wormsLocator = wormsLocator;
-        _cliInfoRetriever = cliInfoRetriever;
-        _logger = logger;
-    }
-
     public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
     public Task<int> InvokeAsync(InvocationContext context)
     {
-        var cliInfo = _cliInfoRetriever.Get(_logger);
-        _logger.Information($"Worms CLI: {cliInfo.Version.ToString(3)}");
+        var cliInfo = cliInfoRetriever.Get(logger);
+        logger.Information($"Worms CLI: {cliInfo.Version.ToString(3)}");
 
-        var gameInfo = _wormsLocator.Find();
+        var gameInfo = wormsLocator.Find();
         var gameVersion = gameInfo.IsInstalled ? gameInfo.Version.ToString(4) : "Not Installed";
-        _logger.Information($"Worms Armageddon: {gameVersion}");
+        logger.Information($"Worms Armageddon: {gameVersion}");
         return Task.FromResult(0);
     }
 }

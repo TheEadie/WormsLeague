@@ -31,17 +31,8 @@ internal sealed class Setup : Command
     }
 }
 
-internal sealed class SetupHandler : ICommandHandler
+internal sealed class SetupHandler(IConfigManager configManager, ILogger logger) : ICommandHandler
 {
-    private readonly IConfigManager _configManager;
-    private readonly ILogger _logger;
-
-    public SetupHandler(IConfigManager configManager, ILogger logger)
-    {
-        _configManager = configManager;
-        _logger = logger;
-    }
-
     public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
     public Task<int> InvokeAsync(InvocationContext context)
@@ -49,11 +40,11 @@ internal sealed class SetupHandler : ICommandHandler
         var githubToken = context.ParseResult.GetValueForOption(Setup.GitHubToken);
         var slackWebHook = context.ParseResult.GetValueForOption(Setup.SlackWebHook);
 
-        var config = _configManager.Load();
+        var config = configManager.Load();
 
         if (string.IsNullOrWhiteSpace(githubToken))
         {
-            _logger.Information(
+            logger.Information(
                 "GitHub Personal Access Token (Scopes: 'public_repo' only) (https://github.com/settings/tokens):");
             config.GitHubPersonalAccessToken = Console.ReadLine()!;
         }
@@ -64,7 +55,7 @@ internal sealed class SetupHandler : ICommandHandler
 
         if (string.IsNullOrWhiteSpace(slackWebHook))
         {
-            _logger.Information("Slack Web Hook to announce games (Ask the team):");
+            logger.Information("Slack Web Hook to announce games (Ask the team):");
             config.SlackWebHook = Console.ReadLine()!;
         }
         else
@@ -72,7 +63,7 @@ internal sealed class SetupHandler : ICommandHandler
             config.SlackWebHook = slackWebHook;
         }
 
-        _configManager.Save(config);
+        configManager.Save(config);
         return Task.FromResult(0);
     }
 }

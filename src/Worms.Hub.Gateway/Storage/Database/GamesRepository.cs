@@ -5,15 +5,11 @@ using Worms.Hub.Gateway.API.DTOs;
 
 namespace Worms.Hub.Gateway.Storage.Database;
 
-internal sealed class GamesRepository : IRepository<GameDto>
+internal sealed class GamesRepository(IConfiguration configuration) : IRepository<GameDto>
 {
-    private readonly IConfiguration _configuration;
-
-    public GamesRepository(IConfiguration configuration) => _configuration = configuration;
-
     public IReadOnlyCollection<GameDto> GetAll()
     {
-        var connectionString = _configuration.GetConnectionString("Database");
+        var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
 
         var dbObjects = connection.Query<GamesDb>("SELECT id, status, hostmachine FROM games");
@@ -23,7 +19,7 @@ internal sealed class GamesRepository : IRepository<GameDto>
 
     public GameDto Create(GameDto item)
     {
-        var connectionString = _configuration.GetConnectionString("Database");
+        var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "INSERT INTO games (status, hostmachine) VALUES (@status, @hostmachine) RETURNING id";
 
@@ -39,7 +35,7 @@ internal sealed class GamesRepository : IRepository<GameDto>
 
     public void Update(GameDto item)
     {
-        var connectionString = _configuration.GetConnectionString("Database");
+        var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "UPDATE games SET status = @status, hostmachine = @hostmachine WHERE id = @id";
 

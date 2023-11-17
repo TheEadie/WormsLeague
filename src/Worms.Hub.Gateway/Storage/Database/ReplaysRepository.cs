@@ -5,15 +5,11 @@ using Worms.Hub.Gateway.Domain;
 
 namespace Worms.Hub.Gateway.Storage.Database;
 
-internal sealed class ReplaysRepository : IRepository<Replay>
+internal sealed class ReplaysRepository(IConfiguration configuration) : IRepository<Replay>
 {
-    private readonly IConfiguration _configuration;
-
-    public ReplaysRepository(IConfiguration configuration) => _configuration = configuration;
-
     public IReadOnlyCollection<Replay> GetAll()
     {
-        var connectionString = _configuration.GetConnectionString("Database");
+        var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
 
         var dbObjects = connection.Query<ReplayDb>("SELECT id, name, status, filename FROM replays");
@@ -24,7 +20,7 @@ internal sealed class ReplaysRepository : IRepository<Replay>
 
     public Replay Create(Replay item)
     {
-        var connectionString = _configuration.GetConnectionString("Database");
+        var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "INSERT INTO replays "
             + "(name, status, filename) "
@@ -44,7 +40,7 @@ internal sealed class ReplaysRepository : IRepository<Replay>
 
     public void Update(Replay item)
     {
-        var connectionString = _configuration.GetConnectionString("Database");
+        var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "UPDATE replays SET "
             + "name = @name, "

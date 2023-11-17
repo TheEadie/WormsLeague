@@ -8,11 +8,13 @@ namespace Worms.Cli.Commands.Resources.Schemes;
 
 internal sealed class GetScheme : Command
 {
-    public static readonly Argument<string> SchemeName = new("name",
+    public static readonly Argument<string> SchemeName = new(
+        "name",
         () => "",
         "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported");
 
-    public GetScheme() : base("scheme", "Retrieves information for Worms Schemes (.wsc files)")
+    public GetScheme()
+        : base("scheme", "Retrieves information for Worms Schemes (.wsc files)")
     {
         AddAlias("schemes");
         AddAlias("wsc");
@@ -21,19 +23,9 @@ internal sealed class GetScheme : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class GetSchemeHandler : ICommandHandler
+internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetriever, ILogger logger) : ICommandHandler
 {
-    private readonly ResourceGetter<LocalScheme> _schemesRetriever;
-    private readonly ILogger _logger;
-
-    public GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetriever, ILogger logger)
-    {
-        _schemesRetriever = schemesRetriever;
-        _logger = logger;
-    }
-
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -43,12 +35,11 @@ internal sealed class GetSchemeHandler : ICommandHandler
         try
         {
             var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-            await _schemesRetriever.PrintResources(name, Console.Out, windowWidth, _logger,
-                cancellationToken);
+            await schemesRetriever.PrintResources(name, Console.Out, windowWidth, logger, cancellationToken);
         }
         catch (ConfigurationException exception)
         {
-            _logger.Error(exception.Message);
+            logger.Error(exception.Message);
             return 1;
         }
 

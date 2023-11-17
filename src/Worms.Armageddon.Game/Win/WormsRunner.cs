@@ -2,23 +2,14 @@
 
 namespace Worms.Armageddon.Game.Win;
 
-internal sealed class WormsRunner : IWormsRunner
+internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService steamService) : IWormsRunner
 {
-    private readonly IWormsLocator _wormsLocator;
-    private readonly ISteamService _steamService;
-
-    public WormsRunner(IWormsLocator wormsLocator, ISteamService steamService)
-    {
-        _wormsLocator = wormsLocator;
-        _steamService = steamService;
-    }
-
     public Task RunWorms(params string[] wormsArgs)
     {
         return Task.Run(
-            () =>
+            async () =>
                 {
-                    var gameInfo = _wormsLocator.Find();
+                    var gameInfo = wormsLocator.Find();
 
                     var args = string.Join(" ", wormsArgs);
                     using (var process = Process.Start(gameInfo.ExeLocation, args))
@@ -28,13 +19,17 @@ internal sealed class WormsRunner : IWormsRunner
                             throw new InvalidOperationException("Unable to start worms process");
                         }
 
-                        process.WaitForExit();
+                        await process.WaitForExitAsync();
                     }
 
-                    _steamService.WaitForSteamPrompt();
+                    steamService.WaitForSteamPrompt();
 
                     var wormsProcess = FindWormsProcess(gameInfo);
-                    wormsProcess?.WaitForExit();
+
+                    if (wormsProcess is not null)
+                    {
+                        await wormsProcess.WaitForExitAsync();
+                    }
 
                     return Task.CompletedTask;
                 });

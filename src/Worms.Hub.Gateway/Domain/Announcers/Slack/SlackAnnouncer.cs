@@ -3,24 +3,15 @@ using System.Text.Json;
 
 namespace Worms.Hub.Gateway.Domain.Announcers.Slack;
 
-internal sealed class SlackAnnouncer : ISlackAnnouncer
+internal sealed class SlackAnnouncer(IConfiguration configuration, ILogger<SlackAnnouncer> logger) : ISlackAnnouncer
 {
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<SlackAnnouncer> _logger;
-
-    public SlackAnnouncer(IConfiguration configuration, ILogger<SlackAnnouncer> logger)
-    {
-        _configuration = configuration;
-        _logger = logger;
-    }
-
     public async Task AnnounceGameStarting(string hostName)
     {
-        var webHookUrl = _configuration.GetValue<string>("SlackWebHookURL");
+        var webHookUrl = configuration.GetValue<string>("SlackWebHookURL");
 
         if (string.IsNullOrWhiteSpace(webHookUrl))
         {
-            _logger.LogWarning("A Slack web hook must be configured to announce a game");
+            logger.LogWarning("A Slack web hook must be configured to announce a game");
             return;
         }
 
@@ -30,7 +21,7 @@ internal sealed class SlackAnnouncer : ISlackAnnouncer
         var slackMessage = new SlackMessage($"<!here> Hosting at: wa://{hostName}");
 #endif
 
-        _logger.LogInformation("Announcing game starting to Slack");
+        logger.LogInformation("Announcing game starting to Slack");
         using var client = new HttpClient();
         var slackUrl = new Uri(webHookUrl);
         var body = JsonSerializer.Serialize(slackMessage);

@@ -52,43 +52,18 @@ internal sealed class Host : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class HostHandler : ICommandHandler
+internal sealed class HostHandler(
+    IWormsLocator wormsLocator,
+    IWormsRunner wormsRunner,
+    ISlackAnnouncer slackAnnouncer,
+    IConfigManager configManager,
+    LeagueUpdater leagueUpdater,
+    IResourceCreator<RemoteGame, string> remoteGameCreator,
+    IRemoteGameUpdater gameUpdater,
+    IResourceRetriever<LocalReplay> localReplayRetriever,
+    IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> remoteReplayCreator,
+    ILogger logger) : ICommandHandler
 {
-    private readonly IWormsRunner _wormsRunner;
-    private readonly ISlackAnnouncer _slackAnnouncer;
-    private readonly IConfigManager _configManager;
-    private readonly IWormsLocator _wormsLocator;
-    private readonly LeagueUpdater _leagueUpdater;
-    private readonly IResourceCreator<RemoteGame, string> _remoteGameCreator;
-    private readonly IRemoteGameUpdater _gameUpdater;
-    private readonly IResourceRetriever<LocalReplay> _localReplayRetriever;
-    private readonly IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> _remoteReplayCreator;
-    private readonly ILogger _logger;
-
-    public HostHandler(
-        IWormsLocator wormsLocator,
-        IWormsRunner wormsRunner,
-        ISlackAnnouncer slackAnnouncer,
-        IConfigManager configManager,
-        LeagueUpdater leagueUpdater,
-        IResourceCreator<RemoteGame, string> remoteGameCreator,
-        IRemoteGameUpdater gameUpdater,
-        IResourceRetriever<LocalReplay> localReplayRetriever,
-        IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> remoteReplayCreator,
-        ILogger logger)
-    {
-        _wormsRunner = wormsRunner;
-        _slackAnnouncer = slackAnnouncer;
-        _configManager = configManager;
-        _wormsLocator = wormsLocator;
-        _leagueUpdater = leagueUpdater;
-        _remoteGameCreator = remoteGameCreator;
-        _gameUpdater = gameUpdater;
-        _localReplayRetriever = localReplayRetriever;
-        _remoteReplayCreator = remoteReplayCreator;
-        _logger = logger;
-    }
-
     public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
@@ -100,8 +75,8 @@ internal sealed class HostHandler : ICommandHandler
         var skipAnnouncement = context.ParseResult.GetValueForOption(Host.SkipAnnouncement);
         var skipSchemeDownload = context.ParseResult.GetValueForOption(Host.SkipSchemeDownload);
 
-        _logger.Verbose("Loading configuration");
-        var config = _configManager.Load();
+        logger.Verbose("Loading configuration");
+        var config = configManager.Load();
 
         string hostIp;
         try
@@ -111,15 +86,15 @@ internal sealed class HostHandler : ICommandHandler
         }
         catch (ConfigurationException e)
         {
-            _logger.Error($"IP address could not be found. {e.Message}");
+            logger.Error($"IP address could not be found. {e.Message}");
             return 1;
         }
 
-        var gameInfo = _wormsLocator.Find();
+        var gameInfo = wormsLocator.Find();
 
         if (!gameInfo.IsInstalled)
         {
-            _logger.Error("Worms Armageddon is not installed");
+            logger.Error("Worms Armageddon is not installed");
             return 1;
         }
 
@@ -151,11 +126,11 @@ internal sealed class HostHandler : ICommandHandler
             return new RemoteGame("", "", "");
         }
 
-        _logger.Information("Announcing game to hub");
+        logger.Information("Announcing game to hub");
         RemoteGame? game = null;
         if (!dryRun)
         {
-            game = await _remoteGameCreator.Create(hostIp, _logger, cancellationToken);
+            game = await remoteGameCreator.Create(hostIp, logger, cancellationToken);
         }
 
         return game;
@@ -172,10 +147,10 @@ internal sealed class HostHandler : ICommandHandler
             return;
         }
 
-        _logger.Information("Marking game as complete in hub");
+        logger.Information("Marking game as complete in hub");
         if (!dryRun)
         {
-            await _gameUpdater.SetGameComplete(game!, _logger, cancellationToken);
+            await gameUpdater.SetGameComplete(game!, logger, cancellationToken);
         }
     }
 
@@ -186,22 +161,22 @@ internal sealed class HostHandler : ICommandHandler
             return;
         }
 
-        _logger.Information("Uploading replay to hub");
-        var allReplays = await _localReplayRetriever.Retrieve(_logger, cancellationToken);
+        logger.Information("Uploading replay to hub");
+        var allReplays = await localReplayRetriever.Retrieve(logger, cancellationToken);
         var replay = allReplays.MaxBy(x => x.Details.Date);
 
         if (replay is null)
         {
-            _logger.Warning("No replay found to upload");
+            logger.Warning("No replay found to upload");
             return;
         }
 
-        _logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
+        logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
         if (!dryRun)
         {
-            _ = await _remoteReplayCreator.Create(
+            _ = await remoteReplayCreator.Create(
                 new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
-                _logger,
+                logger,
                 cancellationToken);
         }
     }
@@ -213,11 +188,11 @@ internal sealed class HostHandler : ICommandHandler
             return;
         }
 
-        _logger.Information("Announcing game on Slack");
-        _logger.Verbose($"Host name: {hostIp}");
+        logger.Information("Announcing game on Slack");
+        logger.Verbose($"Host name: {hostIp}");
         if (!dryRun)
         {
-            await _slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, _logger).ConfigureAwait(false);
+            await slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, logger).ConfigureAwait(false);
         }
     }
 
@@ -245,23 +220,23 @@ internal sealed class HostHandler : ICommandHandler
             return;
         }
 
-        _logger.Information("Downloading the latest options");
+        logger.Information("Downloading the latest options");
         if (!dryRun)
         {
-            await _leagueUpdater.Update(config, _logger).ConfigureAwait(false);
+            await leagueUpdater.Update(config, logger).ConfigureAwait(false);
         }
     }
 
     private Task StartWorms(bool dryRun, CancellationToken cancellationToken)
     {
-        _logger.Information("Starting Worms Armageddon");
-        var runGame = !dryRun ? _wormsRunner.RunWorms("wa://") : Task.Delay(5000, cancellationToken);
+        logger.Information("Starting Worms Armageddon");
+        var runGame = !dryRun ? wormsRunner.RunWorms("wa://") : Task.Delay(5000, cancellationToken);
         return runGame;
     }
 
     private async Task WaitForGameToClose(Task runGame)
     {
-        _logger.Information("Waiting for game to finish");
+        logger.Information("Waiting for game to finish");
         await runGame;
     }
 }
