@@ -10,6 +10,7 @@ using Worms.Cli.Resources.Remote;
 using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Remote.Replays;
+using Worms.Cli.Resources.Remote.Updates;
 
 namespace Worms.Cli.Resources.Modules;
 
@@ -55,6 +56,9 @@ public class CliResourcesModule : Module
         _ = builder.RegisterType<RemoteGameRetriever>().As<IResourceRetriever<RemoteGame>>();
         _ = builder.RegisterType<RemoteGameCreator>().As<IResourceCreator<RemoteGame, string>>();
         _ = builder.RegisterType<RemoteGameUpdater>().As<IRemoteGameUpdater>();
+
+        // CLI Updates
+        _ = builder.RegisterType<CliUpdateRetriever>().As<ICliUpdateRetriever>();
     }
 
     private static void RegisterOsModules(ContainerBuilder builder)
@@ -63,12 +67,14 @@ public class CliResourcesModule : Module
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             _ = builder.RegisterType<WindowsFolderOpener>().As<IFolderOpener>();
+            _ = builder.RegisterType<WindowsCliUpdateDownloader>().As<ICliUpdateDownloader>();
         }
 
         // Linux
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             _ = builder.RegisterType<LinuxFolderOpener>().As<IFolderOpener>();
+            _ = builder.RegisterType<LinuxCliUpdateDownloader>().As<ICliUpdateDownloader>();
         }
     }
 }
