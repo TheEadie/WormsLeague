@@ -23,7 +23,7 @@ FROM build as test
 RUN dotnet test --no-restore --no-build --verbosity normal
 
 #### Runtime ####
-FROM mcr.microsoft.com/dotnet/aspnet:8.0.0@sha256:5e99a04b3b0c79235890bf5d29d45266e7e9f0233269d25630460d0215a40449
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.0@sha256:09539bb9ccc51d3a2b3c205101001e665bbbe5e62c94d6377bb0f71b24ea20cb
 WORKDIR /app
 COPY --from=build /app/out .
 ENTRYPOINT ["./Worms.Hub.Gateway"]
