@@ -207,7 +207,6 @@ internal class SchemeTextReader : ISchemeTextReader
     {
         var startIndex = text.IndexOf('[', StringComparison.CurrentCulture) + 1;
         var endIndex = text.IndexOf(']', StringComparison.CurrentCulture);
-        var substring = text[startIndex..endIndex];
-        return substring;
+        return text[startIndex..endIndex];
     }
 }

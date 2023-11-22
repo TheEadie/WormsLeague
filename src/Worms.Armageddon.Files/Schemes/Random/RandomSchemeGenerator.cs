@@ -535,7 +535,6 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
             { Weapon.Armageddon, new byte[] { 0 } },
         });
 
-
     public Scheme Generate()
     {
         var scheme = CreateBaseScheme();
@@ -598,9 +597,7 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
 
     private void RandomUtilities(Scheme scheme)
     {
-        var utilitiesToRandomize = Powers.Keys.Where(IsUtility).ToArray();
-
-        foreach (var utilityName in utilitiesToRandomize)
+        foreach (var utilityName in Powers.Keys.Where(IsUtility).ToArray())
         {
             var ammo = (sbyte) _rng.Next(2);
             var delay = DecideUtilityDelay();
@@ -615,9 +612,7 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
 
     private void RandomMovementTools(Scheme scheme)
     {
-        var movementToolsToRandomize = Powers.Keys.Where(IsMovement).ToArray();
-
-        foreach (var movementName in movementToolsToRandomize)
+        foreach (var movementName in Powers.Keys.Where(IsMovement).ToArray())
         {
             var power = Powers[movementName].RandomChoice(_rng);
 

@@ -48,7 +48,6 @@ internal sealed class WormsServerApi : IWormsServerApi
             .ConfigureAwait(false);
     }
 
-
     public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
     {
         using var httpClient = _httpClientFactory.CreateClient();
@@ -95,7 +94,6 @@ internal sealed class WormsServerApi : IWormsServerApi
         return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(httpClient, () => httpClient.PostAsync(path, form))
             .ConfigureAwait(false);
     }
-
 
     private async Task<T> CallApiRefreshAccessTokenIfInvalid<T>(
         HttpClient client,

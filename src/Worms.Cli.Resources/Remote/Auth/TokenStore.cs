@@ -44,10 +44,8 @@ internal sealed class TokenStore : ITokenStore
                 : null;
             return new AccessTokens(accessToken, refreshToken);
         }
-        else
-        {
-            return new AccessTokens(null, null);
-        }
+
+        return new AccessTokens(null, null);
     }
 
     public void StoreAccessTokens(AccessTokens accessTokens)

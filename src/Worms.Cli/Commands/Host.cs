@@ -201,18 +201,17 @@ internal sealed class HostHandler(
     private static string GetIpAddress(string domain)
     {
         var adapters = NetworkInterface.GetAllNetworkInterfaces();
-        var leagueNetworkAdapter = adapters.FirstOrDefault(
+        var leagueNetworkAdapter =
+            Array.Find(
+                adapters,
                 x => x.GetIPProperties().DnsSuffix == domain && x.OperationalStatus == OperationalStatus.Up)
             ?? throw new ConfigurationException($"No network adapter for domain: {domain}");
 
-        var hostIp =
-            (leagueNetworkAdapter.GetIPProperties()
+        return leagueNetworkAdapter.GetIPProperties()
                 .UnicastAddresses.FirstOrDefault(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
-                ?.Address.ToString())
+                ?.Address.ToString()
             ?? throw new ConfigurationException(
                 $"No IPv4 address found for network adapter: {leagueNetworkAdapter.Name}");
-
-        return hostIp;
     }
 
     private Task DownloadLatestOptions(bool skipSchemeDownload, Config config, bool dryRun)
@@ -229,8 +228,7 @@ internal sealed class HostHandler(
     private Task StartWorms(bool dryRun, CancellationToken cancellationToken)
     {
         logger.Information("Starting Worms Armageddon");
-        var runGame = !dryRun ? wormsRunner.RunWorms("wa://") : Task.Delay(5000, cancellationToken);
-        return runGame;
+        return !dryRun ? wormsRunner.RunWorms("wa://") : Task.Delay(5000, cancellationToken);
     }
 
     private Task WaitForGameToClose(Task runGame)

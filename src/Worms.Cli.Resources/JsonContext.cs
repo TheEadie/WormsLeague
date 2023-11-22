@@ -14,4 +14,4 @@ namespace Worms.Cli.Resources;
 [JsonSerializable(typeof(IReadOnlyCollection<GamesDtoV1>))]
 [JsonSerializable(typeof(CreateReplayDtoV1))]
 [JsonSerializable(typeof(ReplayDtoV1))]
-internal sealed partial class JsonContext : JsonSerializerContext;
+internal sealed partial class JsonContext : JsonSerializerContext { }

@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using Serilog;
 using Worms.Armageddon.Game;
@@ -134,11 +135,22 @@ internal sealed class CreateSchemeHandler(
         return outputFolder;
     }
 
-    private (string, string) ValidateSchemeDefinition(string? filename) =>
-        !string.IsNullOrWhiteSpace(filename) ? (fileSystem.File.ReadAllText(filename), $"file: + {filename}") :
-        Console.IsInputRedirected ? (Console.In.ReadToEnd(), "std in") :
+    [SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "This is more readable")]
+    private (string, string) ValidateSchemeDefinition(string? filename)
+    {
+        if (!string.IsNullOrWhiteSpace(filename))
+        {
+            return (fileSystem.File.ReadAllText(filename), $"file: + {filename}");
+        }
+
+        if (Console.IsInputRedirected)
+        {
+            return (Console.In.ReadToEnd(), "std in");
+        }
+
         throw new ConfigurationException(
             "No Scheme definition provided. Provide the definition using std in or the --file option");
+    }
 
     private static string ValidateName(string name) =>
         !string.IsNullOrWhiteSpace(name)

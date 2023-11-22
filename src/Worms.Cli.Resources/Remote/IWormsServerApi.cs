@@ -8,9 +8,9 @@ internal interface IWormsServerApi
 
     Task<IReadOnlyCollection<GamesDtoV1>> GetGames();
 
-    Task<GamesDtoV1> CreateGame(CreateGameDtoV1 hostMachineName);
+    Task<GamesDtoV1> CreateGame(CreateGameDtoV1 createParams);
 
     Task UpdateGame(GamesDtoV1 newGameDetails);
 
-    Task<ReplayDtoV1> CreateReplay(CreateReplayDtoV1 replayFilePath);
+    Task<ReplayDtoV1> CreateReplay(CreateReplayDtoV1 createParams);
 }

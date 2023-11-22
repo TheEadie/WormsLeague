@@ -83,7 +83,6 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClient
         throw new HttpRequestException(stringContent);
     }
 
-
     private async Task<TokenResponse?> RequestTokenAsync(
         DeviceAuthorizationResponse deviceCodeResponse,
         ILogger logger,

@@ -23,8 +23,7 @@ public sealed class SchemeTextRoundTripShould
         using var output = new StringWriter();
         _writer.Write(scheme, output);
         var input = output.ToString();
-        var result = _reader.GetModel(input);
-        return result;
+        return _reader.GetModel(input);
     }
 
     private static IEnumerable<TestCaseData> Schemes => TestSchemes.Schemes();

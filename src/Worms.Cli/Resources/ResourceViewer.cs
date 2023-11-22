@@ -16,13 +16,13 @@ public class ResourceViewer<T, TParams>(IResourceRetriever<T> retriever, IResour
     {
         var resourcesFound = await retriever.Retrieve(name, logger, cancellationToken).ConfigureAwait(false);
 
-        return resourcesFound.Count == 0
-            ? throw new ConfigurationException($"No resource found with name: {name}")
-            :
-            resourcesFound.Count > 1
-                ?
-                throw new ConfigurationException($"More than one resource found with name matching: {name}")
-                : resourcesFound.Single();
+        return resourcesFound.Count switch
+        {
+            0 => throw new ConfigurationException($"No resource found with name: {name}"),
+            1 => resourcesFound.Single(),
+            > 1 => throw new ConfigurationException($"More than one resource found with name matching: {name}"),
+            _ => throw new ArgumentOutOfRangeException(nameof(name), "Unexpected number of resources found.")
+        };
     }
 
     private static string ValidateName(string name) =>
