@@ -30,7 +30,7 @@ public static class WindowTools
 
         _ = EnumWindows(VisitWindow, IntPtr.Zero);
 
-        return results.ToArray();
+        return [.. results];
     }
 
     public static Process? GetProcessForWindow(IntPtr hWnd)

@@ -285,11 +285,6 @@ dotnet_diagnostic.CA1308.severity = none
 # Workaround for https://github.com/dotnet/roslyn/issues/41640
 dotnet_diagnostic.IDE0005.severity = suggestion
 
-# Temp workarounds until Rider supports C#12
-dotnet_diagnostic.IDE0028.severity = suggestion
-dotnet_diagnostic.IDE0300.severity = suggestion
-dotnet_diagnostic.IDE0305.severity = suggestion
-
 
 [*.{yml,aiproj,appxmanifest,axml,build,config,csproj,dbml,discomap,DotSettings,dtd,json,jsproj,lsproj,njsproj,nuspec,proj,props,resjson,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_size = 2

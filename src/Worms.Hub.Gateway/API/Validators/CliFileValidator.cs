@@ -5,10 +5,10 @@ internal sealed class CliFileValidator(ILogger<CliFileValidator> logger)
     private const int MaxFileSize = 1024 * 1024 * 50; // 50MB
 
     private readonly string[] _fileExtensions =
-    {
+    [
         ".zip",
         ".gz"
-    };
+    ];
 
     public bool IsValid(IFormFile replayFile, string fileNameForDisplay)
     {

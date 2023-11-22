@@ -2,7 +2,7 @@
 
 internal sealed class TableBuilder(int outputWidth)
 {
-    private readonly List<TableColumn> _columns = new();
+    private readonly List<TableColumn> _columns = [];
     private const int ColumnPadding = 3;
 
     public void AddColumn(string heading, IReadOnlyCollection<string> rows) =>
