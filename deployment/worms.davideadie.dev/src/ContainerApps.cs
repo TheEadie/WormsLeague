@@ -102,7 +102,7 @@ public static class ContainerApps
                     Ingress = new IngressArgs
                     {
                         External = true,
-                        TargetPort = 80,
+                        TargetPort = 8080,
                         CustomDomains = customDomainArgs,
                     },
                     Secrets = new InputList<SecretArgs>()

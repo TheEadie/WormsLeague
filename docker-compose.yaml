@@ -39,7 +39,7 @@ services:
             dockerfile: build/docker/gateway/Dockerfile
             context: .
         ports:
-            - "5005:80"
+            - "5005:8080"
         volumes:
             - storage:/data
         environment:
