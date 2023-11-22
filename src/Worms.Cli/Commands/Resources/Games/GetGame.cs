@@ -25,7 +25,7 @@ internal sealed class GetGame : Command
 internal sealed class GetGameHandler(ResourceGetter<RemoteGame> gameRetriever, ILogger logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).Result;
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {

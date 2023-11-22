@@ -18,7 +18,7 @@ internal sealed class BrowseGifHandler(IWormsLocator wormsLocator, IFolderOpener
     : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).Result;
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
 
     public Task<int> InvokeAsync(InvocationContext context)
     {
