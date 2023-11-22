@@ -25,7 +25,8 @@ internal sealed class GetReplay : Command
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class GetReplayHandler(ResourceGetter<LocalReplay> replayRetriever, ILogger logger) : ICommandHandler
 {
-    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -35,7 +36,8 @@ internal sealed class GetReplayHandler(ResourceGetter<LocalReplay> replayRetriev
         try
         {
             var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-            await replayRetriever.PrintResources(name, Console.Out, windowWidth, logger, cancellationToken);
+            await replayRetriever.PrintResources(name, Console.Out, windowWidth, logger, cancellationToken)
+                .ConfigureAwait(false);
         }
         catch (ConfigurationException exception)
         {

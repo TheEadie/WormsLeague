@@ -5,8 +5,8 @@ namespace Worms.Cli.Resources.Remote.Games;
 
 internal sealed class RemoteGameRetriever(IWormsServerApi api) : IResourceRetriever<RemoteGame>
 {
-    public async Task<IReadOnlyCollection<RemoteGame>> Retrieve(ILogger logger, CancellationToken cancellationToken) =>
-        await Retrieve("*", logger, cancellationToken);
+    public Task<IReadOnlyCollection<RemoteGame>> Retrieve(ILogger logger, CancellationToken cancellationToken) =>
+        Retrieve("*", logger, cancellationToken);
 
     public async Task<IReadOnlyCollection<RemoteGame>> Retrieve(
         string pattern,
@@ -15,7 +15,7 @@ internal sealed class RemoteGameRetriever(IWormsServerApi api) : IResourceRetrie
     {
         try
         {
-            var apiGames = await api.GetGames();
+            var apiGames = await api.GetGames().ConfigureAwait(false);
             return apiGames.Select(x => new RemoteGame(x.Id, x.Status, x.HostMachine)).ToList();
         }
         catch (HttpRequestException e)

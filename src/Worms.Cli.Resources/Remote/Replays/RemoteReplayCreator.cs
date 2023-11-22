@@ -13,7 +13,8 @@ internal sealed class RemoteReplayCreator(IWormsServerApi api)
     {
         try
         {
-            var apiReplay = await api.CreateReplay(new CreateReplayDtoV1(parameters.Name, parameters.FilePath));
+            var apiReplay = await api.CreateReplay(new CreateReplayDtoV1(parameters.Name, parameters.FilePath))
+                .ConfigureAwait(false);
             return new RemoteReplay(apiReplay.Id, apiReplay.Name, apiReplay.Status);
         }
         catch (HttpRequestException e)

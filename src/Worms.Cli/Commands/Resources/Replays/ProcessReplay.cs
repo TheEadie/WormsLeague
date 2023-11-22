@@ -29,7 +29,8 @@ internal sealed class ProcessReplayHandler(
     IResourceRetriever<LocalReplay> replayRetriever,
     ILogger logger) : ICommandHandler
 {
-    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -43,10 +44,11 @@ internal sealed class ProcessReplayHandler(
             pattern = name;
         }
 
-        foreach (var replayPath in await replayRetriever.Retrieve(pattern, logger, cancellationToken))
+        foreach (var replayPath in await replayRetriever.Retrieve(pattern, logger, cancellationToken)
+                     .ConfigureAwait(false))
         {
             logger.Information($"Processing: {replayPath.Paths.WAgamePath}");
-            await replayLogGenerator.GenerateReplayLog(replayPath.Paths.WAgamePath);
+            await replayLogGenerator.GenerateReplayLog(replayPath.Paths.WAgamePath).ConfigureAwait(false);
         }
 
         return 0;

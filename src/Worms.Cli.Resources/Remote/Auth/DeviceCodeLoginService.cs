@@ -14,7 +14,7 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClient
     public async Task RequestLogin(ILogger logger, CancellationToken cancellationToken)
     {
         logger.Verbose("Requesting device code...");
-        var deviceCodeResponse = await RequestDeviceCode(logger, cancellationToken);
+        var deviceCodeResponse = await RequestDeviceCode(logger, cancellationToken).ConfigureAwait(false);
         logger.Information(
             $"Please visit {deviceCodeResponse.VerificationUri} and enter the code: {deviceCodeResponse.UserCode}");
 
@@ -22,7 +22,8 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClient
         BrowserLauncher.OpenBrowser(deviceCodeResponse.VerificationUriComplete.OriginalString);
 
         logger.Verbose("Requesting tokens...");
-        var tokenResponse = await RequestTokenAsync(deviceCodeResponse, logger, cancellationToken);
+        var tokenResponse =
+            await RequestTokenAsync(deviceCodeResponse, logger, cancellationToken).ConfigureAwait(false);
 
         if (tokenResponse != null)
         {
@@ -53,9 +54,10 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClient
             });
 
         var response = await httpClient.PostAsync(
-            new Uri("oauth/device/code", UriKind.Relative),
-            content,
-            cancellationToken);
+                new Uri("oauth/device/code", UriKind.Relative),
+                content,
+                cancellationToken)
+            .ConfigureAwait(false);
 
         if (response.IsSuccessStatusCode)
         {
@@ -108,7 +110,8 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClient
                     { "client_id", ClientId }
                 });
 
-            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, cancellationToken);
+            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, cancellationToken)
+                .ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
@@ -127,7 +130,7 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClient
                 || stringContent.Contains("slow_down", StringComparison.InvariantCulture))
             {
                 logger.Verbose($"Code not yet confirmed. Retrying in {deviceCodeResponse.Interval} seconds");
-                await Task.Delay(deviceCodeResponse.Interval * 1000, cancellationToken);
+                await Task.Delay(deviceCodeResponse.Interval * 1000, cancellationToken).ConfigureAwait(false);
             }
             else
             {

@@ -6,7 +6,7 @@ internal sealed class ReplayFrameExtractor(IWormsRunner wormsRunner) : IReplayFr
 {
     private const string TimeFormatString = @"hh\:mm\:ss\.ff";
 
-    public async Task ExtractReplayFrames(
+    public Task ExtractReplayFrames(
         string replayPath,
         uint fps,
         TimeSpan startTime,
@@ -17,7 +17,7 @@ internal sealed class ReplayFrameExtractor(IWormsRunner wormsRunner) : IReplayFr
         var start = startTime.ToString(TimeFormatString, CultureInfo.CurrentCulture);
         var end = endTime.ToString(TimeFormatString, CultureInfo.CurrentCulture);
 
-        await wormsRunner.RunWorms(
+        return wormsRunner.RunWorms(
             "/getvideo",
             $"\"{replayPath}\"",
             fps.ToString(CultureInfo.CurrentCulture),

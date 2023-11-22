@@ -17,12 +17,11 @@ internal sealed class BrowseScheme : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class BrowseSchemeHandler(
-    IWormsLocator wormsLocator,
-    IFolderOpener folderOpener,
-    ILogger logger) : ICommandHandler
+internal sealed class BrowseSchemeHandler(IWormsLocator wormsLocator, IFolderOpener folderOpener, ILogger logger)
+    : ICommandHandler
 {
-    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).Result;
 
     public Task<int> InvokeAsync(InvocationContext context)
     {

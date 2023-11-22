@@ -20,10 +20,11 @@ internal sealed class DeleteScheme : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class DeleteSchemeHandler
-    (ResourceDeleter<LocalScheme> resourceDeleter, ILogger logger) : ICommandHandler
+internal sealed class DeleteSchemeHandler(ResourceDeleter<LocalScheme> resourceDeleter, ILogger logger)
+    : ICommandHandler
 {
-    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -32,7 +33,7 @@ internal sealed class DeleteSchemeHandler
 
         try
         {
-            await resourceDeleter.Delete(name, logger, cancellationToken);
+            await resourceDeleter.Delete(name, logger, cancellationToken).ConfigureAwait(false);
         }
         catch (ConfigurationException exception)
         {

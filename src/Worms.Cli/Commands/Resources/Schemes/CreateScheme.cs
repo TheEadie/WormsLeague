@@ -51,7 +51,8 @@ internal sealed class CreateSchemeHandler(
     IWormsLocator wormsLocator,
     ILogger logger) : ICommandHandler
 {
-    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -95,8 +96,8 @@ internal sealed class CreateSchemeHandler(
 
         try
         {
-            var scheme = await creator();
-            await Console.Out.WriteLineAsync(scheme.Path);
+            var scheme = await creator().ConfigureAwait(false);
+            await Console.Out.WriteLineAsync(scheme.Path).ConfigureAwait(false);
         }
         catch (FormatException exception)
         {

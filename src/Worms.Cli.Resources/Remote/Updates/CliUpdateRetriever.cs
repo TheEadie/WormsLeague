@@ -4,7 +4,7 @@ internal sealed class CliUpdateRetriever(IWormsServerApi api) : ICliUpdateRetrie
 {
     public async Task<Version> GetLatestCliVersion()
     {
-        var apiResult = await api.GetLatestCliDetails();
+        var apiResult = await api.GetLatestCliDetails().ConfigureAwait(false);
         return apiResult.LatestVersion;
     }
 }

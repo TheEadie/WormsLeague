@@ -33,7 +33,8 @@ internal sealed class ViewReplayHandler(
     ResourceViewer<LocalReplay, LocalReplayViewParameters> resourceViewer,
     ILogger logger) : ICommandHandler
 {
-    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -42,11 +43,8 @@ internal sealed class ViewReplayHandler(
 
         try
         {
-            await resourceViewer.View(
-                name,
-                new LocalReplayViewParameters(turn),
-                logger,
-                context.GetCancellationToken());
+            await resourceViewer.View(name, new LocalReplayViewParameters(turn), logger, context.GetCancellationToken())
+                .ConfigureAwait(false);
         }
         catch (ConfigurationException exception)
         {

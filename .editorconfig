@@ -278,8 +278,6 @@ dotnet_analyzer_diagnostic.category-Style.severity = warning
 dotnet_diagnostic.CA1812.severity = none
 # CA1848 requires a lot of code to specify Log Messages. Should only be needed in high perf
 dotnet_diagnostic.CA1848.severity = none
-# CA2007 is designed for libraries and it spams the code
-dotnet_diagnostic.CA2007.severity = none
 # CA1308 tries to make user facing string upper case
 dotnet_diagnostic.CA1308.severity = none
 # Workaround for https://github.com/dotnet/roslyn/issues/41640

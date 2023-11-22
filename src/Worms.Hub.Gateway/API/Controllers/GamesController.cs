@@ -30,7 +30,7 @@ internal sealed class GamesController(
     [HttpPost]
     public async Task<ActionResult<GameDto>> Post(CreateGameDto parameters)
     {
-        await slackAnnouncer.AnnounceGameStarting(parameters.HostMachine);
+        await slackAnnouncer.AnnounceGameStarting(parameters.HostMachine).ConfigureAwait(false);
         return repository.Create(new GameDto("0", "Pending", parameters.HostMachine));
     }
 

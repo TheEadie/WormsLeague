@@ -63,7 +63,8 @@ internal sealed class HostHandler(
     IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> remoteReplayCreator,
     ILogger logger) : ICommandHandler
 {
-    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).Result;
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -97,20 +98,21 @@ internal sealed class HostHandler(
             return 1;
         }
 
-        await DownloadLatestOptions(skipSchemeDownload, config, dryRun);
+        await DownloadLatestOptions(skipSchemeDownload, config, dryRun).ConfigureAwait(false);
         var runGame = StartWorms(dryRun, cancellationToken);
 
         if (localMode)
         {
-            await AnnounceGameLocal(hostIp, skipAnnouncement, config, dryRun);
-            await WaitForGameToClose(runGame);
+            await AnnounceGameLocal(hostIp, skipAnnouncement, config, dryRun).ConfigureAwait(false);
+            await WaitForGameToClose(runGame).ConfigureAwait(false);
             return 0;
         }
 
-        var game = await AnnounceGameToWormsHub(hostIp, skipAnnouncement, dryRun, cancellationToken);
-        await WaitForGameToClose(runGame);
-        await MarkGameCompleteOnWormsHub(game, skipAnnouncement, dryRun, cancellationToken);
-        await UploadReplayToWormsHub(skipUpload, dryRun, cancellationToken);
+        var game = await AnnounceGameToWormsHub(hostIp, skipAnnouncement, dryRun, cancellationToken)
+            .ConfigureAwait(false);
+        await WaitForGameToClose(runGame).ConfigureAwait(false);
+        await MarkGameCompleteOnWormsHub(game, skipAnnouncement, dryRun, cancellationToken).ConfigureAwait(false);
+        await UploadReplayToWormsHub(skipUpload, dryRun, cancellationToken).ConfigureAwait(false);
         return 0;
     }
 
@@ -129,7 +131,7 @@ internal sealed class HostHandler(
         RemoteGame? game = null;
         if (!dryRun)
         {
-            game = await remoteGameCreator.Create(hostIp, logger, cancellationToken);
+            game = await remoteGameCreator.Create(hostIp, logger, cancellationToken).ConfigureAwait(false);
         }
 
         return game;
@@ -149,7 +151,7 @@ internal sealed class HostHandler(
         logger.Information("Marking game as complete in hub");
         if (!dryRun)
         {
-            await gameUpdater.SetGameComplete(game!, logger, cancellationToken);
+            await gameUpdater.SetGameComplete(game!, logger, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -161,7 +163,7 @@ internal sealed class HostHandler(
         }
 
         logger.Information("Uploading replay to hub");
-        var allReplays = await localReplayRetriever.Retrieve(logger, cancellationToken);
+        var allReplays = await localReplayRetriever.Retrieve(logger, cancellationToken).ConfigureAwait(false);
         var replay = allReplays.MaxBy(x => x.Details.Date);
 
         if (replay is null)
@@ -174,9 +176,10 @@ internal sealed class HostHandler(
         if (!dryRun)
         {
             _ = await remoteReplayCreator.Create(
-                new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
-                logger,
-                cancellationToken);
+                    new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
+                    logger,
+                    cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 
@@ -212,18 +215,15 @@ internal sealed class HostHandler(
         return hostIp;
     }
 
-    private async Task DownloadLatestOptions(bool skipSchemeDownload, Config config, bool dryRun)
+    private Task DownloadLatestOptions(bool skipSchemeDownload, Config config, bool dryRun)
     {
         if (skipSchemeDownload)
         {
-            return;
+            return Task.CompletedTask;
         }
 
         logger.Information("Downloading the latest options");
-        if (!dryRun)
-        {
-            await leagueUpdater.Update(config, logger).ConfigureAwait(false);
-        }
+        return !dryRun ? leagueUpdater.Update(config, logger) : Task.CompletedTask;
     }
 
     private Task StartWorms(bool dryRun, CancellationToken cancellationToken)
@@ -233,9 +233,9 @@ internal sealed class HostHandler(
         return runGame;
     }
 
-    private async Task WaitForGameToClose(Task runGame)
+    private Task WaitForGameToClose(Task runGame)
     {
         logger.Information("Waiting for game to finish");
-        await runGame;
+        return runGame;
     }
 }
