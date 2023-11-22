@@ -41,7 +41,7 @@ jobs:
         run: echo "version=$(cat deployment/worms.davideadie.dev/database-version.txt)" >> $GITHUB_OUTPUT
 
       - name: Run Flyway Migrate
-        uses: docker://redgate/flyway:9
+        uses: docker://redgate/flyway:10
         with:
           args: >-
             info
