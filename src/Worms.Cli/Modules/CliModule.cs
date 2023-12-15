@@ -5,6 +5,11 @@ using Worms.Armageddon.Files.Modules;
 using Worms.Armageddon.Game.Modules;
 using Worms.Cli.CommandLine;
 using Worms.Cli.CommandLine.PackageManagers;
+using Worms.Cli.Commands;
+using Worms.Cli.Commands.Resources.Games;
+using Worms.Cli.Commands.Resources.Gifs;
+using Worms.Cli.Commands.Resources.Replays;
+using Worms.Cli.Commands.Resources.Schemes;
 using Worms.Cli.Configuration;
 using Worms.Cli.League;
 using Worms.Cli.Resources;
@@ -24,6 +29,29 @@ public class CliModule : Module
     protected override void Load(ContainerBuilder builder)
     {
         RegisterOsModules(builder);
+
+        // Commands
+        _ = builder.RegisterType<AuthHandler>();
+        _ = builder.RegisterType<HostHandler>();
+        _ = builder.RegisterType<SetupHandler>();
+        _ = builder.RegisterType<UpdateHandler>();
+        _ = builder.RegisterType<VersionHandler>();
+
+        _ = builder.RegisterType<GetGameHandler>();
+
+        _ = builder.RegisterType<BrowseGifHandler>();
+        _ = builder.RegisterType<CreateGifHandler>();
+
+        _ = builder.RegisterType<BrowseReplayHandler>();
+        _ = builder.RegisterType<DeleteReplayHandler>();
+        _ = builder.RegisterType<GetReplayHandler>();
+        _ = builder.RegisterType<ProcessReplayHandler>();
+        _ = builder.RegisterType<ViewReplayHandler>();
+
+        _ = builder.RegisterType<BrowseSchemeHandler>();
+        _ = builder.RegisterType<CreateSchemeHandler>();
+        _ = builder.RegisterType<DeleteSchemeHandler>();
+        _ = builder.RegisterType<GetSchemeHandler>();
 
         // FileSystem
         _ = builder.RegisterType<FileSystem>().As<IFileSystem>();

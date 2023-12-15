@@ -12,7 +12,6 @@ internal sealed class Auth : Command
         AddAlias("login");
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class AuthHandler(ILoginService loginService, ILogger logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
