@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
-using RestSharp;
 using Serilog;
 using Worms.Cli.Resources.Remote.Auth.Responses;
 
 namespace Worms.Cli.Resources.Remote.Auth;
 
-internal sealed class DeviceCodeLoginService(ITokenStore tokenStore) : ILoginService
+internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClientFactory httpClientFactory)
+    : ILoginService
 {
     private const string Authority = "https://eadie.eu.auth0.com";
     private const string ClientId = "0dBbKeIKO2UAzWfBh6LuGwWYSWGZPFHB";
@@ -36,26 +36,37 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore) : ILoginSer
         logger.Error("Error logging in");
     }
 
-    private static async Task<DeviceAuthorizationResponse> RequestDeviceCode(
+    private async Task<DeviceAuthorizationResponse> RequestDeviceCode(
         ILogger logger,
         CancellationToken cancellationToken)
     {
-        using var client = new RestClient(Authority);
-        const string scopes = "openid%20profile%20offline_access";
+        using var httpClient = httpClientFactory.CreateClient();
+        httpClient.BaseAddress = new Uri(Authority);
 
-        var request = new RestRequest("oauth/device/code");
-        _ = request.AddHeader("content-type", "application/x-www-form-urlencoded");
-        _ = request.AddParameter(
-            "application/x-www-form-urlencoded",
-            $"client_id={ClientId}&scope={scopes}&audience={Audience}",
-            ParameterType.RequestBody);
-        var response = await client.PostAsync(request, cancellationToken);
+        const string scopes = "openid profile offline_access";
+        using var content = new FormUrlEncodedContent(
+            new Dictionary<string, string>()
+            {
+                { "client_id", ClientId },
+                { "scope", scopes },
+                { "audience", Audience }
+            });
 
-        if (response.IsSuccessful)
+        var response = await httpClient.PostAsync(
+            new Uri("oauth/device/code", UriKind.Relative),
+            content,
+            cancellationToken);
+
+        if (response.IsSuccessStatusCode)
         {
-            var jsonResponse = JsonSerializer.Deserialize(
-                response.Content!,
-                JsonContext.Default.DeviceAuthorizationResponse);
+            var streamAsync = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            await using var stream = streamAsync.ConfigureAwait(false);
+            var jsonResponse = await JsonSerializer.DeserializeAsync(
+                    streamAsync,
+                    JsonContext.Default.DeviceAuthorizationResponse,
+                    cancellationToken)
+                .ConfigureAwait(false);
+
             if (jsonResponse is null)
             {
                 logger.Error("Error requesting device code: No response content");
@@ -65,12 +76,13 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore) : ILoginSer
             return jsonResponse;
         }
 
-        logger.Error($"Error requesting device code: {response.ErrorMessage}");
-        throw response.ErrorException ?? throw new HttpRequestException(response.ErrorMessage);
+        var stringContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        logger.Error($"Error requesting device code: {stringContent}");
+        throw new HttpRequestException(stringContent);
     }
 
 
-    private static async Task<TokenResponse?> RequestTokenAsync(
+    private async Task<TokenResponse?> RequestTokenAsync(
         DeviceAuthorizationResponse deviceCodeResponse,
         ILogger logger,
         CancellationToken cancellationToken)
@@ -81,36 +93,46 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore) : ILoginSer
 
         logger.Verbose($"Checking if code has been confirmed... (Timeout: {timeout.TotalMinutes} mins)");
 
-        using var client = new RestClient(Authority);
+        using var client = httpClientFactory.CreateClient();
+        client.BaseAddress = new Uri(Authority);
 
         while (!cancellationTokenSource.Token.IsCancellationRequested)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var request = new RestRequest("oauth/token");
-            _ = request.AddHeader("content-type", "application/x-www-form-urlencoded");
-            _ = request.AddParameter(
-                "application/x-www-form-urlencoded",
-                $"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Adevice_code&device_code={deviceCodeResponse.DeviceCode}&client_id={ClientId}",
-                ParameterType.RequestBody);
-            var response = await client.ExecutePostAsync(request, cancellationTokenSource.Token);
+            using var content = new FormUrlEncodedContent(
+                new Dictionary<string, string>()
+                {
+                    { "grant_type", "urn:ietf:params:oauth:grant-type:device_code" },
+                    { "device_code", deviceCodeResponse.DeviceCode },
+                    { "client_id", ClientId }
+                });
 
-            if (response.IsSuccessful)
+            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
             {
-                return JsonSerializer.Deserialize(response.Content!, JsonContext.Default.TokenResponse);
+                var streamAsync = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+                await using var stream = streamAsync.ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync(
+                        streamAsync,
+                        JsonContext.Default.TokenResponse,
+                        cancellationToken)
+                    .ConfigureAwait(false);
             }
 
-            if (response.Content is not null
-                && (response.Content.Contains("authorization_pending", StringComparison.InvariantCulture)
-                    || response.Content.Contains("slow_down", StringComparison.InvariantCulture)))
+            var stringContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+            if (stringContent.Contains("authorization_pending", StringComparison.InvariantCulture)
+                || stringContent.Contains("slow_down", StringComparison.InvariantCulture))
             {
                 logger.Verbose($"Code not yet confirmed. Retrying in {deviceCodeResponse.Interval} seconds");
                 await Task.Delay(deviceCodeResponse.Interval * 1000, cancellationToken);
             }
             else
             {
-                logger.Error($"Error logging in: {response.ErrorMessage}");
-                throw response.ErrorException ?? throw new HttpRequestException(response.ErrorMessage);
+                logger.Error($"Error logging in: {stringContent}");
+                throw new HttpRequestException(stringContent);
             }
         }
 
