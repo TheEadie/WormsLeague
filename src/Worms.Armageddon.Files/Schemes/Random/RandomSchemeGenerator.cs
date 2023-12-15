@@ -628,9 +628,11 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
         }
     }
 
-    private IEnumerable<Weapon> DecideGuaranteedStartingWeapons(Weapon[] configWeapons) => configWeapons.Shuffle(_rng).Distinct().Take(4);
+    private IEnumerable<Weapon> DecideGuaranteedStartingWeapons(Weapon[] configWeapons) =>
+        configWeapons.Shuffle(_rng).Distinct().Take(4);
 
-    private IEnumerable<Weapon> DecideGuaranteedPowerfulWeapons(IEnumerable<Weapon> startingWeapons) => Powers.Where(x => x.Value.Length > 1).Select(x => x.Key).Except(startingWeapons).Shuffle(_rng).Take(5);
+    private IEnumerable<Weapon> DecideGuaranteedPowerfulWeapons(IEnumerable<Weapon> startingWeapons) =>
+        Powers.Where(x => x.Value.Length > 1).Select(x => x.Key).Except(startingWeapons).Shuffle(_rng).Take(5);
 
     private sbyte DecideWeaponDelay(byte powerValue, byte[] powerValues)
     {
@@ -713,7 +715,7 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
             SuperWeapons = true
         };
 
-        foreach (var weaponName in (Weapon[]) Enum.GetValues(typeof(Weapon)))
+        foreach (var weaponName in Enum.GetValues<Weapon>())
         {
             (sbyte ammo, byte power, sbyte delay, sbyte prob) = (0, 1, 0, 0);
             scheme.Weapons[weaponName].Ammo = ammo;
