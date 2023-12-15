@@ -42,7 +42,7 @@ jobs:
       - name: Build
         run: make cli.package.windows
       - name: Upload build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: win-x64
           path: .artifacts/win-x64/
@@ -62,7 +62,7 @@ jobs:
       - name: Build
         run: make cli.package.linux
       - name: Upload build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-x64
           path: .artifacts/linux-x64/
@@ -82,7 +82,7 @@ jobs:
       - name: Build
         run: make cli.package.docker
       - name: Upload build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-musl-x64
           path: .artifacts/linux-musl-x64/

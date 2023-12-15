@@ -20,7 +20,7 @@ jobs:
       - name: Build
         run: cd deployment/schemes; make schemes
       - name: Upload build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: RGSchemes
           path: deployment/schemes/.artifacts/
