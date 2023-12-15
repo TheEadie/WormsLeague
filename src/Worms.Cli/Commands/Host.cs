@@ -51,7 +51,6 @@ internal sealed class Host : Command
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class HostHandler(
     IWormsLocator wormsLocator,
     IWormsRunner wormsRunner,

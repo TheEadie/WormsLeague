@@ -53,10 +53,8 @@ public class GitHubReleasePackageManager
 
         foreach (var file in files)
         {
-            var raw = await _gitHubClient.Connection.Get<byte[]>(
-                    new Uri(file.Url),
-                    new Dictionary<string, string>(),
-                    "application/octet-stream")
+            var raw = await _gitHubClient.Connection
+                .GetRaw(new Uri(file.BrowserDownloadUrl), new Dictionary<string, string>())
                 .ConfigureAwait(false);
             await File.WriteAllBytesAsync(Path.Combine(downloadToFolderPath, file.Name), raw.Body)
                 .ConfigureAwait(false);

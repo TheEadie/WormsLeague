@@ -36,7 +36,7 @@ internal sealed class ConfigManager : IConfigManager
         if (_fileSystem.File.Exists(configPath))
         {
             var configContent = _fileSystem.File.ReadAllText(configPath);
-            var config = JsonSerializer.Deserialize<Config>(configContent);
+            var config = JsonSerializer.Deserialize(configContent, JsonContext.Default.Config);
             return config ?? new Config();
         }
 
@@ -56,6 +56,8 @@ internal sealed class ConfigManager : IConfigManager
             SlackWebHook = config.SlackWebHook
         };
 
-        _fileSystem.File.WriteAllText(_localConfigPath, JsonSerializer.Serialize(localConfig));
+        _fileSystem.File.WriteAllText(
+            _localConfigPath,
+            JsonSerializer.Serialize(localConfig, JsonContext.Default.Config));
     }
 }

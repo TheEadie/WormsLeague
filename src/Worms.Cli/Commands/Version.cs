@@ -12,11 +12,8 @@ internal sealed class Version : Command
         : base("version", "Get the current version of the Worms CLI") { }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class VersionHandler(
-    IWormsLocator wormsLocator,
-    CliInfoRetriever cliInfoRetriever,
-    ILogger logger) : ICommandHandler
+internal sealed class VersionHandler(IWormsLocator wormsLocator, CliInfoRetriever cliInfoRetriever, ILogger logger)
+    : ICommandHandler
 {
     public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
 

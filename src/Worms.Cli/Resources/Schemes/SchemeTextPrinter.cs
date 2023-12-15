@@ -40,7 +40,7 @@ internal sealed class SchemeTextPrinter(ISchemeTextWriter schemeTextWriter) : IR
     private static string GetWeaponSummary(Scheme.WeaponList weapons)
     {
         var summary = "";
-        foreach (var weaponName in (Weapon[]) Enum.GetValues(typeof(Weapon)))
+        foreach (var weaponName in Enum.GetValues<Weapon>())
         {
             var weapon = weapons[weaponName];
             if (weapon.Ammo > 0)

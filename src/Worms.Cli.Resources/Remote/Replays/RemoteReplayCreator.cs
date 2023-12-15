@@ -3,8 +3,8 @@ using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Replays;
 
-internal sealed class RemoteReplayCreator
-    (IWormsServerApi api) : IResourceCreator<RemoteReplay, RemoteReplayCreateParameters>
+internal sealed class RemoteReplayCreator(IWormsServerApi api)
+    : IResourceCreator<RemoteReplay, RemoteReplayCreateParameters>
 {
     public async Task<RemoteReplay> Create(
         RemoteReplayCreateParameters parameters,
@@ -13,8 +13,7 @@ internal sealed class RemoteReplayCreator
     {
         try
         {
-            var apiReplay = await api.CreateReplay(
-                new WormsServerApi.CreateReplayDtoV1(parameters.Name, parameters.FilePath));
+            var apiReplay = await api.CreateReplay(new CreateReplayDtoV1(parameters.Name, parameters.FilePath));
             return new RemoteReplay(apiReplay.Id, apiReplay.Name, apiReplay.Status);
         }
         catch (HttpRequestException e)

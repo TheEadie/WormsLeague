@@ -29,7 +29,7 @@ internal sealed class TokenStore : ITokenStore
         if (_fileSystem.File.Exists(_tokenStorePath))
         {
             var fileContent = _fileSystem.File.ReadAllText(_tokenStorePath);
-            var protectedTokens = JsonSerializer.Deserialize<AccessTokens>(fileContent);
+            var protectedTokens = JsonSerializer.Deserialize(fileContent, JsonContext.Default.AccessTokens);
 
             if (protectedTokens is null)
             {
@@ -65,6 +65,8 @@ internal sealed class TokenStore : ITokenStore
             _ = _fileSystem.Directory.CreateDirectory(_tokenStoreFolder);
         }
 
-        _fileSystem.File.WriteAllText(_tokenStorePath, JsonSerializer.Serialize(protectedTokens));
+        _fileSystem.File.WriteAllText(
+            _tokenStorePath,
+            JsonSerializer.Serialize(protectedTokens, JsonContext.Default.AccessTokens));
     }
 }

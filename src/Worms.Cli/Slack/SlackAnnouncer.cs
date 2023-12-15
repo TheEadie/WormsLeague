@@ -17,8 +17,8 @@ internal sealed class SlackAnnouncer : ISlackAnnouncer
         var slackMessage = new SlackMessage { Text = $"<!here> Hosting at: wa://{hostName}" };
 
         using var client = new HttpClient();
-        var slackUrl = new System.Uri(webHookUrl);
-        var body = JsonSerializer.Serialize(slackMessage);
+        var slackUrl = new Uri(webHookUrl);
+        var body = JsonSerializer.Serialize(slackMessage, JsonContext.Default.SlackMessage);
         using var content = new StringContent(body, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync(slackUrl, content).ConfigureAwait(false);
