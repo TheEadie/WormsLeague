@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using RestSharp;
 
 namespace Worms.Cli.Resources.Remote.Auth;
@@ -25,21 +24,9 @@ internal sealed class AccessTokenRefreshService : IAccessTokenRefreshService
             throw response.ErrorException ?? throw new HttpRequestException(response.ErrorMessage);
         }
 
-        var result = JsonSerializer.Deserialize<TokenResponse>(response.Content!)
+        var result = JsonSerializer.Deserialize(response.Content!, JsonContext.Default.TokenResponse)
             ?? throw new JsonException("The API returned success but the JSON response was empty");
 
         return current with { AccessToken = result.AccessToken };
     }
-
-    private sealed record TokenResponse(
-        [property: JsonPropertyName("access_token")]
-        string AccessToken,
-        [property: JsonPropertyName("refresh_token")]
-        string RefreshToken,
-        [property: JsonPropertyName("id_token")]
-        string IdToken,
-        [property: JsonPropertyName("token_type")]
-        string TokenType,
-        [property: JsonPropertyName("expires_in")]
-        int ExpiresIn);
 }

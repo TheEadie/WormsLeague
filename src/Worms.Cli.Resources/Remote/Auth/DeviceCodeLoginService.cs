@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
 using RestSharp;
 using Serilog;
+using Worms.Cli.Resources.Remote.Auth.Responses;
 
 namespace Worms.Cli.Resources.Remote.Auth;
 
@@ -53,7 +53,9 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore) : ILoginSer
 
         if (response.IsSuccessful)
         {
-            var jsonResponse = JsonSerializer.Deserialize<DeviceAuthorizationResponse>(response.Content!);
+            var jsonResponse = JsonSerializer.Deserialize(
+                response.Content!,
+                JsonContext.Default.DeviceAuthorizationResponse);
             if (jsonResponse is null)
             {
                 logger.Error("Error requesting device code: No response content");
@@ -67,19 +69,6 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore) : ILoginSer
         throw response.ErrorException ?? throw new HttpRequestException(response.ErrorMessage);
     }
 
-    private sealed record DeviceAuthorizationResponse(
-        [property: JsonPropertyName("device_code")]
-        string DeviceCode,
-        [property: JsonPropertyName("user_code")]
-        string UserCode,
-        [property: JsonPropertyName("verification_uri")]
-        Uri VerificationUri,
-        [property: JsonPropertyName("expires_in")]
-        int ExpiresIn,
-        [property: JsonPropertyName("interval")]
-        int Interval,
-        [property: JsonPropertyName("verification_uri_complete")]
-        Uri VerificationUriComplete);
 
     private static async Task<TokenResponse?> RequestTokenAsync(
         DeviceAuthorizationResponse deviceCodeResponse,
@@ -108,7 +97,7 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore) : ILoginSer
 
             if (response.IsSuccessful)
             {
-                return JsonSerializer.Deserialize<TokenResponse>(response.Content!);
+                return JsonSerializer.Deserialize(response.Content!, JsonContext.Default.TokenResponse);
             }
 
             if (response.Content is not null
@@ -128,16 +117,4 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore) : ILoginSer
         logger.Warning($"Requesting tokens timed out after ${timeout} seconds");
         return null;
     }
-
-    private sealed record TokenResponse(
-        [property: JsonPropertyName("access_token")]
-        string AccessToken,
-        [property: JsonPropertyName("refresh_token")]
-        string RefreshToken,
-        [property: JsonPropertyName("id_token")]
-        string IdToken,
-        [property: JsonPropertyName("token_type")]
-        string TokenType,
-        [property: JsonPropertyName("expires_in")]
-        int ExpiresIn);
 }

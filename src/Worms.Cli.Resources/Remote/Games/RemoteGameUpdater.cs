@@ -9,7 +9,7 @@ internal sealed class RemoteGameUpdater(IWormsServerApi api) : IRemoteGameUpdate
     {
         try
         {
-            await api.UpdateGame(new WormsServerApi.GamesDtoV1(game.Id, "Complete", game.HostMachine));
+            await api.UpdateGame(new GamesDtoV1(game.Id, "Complete", game.HostMachine));
         }
         catch (HttpRequestException e)
         {

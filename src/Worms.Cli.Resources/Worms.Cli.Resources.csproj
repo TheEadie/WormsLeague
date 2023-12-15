@@ -1,5 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimAnalyzers>true</TrimAnalyzers>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="System.IO.Abstractions" Version="20.0.4"/>
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.5.0"/>

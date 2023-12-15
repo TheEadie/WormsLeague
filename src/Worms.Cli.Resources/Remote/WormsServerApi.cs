@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Worms.Cli.Resources.Remote.Auth;
 
 namespace Worms.Cli.Resources.Remote;
@@ -33,12 +32,6 @@ internal sealed class WormsServerApi : IWormsServerApi
 #endif
     }
 
-    public sealed record LatestCliDtoV1(
-        [property: JsonPropertyName("latestVersion")]
-        Version LatestVersion,
-        [property: JsonPropertyName("fileLocations")]
-        IReadOnlyDictionary<string, string> FileLocations);
-
     public async Task<LatestCliDtoV1> GetLatestCliDetails()
     {
         using var httpClient = _httpClientFactory.CreateClient();
@@ -55,15 +48,6 @@ internal sealed class WormsServerApi : IWormsServerApi
         return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, async () => await httpClient.GetAsync(path));
     }
 
-    public sealed record GamesDtoV1(
-        [property: JsonPropertyName("id")] string Id,
-        [property: JsonPropertyName("status")] string Status,
-        [property: JsonPropertyName("hostMachine")]
-        string HostMachine);
-
-    public sealed record CreateGameDtoV1(
-        [property: JsonPropertyName("hostMachine")]
-        string HostMachine);
 
     public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
     {
@@ -80,7 +64,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<GamesDtoV1>(
             httpClient,
-            async () => await httpClient.PostAsJsonAsync(path, createParams));
+            async () => await httpClient.PostAsJsonAsync(path, createParams, JsonContext.Default.CreateGameDtoV1));
     }
 
     public async Task UpdateGame(GamesDtoV1 newGameDetails)
@@ -89,15 +73,8 @@ internal sealed class WormsServerApi : IWormsServerApi
         var path = new Uri("api/v1/games", UriKind.Relative);
         await CallApiRefreshAccessTokenIfInvalid(
             httpClient,
-            async () => await httpClient.PutAsJsonAsync(path, newGameDetails));
+            async () => await httpClient.PutAsJsonAsync(path, newGameDetails, JsonContext.Default.GamesDtoV1));
     }
-
-    public sealed record ReplayDtoV1(
-        [property: JsonPropertyName("id")] string Id,
-        [property: JsonPropertyName("name")] string Name,
-        [property: JsonPropertyName("status")] string Status);
-
-    public sealed record CreateReplayDtoV1(string Name, string ReplayFilePath);
 
     public async Task<ReplayDtoV1> CreateReplay(CreateReplayDtoV1 createParams)
     {
@@ -125,10 +102,10 @@ internal sealed class WormsServerApi : IWormsServerApi
         var response = await CallApiWithAuthRetry(client, apiCall);
         var streamAsync = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         await using var stream = streamAsync.ConfigureAwait(false);
-        var result = await JsonSerializer.DeserializeAsync<T>(streamAsync).ConfigureAwait(false);
-        return result is null
-            ? throw new JsonException("The API returned success but the JSON response was empty")
-            : result;
+        return await JsonSerializer.DeserializeAsync(streamAsync, typeof(T), JsonContext.Default)
+            .ConfigureAwait(false) is T result
+            ? result
+            : throw new JsonException("The API returned success but the JSON response was empty");
     }
 
     private Task CallApiRefreshAccessTokenIfInvalid(HttpClient client, Func<Task<HttpResponseMessage>> apiCall)
