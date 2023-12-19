@@ -35,6 +35,7 @@ builder.Services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
 builder.Services.AddSingleton<ReplayFileValidator>();
 builder.Services.AddSingleton<CliFileValidator>();
 builder.Services.AddSingleton<CliFiles>();
+builder.Services.AddSingleton<SchemeFiles>();
 
 var app = builder.Build();
 app.UseHttpsRedirection();
@@ -45,7 +46,7 @@ app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
     _ = app.UseDeveloperExceptionPage();
-    _ = app.MapControllers(); //.AllowAnonymous();
+    _ = app.MapControllers().AllowAnonymous();
 }
 else
 {
