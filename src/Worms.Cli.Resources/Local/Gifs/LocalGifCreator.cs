@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using ImageMagick;
 using Serilog;
 using Worms.Armageddon.Game;

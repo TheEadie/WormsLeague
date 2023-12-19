@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Schemes.Text;

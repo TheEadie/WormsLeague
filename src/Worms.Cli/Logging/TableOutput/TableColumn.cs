@@ -1,4 +1,4 @@
-﻿namespace Worms.Cli.Logging.TableOutput;
+namespace Worms.Cli.Logging.TableOutput;
 
 internal sealed class TableColumn(string heading, IReadOnlyCollection<string> rows, int width)
 {

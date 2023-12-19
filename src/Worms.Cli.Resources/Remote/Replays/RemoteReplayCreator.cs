@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Replays;

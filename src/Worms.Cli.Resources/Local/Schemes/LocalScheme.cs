@@ -1,4 +1,4 @@
-﻿using Syroot.Worms.Armageddon;
+using Syroot.Worms.Armageddon;
 
 namespace Worms.Cli.Resources.Local.Schemes;
 

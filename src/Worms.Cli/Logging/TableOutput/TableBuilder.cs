@@ -1,4 +1,4 @@
-﻿namespace Worms.Cli.Logging.TableOutput;
+namespace Worms.Cli.Logging.TableOutput;
 
 internal sealed class TableBuilder(int outputWidth)
 {

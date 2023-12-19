@@ -1,4 +1,4 @@
-﻿using Serilog;
+using Serilog;
 using Worms.Cli.Commands;
 
 namespace Worms.Cli.Resources;

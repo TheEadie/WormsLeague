@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Serilog;
 using Worms.Cli.Resources.Remote.Auth.Responses;
 

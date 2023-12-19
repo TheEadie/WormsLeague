@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using Worms.Armageddon.Game.Linux;
 
 namespace Worms.Armageddon.Game.Modules;

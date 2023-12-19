@@ -1,7 +1,7 @@
 using System.IO.Abstractions;
 using Serilog;
-using Worms.Armageddon.Game;
 using Worms.Armageddon.Files.Schemes.Binary;
+using Worms.Armageddon.Game;
 
 namespace Worms.Cli.Resources.Local.Schemes;
 

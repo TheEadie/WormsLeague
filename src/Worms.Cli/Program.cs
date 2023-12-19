@@ -1,4 +1,4 @@
-﻿using System.CommandLine.Builder;
+using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Worms.Armageddon.Files.Replays;
 using Worms.Cli.Logging.TableOutput;
 using Worms.Cli.Resources.Local.Replays;

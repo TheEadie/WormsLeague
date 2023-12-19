@@ -1,4 +1,4 @@
-﻿using System.CommandLine;
+using System.CommandLine;
 using System.CommandLine.Invocation;
 using Serilog;
 using Worms.Cli.Resources.Remote.Auth;

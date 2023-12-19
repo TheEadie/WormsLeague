@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using Serilog;
 using Worms.Armageddon.Files.Schemes.Binary;
 using Worms.Armageddon.Files.Schemes.Text;

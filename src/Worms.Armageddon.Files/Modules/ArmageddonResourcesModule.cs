@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using Worms.Armageddon.Files.Replays.Text;
 using Worms.Armageddon.Files.Replays.Text.Parsers;
 using Worms.Armageddon.Files.Schemes.Binary;

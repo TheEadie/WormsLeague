@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using Serilog;
 using Worms.Armageddon.Files.Replays;
 using Worms.Armageddon.Files.Replays.Text;
