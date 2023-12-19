@@ -10,6 +10,7 @@ using Worms.Cli.Resources.Remote;
 using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Remote.Replays;
+using Worms.Cli.Resources.Remote.Schemes;
 using Worms.Cli.Resources.Remote.Updates;
 
 namespace Worms.Cli.Resources.Modules;
@@ -33,6 +34,8 @@ public class CliResourcesModule : Module
         _ = builder.RegisterType<LocalSchemeRandomCreator>()
             .As<IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>>();
         _ = builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<LocalScheme>>();
+        _ = builder.RegisterType<RemoteSchemeRetriever>().As<IRemoteSchemeRetriever>();
+        _ = builder.RegisterType<RemoteSchemeDownloader>().As<IRemoteSchemeDownloader>();
 
         // Replays
         _ = builder.RegisterType<LocalReplayLocator>().As<ILocalReplayLocator>();

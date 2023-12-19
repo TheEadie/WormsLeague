@@ -26,7 +26,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         _fileSystem = fileSystem;
         _httpClientFactory = httpClientFactory;
 #if DEBUG
-        _baseUri = new Uri("http://localhost:5005/");
+        _baseUri = new Uri("https://localhost:5003/");
 #else
         _baseUri = new Uri("https://worms.davideadie.dev/");
 #endif
@@ -44,6 +44,22 @@ internal sealed class WormsServerApi : IWormsServerApi
     {
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/files/cli/{platform}", UriKind.Relative);
+        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path))
+            .ConfigureAwait(false);
+    }
+
+    public async Task<SchemeDtoV1> GetScheme(string id)
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        var path = new Uri($"api/v1/schemes/{id}", UriKind.Relative);
+        return await CallApiRefreshAccessTokenIfInvalid<SchemeDtoV1>(httpClient, () => httpClient.GetAsync(path))
+            .ConfigureAwait(false);
+    }
+
+    public async Task<byte[]> DownloadScheme(string id)
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        var path = new Uri($"api/v1/files/schemes/{id}", UriKind.Relative);
         return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path))
             .ConfigureAwait(false);
     }

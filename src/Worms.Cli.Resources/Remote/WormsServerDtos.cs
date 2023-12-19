@@ -8,6 +8,14 @@ public sealed record LatestCliDtoV1(
     [property: JsonPropertyName("fileLocations")]
     IReadOnlyDictionary<string, string> FileLocations);
 
+public sealed record SchemeDtoV1(
+    [property: JsonPropertyName("id")] string Id,
+    [property: JsonPropertyName("name")] string Name,
+    [property: JsonPropertyName("version")]
+    Version Version,
+    [property: JsonPropertyName("downloadUrl")]
+    Uri DownloadUrl);
+
 public sealed record CreateGameDtoV1(
     [property: JsonPropertyName("hostMachine")]
     string HostMachine);

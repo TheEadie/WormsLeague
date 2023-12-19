@@ -11,6 +11,7 @@ namespace Worms.Cli.Resources;
 [JsonSerializable(typeof(LatestCliDtoV1))]
 [JsonSerializable(typeof(CreateGameDtoV1))]
 [JsonSerializable(typeof(GamesDtoV1))]
+[JsonSerializable(typeof(SchemeDtoV1))]
 [JsonSerializable(typeof(IReadOnlyCollection<GamesDtoV1>))]
 [JsonSerializable(typeof(CreateReplayDtoV1))]
 [JsonSerializable(typeof(ReplayDtoV1))]

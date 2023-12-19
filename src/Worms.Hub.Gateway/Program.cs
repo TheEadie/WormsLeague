@@ -46,7 +46,7 @@ app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
     _ = app.UseDeveloperExceptionPage();
-    _ = app.MapControllers().AllowAnonymous();
+    _ = app.MapControllers(); //.AllowAnonymous();
 }
 else
 {
