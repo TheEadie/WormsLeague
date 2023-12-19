@@ -1,4 +1,4 @@
-﻿namespace Worms.Cli.Resources;
+namespace Worms.Cli.Resources;
 
 public interface IResourcePrinter<in T>
 {

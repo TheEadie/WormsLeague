@@ -4,6 +4,6 @@ internal sealed record CliInfo(Version Version, IDictionary<Platform, string> Pl
 
 internal enum Platform
 {
-    Windows,
-    Linux
+    Windows = 0,
+    Linux = 1
 }

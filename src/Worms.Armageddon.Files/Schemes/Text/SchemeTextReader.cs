@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Schemes.Text;
@@ -207,7 +207,6 @@ internal class SchemeTextReader : ISchemeTextReader
     {
         var startIndex = text.IndexOf('[', StringComparison.CurrentCulture) + 1;
         var endIndex = text.IndexOf(']', StringComparison.CurrentCulture);
-        var substring = text[startIndex..endIndex];
-        return substring;
+        return text[startIndex..endIndex];
     }
 }

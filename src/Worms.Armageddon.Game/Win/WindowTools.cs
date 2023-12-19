@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
@@ -6,9 +7,14 @@ namespace Worms.Armageddon.Game.Win;
 
 public static class WindowTools
 {
+    [SuppressMessage("Roslynator", "RCS1163:Unused parameter.", Justification = "Required for P/Invoke.")]
     public static IntPtr[] GetWindowsWithTitleMatching(Regex pattern)
     {
         var results = new List<IntPtr>();
+
+        _ = EnumWindows(VisitWindow, IntPtr.Zero);
+
+        return [.. results];
 
         bool VisitWindow(IntPtr hWnd, IntPtr lParam)
         {
@@ -27,10 +33,6 @@ public static class WindowTools
 
             return true;
         }
-
-        _ = EnumWindows(VisitWindow, IntPtr.Zero);
-
-        return results.ToArray();
     }
 
     public static Process? GetProcessForWindow(IntPtr hWnd)

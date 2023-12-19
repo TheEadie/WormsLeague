@@ -1,8 +1,8 @@
-﻿namespace Worms.Cli.Logging.TableOutput;
+namespace Worms.Cli.Logging.TableOutput;
 
 internal sealed class TableBuilder(int outputWidth)
 {
-    private readonly List<TableColumn> _columns = new();
+    private readonly List<TableColumn> _columns = [];
     private const int ColumnPadding = 3;
 
     public void AddColumn(string heading, IReadOnlyCollection<string> rows) =>
@@ -50,9 +50,19 @@ internal sealed class TableBuilder(int outputWidth)
     private static string TrimText(string input, int maxLength)
     {
         const string truncate = "..";
+        var truncatedString = input;
 
-        return maxLength <= truncate.Length ? input.Length <= maxLength ? input : input[..maxLength] :
-            input.Length <= maxLength ? input : input[..(maxLength - truncate.Length)] + truncate;
+        if (input.Length > maxLength && maxLength > truncate.Length)
+        {
+            truncatedString = input[..(maxLength - truncate.Length)] + truncate;
+        }
+
+        if (input.Length > maxLength && maxLength <= truncate.Length)
+        {
+            truncatedString = input[..maxLength];
+        }
+
+        return truncatedString;
     }
 
     private static int GetWidth(string header, IReadOnlyCollection<string> values)

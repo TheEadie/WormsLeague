@@ -5,8 +5,8 @@ internal class TurnBuilder
     private Team? _team;
     private TimeSpan? _start;
     private TimeSpan? _end;
-    private readonly HashSet<Weapon> _weapons = new();
-    private readonly List<Damage> _damage = new();
+    private readonly HashSet<Weapon> _weapons = [];
+    private readonly List<Damage> _damage = [];
 
     public TurnBuilder WithStartTime(TimeSpan start)
     {

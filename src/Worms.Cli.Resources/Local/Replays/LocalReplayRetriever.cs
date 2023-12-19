@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using Serilog;
 using Worms.Armageddon.Files.Replays;
 using Worms.Armageddon.Files.Replays.Text;
@@ -24,7 +24,8 @@ internal sealed class LocalReplayRetriever(
         {
             if (fileSystem.File.Exists(paths.LogPath))
             {
-                var content = await fileSystem.File.ReadAllTextAsync(paths.LogPath, cancellationToken);
+                var content = await fileSystem.File.ReadAllTextAsync(paths.LogPath, cancellationToken)
+                    .ConfigureAwait(false);
                 resources.Add(new LocalReplay(paths, replayTextReader.GetModel(content)));
             }
             else

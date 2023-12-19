@@ -1,4 +1,4 @@
-﻿using System.Runtime.Versioning;
+using System.Runtime.Versioning;
 using Autofac;
 using Worms.Armageddon.Game.Win;
 

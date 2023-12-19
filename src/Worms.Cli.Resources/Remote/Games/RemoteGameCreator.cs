@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Games;
@@ -9,7 +9,7 @@ internal sealed class RemoteGameCreator(IWormsServerApi api) : IResourceCreator<
     {
         try
         {
-            var apiGame = await api.CreateGame(new CreateGameDtoV1(parameters));
+            var apiGame = await api.CreateGame(new CreateGameDtoV1(parameters)).ConfigureAwait(false);
             return new RemoteGame(apiGame.Id, apiGame.Status, apiGame.HostMachine);
         }
         catch (HttpRequestException e)

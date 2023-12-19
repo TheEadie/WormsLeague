@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Worms.Armageddon.Files.Replays;
 using Worms.Cli.Logging.TableOutput;
 using Worms.Cli.Resources.Local.Replays;
@@ -13,12 +13,11 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
 
         tableBuilder.AddColumn(
             "NAME",
-            resources.Select(x => x.Details.Date.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture)).ToList());
+            resources.Select(x => x.Details.Date.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture))
+                .ToList());
         tableBuilder.AddColumn("CONTEXT", resources.Select(x => x.Context).ToList());
         tableBuilder.AddColumn("PROCESSED", resources.Select(x => x.Details.Processed.ToString()).ToList());
-        tableBuilder.AddColumn(
-            "WINNER",
-            resources.Select(x => x.Details.Winner != null ? x.Details.Winner.ToString() : "").ToList());
+        tableBuilder.AddColumn("WINNER", resources.Select(x => x.Details.Winner).ToList());
         tableBuilder.AddColumn(
             "TEAMS",
             resources.Select(x => string.Join(", ", x.Details.Teams.Select(t => t.Name))).ToList());
@@ -91,6 +90,6 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
             details = $" ({modifier})";
         }
 
-        return $"{name}{details}";
+        return name + details;
     }
 }

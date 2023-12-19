@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using Worms.Cli.Configuration.SecureStorage;
 
 namespace Worms.Cli.Modules;

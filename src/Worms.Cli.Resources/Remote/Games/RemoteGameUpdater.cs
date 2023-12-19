@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Serilog;
 
 namespace Worms.Cli.Resources.Remote.Games;
@@ -9,7 +9,7 @@ internal sealed class RemoteGameUpdater(IWormsServerApi api) : IRemoteGameUpdate
     {
         try
         {
-            await api.UpdateGame(new GamesDtoV1(game.Id, "Complete", game.HostMachine));
+            await api.UpdateGame(new GamesDtoV1(game.Id, "Complete", game.HostMachine)).ConfigureAwait(false);
         }
         catch (HttpRequestException e)
         {

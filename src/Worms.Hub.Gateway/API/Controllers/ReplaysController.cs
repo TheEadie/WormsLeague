@@ -28,7 +28,8 @@ internal sealed class ReplaysController(
             return BadRequest("Invalid replay file");
         }
 
-        var tempFilename = await SaveFileToTempLocation(parameters.ReplayFile, fileNameForDisplay);
+        var tempFilename =
+            await SaveFileToTempLocation(parameters.ReplayFile, fileNameForDisplay).ConfigureAwait(false);
         var replay = repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename));
         return ReplayDto.FromDomain(replay);
     }
@@ -53,8 +54,9 @@ internal sealed class ReplaysController(
             fileNameForDisplay,
             saveFilePath);
 
-        await using var stream = System.IO.File.Create(saveFilePath);
-        await replayFile.CopyToAsync(stream);
+        var fileStream = System.IO.File.Create(saveFilePath);
+        await using var stream = fileStream.ConfigureAwait(false);
+        await replayFile.CopyToAsync(fileStream).ConfigureAwait(false);
         return generatedFileName;
     }
 }

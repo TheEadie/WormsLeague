@@ -5,7 +5,7 @@ namespace Worms.Cli.Resources.Local.Replays;
 
 internal sealed class LocalReplayLocator(IWormsLocator wormsLocator, IFileSystem fileSystem) : ILocalReplayLocator
 {
-    public IReadOnlyCollection<ReplayPaths> GetReplayPaths(string pattern)
+    public IReadOnlyCollection<ReplayPaths> GetReplayPaths(string searchPattern)
     {
         var gameInfo = wormsLocator.Find();
 
@@ -14,7 +14,7 @@ internal sealed class LocalReplayLocator(IWormsLocator wormsLocator, IFileSystem
             return new List<ReplayPaths>(0);
         }
 
-        var waGamePaths = fileSystem.Directory.GetFiles(gameInfo.ReplayFolder, $"{pattern}*.WAgame");
+        var waGamePaths = fileSystem.Directory.GetFiles(gameInfo.ReplayFolder, $"{searchPattern}*.WAgame");
         return waGamePaths.Select(x => new ReplayPaths(x, GetLogPath(x))).ToList();
     }
 

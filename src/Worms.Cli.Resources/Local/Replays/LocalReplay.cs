@@ -1,4 +1,4 @@
-﻿using Worms.Armageddon.Files.Replays;
+using Worms.Armageddon.Files.Replays;
 
 namespace Worms.Cli.Resources.Local.Replays;
 

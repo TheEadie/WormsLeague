@@ -1,4 +1,4 @@
-﻿namespace Worms.Cli.Configuration;
+namespace Worms.Cli.Configuration;
 
 public class Config
 {

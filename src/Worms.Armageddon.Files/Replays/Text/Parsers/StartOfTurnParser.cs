@@ -6,7 +6,7 @@ namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 internal class StartOfTurnParser : IReplayLineParser
 {
     private const string Timestamp = @"\[(\d+:\d+:\d+.\d+)\]";
-    private const string TeamName = @"(.+)";
+    private const string TeamName = "(.+)";
     private static readonly Regex StartOfTurn = new($"{Timestamp} (•••|���) {TeamName} starts turn");
 
     public bool CanParse(string line) => StartOfTurn.IsMatch(line);

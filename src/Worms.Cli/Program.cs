@@ -1,5 +1,6 @@
-﻿using System.CommandLine.Builder;
+using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -39,7 +40,19 @@ internal static class Program
         return new AutofacServiceProvider(container);
     }
 
-    private static LogEventLevel GetLogEventLevel(string[] args) =>
-        args.Contains("-v") || args.Contains("--verbose") ? LogEventLevel.Verbose :
-        args.Contains("-q") || args.Contains("--quiet") ? LogEventLevel.Error : LogEventLevel.Information;
+    [SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "This is more readable")]
+    private static LogEventLevel GetLogEventLevel(string[] args)
+    {
+        if (args.Contains("-v") || args.Contains("--verbose"))
+        {
+            return LogEventLevel.Verbose;
+        }
+
+        if (args.Contains("-q") || args.Contains("--quiet"))
+        {
+            return LogEventLevel.Error;
+        }
+
+        return LogEventLevel.Information;
+    }
 }

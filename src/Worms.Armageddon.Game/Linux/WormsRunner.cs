@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace Worms.Armageddon.Game.Linux;
 
@@ -24,7 +24,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator) : IWormsRunner
 
                     if (process is not null)
                     {
-                        await process.WaitForExitAsync();
+                        await process.WaitForExitAsync().ConfigureAwait(false);
                     }
 
                     return Task.CompletedTask;

@@ -13,16 +13,16 @@ public record Team(string Name, string Machine, TeamColour Colour)
     public static Team Local(string name, TeamColour colour) => new(name, "local", colour);
 
     public static Team Remote(string name, string machine, TeamColour colour) => new(name, machine, colour);
-};
+}
 
 public enum TeamColour
 {
-    Red,
-    Blue,
-    Green,
-    Yellow,
-    Magenta,
-    Cyan
+    Red = 0,
+    Blue = 1,
+    Green = 2,
+    Yellow = 3,
+    Magenta = 4,
+    Cyan = 5
 }
 
 public record Turn(

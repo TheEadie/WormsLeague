@@ -13,7 +13,7 @@ internal sealed class LoggingMiddleware(RequestDelegate next, ILogger<LoggingMid
             request.Path,
             username);
 
-        await next(context);
+        await next(context).ConfigureAwait(false);
 
         var response = context.Response;
         logger.Log(

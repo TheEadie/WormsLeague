@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using ImageMagick;
 using Serilog;
 using Worms.Armageddon.Game;
@@ -30,10 +30,11 @@ internal sealed class LocalGifCreator(
 
         DeleteFrames(framesFolder);
         await replayFrameExtractor.ExtractReplayFrames(
-            replayPath,
-            parameters.FramesPerSecond,
-            turn.Start + parameters.StartOffset,
-            turn.End - parameters.EndOffset);
+                replayPath,
+                parameters.FramesPerSecond,
+                turn.Start + parameters.StartOffset,
+                turn.End - parameters.EndOffset)
+            .ConfigureAwait(false);
         CreateGifFromFiles(framesFolder, outputFileName, animationDelay, 640, 480);
         DeleteFrames(framesFolder);
 

@@ -33,7 +33,8 @@ internal sealed class Setup : Command
 
 internal sealed class SetupHandler(IConfigManager configManager, ILogger logger) : ICommandHandler
 {
-    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
 
     public Task<int> InvokeAsync(InvocationContext context)
     {

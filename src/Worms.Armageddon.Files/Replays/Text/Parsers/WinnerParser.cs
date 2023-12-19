@@ -4,8 +4,8 @@ namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 
 internal class WinnerParser : IReplayLineParser
 {
-    private const string TeamName = @"(.+)";
-    private static readonly Regex WinnerDraw = new($"The round was drawn.");
+    private const string TeamName = "(.+)";
+    private static readonly Regex WinnerDraw = new("The round was drawn.");
     private static readonly Regex Winner = new($"{TeamName} wins the (match!|round.)");
 
     public bool CanParse(string line) => WinnerDraw.IsMatch(line) || Winner.IsMatch(line);

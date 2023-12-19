@@ -1,4 +1,4 @@
-﻿using CredentialManagement;
+using CredentialManagement;
 
 namespace Worms.Cli.Configuration.SecureStorage;
 

@@ -1,4 +1,4 @@
-﻿namespace Worms.Armageddon.Files.Replays.Text;
+namespace Worms.Armageddon.Files.Replays.Text;
 
 internal class ReplayTextReader(IEnumerable<IReplayLineParser> parsers) : IReplayTextReader
 {

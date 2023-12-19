@@ -24,7 +24,8 @@ internal sealed class GetGame : Command
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class GetGameHandler(ResourceGetter<RemoteGame> gameRetriever, ILogger logger) : ICommandHandler
 {
-    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -34,7 +35,8 @@ internal sealed class GetGameHandler(ResourceGetter<RemoteGame> gameRetriever, I
         try
         {
             var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-            await gameRetriever.PrintResources(name, Console.Out, windowWidth, logger, cancellationToken);
+            await gameRetriever.PrintResources(name, Console.Out, windowWidth, logger, cancellationToken)
+                .ConfigureAwait(false);
         }
         catch (ConfigurationException exception)
         {

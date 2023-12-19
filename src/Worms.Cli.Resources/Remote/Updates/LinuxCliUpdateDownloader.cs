@@ -11,8 +11,8 @@ internal sealed class LinuxCliUpdateDownloader(IWormsServerApi api, IFileSystem 
         var archiveFilePath = Path.Combine(updateFolder, downloadFileName);
 
         // Download file
-        var bytes = await api.DownloadLatestCli("linux");
-        await File.WriteAllBytesAsync(archiveFilePath, bytes);
+        var bytes = await api.DownloadLatestCli("linux").ConfigureAwait(false);
+        await File.WriteAllBytesAsync(archiveFilePath, bytes).ConfigureAwait(false);
 
         // Unzip tar.gz file
         using var zip = ZipFile.OpenRead(archiveFilePath);

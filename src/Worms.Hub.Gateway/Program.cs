@@ -10,11 +10,11 @@ using Worms.Hub.Gateway.Storage.Database;
 using Worms.Hub.Gateway.Storage.Files;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.AddSimpleConsole(options => { options.SingleLine = true; });
+builder.Logging.AddSimpleConsole(options => options.SingleLine = true);
 builder.Configuration.AddEnvironmentVariables("WORMS_");
 
 builder.Services.AddControllers()
-    .ConfigureApplicationPartManager(manager => { manager.FeatureProviders.Add(new InternalControllerProvider()); });
+    .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new InternalControllerProvider()));
 builder.Services.AddApiVersioning();
 builder.Services.AddAuthentication()
     .AddJwtBearer(

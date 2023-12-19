@@ -3,8 +3,8 @@ namespace Worms.Armageddon.Files.Replays;
 internal class ReplayResourceBuilder
 {
     private DateTime _start;
-    private readonly List<Team> _teams = new();
-    private readonly List<Turn> _turns = new();
+    private readonly List<Team> _teams = [];
+    private readonly List<Turn> _turns = [];
     private string _winner = string.Empty;
     private string _fullLog = string.Empty;
 

@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Armageddon.Game.Replays;
 

@@ -25,7 +25,8 @@ internal sealed class GetScheme : Command
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetriever, ILogger logger) : ICommandHandler
 {
-    public int Invoke(InvocationContext context) => Task.Run(async () => await InvokeAsync(context)).Result;
+    public int Invoke(InvocationContext context) =>
+        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -35,7 +36,8 @@ internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetrie
         try
         {
             var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-            await schemesRetriever.PrintResources(name, Console.Out, windowWidth, logger, cancellationToken);
+            await schemesRetriever.PrintResources(name, Console.Out, windowWidth, logger, cancellationToken)
+                .ConfigureAwait(false);
         }
         catch (ConfigurationException exception)
         {

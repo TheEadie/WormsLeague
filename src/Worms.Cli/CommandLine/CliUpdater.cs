@@ -17,7 +17,7 @@ internal sealed class CliUpdater(
         var cliInfo = cliInfoRetriever.Get(logger);
         logger.Verbose(cliInfo.ToString());
 
-        var latestCliVersion = await cliUpdateRetriever.GetLatestCliVersion();
+        var latestCliVersion = await cliUpdateRetriever.GetLatestCliVersion().ConfigureAwait(false);
         logger.Verbose($"Latest version: {latestCliVersion}");
 
         if (cliInfo.Version >= latestCliVersion)

@@ -1,4 +1,4 @@
-﻿using Serilog;
+using Serilog;
 using Worms.Cli.Commands;
 
 namespace Worms.Cli.Resources;
@@ -15,8 +15,8 @@ public class ResourceGetter<T>(IResourceRetriever<T> retriever, IResourcePrinter
         var requestForAll = string.IsNullOrWhiteSpace(name);
         var userSpecifiedName = !requestForAll && !name.Contains('*', StringComparison.InvariantCulture);
         var matches = requestForAll
-            ? await retriever.Retrieve(logger, cancellationToken)
-            : await retriever.Retrieve(name, logger, cancellationToken);
+            ? await retriever.Retrieve(logger, cancellationToken).ConfigureAwait(false)
+            : await retriever.Retrieve(name, logger, cancellationToken).ConfigureAwait(false);
 
         if (userSpecifiedName)
         {
