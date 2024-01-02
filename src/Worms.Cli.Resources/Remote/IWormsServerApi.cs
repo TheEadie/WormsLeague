@@ -6,7 +6,7 @@ internal interface IWormsServerApi
 
     Task<byte[]> DownloadLatestCli(string platform);
 
-    Task<SchemeDtoV1> GetScheme(string id);
+    Task<LeagueDtoV1> GetLeague(string id);
 
     Task<byte[]> DownloadScheme(string id);
 

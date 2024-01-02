@@ -6,7 +6,7 @@ internal sealed class SchemeFiles(IConfiguration configuration)
 {
     private const string VersionFilename = "version.txt";
 
-    public async Task<Scheme> GetLatestDetails(string id)
+    public async Task<League> GetLatestDetails(string id)
     {
         var (versionPath, schemePath) = GetFilesPaths(id);
         var versionContent = await File.ReadAllTextAsync(versionPath).ConfigureAwait(false);
@@ -15,7 +15,7 @@ internal sealed class SchemeFiles(IConfiguration configuration)
             ? parsedVersion
             : throw new ArgumentException($"Invalid version found in {id}-{VersionFilename}");
 
-        return new Scheme(id, id, version, schemePath);
+        return new League(id, id, version, schemePath);
     }
 
     public Stream GetFileContents(string id)

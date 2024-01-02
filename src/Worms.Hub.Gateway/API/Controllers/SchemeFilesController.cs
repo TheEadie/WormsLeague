@@ -18,7 +18,7 @@ internal sealed class SchemeFilesController(SchemeFiles schemeFiles, ILogger<Sch
         "Security",
         "CA3003:Review code for file path injection vulnerabilities",
         Justification = "User input is checked against known values list")]
-    public async Task<ActionResult<SchemeDto>> Get(string id)
+    public async Task<ActionResult<LeagueDto>> Get(string id)
     {
         // Temp guard to only allow well known Schemes for now
         // Will need to look up Scheme in DB and check if user has access to it in future
@@ -29,7 +29,7 @@ internal sealed class SchemeFilesController(SchemeFiles schemeFiles, ILogger<Sch
         }
 
         var latestDetails = await schemeFiles.GetLatestDetails(id).ConfigureAwait(false);
-        if (!System.IO.File.Exists(latestDetails.FullPath))
+        if (!System.IO.File.Exists(latestDetails.SchemePath))
         {
             logger.Log(LogLevel.Information, "Scheme file {Name} not found", id);
             return NotFound("Scheme file not found");

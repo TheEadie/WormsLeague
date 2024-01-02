@@ -9,6 +9,7 @@ using Worms.Cli.Resources.Local.Schemes;
 using Worms.Cli.Resources.Remote;
 using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Resources.Remote.Games;
+using Worms.Cli.Resources.Remote.Leagues;
 using Worms.Cli.Resources.Remote.Replays;
 using Worms.Cli.Resources.Remote.Schemes;
 using Worms.Cli.Resources.Remote.Updates;
@@ -34,7 +35,7 @@ public class CliResourcesModule : Module
         _ = builder.RegisterType<LocalSchemeRandomCreator>()
             .As<IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>>();
         _ = builder.RegisterType<LocalSchemeDeleter>().As<IResourceDeleter<LocalScheme>>();
-        _ = builder.RegisterType<RemoteSchemeRetriever>().As<IRemoteSchemeRetriever>();
+        _ = builder.RegisterType<RemoteLeagueRetriever>().As<IRemoteLeagueRetriever>();
         _ = builder.RegisterType<RemoteSchemeDownloader>().As<IRemoteSchemeDownloader>();
 
         // Replays
