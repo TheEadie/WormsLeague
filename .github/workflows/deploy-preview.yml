@@ -34,7 +34,7 @@ jobs:
           dotnet-version: 8.x
 
       - name: Preview Azure Infrastructure
-        uses: pulumi/actions@v4
+        uses: pulumi/actions@v5
         id: preview
         with:
           command: preview
