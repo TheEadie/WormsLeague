@@ -130,16 +130,36 @@ internal sealed class WormsServerApi : IWormsServerApi
         var accessTokens = _tokenStore.GetAccessTokens();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
 
-        var response = await apiCall().ConfigureAwait(false);
+        HttpResponseMessage? response = null;
 
-        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        const int maxRetries = 3;
+        var delayBetweenRetries = 1000;
+        for (var i = 0; i < maxRetries; i++)
         {
-            // Retry with newer access token
-            accessTokens = await _accessTokenRefreshService.RefreshAccessTokens(accessTokens).ConfigureAwait(false);
-            _tokenStore.StoreAccessTokens(accessTokens);
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
             response = await apiCall().ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                // Retry with newer access token
+                accessTokens = await _accessTokenRefreshService.RefreshAccessTokens(accessTokens).ConfigureAwait(false);
+                _tokenStore.StoreAccessTokens(accessTokens);
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
+                response = await apiCall().ConfigureAwait(false);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response;
+            }
+
+            await Task.Delay(delayBetweenRetries).ConfigureAwait(false);
+            delayBetweenRetries *= 2;
+        }
+
+        if (response is null)
+        {
+            throw new HttpRequestException("The API call failed and no response was returned");
         }
 
         _ = response.EnsureSuccessStatusCode();
