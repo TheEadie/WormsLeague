@@ -3,6 +3,7 @@ name: Hub.Gateway
 on:
   push:
     paths:
+      - "src/Directory.Build.props"
       - "src/Worms.Hub.Gateway/**"
       - "src/database/**"
       - "build/docker/makefile"

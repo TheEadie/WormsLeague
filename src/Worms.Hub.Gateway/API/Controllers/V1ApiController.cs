@@ -7,4 +7,4 @@ namespace Worms.Hub.Gateway.API.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [Authorize(Roles = "access")]
-public class V1ApiController : ControllerBase { }
+public class V1ApiController : ControllerBase;

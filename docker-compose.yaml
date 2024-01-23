@@ -9,7 +9,7 @@ services:
         ports:
             - "5432:5432"
         healthcheck:
-            test: [ "CMD", "pg_isready", "-U", "worms" ]
+            test: "pg_isready -U worms"
             interval: 5s
             timeout: 5s
             retries: 5
@@ -17,14 +17,13 @@ services:
     flyway-init:
         image: redgate/flyway:10
         volumes:
-            - ./src/database/migrations:/flyway/migrations
-            - ./src/database/local-dev:/flyway/local-dev
-            - ./src/database:/flyway/conf
+            - ./src/database:/project
         command:
             - "info"
             - "migrate"
             - "info"
-            - "-locations=filesystem:/flyway/migrations,filesystem:/flyway/local-dev"
+            - "-workingDirectory=/project"
+            - "-locations=filesystem:/project/migrations,filesystem:/project/local-dev"
         environment:
             - FLYWAY_URL=jdbc:postgresql://database:5432/worms
             - FLYWAY_USER=worms

@@ -3,6 +3,7 @@ name: CLI
 on:
   push:
     paths:
+      - "src/Directory.Build.props"
       - "src/Worms.Cli/**"
       - "src/Worms.Cli.*/**"
       - "src/Worms.Armageddon.*/**"
