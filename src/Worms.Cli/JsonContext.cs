@@ -6,4 +6,4 @@ namespace Worms.Cli;
 
 [JsonSerializable(typeof(SlackMessage))]
 [JsonSerializable(typeof(Config))]
-internal sealed partial class JsonContext : JsonSerializerContext { }
+internal sealed partial class JsonContext : JsonSerializerContext;
