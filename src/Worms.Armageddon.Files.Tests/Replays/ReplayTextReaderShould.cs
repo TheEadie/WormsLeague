@@ -9,16 +9,15 @@ namespace Worms.Armageddon.Files.Tests.Replays;
 public sealed class ReplayTextReaderShould
 {
     private readonly ReplayTextReader _replayTextReader = new(
-        new List<IReplayLineParser>
-        {
-            new StartTimeParser(),
-            new TeamParser(),
-            new WinnerParser(),
-            new StartOfTurnParser(),
-            new WeaponUsedParser(),
-            new DamageParser(),
-            new EndOfTurnParser()
-        });
+    [
+        new StartTimeParser(),
+        new TeamParser(),
+        new WinnerParser(),
+        new StartOfTurnParser(),
+        new WeaponUsedParser(),
+        new DamageParser(),
+        new EndOfTurnParser()
+    ]);
 
     private readonly Team _redTeam = new("Red Team", "local", TeamColour.Red);
     private readonly Team _blueTeam = new("Blue Team", "local", TeamColour.Blue);

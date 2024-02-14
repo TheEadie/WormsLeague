@@ -29,7 +29,7 @@ internal sealed class RemoteGameRetriever(IWormsServerApi api) : IResourceRetrie
                 logger.Error(e, "An error occured calling the Worms Hub API");
             }
 
-            return new List<RemoteGame>(0);
+            return [];
         }
     }
 }

@@ -35,18 +35,10 @@ internal sealed class LocalReplayRetriever(
                 var dateString = fileName[..(startIndex - 1)];
                 var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);
                 resources.Add(
-                    new LocalReplay(
-                        paths,
-                        new ReplayResource(
-                            date,
-                            false,
-                            new List<Team>(0),
-                            string.Empty,
-                            new List<Turn>(0),
-                            string.Empty)));
+                    new LocalReplay(paths, new ReplayResource(date, false, [], string.Empty, [], string.Empty)));
             }
         }
 
-        return resources.OrderByDescending(x => x.Details.Date).ToList();
+        return [.. resources.OrderByDescending(x => x.Details.Date)];
     }
 }

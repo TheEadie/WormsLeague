@@ -11,7 +11,7 @@ internal sealed class LocalReplayLocator(IWormsLocator wormsLocator, IFileSystem
 
         if (!gameInfo.IsInstalled)
         {
-            return new List<ReplayPaths>(0);
+            return [];
         }
 
         var waGamePaths = fileSystem.Directory.GetFiles(gameInfo.ReplayFolder, $"{searchPattern}*.WAgame");
