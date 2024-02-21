@@ -79,15 +79,21 @@ internal sealed class HostHandler(
         var config = configManager.Load();
 
         string hostIp;
-        try
+
+        var result = new Some<string>("red-gate.com").Bind(GetIpAddress)
+            .OnError(e => logger.Error($"IP address could not be found. {e.Message}"));
+
+        switch (result)
         {
-            const string domain = "red-gate.com";
-            hostIp = GetIpAddress(domain);
-        }
-        catch (ConfigurationException e)
-        {
-            logger.Error($"IP address could not be found. {e.Message}");
-            return 1;
+            case Some<string> s:
+                hostIp = s.Value;
+                break;
+            case Nothing<string>:
+                return 1;
+            case Error<string>:
+                return 1;
+            default:
+                return 1;
         }
 
         var gameInfo = wormsLocator.Find();
