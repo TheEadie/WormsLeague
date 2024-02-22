@@ -1,0 +1,42 @@
+using System.Diagnostics.CodeAnalysis;
+using Serilog;
+
+namespace Worms.Cli;
+
+public class Validated<T>(bool isValid, T? value, IEnumerable<string> error)
+{
+    [MemberNotNullWhen(true, nameof(Value))]
+    [MemberNotNullWhen(false, nameof(Error))]
+    public bool IsValid { get; } = isValid;
+
+    public T? Value { get; } = value;
+
+    public IEnumerable<string> Error { get; } = error;
+}
+
+public class Valid<T>(T value) : Validated<T>(true, value, []);
+
+public class Invalid<T> : Validated<T>
+{
+    public Invalid(string error)
+        : base(false, default, [error]) { }
+
+    public Invalid(IEnumerable<string> errors)
+        : base(false, default, errors) { }
+}
+
+internal static class ValidatedExtensions
+{
+    public static void LogErrors<T>(this Validated<T> validated, ILogger logger)
+    {
+        if (validated.IsValid)
+        {
+            return;
+        }
+
+        foreach (var error in validated.Error)
+        {
+            logger.Error(error);
+        }
+    }
+}
