@@ -76,7 +76,7 @@ public static class ContainerApps
             var certificate = GetCertificate.Invoke(
                 new()
                 {
-                    CertificateName = "worms.davideadie.dev",
+                    CertificateName = "worms",
                     EnvironmentName = "Worms-Hub",
                     ResourceGroupName = resourceGroup.Name,
                 });
