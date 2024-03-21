@@ -63,6 +63,9 @@ internal sealed class HostHandler(
     IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> remoteReplayCreator,
     ILogger logger) : ICommandHandler
 {
+    private const string LeagueName = "redgate";
+    private const string Domain = "red-gate.com";
+
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
 
@@ -81,8 +84,7 @@ internal sealed class HostHandler(
         string hostIp;
         try
         {
-            const string domain = "red-gate.com";
-            hostIp = GetIpAddress(domain);
+            hostIp = GetIpAddress(Domain);
         }
         catch (ConfigurationException e)
         {
@@ -98,7 +100,7 @@ internal sealed class HostHandler(
             return 1;
         }
 
-        await DownloadLatestOptions(skipSchemeDownload, config, dryRun).ConfigureAwait(false);
+        await DownloadLatestOptions(skipSchemeDownload, dryRun).ConfigureAwait(false);
         var runGame = StartWorms(dryRun, cancellationToken);
 
         if (localMode)
@@ -214,7 +216,7 @@ internal sealed class HostHandler(
                 $"No IPv4 address found for network adapter: {leagueNetworkAdapter.Name}");
     }
 
-    private Task DownloadLatestOptions(bool skipSchemeDownload, Config config, bool dryRun)
+    private Task DownloadLatestOptions(bool skipSchemeDownload, bool dryRun)
     {
         if (skipSchemeDownload)
         {
@@ -222,7 +224,7 @@ internal sealed class HostHandler(
         }
 
         logger.Information("Downloading the latest options");
-        return !dryRun ? leagueUpdater.Update(config, logger) : Task.CompletedTask;
+        return !dryRun ? leagueUpdater.Update(LeagueName, logger) : Task.CompletedTask;
     }
 
     private Task StartWorms(bool dryRun, CancellationToken cancellationToken)

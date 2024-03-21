@@ -48,6 +48,22 @@ internal sealed class WormsServerApi : IWormsServerApi
             .ConfigureAwait(false);
     }
 
+    public async Task<LeagueDtoV1> GetLeague(string id)
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        var path = new Uri($"api/v1/leagues/{id}", UriKind.Relative);
+        return await CallApiRefreshAccessTokenIfInvalid<LeagueDtoV1>(httpClient, () => httpClient.GetAsync(path))
+            .ConfigureAwait(false);
+    }
+
+    public async Task<byte[]> DownloadScheme(string id)
+    {
+        using var httpClient = _httpClientFactory.CreateClient();
+        var path = new Uri($"api/v1/files/schemes/{id}", UriKind.Relative);
+        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path))
+            .ConfigureAwait(false);
+    }
+
     public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
     {
         using var httpClient = _httpClientFactory.CreateClient();
