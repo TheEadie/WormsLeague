@@ -19,7 +19,6 @@ using Worms.Cli.Resources.Modules;
 using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Replays;
 using Worms.Cli.Resources.Schemes;
-using Worms.Cli.Slack;
 
 namespace Worms.Cli.Modules;
 
@@ -61,9 +60,6 @@ public class CliModule : Module
         // CLI
         _ = builder.RegisterType<CliUpdater>();
         _ = builder.RegisterType<CliInfoRetriever>();
-
-        // Announcer
-        _ = builder.RegisterType<SlackAnnouncer>().As<ISlackAnnouncer>();
 
         // League
         _ = builder.RegisterType<LeagueUpdater>();
