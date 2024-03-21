@@ -20,11 +20,19 @@ docker run theeadie/wormscli <args>
 ## First time setup
 
 ```
-worms setup
+worms auth
 ```
+
+then contact an admin to get your account added to the league
 
 ## Hosting a game
 
 ```
 worms host
 ```
+
+This will:
+- Download the latest Scheme options
+- Start a game
+- Announce the game on Slack with a link to join
+- Upload the replay at the end of the game

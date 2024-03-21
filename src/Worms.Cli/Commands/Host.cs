@@ -4,13 +4,11 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using Serilog;
 using Worms.Armageddon.Game;
-using Worms.Cli.Configuration;
 using Worms.Cli.League;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Remote.Replays;
-using Worms.Cli.Slack;
 
 namespace Worms.Cli.Commands;
 
@@ -23,10 +21,6 @@ internal sealed class Host : Command
             "-dr"
         },
         "When set the CLI will print what will happen rather than running the commands");
-
-    public static readonly Option<bool> LocalMode = new(
-        new[] { "--local-mode" },
-        "Use legacy local mode to announce to Slack");
 
     public static readonly Option<bool> SkipSchemeDownload = new(
         new[] { "--skip-scheme-download" },
@@ -44,7 +38,6 @@ internal sealed class Host : Command
         : base("host", "Host a game of worms using the latest options")
     {
         AddOption(DryRun);
-        AddOption(LocalMode);
         AddOption(SkipSchemeDownload);
         AddOption(SkipUpload);
         AddOption(SkipAnnouncement);
@@ -54,8 +47,6 @@ internal sealed class Host : Command
 internal sealed class HostHandler(
     IWormsLocator wormsLocator,
     IWormsRunner wormsRunner,
-    ISlackAnnouncer slackAnnouncer,
-    IConfigManager configManager,
     LeagueUpdater leagueUpdater,
     IResourceCreator<RemoteGame, string> remoteGameCreator,
     IRemoteGameUpdater gameUpdater,
@@ -73,13 +64,9 @@ internal sealed class HostHandler(
     {
         var cancellationToken = context.GetCancellationToken();
         var dryRun = context.ParseResult.GetValueForOption(Host.DryRun);
-        var localMode = context.ParseResult.GetValueForOption(Host.LocalMode);
         var skipUpload = context.ParseResult.GetValueForOption(Host.SkipUpload);
         var skipAnnouncement = context.ParseResult.GetValueForOption(Host.SkipAnnouncement);
         var skipSchemeDownload = context.ParseResult.GetValueForOption(Host.SkipSchemeDownload);
-
-        logger.Verbose("Loading configuration");
-        var config = configManager.Load();
 
         string hostIp;
         try
@@ -102,13 +89,6 @@ internal sealed class HostHandler(
 
         await DownloadLatestOptions(skipSchemeDownload, dryRun).ConfigureAwait(false);
         var runGame = StartWorms(dryRun, cancellationToken);
-
-        if (localMode)
-        {
-            await AnnounceGameLocal(hostIp, skipAnnouncement, config, dryRun).ConfigureAwait(false);
-            await WaitForGameToClose(runGame).ConfigureAwait(false);
-            return 0;
-        }
 
         var game = await AnnounceGameToWormsHub(hostIp, skipAnnouncement, dryRun, cancellationToken)
             .ConfigureAwait(false);
@@ -182,21 +162,6 @@ internal sealed class HostHandler(
                     logger,
                     cancellationToken)
                 .ConfigureAwait(false);
-        }
-    }
-
-    private async Task AnnounceGameLocal(string hostIp, bool skipAnnouncement, Config config, bool dryRun)
-    {
-        if (skipAnnouncement)
-        {
-            return;
-        }
-
-        logger.Information("Announcing game on Slack");
-        logger.Verbose($"Host name: {hostIp}");
-        if (!dryRun)
-        {
-            await slackAnnouncer.AnnounceGameStarting(hostIp, config.SlackWebHook, logger).ConfigureAwait(false);
         }
     }
 

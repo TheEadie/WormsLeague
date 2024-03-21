@@ -20,7 +20,6 @@ internal static class CliStructure
         rootCommand.Add<Auth, AuthHandler>(serviceProvider);
         rootCommand.Add<Version, VersionHandler>(serviceProvider);
         rootCommand.Add<Update, UpdateHandler>(serviceProvider);
-        rootCommand.Add<Setup, SetupHandler>(serviceProvider);
         rootCommand.Add<Host, HostHandler>(serviceProvider);
 
         var viewCommand = new View();
