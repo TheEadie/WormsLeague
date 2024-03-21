@@ -126,7 +126,7 @@ public static class ContainerApps
                         new ContainerArgs
                         {
                             Name = "gateway",
-                            Image = "theeadie/worms-server-gateway:0.4.18",
+                            Image = "theeadie/worms-server-gateway:0.5.0",
                             Env = new InputList<EnvironmentVarArgs>
                             {
                                 new EnvironmentVarArgs
@@ -138,6 +138,11 @@ public static class ContainerApps
                                 {
                                     Name = "WORMS_STORAGE__CliFolder",
                                     Value = "/storage/cli",
+                                },
+                                new EnvironmentVarArgs
+                                {
+                                    Name = "WORMS_STORAGE__SchemesFolder",
+                                    Value = "/storage/schemes",
                                 },
                                 new EnvironmentVarArgs
                                 {
