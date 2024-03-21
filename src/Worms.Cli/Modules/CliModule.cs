@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using System.Runtime.InteropServices;
 using Autofac;
 using Worms.Armageddon.Files.Modules;
 using Worms.Armageddon.Game.Modules;
@@ -9,7 +8,6 @@ using Worms.Cli.Commands.Resources.Games;
 using Worms.Cli.Commands.Resources.Gifs;
 using Worms.Cli.Commands.Resources.Replays;
 using Worms.Cli.Commands.Resources.Schemes;
-using Worms.Cli.Configuration;
 using Worms.Cli.League;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Games;
@@ -26,12 +24,9 @@ public class CliModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        RegisterOsModules(builder);
-
         // Commands
         _ = builder.RegisterType<AuthHandler>();
         _ = builder.RegisterType<HostHandler>();
-        _ = builder.RegisterType<SetupHandler>();
         _ = builder.RegisterType<UpdateHandler>();
         _ = builder.RegisterType<VersionHandler>();
 
@@ -53,9 +48,6 @@ public class CliModule : Module
 
         // FileSystem
         _ = builder.RegisterType<FileSystem>().As<IFileSystem>();
-
-        // Config
-        _ = builder.RegisterType<ConfigManager>().As<IConfigManager>();
 
         // CLI
         _ = builder.RegisterType<CliUpdater>();
@@ -80,20 +72,5 @@ public class CliModule : Module
         _ = builder.RegisterModule<ArmageddonGameModule>();
         _ = builder.RegisterModule<ArmageddonResourcesModule>();
         _ = builder.RegisterModule<CliResourcesModule>();
-    }
-
-    private static void RegisterOsModules(ContainerBuilder builder)
-    {
-        // Windows
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            _ = builder.RegisterModule<WindowsModule>();
-        }
-
-        // Linux
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            _ = builder.RegisterModule<LinuxModule>();
-        }
     }
 }
