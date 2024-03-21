@@ -40,14 +40,13 @@ services:
         ports:
             - "5005:8080"
         volumes:
-            - storage:/data
+            - ./sample-data:/data
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
             - WORMS_CONNECTIONSTRINGS__DATABASE=Server=database;Port=5432;Database=worms;Username=worms;Password=worms
             - WORMS_STORAGE__TEMPREPLAYFOLDER=/data/replays
+            - WORMS_STORAGE__CLIFOLDER=/data/cli
+            - WORMS_STORAGE__SCHEMESFOLDER=/data/schemes
         depends_on:
             flyway-init:
                 condition: service_completed_successfully
-
-volumes:
-    storage:

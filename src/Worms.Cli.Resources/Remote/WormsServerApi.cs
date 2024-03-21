@@ -26,7 +26,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         _fileSystem = fileSystem;
         _httpClientFactory = httpClientFactory;
 #if DEBUG
-        _baseUri = new Uri("https://localhost:5003/");
+        _baseUri = new Uri("http://localhost:5005/");
 #else
         _baseUri = new Uri("https://worms.davideadie.dev/");
 #endif
