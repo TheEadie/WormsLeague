@@ -14,8 +14,9 @@ internal sealed class LeagueUpdater(
     {
         var latestVersion = await remoteLeagueRetriever.Retrieve(leagueName).ConfigureAwait(false);
         var schemesFolder = wormsLocator.Find().SchemesFolder;
+        var downloadFileName = $"{leagueName}.{latestVersion.Version.ToString(3)}.wsc";
 
-        logger.Information($"Downloading Schemes: {latestVersion.Version}");
-        await remoteSchemeDownloader.Download(leagueName, schemesFolder).ConfigureAwait(false);
+        logger.Information($"Downloading Scheme: {downloadFileName}");
+        await remoteSchemeDownloader.Download(leagueName, downloadFileName, schemesFolder).ConfigureAwait(false);
     }
 }

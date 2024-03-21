@@ -4,10 +4,9 @@ namespace Worms.Cli.Resources.Remote.Schemes;
 
 internal sealed class RemoteSchemeDownloader(IWormsServerApi api, IFileSystem fileSystem) : IRemoteSchemeDownloader
 {
-    public async Task Download(string id, string destinationFolder)
+    public async Task Download(string id, string destinationFilename, string destinationFolder)
     {
-        var downloadFileName = $"{id}.wsc";
-        var filePath = Path.Combine(destinationFolder, downloadFileName);
+        var filePath = Path.Combine(destinationFolder, destinationFilename);
 
         var bytes = await api.DownloadScheme(id).ConfigureAwait(false);
         await fileSystem.File.WriteAllBytesAsync(filePath, bytes).ConfigureAwait(false);

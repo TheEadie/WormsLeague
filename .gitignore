@@ -198,4 +198,5 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
-.artifacts/
+sample-data/replays/
+sample-data/cli/
