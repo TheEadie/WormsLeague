@@ -4,7 +4,6 @@ using Autofac;
 using Worms.Armageddon.Files.Modules;
 using Worms.Armageddon.Game.Modules;
 using Worms.Cli.CommandLine;
-using Worms.Cli.CommandLine.PackageManagers;
 using Worms.Cli.Commands;
 using Worms.Cli.Commands.Resources.Games;
 using Worms.Cli.Commands.Resources.Gifs;
@@ -60,7 +59,6 @@ public class CliModule : Module
         _ = builder.RegisterType<ConfigManager>().As<IConfigManager>();
 
         // CLI
-        _ = builder.RegisterType<GitHubReleasePackageManagerFactory>().As<IGitHubReleasePackageManagerFactory>();
         _ = builder.RegisterType<CliUpdater>();
         _ = builder.RegisterType<CliInfoRetriever>();
 
