@@ -39,5 +39,5 @@ internal sealed class SchemeFilesController(SchemeFiles schemeFiles, ILogger<Sch
         return File(fileStream, "application/zip", $"{id}.{latestDetails.Version}.wsc");
     }
 
-    private static IEnumerable<string> KnownSchemeNames => new[] { "redgate" };
+    private static IEnumerable<string> KnownSchemeNames => ["redgate"];
 }
