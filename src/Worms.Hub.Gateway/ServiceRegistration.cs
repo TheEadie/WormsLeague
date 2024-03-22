@@ -11,11 +11,11 @@ namespace Worms.Hub.Gateway;
 public static class ServiceRegistration
 {
     public static IServiceCollection AddGatewayServices(this IServiceCollection builder) =>
-        builder.AddSingleton<IRepository<GameDto>, GamesRepository>()
-            .AddSingleton<IRepository<Replay>, ReplaysRepository>()
-            .AddSingleton<ISlackAnnouncer, SlackAnnouncer>()
-            .AddSingleton<ReplayFileValidator>()
-            .AddSingleton<CliFileValidator>()
-            .AddSingleton<CliFiles>()
-            .AddSingleton<SchemeFiles>();
+        builder.AddScoped<IRepository<GameDto>, GamesRepository>()
+            .AddScoped<IRepository<Replay>, ReplaysRepository>()
+            .AddScoped<ISlackAnnouncer, SlackAnnouncer>()
+            .AddScoped<ReplayFileValidator>()
+            .AddScoped<CliFileValidator>()
+            .AddScoped<CliFiles>()
+            .AddScoped<SchemeFiles>();
 }

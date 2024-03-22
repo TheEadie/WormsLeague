@@ -6,5 +6,5 @@ namespace Worms.Armageddon.Game;
 internal static class ServiceRegistrationLinux
 {
     public static IServiceCollection AddLinuxServices(this IServiceCollection builder) =>
-        builder.AddTransient<IWormsLocator, WormsLocator>().AddTransient<IWormsRunner, WormsRunner>();
+        builder.AddScoped<IWormsLocator, WormsLocator>().AddScoped<IWormsRunner, WormsRunner>();
 }

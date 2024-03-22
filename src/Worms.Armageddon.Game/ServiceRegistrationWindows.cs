@@ -8,7 +8,7 @@ namespace Worms.Armageddon.Game;
 internal static class ServiceRegistrationWindows
 {
     public static IServiceCollection AddWindowsServices(this IServiceCollection builder) =>
-        builder.AddTransient<ISteamService, SteamService>()
-            .AddTransient<IWormsLocator, WormsLocator>()
-            .AddTransient<IWormsRunner, WormsRunner>();
+        builder.AddScoped<ISteamService, SteamService>()
+            .AddScoped<IWormsLocator, WormsLocator>()
+            .AddScoped<IWormsRunner, WormsRunner>();
 }

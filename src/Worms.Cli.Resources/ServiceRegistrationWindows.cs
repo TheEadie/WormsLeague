@@ -9,6 +9,6 @@ namespace Worms.Cli.Resources;
 internal static class ServiceRegistrationWindows
 {
     public static IServiceCollection AddWindowsServices(this IServiceCollection builder) =>
-        builder.AddTransient<IFolderOpener, WindowsFolderOpener>()
-            .AddTransient<ICliUpdateDownloader, WindowsCliUpdateDownloader>();
+        builder.AddScoped<IFolderOpener, WindowsFolderOpener>()
+            .AddScoped<ICliUpdateDownloader, WindowsCliUpdateDownloader>();
 }

@@ -9,9 +9,9 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddWormsArmageddonGameServices(this IServiceCollection builder) =>
         builder.AddOsServices()
-            .AddTransient<IReplayFrameExtractor, ReplayFrameExtractor>()
-            .AddTransient<IReplayLogGenerator, ReplayLogGenerator>()
-            .AddTransient<IReplayPlayer, ReplayPlayer>();
+            .AddScoped<IReplayFrameExtractor, ReplayFrameExtractor>()
+            .AddScoped<IReplayLogGenerator, ReplayLogGenerator>()
+            .AddScoped<IReplayPlayer, ReplayPlayer>();
 
     [SuppressMessage("Style", "IDE0046:Convert to conditional expression")]
     private static IServiceCollection AddOsServices(this IServiceCollection builder)

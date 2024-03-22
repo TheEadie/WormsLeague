@@ -9,16 +9,16 @@ namespace Worms.Armageddon.Files;
 public static class ServiceRegistration
 {
     public static IServiceCollection AddWormsArmageddonFilesServices(this IServiceCollection builder) =>
-        builder.AddTransient<IWscReader, WscReader>()
-            .AddTransient<IWscWriter, WscWriter>()
-            .AddTransient<ISchemeTextReader, SchemeTextReader>()
-            .AddTransient<ISchemeTextWriter, SchemeTextWriter>()
-            .AddTransient<IReplayTextReader, ReplayTextReader>()
-            .AddTransient<IReplayLineParser, StartTimeParser>()
-            .AddTransient<IReplayLineParser, TeamParser>()
-            .AddTransient<IReplayLineParser, WinnerParser>()
-            .AddTransient<IReplayLineParser, StartOfTurnParser>()
-            .AddTransient<IReplayLineParser, WeaponUsedParser>()
-            .AddTransient<IReplayLineParser, DamageParser>()
-            .AddTransient<IReplayLineParser, EndOfTurnParser>();
+        builder.AddScoped<IWscReader, WscReader>()
+            .AddScoped<IWscWriter, WscWriter>()
+            .AddScoped<ISchemeTextReader, SchemeTextReader>()
+            .AddScoped<ISchemeTextWriter, SchemeTextWriter>()
+            .AddScoped<IReplayTextReader, ReplayTextReader>()
+            .AddScoped<IReplayLineParser, StartTimeParser>()
+            .AddScoped<IReplayLineParser, TeamParser>()
+            .AddScoped<IReplayLineParser, WinnerParser>()
+            .AddScoped<IReplayLineParser, StartOfTurnParser>()
+            .AddScoped<IReplayLineParser, WeaponUsedParser>()
+            .AddScoped<IReplayLineParser, DamageParser>()
+            .AddScoped<IReplayLineParser, EndOfTurnParser>();
 }
