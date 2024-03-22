@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
 using Worms.Armageddon.Files;
+using Worms.Armageddon.Game;
 using Worms.Cli.Logging;
 using Worms.Cli.Modules;
 
@@ -34,6 +35,7 @@ internal static class Program
 
         var serviceCollection = new ServiceCollection().AddHttpClient();
         _ = serviceCollection.AddWormsArmageddonFilesServices();
+        _ = serviceCollection.AddWormsArmageddonGameServices();
         var containerBuilder = new ContainerBuilder();
         containerBuilder.Populate(serviceCollection);
         _ = containerBuilder.RegisterModule<CliModule>();

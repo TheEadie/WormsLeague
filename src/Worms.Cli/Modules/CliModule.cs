@@ -1,6 +1,5 @@
 using System.IO.Abstractions;
 using Autofac;
-using Worms.Armageddon.Game.Modules;
 using Worms.Cli.CommandLine;
 using Worms.Cli.Commands;
 using Worms.Cli.Commands.Resources.Games;
@@ -68,7 +67,6 @@ public class CliModule : Module
         _ = builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
         _ = builder.RegisterGeneric(typeof(ResourceViewer<,>)).As(typeof(ResourceViewer<,>));
 
-        _ = builder.RegisterModule<ArmageddonGameModule>();
         _ = builder.RegisterModule<CliResourcesModule>();
     }
 }
