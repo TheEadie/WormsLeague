@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 
-internal class TeamParser : IReplayLineParser
+internal sealed class TeamParser : IReplayLineParser
 {
     private const string TeamColour = "(Red|Blue|Green|Yellow|Magenta|Cyan)";
     private const string TeamName = "(.+)";

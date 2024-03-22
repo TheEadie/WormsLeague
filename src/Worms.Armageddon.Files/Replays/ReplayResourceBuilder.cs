@@ -1,6 +1,6 @@
 namespace Worms.Armageddon.Files.Replays;
 
-internal class ReplayResourceBuilder
+internal sealed class ReplayResourceBuilder
 {
     private DateTime _start;
     private readonly List<Team> _teams = [];

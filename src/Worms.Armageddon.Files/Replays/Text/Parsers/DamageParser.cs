@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 
-internal class DamageParser : IReplayLineParser
+internal sealed class DamageParser : IReplayLineParser
 {
     private const string Timestamp = @"\[(\d+:\d+:\d+.\d+)\]";
     private const string DamageDealtDetails = "(.+)";

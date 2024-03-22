@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 
-internal class WinnerParser : IReplayLineParser
+internal sealed class WinnerParser : IReplayLineParser
 {
     private const string TeamName = "(.+)";
     private static readonly Regex WinnerDraw = new("The round was drawn.");

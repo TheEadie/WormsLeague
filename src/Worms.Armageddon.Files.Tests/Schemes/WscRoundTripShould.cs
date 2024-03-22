@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;
 using Syroot.Worms.Armageddon;
@@ -7,15 +8,18 @@ namespace Worms.Armageddon.Files.Tests.Schemes;
 
 public sealed class WscRoundTripShould : IDisposable
 {
-    private readonly WscWriter _writer;
-    private readonly WscReader _reader;
+    private readonly IWscWriter _writer;
+    private readonly IWscReader _reader;
     private readonly string _tempDirectory;
     private readonly string _file;
 
     public WscRoundTripShould()
     {
-        _writer = new WscWriter();
-        _reader = new WscReader();
+        var services = new ServiceCollection();
+        _ = services.AddWormsArmageddonFilesServices();
+        var serviceProvider = services.BuildServiceProvider();
+        _writer = serviceProvider.GetRequiredService<IWscWriter>();
+        _reader = serviceProvider.GetRequiredService<IWscReader>();
 
         _tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         _file = Path.Combine(_tempDirectory, Path.GetRandomFileName() + ".wsc");

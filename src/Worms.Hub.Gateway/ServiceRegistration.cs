@@ -8,7 +8,7 @@ using Worms.Hub.Gateway.Storage.Files;
 
 namespace Worms.Hub.Gateway;
 
-public static class Services
+public static class ServiceRegistration
 {
     public static IServiceCollection AddGatewayServices(this IServiceCollection builder) =>
         builder.AddSingleton<IRepository<GameDto>, GamesRepository>()
