@@ -11,7 +11,6 @@ using Worms.Cli.Resources;
 using Worms.Cli.Resources.Games;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
-using Worms.Cli.Resources.Modules;
 using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Replays;
 using Worms.Cli.Resources.Schemes;
@@ -66,7 +65,5 @@ public class CliModule : Module
         _ = builder.RegisterGeneric(typeof(ResourceGetter<>)).As(typeof(ResourceGetter<>));
         _ = builder.RegisterGeneric(typeof(ResourceDeleter<>)).As(typeof(ResourceDeleter<>));
         _ = builder.RegisterGeneric(typeof(ResourceViewer<,>)).As(typeof(ResourceViewer<,>));
-
-        _ = builder.RegisterModule<CliResourcesModule>();
     }
 }
