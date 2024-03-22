@@ -10,7 +10,6 @@ using Serilog.Events;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
 using Worms.Cli.Logging;
-using Worms.Cli.Modules;
 using Worms.Cli.Resources;
 
 namespace Worms.Cli;
@@ -34,13 +33,13 @@ internal static class Program
             .WriteTo.ColoredConsole(formatProvider: CultureInfo.CurrentCulture)
             .CreateLogger();
 
-        var serviceCollection = new ServiceCollection().AddHttpClient();
-        _ = serviceCollection.AddWormsArmageddonFilesServices();
-        _ = serviceCollection.AddWormsArmageddonGameServices();
-        _ = serviceCollection.AddWormsCliResourcesServices();
+        var serviceCollection = new ServiceCollection().AddHttpClient()
+            .AddWormsArmageddonFilesServices()
+            .AddWormsArmageddonGameServices()
+            .AddWormsCliResourcesServices()
+            .AddWormsCliServices();
         var containerBuilder = new ContainerBuilder();
         containerBuilder.Populate(serviceCollection);
-        _ = containerBuilder.RegisterModule<CliModule>();
         _ = containerBuilder.RegisterInstance<ILogger>(logger);
         var container = containerBuilder.Build();
         return new AutofacServiceProvider(container);
