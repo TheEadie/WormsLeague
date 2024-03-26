@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 
@@ -31,7 +31,7 @@ internal sealed class ViewReplay : Command
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class ViewReplayHandler(
     ResourceViewer<LocalReplay, LocalReplayViewParameters> resourceViewer,
-    ILogger logger) : ICommandHandler
+    ILogger<ViewReplay> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
@@ -43,12 +43,12 @@ internal sealed class ViewReplayHandler(
 
         try
         {
-            await resourceViewer.View(name, new LocalReplayViewParameters(turn), logger, context.GetCancellationToken())
+            await resourceViewer.View(name, new LocalReplayViewParameters(turn), context.GetCancellationToken())
                 .ConfigureAwait(false);
         }
         catch (ConfigurationException exception)
         {
-            logger.Error(exception.Message);
+            logger.LogError("{Message}", exception.Message);
             return 1;
         }
 

@@ -1,11 +1,12 @@
 using System.Net;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace Worms.Cli.Resources.Remote.Games;
 
-internal sealed class RemoteGameCreator(IWormsServerApi api) : IResourceCreator<RemoteGame, string>
+internal sealed class RemoteGameCreator(IWormsServerApi api, ILogger<RemoteGameCreator> logger)
+    : IResourceCreator<RemoteGame, string>
 {
-    public async Task<RemoteGame> Create(string parameters, ILogger logger, CancellationToken cancellationToken)
+    public async Task<RemoteGame> Create(string parameters, CancellationToken cancellationToken)
     {
         try
         {
@@ -16,11 +17,11 @@ internal sealed class RemoteGameCreator(IWormsServerApi api) : IResourceCreator<
         {
             if (e.StatusCode == HttpStatusCode.Unauthorized)
             {
-                logger.Warning("You don't have access to the Worms Hub. Please run worms auth or contact an admin");
+                logger.LogWarning("You don't have access to the Worms Hub. Please run worms auth or contact an admin");
             }
             else
             {
-                logger.Error(e, "An error occured calling the Worms Hub API");
+                logger.LogError(e, "An error occured calling the Worms Hub API");
             }
 
             return new RemoteGame("", "", "");

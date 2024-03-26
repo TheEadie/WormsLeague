@@ -1,15 +1,12 @@
 using System.Net;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace Worms.Cli.Resources.Remote.Replays;
 
-internal sealed class RemoteReplayCreator(IWormsServerApi api)
+internal sealed class RemoteReplayCreator(IWormsServerApi api, ILogger<RemoteReplayCreator> logger)
     : IResourceCreator<RemoteReplay, RemoteReplayCreateParameters>
 {
-    public async Task<RemoteReplay> Create(
-        RemoteReplayCreateParameters parameters,
-        ILogger logger,
-        CancellationToken cancellationToken)
+    public async Task<RemoteReplay> Create(RemoteReplayCreateParameters parameters, CancellationToken cancellationToken)
     {
         try
         {
@@ -21,11 +18,11 @@ internal sealed class RemoteReplayCreator(IWormsServerApi api)
         {
             if (e.StatusCode == HttpStatusCode.Unauthorized)
             {
-                logger.Warning("You don't have access to the Worms Hub. Please run worms auth or contact an admin");
+                logger.LogWarning("You don't have access to the Worms Hub. Please run worms auth or contact an admin");
             }
             else
             {
-                logger.Error(e, "An error occured calling the Worms Hub API");
+                logger.LogError(e, "An error occured calling the Worms Hub API");
             }
 
             return new RemoteReplay("", "", "");

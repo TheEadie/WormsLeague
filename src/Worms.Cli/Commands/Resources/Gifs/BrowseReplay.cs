@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources.Local.Folders;
 
@@ -14,8 +14,10 @@ internal sealed class BrowseGif : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class BrowseGifHandler(IWormsLocator wormsLocator, IFolderOpener folderOpener, ILogger logger)
-    : ICommandHandler
+internal sealed class BrowseGifHandler(
+    IWormsLocator wormsLocator,
+    IFolderOpener folderOpener,
+    ILogger<BrowseGifHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
@@ -26,11 +28,11 @@ internal sealed class BrowseGifHandler(IWormsLocator wormsLocator, IFolderOpener
 
         if (!worms.IsInstalled)
         {
-            logger.Error("Worms is not installed");
+            logger.LogError("Worms is not installed");
             return Task.FromResult(1);
         }
 
-        logger.Verbose($"Opening scheme folder: {worms.CaptureFolder}");
+        logger.LogDebug("Opening capture folder: {Folder}", worms.CaptureFolder);
         folderOpener.OpenFolder(worms.CaptureFolder);
         return Task.FromResult(0);
     }
