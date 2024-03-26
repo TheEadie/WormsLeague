@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 
@@ -20,8 +20,9 @@ internal sealed class DeleteReplay : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class DeleteReplayHandler(ResourceDeleter<LocalReplay> resourceDeleter, ILogger logger)
-    : ICommandHandler
+internal sealed class DeleteReplayHandler(
+    ResourceDeleter<LocalReplay> resourceDeleter,
+    ILogger<DeleteReplayHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
@@ -33,11 +34,11 @@ internal sealed class DeleteReplayHandler(ResourceDeleter<LocalReplay> resourceD
 
         try
         {
-            await resourceDeleter.Delete(name, logger, cancellationToken).ConfigureAwait(false);
+            await resourceDeleter.Delete(name, cancellationToken).ConfigureAwait(false);
         }
         catch (ConfigurationException exception)
         {
-            logger.Error(exception.Message);
+            logger.LogError("{Message}", exception.Message);
             return 1;
         }
 

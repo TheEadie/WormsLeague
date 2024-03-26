@@ -1,45 +1,47 @@
 using System.Text.Json;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Cli.Resources.Remote.Auth.Responses;
 
 namespace Worms.Cli.Resources.Remote.Auth;
 
-internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClientFactory httpClientFactory)
-    : ILoginService
+internal sealed class DeviceCodeLoginService(
+    ITokenStore tokenStore,
+    IHttpClientFactory httpClientFactory,
+    ILogger<DeviceCodeLoginService> logger) : ILoginService
 {
     private const string Authority = "https://eadie.eu.auth0.com";
     private const string ClientId = "0dBbKeIKO2UAzWfBh6LuGwWYSWGZPFHB";
     private const string Audience = "worms.davideadie.dev";
 
-    public async Task RequestLogin(ILogger logger, CancellationToken cancellationToken)
+    public async Task RequestLogin(CancellationToken cancellationToken)
     {
-        logger.Verbose("Requesting device code...");
-        var deviceCodeResponse = await RequestDeviceCode(logger, cancellationToken).ConfigureAwait(false);
-        logger.Information(
-            $"Please visit {deviceCodeResponse.VerificationUri} and enter the code: {deviceCodeResponse.UserCode}");
+        logger.LogDebug("Requesting device code...");
+        var deviceCodeResponse = await RequestDeviceCode(cancellationToken).ConfigureAwait(false);
+        logger.LogInformation(
+            "Please visit {VerificationUri} and enter the code: {UserCode}",
+            deviceCodeResponse.VerificationUri,
+            deviceCodeResponse.UserCode);
 
-        logger.Verbose("Opening browser...");
+        logger.LogDebug("Opening browser...");
         BrowserLauncher.OpenBrowser(deviceCodeResponse.VerificationUriComplete.OriginalString);
 
-        logger.Verbose("Requesting tokens...");
+        logger.LogDebug("Requesting tokens...");
         var tokenResponse =
             await RequestTokenAsync(deviceCodeResponse, logger, cancellationToken).ConfigureAwait(false);
 
         if (tokenResponse != null)
         {
-            logger.Verbose("Saving tokens...");
+            logger.LogDebug("Saving tokens...");
             tokenStore.StoreAccessTokens(new AccessTokens(tokenResponse.AccessToken, tokenResponse.RefreshToken));
 
-            logger.Information("Logged in successfully");
+            logger.LogInformation("Logged in successfully");
             return;
         }
 
-        logger.Error("Error logging in");
+        logger.LogError("Error logging in");
     }
 
-    private async Task<DeviceAuthorizationResponse> RequestDeviceCode(
-        ILogger logger,
-        CancellationToken cancellationToken)
+    private async Task<DeviceAuthorizationResponse> RequestDeviceCode(CancellationToken cancellationToken)
     {
         using var httpClient = httpClientFactory.CreateClient();
         httpClient.BaseAddress = new Uri(Authority);
@@ -71,7 +73,7 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClient
 
             if (jsonResponse is null)
             {
-                logger.Error("Error requesting device code: No response content");
+                logger.LogError("Error requesting device code: No response content");
                 throw new HttpRequestException("No response content");
             }
 
@@ -79,7 +81,7 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClient
         }
 
         var stringContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-        logger.Error($"Error requesting device code: {stringContent}");
+        logger.LogError("Error requesting device code: {Error}", stringContent);
         throw new HttpRequestException(stringContent);
     }
 
@@ -92,7 +94,9 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClient
         var timeout = TimeSpan.FromSeconds(deviceCodeResponse.ExpiresIn);
         cancellationTokenSource.CancelAfter(timeout);
 
-        logger.Verbose($"Checking if code has been confirmed... (Timeout: {timeout.TotalMinutes} mins)");
+        logger.LogDebug(
+            "Checking if code has been confirmed... (Timeout: {TimeoutMinutes} mins)",
+            timeout.TotalMinutes);
 
         using var client = httpClientFactory.CreateClient();
         client.BaseAddress = new Uri(Authority);
@@ -128,17 +132,19 @@ internal sealed class DeviceCodeLoginService(ITokenStore tokenStore, IHttpClient
             if (stringContent.Contains("authorization_pending", StringComparison.InvariantCulture)
                 || stringContent.Contains("slow_down", StringComparison.InvariantCulture))
             {
-                logger.Verbose($"Code not yet confirmed. Retrying in {deviceCodeResponse.Interval} seconds");
+                logger.LogDebug(
+                    "Code not yet confirmed. Retrying in {IntervalSeconds} seconds",
+                    deviceCodeResponse.Interval);
                 await Task.Delay(deviceCodeResponse.Interval * 1000, cancellationToken).ConfigureAwait(false);
             }
             else
             {
-                logger.Error($"Error logging in: {stringContent}");
+                logger.LogError("Error logging in: {Error}", stringContent);
                 throw new HttpRequestException(stringContent);
             }
         }
 
-        logger.Warning($"Requesting tokens timed out after ${timeout} seconds");
+        logger.LogWarning("Requesting tokens timed out after ${TimeoutSeconds} seconds", timeout);
         return null;
     }
 }

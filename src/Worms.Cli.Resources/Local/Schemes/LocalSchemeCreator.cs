@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using Serilog;
 using Worms.Armageddon.Files.Schemes.Binary;
 using Worms.Armageddon.Files.Schemes.Text;
 
@@ -10,10 +9,7 @@ internal sealed class LocalSchemeCreator(
     IWscWriter wscWriter,
     IFileSystem fileSystem) : IResourceCreator<LocalScheme, LocalSchemeCreateParameters>
 {
-    public Task<LocalScheme> Create(
-        LocalSchemeCreateParameters parameters,
-        ILogger logger,
-        CancellationToken cancellationToken)
+    public Task<LocalScheme> Create(LocalSchemeCreateParameters parameters, CancellationToken cancellationToken)
     {
         var scheme = schemeTextReader.GetModel(parameters.Definition);
         var path = fileSystem.Path.Combine(parameters.Folder, parameters.Name + ".wsc");

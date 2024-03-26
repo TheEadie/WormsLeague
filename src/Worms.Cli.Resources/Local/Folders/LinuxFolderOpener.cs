@@ -1,9 +1,9 @@
 using System.Diagnostics;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace Worms.Cli.Resources.Local.Folders;
 
-public class LinuxFolderOpener(ILogger logger) : IFolderOpener
+public class LinuxFolderOpener(ILogger<LinuxFolderOpener> logger) : IFolderOpener
 {
     public void OpenFolder(string folderPath)
     {
@@ -13,7 +13,7 @@ public class LinuxFolderOpener(ILogger logger) : IFolderOpener
         }
         else
         {
-            logger.Warning($"Folder {folderPath} does not exist");
+            logger.LogWarning("Folder {FolderPath} does not exist", folderPath);
         }
     }
 }

@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using Serilog;
 using Worms.Armageddon.Files.Schemes.Binary;
 using Worms.Armageddon.Game;
 
@@ -8,13 +7,10 @@ namespace Worms.Cli.Resources.Local.Schemes;
 internal sealed class LocalSchemesRetriever(IWscReader wscReader, IWormsLocator wormsLocator, IFileSystem fileSystem)
     : IResourceRetriever<LocalScheme>
 {
-    public Task<IReadOnlyCollection<LocalScheme>> Retrieve(ILogger logger, CancellationToken cancellationToken) =>
-        Retrieve("*", logger, cancellationToken);
+    public Task<IReadOnlyCollection<LocalScheme>> Retrieve(CancellationToken cancellationToken) =>
+        Retrieve("*", cancellationToken);
 
-    public Task<IReadOnlyCollection<LocalScheme>> Retrieve(
-        string pattern,
-        ILogger logger,
-        CancellationToken cancellationToken)
+    public Task<IReadOnlyCollection<LocalScheme>> Retrieve(string pattern, CancellationToken cancellationToken)
     {
         var gameInfo = wormsLocator.Find();
 

@@ -1,13 +1,10 @@
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-using Serilog.Events;
+using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
-using Worms.Cli.Logging;
 using Worms.Cli.Resources;
 
 namespace Worms.Cli;
@@ -16,16 +13,17 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        var logger = new LoggerConfiguration().MinimumLevel.Is(GetLogEventLevel(args))
-            .WriteTo.ColoredConsole(formatProvider: CultureInfo.CurrentCulture)
-            .CreateLogger();
-
         var serviceCollection = new ServiceCollection().AddHttpClient()
+            .AddLogging(
+                builder =>
+                    {
+                        _ = builder.SetMinimumLevel(GetLogLevel(args))
+                            .AddSimpleConsole(options => options.SingleLine = true);
+                    })
             .AddWormsArmageddonFilesServices()
             .AddWormsArmageddonGameServices()
             .AddWormsCliResourcesServices()
-            .AddWormsCliServices()
-            .AddScoped<ILogger>(_ => logger);
+            .AddWormsCliServices();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
@@ -37,18 +35,18 @@ internal static class Program
     }
 
     [SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "This is more readable")]
-    private static LogEventLevel GetLogEventLevel(string[] args)
+    private static LogLevel GetLogLevel(string[] args)
     {
         if (args.Contains("-v") || args.Contains("--verbose"))
         {
-            return LogEventLevel.Verbose;
+            return LogLevel.Debug;
         }
 
         if (args.Contains("-q") || args.Contains("--quiet"))
         {
-            return LogEventLevel.Error;
+            return LogLevel.Error;
         }
 
-        return LogEventLevel.Information;
+        return LogLevel.Information;
     }
 }

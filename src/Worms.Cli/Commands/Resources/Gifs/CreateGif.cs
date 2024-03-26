@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Replays;
@@ -76,7 +76,7 @@ internal sealed class CreateGif : Command
 internal sealed class CreateGifHandler(
     IResourceCreator<LocalGif, LocalGifCreateParameters> gifCreator,
     IResourceRetriever<LocalReplay> replayRetriever,
-    ILogger logger) : ICommandHandler
+    ILogger<CreateGifHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
@@ -99,13 +99,13 @@ internal sealed class CreateGifHandler(
         }
         catch (ConfigurationException exception)
         {
-            logger.Error(exception.Message);
+            logger.LogError("{Message}", exception.Message);
             return 1;
         }
 
         try
         {
-            logger.Information($"Creating gif for {replayName}, turn {turn} ...");
+            logger.LogInformation("Creating gif for {ReplayName}, turn {Turn} ...", replayName, turn);
             var gif = await gifCreator.Create(
                     new LocalGifCreateParameters(
                         replay,
@@ -114,14 +114,13 @@ internal sealed class CreateGifHandler(
                         TimeSpan.FromSeconds(endOffset),
                         fps,
                         speed),
-                    logger,
                     cancellationToken)
                 .ConfigureAwait(false);
             await Console.Out.WriteLineAsync(gif.Path).ConfigureAwait(false);
         }
         catch (FormatException exception)
         {
-            logger.Error("Failed to create gif: " + exception.Message);
+            logger.LogError("Failed to create gif: {Message}", exception.Message);
             return 1;
         }
 
@@ -140,7 +139,7 @@ internal sealed class CreateGifHandler(
             throw new ConfigurationException("No turn provided for the Gif being created");
         }
 
-        var replays = await replayRetriever.Retrieve(replay, logger, cancellationToken).ConfigureAwait(false);
+        var replays = await replayRetriever.Retrieve(replay, cancellationToken).ConfigureAwait(false);
 
         if (replays.Count == 0)
         {

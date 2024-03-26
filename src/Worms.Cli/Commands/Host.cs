@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Cli.League;
 using Worms.Cli.Resources;
@@ -52,7 +52,7 @@ internal sealed class HostHandler(
     IRemoteGameUpdater gameUpdater,
     IResourceRetriever<LocalReplay> localReplayRetriever,
     IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> remoteReplayCreator,
-    ILogger logger) : ICommandHandler
+    ILogger<HostHandler> logger) : ICommandHandler
 {
     private const string LeagueName = "redgate";
     private const string Domain = "red-gate.com";
@@ -75,7 +75,7 @@ internal sealed class HostHandler(
         }
         catch (ConfigurationException e)
         {
-            logger.Error($"IP address could not be found. {e.Message}");
+            logger.LogError("IP address could not be found. {Error}", e.Message);
             return 1;
         }
 
@@ -83,7 +83,7 @@ internal sealed class HostHandler(
 
         if (!gameInfo.IsInstalled)
         {
-            logger.Error("Worms Armageddon is not installed");
+            logger.LogError("Worms Armageddon is not installed");
             return 1;
         }
 
@@ -109,11 +109,11 @@ internal sealed class HostHandler(
             return new RemoteGame("", "", "");
         }
 
-        logger.Information("Announcing game to hub");
+        logger.LogInformation("Announcing game to hub");
         RemoteGame? game = null;
         if (!dryRun)
         {
-            game = await remoteGameCreator.Create(hostIp, logger, cancellationToken).ConfigureAwait(false);
+            game = await remoteGameCreator.Create(hostIp, cancellationToken).ConfigureAwait(false);
         }
 
         return game;
@@ -130,10 +130,10 @@ internal sealed class HostHandler(
             return;
         }
 
-        logger.Information("Marking game as complete in hub");
+        logger.LogInformation("Marking game as complete in hub");
         if (!dryRun)
         {
-            await gameUpdater.SetGameComplete(game!, logger, cancellationToken).ConfigureAwait(false);
+            await gameUpdater.SetGameComplete(game!, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -144,22 +144,21 @@ internal sealed class HostHandler(
             return;
         }
 
-        logger.Information("Uploading replay to hub");
-        var allReplays = await localReplayRetriever.Retrieve(logger, cancellationToken).ConfigureAwait(false);
+        logger.LogInformation("Uploading replay to hub");
+        var allReplays = await localReplayRetriever.Retrieve(cancellationToken).ConfigureAwait(false);
         var replay = allReplays.MaxBy(x => x.Details.Date);
 
         if (replay is null)
         {
-            logger.Warning("No replay found to upload");
+            logger.LogWarning("No replay found to upload");
             return;
         }
 
-        logger.Information("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
+        logger.LogInformation("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
         if (!dryRun)
         {
             _ = await remoteReplayCreator.Create(
                     new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
-                    logger,
                     cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -188,19 +187,19 @@ internal sealed class HostHandler(
             return Task.CompletedTask;
         }
 
-        logger.Information("Downloading the latest options");
-        return !dryRun ? leagueUpdater.Update(LeagueName, logger) : Task.CompletedTask;
+        logger.LogInformation("Downloading the latest options");
+        return !dryRun ? leagueUpdater.Update(LeagueName) : Task.CompletedTask;
     }
 
     private Task StartWorms(bool dryRun, CancellationToken cancellationToken)
     {
-        logger.Information("Starting Worms Armageddon");
+        logger.LogInformation("Starting Worms Armageddon");
         return !dryRun ? wormsRunner.RunWorms("wa://") : Task.Delay(5000, cancellationToken);
     }
 
     private Task WaitForGameToClose(Task runGame)
     {
-        logger.Information("Waiting for game to finish");
+        logger.LogInformation("Waiting for game to finish");
         return runGame;
     }
 }
