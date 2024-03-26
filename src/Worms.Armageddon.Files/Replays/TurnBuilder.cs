@@ -1,6 +1,6 @@
 namespace Worms.Armageddon.Files.Replays;
 
-internal class TurnBuilder
+internal sealed class TurnBuilder
 {
     private Team? _team;
     private TimeSpan? _start;

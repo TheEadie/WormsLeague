@@ -2,7 +2,7 @@ using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Schemes.Text;
 
-internal class SchemeTextWriter : ISchemeTextWriter
+internal sealed class SchemeTextWriter : ISchemeTextWriter
 {
     public void Write(Scheme definition, TextWriter textWriter)
     {

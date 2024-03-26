@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 
-internal class StartOfTurnParser : IReplayLineParser
+internal sealed class StartOfTurnParser : IReplayLineParser
 {
     private const string Timestamp = @"\[(\d+:\d+:\d+.\d+)\]";
     private const string TeamName = "(.+)";

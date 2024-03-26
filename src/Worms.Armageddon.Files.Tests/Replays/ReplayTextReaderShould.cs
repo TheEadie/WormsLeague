@@ -1,29 +1,29 @@
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Armageddon.Files.Replays;
 using Worms.Armageddon.Files.Replays.Text;
-using Worms.Armageddon.Files.Replays.Text.Parsers;
 
 namespace Worms.Armageddon.Files.Tests.Replays;
 
 public sealed class ReplayTextReaderShould
 {
-    private readonly ReplayTextReader _replayTextReader = new(
-    [
-        new StartTimeParser(),
-        new TeamParser(),
-        new WinnerParser(),
-        new StartOfTurnParser(),
-        new WeaponUsedParser(),
-        new DamageParser(),
-        new EndOfTurnParser()
-    ]);
+    private readonly IReplayTextReader _replayTextReader;
 
     private readonly Team _redTeam = new("Red Team", "local", TeamColour.Red);
     private readonly Team _blueTeam = new("Blue Team", "local", TeamColour.Blue);
     private readonly Team _greenTeam = new("Green Team", "local", TeamColour.Green);
     private readonly Team _yellowTeam = new("1UP", "local", TeamColour.Yellow);
     private readonly Team _magentaTeam = new("Test Team", "local", TeamColour.Magenta);
+
+    public ReplayTextReaderShould()
+    {
+        var services = new ServiceCollection();
+        _ = services.AddWormsArmageddonFilesServices();
+        var serviceProvider = services.BuildServiceProvider();
+        _replayTextReader = serviceProvider.GetRequiredService<IReplayTextReader>();
+    }
+
     private readonly Team _cyanTeam = new("Last Team Name", "local", TeamColour.Cyan);
 
     [Test]

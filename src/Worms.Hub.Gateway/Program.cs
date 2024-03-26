@@ -1,13 +1,6 @@
 using Microsoft.IdentityModel.Tokens;
 using Worms.Hub.Gateway;
-using Worms.Hub.Gateway.API.DTOs;
 using Worms.Hub.Gateway.API.Middleware;
-using Worms.Hub.Gateway.API.Validators;
-using Worms.Hub.Gateway.Domain;
-using Worms.Hub.Gateway.Domain.Announcers;
-using Worms.Hub.Gateway.Domain.Announcers.Slack;
-using Worms.Hub.Gateway.Storage.Database;
-using Worms.Hub.Gateway.Storage.Files;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddSimpleConsole(options => options.SingleLine = true);
@@ -29,13 +22,7 @@ builder.Services.AddAuthentication()
                 };
             });
 builder.Services.AddAuthorization();
-builder.Services.AddSingleton<IRepository<GameDto>, GamesRepository>();
-builder.Services.AddSingleton<IRepository<Replay>, ReplaysRepository>();
-builder.Services.AddSingleton<ISlackAnnouncer, SlackAnnouncer>();
-builder.Services.AddSingleton<ReplayFileValidator>();
-builder.Services.AddSingleton<CliFileValidator>();
-builder.Services.AddSingleton<CliFiles>();
-builder.Services.AddSingleton<SchemeFiles>();
+builder.Services.AddGatewayServices();
 
 var app = builder.Build();
 app.UseHttpsRedirection();

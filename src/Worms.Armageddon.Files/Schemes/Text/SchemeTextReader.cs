@@ -3,7 +3,7 @@ using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Schemes.Text;
 
-internal class SchemeTextReader : ISchemeTextReader
+internal sealed class SchemeTextReader : ISchemeTextReader
 {
     public Scheme GetModel(string definition)
     {

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 
-internal class StartTimeParser : IReplayLineParser
+internal sealed class StartTimeParser : IReplayLineParser
 {
     private const string DateAndTime = @"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})";
     private static readonly Regex StartTime = new($"Game Started at {DateAndTime} GMT");

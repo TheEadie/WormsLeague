@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;
 using Syroot.Worms.Armageddon;
@@ -7,8 +8,17 @@ namespace Worms.Armageddon.Files.Tests.Schemes;
 
 public sealed class SchemeTextRoundTripShould
 {
-    private readonly SchemeTextWriter _writer = new();
-    private readonly SchemeTextReader _reader = new();
+    private readonly ISchemeTextWriter _writer;
+    private readonly ISchemeTextReader _reader;
+
+    public SchemeTextRoundTripShould()
+    {
+        var services = new ServiceCollection();
+        _ = services.AddWormsArmageddonFilesServices();
+        var serviceProvider = services.BuildServiceProvider();
+        _writer = serviceProvider.GetRequiredService<ISchemeTextWriter>();
+        _reader = serviceProvider.GetRequiredService<ISchemeTextReader>();
+    }
 
     [Test]
     [TestCaseSource(nameof(Schemes))]

@@ -1,6 +1,6 @@
 namespace Worms.Armageddon.Files.Replays.Text;
 
-internal class ReplayTextReader(IEnumerable<IReplayLineParser> parsers) : IReplayTextReader
+internal sealed class ReplayTextReader(IEnumerable<IReplayLineParser> parsers) : IReplayTextReader
 {
     public ReplayResource GetModel(string definition)
     {
