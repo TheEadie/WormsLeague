@@ -1,6 +1,5 @@
 using System.IO.Abstractions;
 using ImageMagick;
-using Serilog;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Game.Replays;
 
@@ -11,10 +10,7 @@ internal sealed class LocalGifCreator(
     IWormsLocator wormsLocator,
     IFileSystem fileSystem) : IResourceCreator<LocalGif, LocalGifCreateParameters>
 {
-    public async Task<LocalGif> Create(
-        LocalGifCreateParameters parameters,
-        ILogger logger,
-        CancellationToken cancellationToken)
+    public async Task<LocalGif> Create(LocalGifCreateParameters parameters, CancellationToken cancellationToken)
     {
         var replayPath = parameters.Replay.Paths.WAgamePath;
         var turn = parameters.Replay.Details.Turns.ElementAt((int) parameters.Turn - 1);

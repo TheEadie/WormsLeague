@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using Serilog;
 using Worms.Armageddon.Files.Schemes.Binary;
 using Worms.Armageddon.Files.Schemes.Random;
 
@@ -10,10 +9,7 @@ internal sealed class LocalSchemeRandomCreator(
     IWscWriter wscWriter,
     IFileSystem fileSystem) : IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>
 {
-    public Task<LocalScheme> Create(
-        LocalSchemeCreateRandomParameters parameters,
-        ILogger logger,
-        CancellationToken cancellationToken)
+    public Task<LocalScheme> Create(LocalSchemeCreateRandomParameters parameters, CancellationToken cancellationToken)
     {
         var scheme = randomSchemeGenerator.Generate();
         var path = fileSystem.Path.Combine(parameters.Folder, parameters.Name + ".wsc");

@@ -1,20 +1,19 @@
-using Serilog;
 using Worms.Cli.Commands;
 
 namespace Worms.Cli.Resources;
 
 public class ResourceDeleter<T>(IResourceRetriever<T> retriever, IResourceDeleter<T> deleter)
 {
-    public async Task Delete(string name, ILogger logger, CancellationToken cancellationToken)
+    public async Task Delete(string name, CancellationToken cancellationToken)
     {
         name = ValidateName(name);
-        var resource = await GetResource(name, logger, cancellationToken).ConfigureAwait(false);
+        var resource = await GetResource(name, cancellationToken).ConfigureAwait(false);
         deleter.Delete(resource);
     }
 
-    private async Task<T> GetResource(string name, ILogger logger, CancellationToken cancellationToken)
+    private async Task<T> GetResource(string name, CancellationToken cancellationToken)
     {
-        var resourcesFound = await retriever.Retrieve(name, logger, cancellationToken).ConfigureAwait(false);
+        var resourcesFound = await retriever.Retrieve(name, cancellationToken).ConfigureAwait(false);
 
         return resourcesFound.Count switch
         {

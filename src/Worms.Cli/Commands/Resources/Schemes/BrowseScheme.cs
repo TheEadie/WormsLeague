@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources.Local.Folders;
 
@@ -17,8 +17,10 @@ internal sealed class BrowseScheme : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class BrowseSchemeHandler(IWormsLocator wormsLocator, IFolderOpener folderOpener, ILogger logger)
-    : ICommandHandler
+internal sealed class BrowseSchemeHandler(
+    IWormsLocator wormsLocator,
+    IFolderOpener folderOpener,
+    ILogger<BrowseSchemeHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
@@ -29,11 +31,11 @@ internal sealed class BrowseSchemeHandler(IWormsLocator wormsLocator, IFolderOpe
 
         if (!worms.IsInstalled)
         {
-            logger.Error("Worms is not installed");
+            logger.LogError("Worms is not installed");
             return Task.FromResult(1);
         }
 
-        logger.Verbose($"Opening scheme folder: {worms.SchemesFolder}");
+        logger.LogDebug("Opening scheme folder: {Folder}", worms.SchemesFolder);
         folderOpener.OpenFolder(worms.SchemesFolder);
         return Task.FromResult(0);
     }

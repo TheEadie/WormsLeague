@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Schemes;
@@ -50,7 +50,7 @@ internal sealed class CreateSchemeHandler(
     IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters> randomSchemeCreator,
     IFileSystem fileSystem,
     IWormsLocator wormsLocator,
-    ILogger logger) : ICommandHandler
+    ILogger<CreateSchemeHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
@@ -75,25 +75,23 @@ internal sealed class CreateSchemeHandler(
                 var (definition, source) = ValidateSchemeDefinition(inputFile);
                 creator = () => schemeCreator.Create(
                     new LocalSchemeCreateParameters(validatedName, outputFolder, definition),
-                    logger,
                     cancellationToken);
-                logger.Verbose($"Scheme definition being read from {source}");
+                logger.LogDebug("Scheme definition being read from {Source}", source);
             }
             else
             {
                 creator = () => randomSchemeCreator.Create(
                     new LocalSchemeCreateRandomParameters(validatedName, outputFolder),
-                    logger,
                     cancellationToken);
             }
         }
         catch (ConfigurationException exception)
         {
-            logger.Error(exception.Message);
+            logger.LogError("{Message}", exception.Message);
             return 1;
         }
 
-        logger.Information($"Writing Scheme to {outputFolder}");
+        logger.LogInformation("Writing Scheme to {Folder}", outputFolder);
 
         try
         {
@@ -102,7 +100,7 @@ internal sealed class CreateSchemeHandler(
         }
         catch (FormatException exception)
         {
-            logger.Error("Failed to read Scheme definition: " + exception.Message);
+            logger.LogError("Failed to read Scheme definition: {Message}", exception.Message);
             return 1;
         }
 
@@ -129,7 +127,7 @@ internal sealed class CreateSchemeHandler(
             return outputFolder;
         }
 
-        logger.Information($"Output folder ({outputFolder}) does not exit. It will be created.");
+        logger.LogInformation("Output folder ({Folder}) does not exit. It will be created.", outputFolder);
         _ = fileSystem.Directory.CreateDirectory(outputFolder);
 
         return outputFolder;

@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using Serilog;
 using Worms.Armageddon.Files.Replays;
 using Worms.Armageddon.Files.Replays.Text;
 
@@ -10,13 +9,10 @@ internal sealed class LocalReplayRetriever(
     IFileSystem fileSystem,
     IReplayTextReader replayTextReader) : IResourceRetriever<LocalReplay>
 {
-    public Task<IReadOnlyCollection<LocalReplay>> Retrieve(ILogger logger, CancellationToken cancellationToken) =>
-        Retrieve("*", logger, cancellationToken);
+    public Task<IReadOnlyCollection<LocalReplay>> Retrieve(CancellationToken cancellationToken) =>
+        Retrieve("*", cancellationToken);
 
-    public async Task<IReadOnlyCollection<LocalReplay>> Retrieve(
-        string pattern,
-        ILogger logger,
-        CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<LocalReplay>> Retrieve(string pattern, CancellationToken cancellationToken)
     {
         var resources = new List<LocalReplay>();
 
