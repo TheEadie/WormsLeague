@@ -34,7 +34,7 @@ internal sealed class TableBuilder(int outputWidth)
         }
 
         // Adjust the last column so it doesn't wrap the line
-        var lastColumn = adjustedColumns.Last();
+        var lastColumn = adjustedColumns[^1];
         _ = adjustedColumns.Remove(lastColumn);
         var remainingWidth = outputWidth - adjustedColumns.Sum(x => x.Width) - 1;
 

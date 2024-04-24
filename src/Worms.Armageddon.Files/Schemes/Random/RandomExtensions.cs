@@ -53,6 +53,6 @@ internal static class RandomExtensions
             }
         }
 
-        return wheel.Last().Item1;
+        return wheel[^1].Item1;
     }
 }
