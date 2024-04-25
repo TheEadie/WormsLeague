@@ -3,8 +3,10 @@ using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
+using Worms.Cli.Logging;
 using Worms.Cli.Resources;
 
 namespace Worms.Cli;
@@ -14,12 +16,7 @@ internal static class Program
     public static async Task<int> Main(string[] args)
     {
         var serviceCollection = new ServiceCollection().AddHttpClient()
-            .AddLogging(
-                builder =>
-                    {
-                        _ = builder.SetMinimumLevel(GetLogLevel(args))
-                            .AddSimpleConsole(options => options.SingleLine = true);
-                    })
+            .AddWormsCliLogging(GetLogLevel(args))
             .AddWormsArmageddonFilesServices()
             .AddWormsArmageddonGameServices()
             .AddWormsCliResourcesServices()
@@ -49,4 +46,23 @@ internal static class Program
 
         return LogLevel.Information;
     }
+
+    [UnconditionalSuppressMessage("RequiresDynamicCodeEvaluation", "IL3050")]
+    [UnconditionalSuppressMessage("RequiresDynamicCodeEvaluation", "IL2026")]
+    private static IServiceCollection AddWormsCliLogging(this IServiceCollection builder, LogLevel logLevel) =>
+        builder.AddLogging(
+            loggingBuilder =>
+                {
+                    _ = loggingBuilder.AddConsole(
+                            options =>
+                                {
+                                    options.LogToStandardErrorThreshold = LogLevel.Trace;
+                                    options.FormatterName = nameof(ColorFormatter);
+                                })
+                        .AddConsoleFormatter<ColorFormatter, ColorLoggerOptions>(
+                            options => options.ColorBehavior = LoggerColorBehavior.Enabled)
+                        .AddFilter<ConsoleLoggerProvider>("Microsoft", LogLevel.None)
+                        .AddFilter<ConsoleLoggerProvider>("System", LogLevel.None)
+                        .AddFilter<ConsoleLoggerProvider>("Worms", logLevel);
+                });
 }
