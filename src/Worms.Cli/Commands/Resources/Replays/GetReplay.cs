@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 
@@ -23,7 +23,8 @@ internal sealed class GetReplay : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class GetReplayHandler(ResourceGetter<LocalReplay> replayRetriever, ILogger logger) : ICommandHandler
+internal sealed class GetReplayHandler(ResourceGetter<LocalReplay> replayRetriever, ILogger<GetReplayHandler> logger)
+    : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
@@ -36,12 +37,12 @@ internal sealed class GetReplayHandler(ResourceGetter<LocalReplay> replayRetriev
         try
         {
             var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-            await replayRetriever.PrintResources(name, Console.Out, windowWidth, logger, cancellationToken)
+            await replayRetriever.PrintResources(name, Console.Out, windowWidth, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (ConfigurationException exception)
         {
-            logger.Error(exception.Message);
+            logger.LogError("{Message}", exception.Message);
             return 1;
         }
 

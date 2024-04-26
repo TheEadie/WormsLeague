@@ -1,10 +1,9 @@
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-using Serilog.Events;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
 using Worms.Cli.Logging;
@@ -16,16 +15,12 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        var logger = new LoggerConfiguration().MinimumLevel.Is(GetLogEventLevel(args))
-            .WriteTo.ColoredConsole(formatProvider: CultureInfo.CurrentCulture)
-            .CreateLogger();
-
         var serviceCollection = new ServiceCollection().AddHttpClient()
+            .AddWormsCliLogging(GetLogLevel(args))
             .AddWormsArmageddonFilesServices()
             .AddWormsArmageddonGameServices()
             .AddWormsCliResourcesServices()
-            .AddWormsCliServices()
-            .AddScoped<ILogger>(_ => logger);
+            .AddWormsCliServices();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
@@ -37,18 +32,37 @@ internal static class Program
     }
 
     [SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "This is more readable")]
-    private static LogEventLevel GetLogEventLevel(string[] args)
+    private static LogLevel GetLogLevel(string[] args)
     {
         if (args.Contains("-v") || args.Contains("--verbose"))
         {
-            return LogEventLevel.Verbose;
+            return LogLevel.Debug;
         }
 
         if (args.Contains("-q") || args.Contains("--quiet"))
         {
-            return LogEventLevel.Error;
+            return LogLevel.Error;
         }
 
-        return LogEventLevel.Information;
+        return LogLevel.Information;
     }
+
+    [UnconditionalSuppressMessage("RequiresDynamicCodeEvaluation", "IL3050")]
+    [UnconditionalSuppressMessage("RequiresDynamicCodeEvaluation", "IL2026")]
+    private static IServiceCollection AddWormsCliLogging(this IServiceCollection builder, LogLevel logLevel) =>
+        builder.AddLogging(
+            loggingBuilder =>
+                {
+                    _ = loggingBuilder.AddConsole(
+                            options =>
+                                {
+                                    options.LogToStandardErrorThreshold = LogLevel.Trace;
+                                    options.FormatterName = nameof(ColorFormatter);
+                                })
+                        .AddConsoleFormatter<ColorFormatter, ColorLoggerOptions>(
+                            options => options.ColorBehavior = LoggerColorBehavior.Enabled)
+                        .AddFilter<ConsoleLoggerProvider>("Microsoft", LogLevel.None)
+                        .AddFilter<ConsoleLoggerProvider>("System", LogLevel.None)
+                        .AddFilter<ConsoleLoggerProvider>("Worms", logLevel);
+                });
 }

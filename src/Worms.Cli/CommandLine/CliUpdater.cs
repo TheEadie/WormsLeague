@@ -1,5 +1,5 @@
 using System.IO.Abstractions;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Cli.Resources.Remote.Updates;
 
 namespace Worms.Cli.CommandLine;
@@ -8,25 +8,26 @@ internal sealed class CliUpdater(
     CliInfoRetriever cliInfoRetriever,
     ICliUpdateRetriever cliUpdateRetriever,
     ICliUpdateDownloader cliUpdateDownloader,
-    IFileSystem fileSystem)
+    IFileSystem fileSystem,
+    ILogger<CliUpdater> logger)
 {
-    public async Task DownloadLatestUpdate(ILogger logger)
+    public async Task DownloadLatestUpdate()
     {
-        logger.Verbose("Starting update");
+        logger.LogDebug("Starting update");
 
-        var cliInfo = cliInfoRetriever.Get(logger);
-        logger.Verbose(cliInfo.ToString());
+        var cliInfo = cliInfoRetriever.Get();
+        logger.LogDebug("{Info}", cliInfo.ToString());
 
         var latestCliVersion = await cliUpdateRetriever.GetLatestCliVersion().ConfigureAwait(false);
-        logger.Verbose($"Latest version: {latestCliVersion}");
+        logger.LogDebug("Latest version: {Version}", latestCliVersion);
 
         if (cliInfo.Version >= latestCliVersion)
         {
-            logger.Information("Worms CLI is up to date");
+            logger.LogInformation("Worms CLI is up to date");
             return;
         }
 
-        logger.Information($"Downloading Worms CLI {latestCliVersion}");
+        logger.LogInformation("Downloading Worms CLI {Version}", latestCliVersion);
 
         var updateFolder = fileSystem.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -37,7 +38,7 @@ internal sealed class CliUpdater(
         EnsureFolderExistsAndIsEmpty(updateFolder);
 
         await cliUpdateDownloader.DownloadLatestCli(updateFolder).ConfigureAwait(false);
-        logger.Warning("Update available - To install the update run Install-WormsCli");
+        logger.LogWarning("Update available - To install the update run Install-WormsCli");
     }
 
     private void EnsureFolderExistsAndIsEmpty(string updateFolder)

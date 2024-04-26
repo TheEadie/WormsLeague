@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game.Replays;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
@@ -27,7 +27,7 @@ internal sealed class ProcessReplay : Command
 internal sealed class ProcessReplayHandler(
     IReplayLogGenerator replayLogGenerator,
     IResourceRetriever<LocalReplay> replayRetriever,
-    ILogger logger) : ICommandHandler
+    ILogger<ProcessReplayHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
@@ -44,10 +44,9 @@ internal sealed class ProcessReplayHandler(
             pattern = name;
         }
 
-        foreach (var replayPath in await replayRetriever.Retrieve(pattern, logger, cancellationToken)
-                     .ConfigureAwait(false))
+        foreach (var replayPath in await replayRetriever.Retrieve(pattern, cancellationToken).ConfigureAwait(false))
         {
-            logger.Information($"Processing: {replayPath.Paths.WAgamePath}");
+            logger.LogInformation("Processing: {Path}", replayPath.Paths.WAgamePath);
             await replayLogGenerator.GenerateReplayLog(replayPath.Paths.WAgamePath).ConfigureAwait(false);
         }
 

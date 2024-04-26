@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Remote.Games;
 
@@ -22,7 +22,8 @@ internal sealed class GetGame : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class GetGameHandler(ResourceGetter<RemoteGame> gameRetriever, ILogger logger) : ICommandHandler
+internal sealed class GetGameHandler(ResourceGetter<RemoteGame> gameRetriever, ILogger<GetGameHandler> logger)
+    : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
@@ -35,12 +36,11 @@ internal sealed class GetGameHandler(ResourceGetter<RemoteGame> gameRetriever, I
         try
         {
             var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-            await gameRetriever.PrintResources(name, Console.Out, windowWidth, logger, cancellationToken)
-                .ConfigureAwait(false);
+            await gameRetriever.PrintResources(name, Console.Out, windowWidth, cancellationToken).ConfigureAwait(false);
         }
         catch (ConfigurationException exception)
         {
-            logger.Error(exception.Message);
+            logger.LogError("{Message}", exception.Message);
             return 1;
         }
 

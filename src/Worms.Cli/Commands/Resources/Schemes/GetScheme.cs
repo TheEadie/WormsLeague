@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Schemes;
 
@@ -23,7 +23,8 @@ internal sealed class GetScheme : Command
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetriever, ILogger logger) : ICommandHandler
+internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetriever, ILogger<GetSchemeHandler> logger)
+    : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
@@ -36,12 +37,12 @@ internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetrie
         try
         {
             var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-            await schemesRetriever.PrintResources(name, Console.Out, windowWidth, logger, cancellationToken)
+            await schemesRetriever.PrintResources(name, Console.Out, windowWidth, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (ConfigurationException exception)
         {
-            logger.Error(exception.Message);
+            logger.LogError("{Message}", exception.Message);
             return 1;
         }
 
