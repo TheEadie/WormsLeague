@@ -18,7 +18,7 @@ internal sealed class UpdateHandler(CliUpdater cliUpdater) : ICommandHandler
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
-        await cliUpdater.DownloadLatestUpdate().ConfigureAwait(false);
+        await cliUpdater.DownloadAndInstall().ConfigureAwait(false);
         return 0;
     }
 }
