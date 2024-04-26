@@ -53,6 +53,7 @@ cli.package.windows: cli.version
             -r win-x64 \
             -o .artifacts/win-x64 \
             --self-contained true \
+            -p:PublishTrimmed=true \
             /p:PublishSingleFile=true \
             /p:Version=$(cli_VERSION) \
             /p:DebugType=none
@@ -68,6 +69,7 @@ cli.package.linux: cli.version
             -r linux-x64 \
             -o .artifacts/linux-x64 \
             --self-contained true \
+            -p:PublishTrimmed=true \
             /p:PublishSingleFile=true \
             /p:Version=$(cli_VERSION) \
             /p:DebugType=none
@@ -82,6 +84,7 @@ cli.package.alpine: cli.version
             -r linux-musl-x64 \
             -o .artifacts/linux-musl-x64 \
             --self-contained true \
+            -p:PublishTrimmed=true \
             /p:PublishSingleFile=true \
             /p:Version=$(cli_VERSION) \
             /p:DebugType=none
