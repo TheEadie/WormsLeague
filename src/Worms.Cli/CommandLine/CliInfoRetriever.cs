@@ -17,13 +17,21 @@ internal sealed class CliInfoRetriever(IFileSystem fileSystem, ILogger<CliInfoRe
             version = new Version(0, 0, 0);
         }
 
-        var cliFolder = fileSystem.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName);
+        var execPath = Process.GetCurrentProcess().MainModule?.FileName;
+        var execName = fileSystem.Path.GetFileName(execPath);
+        if (execName is null)
+        {
+            logger.LogWarning("Could not get executable file of Worms CLI from assembly info");
+            execName = string.Empty;
+        }
+
+        var cliFolder = fileSystem.Path.GetDirectoryName(execPath);
         if (cliFolder is null)
         {
             logger.LogWarning("Could not get folder of Worms CLI from assembly info");
             cliFolder = string.Empty;
         }
 
-        return new CliInfo(version, cliFolder);
+        return new CliInfo(version, cliFolder, execName);
     }
 }

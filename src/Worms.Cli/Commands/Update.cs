@@ -6,8 +6,17 @@ namespace Worms.Cli.Commands;
 
 internal sealed class Update : Command
 {
+    public static readonly Option<bool> Force = new(
+        new[]
+        {
+            "--force",
+            "-f"
+        },
+        "Forces the latest version to be downloaded and installed even if the CLI is already up to date");
+
     public Update()
-        : base("update", "Update Worms CLI") { }
+        : base("update", "Update Worms CLI") =>
+        AddOption(Force);
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
@@ -18,7 +27,10 @@ internal sealed class UpdateHandler(CliUpdater cliUpdater) : ICommandHandler
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
-        await cliUpdater.DownloadLatestUpdate().ConfigureAwait(false);
+        var force = context.ParseResult.GetValueForOption(Update.Force);
+
+        await cliUpdater.DownloadAndInstall(force).ConfigureAwait(false);
+
         return 0;
     }
 }
