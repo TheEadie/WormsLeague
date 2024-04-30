@@ -11,17 +11,17 @@ internal sealed class CliUpdater(
     IFileSystem fileSystem,
     ILogger<CliUpdater> logger)
 {
-    public async Task DownloadAndInstall()
+    public async Task DownloadAndInstall(bool force)
     {
         logger.LogDebug("Starting update...");
 
         var cliInfo = cliInfoRetriever.Get();
-        logger.LogDebug("Current Install: {Info}", cliInfo.ToString());
+        logger.LogDebug("Current Version: {Info}", cliInfo.ToString());
 
         var latestCliVersion = await cliUpdateRetriever.GetLatestCliVersion().ConfigureAwait(false);
         logger.LogDebug("Latest version: {Version}", latestCliVersion);
 
-        if (cliInfo.Version >= latestCliVersion)
+        if (cliInfo.Version >= latestCliVersion && !force)
         {
             logger.LogInformation("Worms CLI is up to date");
             return;
