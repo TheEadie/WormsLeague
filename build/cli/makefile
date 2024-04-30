@@ -57,7 +57,6 @@ cli.package.windows: cli.version
             /p:PublishSingleFile=true \
             /p:Version=$(cli_VERSION) \
             /p:DebugType=none
-	@cp src/Worms.Cli/*.ps1 .artifacts/win-x64/
 	@echo $(cli_VERSION) > .artifacts/win-x64/version.txt
 	@echo ""
 

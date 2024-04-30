@@ -7,7 +7,7 @@ Repo containing tooling and config for the Redgate worms league
 ### Windows
 
 ```
-$script = Invoke-WebRequest https://raw.githubusercontent.com/TheEadie/WormsLeague/main/InstallCli.ps1
+$script = Invoke-WebRequest https://raw.githubusercontent.com/TheEadie/WormsLeague/main/install-cli.ps1
 Invoke-Expression $($script.content)
 ```
 
@@ -32,7 +32,8 @@ worms host
 ```
 
 This will:
-- Download the latest Scheme options
-- Start a game
-- Announce the game on Slack with a link to join
-- Upload the replay at the end of the game
+
+-   Download the latest Scheme options
+-   Start a game
+-   Announce the game on Slack with a link to join
+-   Upload the replay at the end of the game
