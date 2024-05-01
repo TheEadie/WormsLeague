@@ -47,7 +47,6 @@ internal sealed class CreateScheme : Command
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class CreateSchemeHandler(
     IResourceCreator<LocalScheme, LocalSchemeCreateParameters> schemeCreator,
-    IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters> randomSchemeCreator,
     IFileSystem fileSystem,
     IWormsLocator wormsLocator,
     ILogger<CreateSchemeHandler> logger) : ICommandHandler
@@ -58,32 +57,23 @@ internal sealed class CreateSchemeHandler(
     public async Task<int> InvokeAsync(InvocationContext context)
     {
         var name = context.ParseResult.GetValueForArgument(CreateScheme.SchemeName);
-        var resourceFolder = context.ParseResult.GetValueForOption(CreateScheme.ResourceFolder);
+        var outputFolder = context.ParseResult.GetValueForOption(CreateScheme.ResourceFolder);
         var inputFile = context.ParseResult.GetValueForOption(CreateScheme.InputFile);
         var random = context.ParseResult.GetValueForOption(CreateScheme.Random);
         var cancellationToken = context.GetCancellationToken();
 
-        var outputFolder = resourceFolder;
         Func<Task<LocalScheme>> creator;
 
         try
         {
             var validatedName = ValidateName(name);
             outputFolder = ValidateOutputFolder(outputFolder);
-            if (!random)
-            {
-                var (definition, source) = ValidateSchemeDefinition(inputFile);
-                creator = () => schemeCreator.Create(
-                    new LocalSchemeCreateParameters(validatedName, outputFolder, definition),
-                    cancellationToken);
-                logger.LogDebug("Scheme definition being read from {Source}", source);
-            }
-            else
-            {
-                creator = () => randomSchemeCreator.Create(
-                    new LocalSchemeCreateRandomParameters(validatedName, outputFolder),
-                    cancellationToken);
-            }
+            var (definition, source) = random ? (null, "random") : ValidateSchemeDefinition(inputFile);
+
+            logger.LogDebug("Scheme definition being read from {Source}", source);
+            creator = () => schemeCreator.Create(
+                new LocalSchemeCreateParameters(validatedName, outputFolder, random, definition),
+                cancellationToken);
         }
         catch (ConfigurationException exception)
         {

@@ -25,7 +25,6 @@ public static class ServiceRegistration
             .AddScoped<IRandomSchemeGenerator, RandomSchemeGenerator>()
             .AddScoped<IResourceRetriever<LocalScheme>, LocalSchemesRetriever>()
             .AddScoped<IResourceCreator<LocalScheme, LocalSchemeCreateParameters>, LocalSchemeCreator>()
-            .AddScoped<IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>, LocalSchemeRandomCreator>()
             .AddScoped<IResourceDeleter<LocalScheme>, LocalSchemeDeleter>()
             .AddScoped<IRemoteLeagueRetriever, RemoteLeagueRetriever>()
             .AddScoped<IRemoteSchemeDownloader, RemoteSchemeDownloader>()
@@ -64,7 +63,7 @@ public static class ServiceRegistration
         builder.AddScoped<IFolderOpener, LinuxFolderOpener>()
             .AddScoped<ICliUpdateDownloader, LinuxCliUpdateDownloader>();
 
-    public static IServiceCollection AddWindowsServices(this IServiceCollection builder) =>
+    private static IServiceCollection AddWindowsServices(this IServiceCollection builder) =>
         builder.AddScoped<IFolderOpener, WindowsFolderOpener>()
             .AddScoped<ICliUpdateDownloader, WindowsCliUpdateDownloader>();
 }
