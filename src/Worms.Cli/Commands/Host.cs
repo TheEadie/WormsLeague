@@ -99,7 +99,7 @@ internal sealed class HostHandler(
         await UploadReplayToWormsHub(config.SkipUpload, config.DryRun, cancellationToken).ConfigureAwait(false);
     }
 
-    private record Config(
+    private sealed record Config(
         bool DryRun,
         bool SkipSchemeDownload,
         bool SkipUpload,

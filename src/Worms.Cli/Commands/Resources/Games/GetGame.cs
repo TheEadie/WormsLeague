@@ -21,7 +21,6 @@ internal sealed class GetGame : Command
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class GetGameHandler(ResourceGetter<RemoteGame> gameRetriever, ILogger<GetGameHandler> logger)
     : ICommandHandler
 {
@@ -31,19 +30,18 @@ internal sealed class GetGameHandler(ResourceGetter<RemoteGame> gameRetriever, I
     public async Task<int> InvokeAsync(InvocationContext context)
     {
         var name = context.ParseResult.GetValueForArgument(GetGame.GameName);
+        var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
         var cancellationToken = context.GetCancellationToken();
 
-        try
+        var games = await gameRetriever.GetResources(name, cancellationToken).ConfigureAwait(false);
+
+        if (!games.IsValid)
         {
-            var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-            await gameRetriever.PrintResources(name, Console.Out, windowWidth, cancellationToken).ConfigureAwait(false);
-        }
-        catch (ConfigurationException exception)
-        {
-            logger.LogError("{Message}", exception.Message);
+            games.LogErrors(logger);
             return 1;
         }
 
+        gameRetriever.PrintResources(games.Value, Console.Out, windowWidth);
         return 0;
     }
 }

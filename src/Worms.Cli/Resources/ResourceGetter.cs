@@ -1,38 +1,30 @@
-using Worms.Cli.Commands;
-
 namespace Worms.Cli.Resources;
 
-public class ResourceGetter<T>(IResourceRetriever<T> retriever, IResourcePrinter<T> printer)
+internal sealed class ResourceGetter<T>(IResourceRetriever<T> retriever, IResourcePrinter<T> printer)
 {
-    public async Task PrintResources(
-        string name,
-        TextWriter writer,
-        int outputMaxWidth,
-        CancellationToken cancellationToken)
+    public async Task<Validated<IReadOnlyCollection<T>>> GetResources(string name, CancellationToken cancellationToken)
     {
         var requestForAll = string.IsNullOrWhiteSpace(name);
         var userSpecifiedName = !requestForAll && !name.Contains('*', StringComparison.InvariantCulture);
+
         var matches = requestForAll
             ? await retriever.Retrieve(cancellationToken).ConfigureAwait(false)
             : await retriever.Retrieve(name, cancellationToken).ConfigureAwait(false);
 
-        if (userSpecifiedName)
+        return matches.Count == 0 && userSpecifiedName
+            ? new Invalid<IReadOnlyCollection<T>>($"No resources found for '{name}'")
+            : new Valid<IReadOnlyCollection<T>>(matches);
+    }
+
+    public void PrintResources(IReadOnlyCollection<T> resources, TextWriter writer, int outputMaxWidth)
+    {
+        if (resources.Count == 1)
         {
-            switch (matches.Count)
-            {
-                case 0:
-                    throw new ConfigurationException($"No resources found with name: {name}");
-                case 1:
-                    printer.Print(writer, matches.Single(), outputMaxWidth);
-                    break;
-                default:
-                    printer.Print(writer, matches, outputMaxWidth);
-                    break;
-            }
+            printer.Print(writer, resources.Single(), outputMaxWidth);
         }
         else
         {
-            printer.Print(writer, matches, outputMaxWidth);
+            printer.Print(writer, resources, outputMaxWidth);
         }
     }
 }
