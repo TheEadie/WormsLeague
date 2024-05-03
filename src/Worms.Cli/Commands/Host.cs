@@ -63,39 +63,64 @@ internal sealed class HostHandler(
     public async Task<int> InvokeAsync(InvocationContext context)
     {
         var cancellationToken = context.GetCancellationToken();
-        var dryRun = context.ParseResult.GetValueForOption(Host.DryRun);
-        var skipUpload = context.ParseResult.GetValueForOption(Host.SkipUpload);
-        var skipAnnouncement = context.ParseResult.GetValueForOption(Host.SkipAnnouncement);
-        var skipSchemeDownload = context.ParseResult.GetValueForOption(Host.SkipSchemeDownload);
+        var config = new Config(
+            context.ParseResult.GetValueForOption(Host.DryRun),
+            context.ParseResult.GetValueForOption(Host.SkipSchemeDownload),
+            context.ParseResult.GetValueForOption(Host.SkipUpload),
+            context.ParseResult.GetValueForOption(Host.SkipAnnouncement),
+            GetIpAddress(Domain),
+            wormsLocator.Find());
 
-        string hostIp;
-        try
+        var validatedConfig = ValidateConfig(config);
+        if (!validatedConfig.IsValid)
         {
-            hostIp = GetIpAddress(Domain);
-        }
-        catch (ConfigurationException e)
-        {
-            logger.LogError("IP address could not be found. {Error}", e.Message);
+            validatedConfig.LogErrors(logger);
             return 1;
         }
 
-        var gameInfo = wormsLocator.Find();
+        await HostGame(validatedConfig.Value, cancellationToken).ConfigureAwait(false);
+        return 0;
+    }
 
-        if (!gameInfo.IsInstalled)
-        {
-            logger.LogError("Worms Armageddon is not installed");
-            return 1;
-        }
+    private async Task HostGame(Config config, CancellationToken cancellationToken)
+    {
+        await DownloadLatestOptions(config.SkipSchemeDownload, config.DryRun).ConfigureAwait(false);
+        var runGame = StartWorms(config.DryRun, cancellationToken);
 
-        await DownloadLatestOptions(skipSchemeDownload, dryRun).ConfigureAwait(false);
-        var runGame = StartWorms(dryRun, cancellationToken);
-
-        var game = await AnnounceGameToWormsHub(hostIp, skipAnnouncement, dryRun, cancellationToken)
+        var game = await AnnounceGameToWormsHub(
+                config.IpAddress.Value!,
+                config.SkipAnnouncement,
+                config.DryRun,
+                cancellationToken)
             .ConfigureAwait(false);
         await WaitForGameToClose(runGame).ConfigureAwait(false);
-        await MarkGameCompleteOnWormsHub(game, skipAnnouncement, dryRun, cancellationToken).ConfigureAwait(false);
-        await UploadReplayToWormsHub(skipUpload, dryRun, cancellationToken).ConfigureAwait(false);
-        return 0;
+        await MarkGameCompleteOnWormsHub(game, config.SkipAnnouncement, config.DryRun, cancellationToken)
+            .ConfigureAwait(false);
+        await UploadReplayToWormsHub(config.SkipUpload, config.DryRun, cancellationToken).ConfigureAwait(false);
+    }
+
+    private record Config(
+        bool DryRun,
+        bool SkipSchemeDownload,
+        bool SkipUpload,
+        bool SkipAnnouncement,
+        Validated<string> IpAddress,
+        GameInfo GameInfo);
+
+    private static Validated<Config> ValidateConfig(Config config)
+    {
+        var errors = new List<string>();
+        if (!config.IpAddress.IsValid)
+        {
+            errors.AddRange(config.IpAddress.Error);
+        }
+
+        if (!config.GameInfo.IsInstalled)
+        {
+            errors.Add("Worms Armageddon is not installed");
+        }
+
+        return errors.Count != 0 ? new Invalid<Config>(errors) : new Valid<Config>(config);
     }
 
     private async Task<RemoteGame?> AnnounceGameToWormsHub(
@@ -164,20 +189,25 @@ internal sealed class HostHandler(
         }
     }
 
-    private static string GetIpAddress(string domain)
+    private static Validated<string> GetIpAddress(string domain)
     {
         var adapters = NetworkInterface.GetAllNetworkInterfaces();
-        var leagueNetworkAdapter =
-            Array.Find(
-                adapters,
-                x => x.GetIPProperties().DnsSuffix == domain && x.OperationalStatus == OperationalStatus.Up)
-            ?? throw new ConfigurationException($"No network adapter for domain: {domain}");
+        var leagueNetworkAdapter = Array.Find(
+            adapters,
+            x => x.GetIPProperties().DnsSuffix == domain && x.OperationalStatus == OperationalStatus.Up);
 
-        return leagueNetworkAdapter.GetIPProperties()
-                .UnicastAddresses.FirstOrDefault(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
-                ?.Address.ToString()
-            ?? throw new ConfigurationException(
-                $"No IPv4 address found for network adapter: {leagueNetworkAdapter.Name}");
+        if (leagueNetworkAdapter is null)
+        {
+            return new Invalid<string>($"No network adapter found for domain: {domain}");
+        }
+
+        var ipAddress = leagueNetworkAdapter.GetIPProperties()
+            .UnicastAddresses.FirstOrDefault(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
+            ?.Address.ToString();
+
+        return ipAddress is null
+            ? new Invalid<string>($"No IPv4 address found for domain: {domain}")
+            : new Valid<string>(ipAddress);
     }
 
     private Task DownloadLatestOptions(bool skipSchemeDownload, bool dryRun)
