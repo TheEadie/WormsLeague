@@ -27,6 +27,25 @@ public class Invalid<T> : Validated<T>
 
 internal static class ValidatedExtensions
 {
+    public static Validated<T> Validate<T>(this T value, Func<T, bool> predicate, string error) =>
+        predicate(value) ? new Valid<T>(value) : new Invalid<T>(error);
+
+    public static Validated<T> Validate<T>(
+        this T value,
+        IEnumerable<(Func<T, bool> predicate, string error)> validations)
+    {
+        var errors = new List<string>();
+        foreach (var (predicate, error) in validations)
+        {
+            if (predicate(value))
+            {
+                errors.Add(error);
+            }
+        }
+
+        return errors.Count > 0 ? new Invalid<T>(errors) : new Valid<T>(value);
+    }
+
     [SuppressMessage("Usage", "CA2254:Template should be a static expression")]
     public static void LogErrors<T>(this Validated<T> validated, ILogger logger)
     {

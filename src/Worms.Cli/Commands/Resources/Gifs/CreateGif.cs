@@ -91,69 +91,62 @@ internal sealed class CreateGifHandler(
         var endOffset = context.ParseResult.GetValueForOption(CreateGif.EndOffset);
         var cancellationToken = context.GetCancellationToken();
 
-        LocalReplay replay;
-
-        try
+        var config = new Config(replayName, turn, fps, speed, startOffset, endOffset);
+        var validatedConfig = config.Validate(
+        [
+            (x => string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created"),
+            (x => x.Turn == default, "No turn provided for the Gif being created")
+        ]);
+        if (!validatedConfig.IsValid)
         {
-            replay = await ValidateReplay(replayName, turn, cancellationToken).ConfigureAwait(false);
-        }
-        catch (ConfigurationException exception)
-        {
-            logger.LogError("{Message}", exception.Message);
+            validatedConfig.LogErrors(logger);
             return 1;
         }
 
-        try
+        var replays = await replayRetriever.Retrieve(replayName!, cancellationToken).ConfigureAwait(false);
+        var validatedReplay = replays.Validate(
+        [
+            (x => x.Count == 0, $"No replays found with name: {replayName}"),
+            (x => x.Count > 1, $"More than one replay found matching pattern: {replayName}")
+        ]);
+
+        if (!validatedReplay.IsValid)
         {
-            logger.LogInformation("Creating gif for {ReplayName}, turn {Turn} ...", replayName, turn);
-            var gif = await gifCreator.Create(
-                    new LocalGifCreateParameters(
-                        replay,
-                        turn,
-                        TimeSpan.FromSeconds(startOffset),
-                        TimeSpan.FromSeconds(endOffset),
-                        fps,
-                        speed),
-                    cancellationToken)
-                .ConfigureAwait(false);
-            await Console.Out.WriteLineAsync(gif.Path).ConfigureAwait(false);
-        }
-        catch (FormatException exception)
-        {
-            logger.LogError("Failed to create gif: {Message}", exception.Message);
+            validatedReplay.LogErrors(logger);
             return 1;
-        }
-
-        return 0;
-    }
-
-    private async Task<LocalReplay> ValidateReplay(string? replay, uint turn, CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrWhiteSpace(replay))
-        {
-            throw new ConfigurationException("No replay provided for the Gif being created");
-        }
-
-        if (turn == default)
-        {
-            throw new ConfigurationException("No turn provided for the Gif being created");
-        }
-
-        var replays = await replayRetriever.Retrieve(replay, cancellationToken).ConfigureAwait(false);
-
-        if (replays.Count == 0)
-        {
-            throw new ConfigurationException($"No replays found with name: {replay}");
-        }
-
-        if (replays.Count > 1)
-        {
-            throw new ConfigurationException($"More than one replay found matching pattern: {replay}");
         }
 
         var foundReplay = replays.Single();
-        return foundReplay.Details.Turns.Count < turn
-            ? throw new ConfigurationException($"Replay {replay} does not have a turn {turn}")
-            : foundReplay;
+        Validated<LocalReplay> replay = foundReplay.Details.Turns.Count < turn
+            ? new Invalid<LocalReplay>(
+                $"Replay {replayName} only has {foundReplay.Details.Turns.Count} turns, cannot create gif for turn {turn}")
+            : new Valid<LocalReplay>(foundReplay));
+        if (!replay.IsValid)
+        {
+            replay.LogErrors(logger);
+            return 1;
+        }
+
+        logger.LogInformation("Creating gif for {ReplayName}, turn {Turn} ...", replayName, turn);
+        var gif = await gifCreator.Create(
+                new LocalGifCreateParameters(
+                    replay.Value,
+                    turn,
+                    TimeSpan.FromSeconds(startOffset),
+                    TimeSpan.FromSeconds(endOffset),
+                    fps,
+                    speed),
+                cancellationToken)
+            .ConfigureAwait(false);
+        await Console.Out.WriteLineAsync(gif.Path).ConfigureAwait(false);
+        return 0;
     }
+
+    private sealed record Config(
+        string? ReplayName,
+        uint Turn,
+        uint FramesPerSecond,
+        uint Speed,
+        uint StartOffset,
+        uint EndOffset);
 }
