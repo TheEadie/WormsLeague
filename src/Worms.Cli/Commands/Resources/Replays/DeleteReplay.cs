@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Microsoft.Extensions.Logging;
+using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 
@@ -21,7 +22,8 @@ internal sealed class DeleteReplay : Command
 
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class DeleteReplayHandler(
-    ResourceDeleter<LocalReplay> resourceDeleter,
+    IResourceRetriever<LocalReplay> resourceRetriever,
+    IResourceDeleter<LocalReplay> resourceDeleter,
     ILogger<DeleteReplayHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
@@ -32,16 +34,34 @@ internal sealed class DeleteReplayHandler(
         var name = context.ParseResult.GetValueForArgument(DeleteReplay.ReplayName);
         var cancellationToken = context.GetCancellationToken();
 
-        try
+        var replay = await name.Validate(NameIsNotEmpty())
+            .Bind(FindReplays())
+            .Validate(Only1ReplayFound())
+            .Bind(x => x.Single())
+            .ConfigureAwait(false);
+
+        if (!replay.IsValid)
         {
-            await resourceDeleter.Delete(name, cancellationToken).ConfigureAwait(false);
-        }
-        catch (ConfigurationException exception)
-        {
-            logger.LogError("{Message}", exception.Message);
+            replay.LogErrors(logger);
             return 1;
         }
 
+        resourceDeleter.Delete(replay.Value);
         return 0;
+
+        static IEnumerable<ValidationRule<string>> NameIsNotEmpty() =>
+            new RulesFor<string>().Must(
+                    x => !string.IsNullOrWhiteSpace(x),
+                    "No name provided for the replay to be deleted.")
+                .Build();
+
+        Func<string, Task<IReadOnlyCollection<LocalReplay>>> FindReplays() =>
+            async x => await resourceRetriever.Retrieve(x, cancellationToken).ConfigureAwait(false);
+
+        IEnumerable<ValidationRule<IReadOnlyCollection<LocalReplay>>> Only1ReplayFound() =>
+            new RulesFor<IReadOnlyCollection<LocalReplay>>()
+                .MustNot(x => x.Count == 0, $"No replay found with name: {name}")
+                .MustNot(x => x.Count > 1, $"More than one replay found with name matching: {name}")
+                .Build();
     }
 }
