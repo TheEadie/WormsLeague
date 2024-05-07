@@ -1,3 +1,5 @@
+using Worms.Cli.Commands.Validation;
+
 namespace Worms.Cli.Resources;
 
 internal sealed class ResourceGetter<T>(IResourceRetriever<T> retriever, IResourcePrinter<T> printer)

@@ -4,6 +4,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
+using Worms.Cli.Commands.Validation;
 using Worms.Cli.League;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
