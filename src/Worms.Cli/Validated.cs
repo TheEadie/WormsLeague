@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Worms.Cli;
 
-public class Validated<T>(bool isValid, T? value, IEnumerable<string> error)
+internal abstract class Validated<T>(bool isValid, T? value, IEnumerable<string> error)
 {
     [MemberNotNullWhen(true, nameof(Value))]
     [MemberNotNullWhen(false, nameof(Error))]
@@ -12,11 +12,17 @@ public class Validated<T>(bool isValid, T? value, IEnumerable<string> error)
     public T? Value { get; } = value;
 
     public IEnumerable<string> Error { get; } = error;
+
+    public Validated<TOut> Bind<TOut>(Func<T, TOut> func) =>
+        IsValid ? new Valid<TOut>(func(Value!)) : new Invalid<TOut>(Error);
+
+    public async Task<Validated<TOut>> Bind<TOut>(Func<T, Task<TOut>> asyncFunc) =>
+        IsValid ? new Valid<TOut>(await asyncFunc(Value!).ConfigureAwait(false)) : new Invalid<TOut>(Error);
 }
 
-public class Valid<T>(T value) : Validated<T>(true, value, []);
+internal sealed class Valid<T>(T value) : Validated<T>(true, value, []);
 
-public class Invalid<T> : Validated<T>
+internal sealed class Invalid<T> : Validated<T>
 {
     public Invalid(string error)
         : base(false, default, [error]) { }
@@ -27,6 +33,22 @@ public class Invalid<T> : Validated<T>
 
 internal static class ValidatedExtensions
 {
+    public static async Task<Validated<TOut>> Bind<T, TOut>(
+        this Task<Validated<T>> value,
+        Func<T, Task<TOut>> asyncFunc)
+    {
+        var result = await value.ConfigureAwait(false);
+        return result.IsValid
+            ? new Valid<TOut>(await asyncFunc(result.Value).ConfigureAwait(false))
+            : new Invalid<TOut>(result.Error);
+    }
+
+    public static async Task<Validated<TOut>> Bind<T, TOut>(this Task<Validated<T>> value, Func<T, TOut> func)
+    {
+        var result = await value.ConfigureAwait(false);
+        return result.IsValid ? new Valid<TOut>(func(result.Value)) : new Invalid<TOut>(result.Error);
+    }
+
     public static Validated<T> Validate<T>(this T value, Func<T, bool> predicate, string error) =>
         predicate(value) ? new Valid<T>(value) : new Invalid<T>(error);
 
@@ -65,6 +87,28 @@ internal static class ValidatedExtensions
         }
 
         return errors.Count > 0 ? new Invalid<T>(errors) : new Valid<T>(value.Value);
+    }
+
+    public static async Task<Validated<T>> Validate<T>(
+        this Task<Validated<T>> value,
+        IEnumerable<(Func<T, bool> predicate, string error)> validations)
+    {
+        var result = await value.ConfigureAwait(false);
+        if (!result.IsValid)
+        {
+            return result;
+        }
+
+        var errors = new List<string>();
+        foreach (var (predicate, error) in validations)
+        {
+            if (predicate(result.Value))
+            {
+                errors.Add(error);
+            }
+        }
+
+        return errors.Count > 0 ? new Invalid<T>(errors) : new Valid<T>(result.Value);
     }
 
     [SuppressMessage("Usage", "CA2254:Template should be a static expression")]

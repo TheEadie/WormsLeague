@@ -91,30 +91,28 @@ internal sealed class CreateGifHandler(
         var endOffset = context.ParseResult.GetValueForOption(CreateGif.EndOffset);
         var cancellationToken = context.GetCancellationToken();
 
-        var config = new Config(replayName, turn, fps, speed, startOffset, endOffset);
-        var validatedConfig = config.Validate(
-        [
-            (x => string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created"),
-            (x => x.Turn == default, "No turn provided for the Gif being created")
-        ]);
-
-        var replays = await GetReplaysForPattern(validatedConfig, cancellationToken).ConfigureAwait(false);
-        replays = replays.Validate(
-            new List<(Func<List<LocalReplay>, bool> predicate, string error)>
-            {
-                new(x => x.Count == 0, $"No replays found with name: {replayName}"),
-                new(x => x.Count > 1, $"More than one replay found matching pattern: {replayName}")
-            });
-
-        var foundReplay = GetSingleReplay(replays);
-
-        var replay = foundReplay.Validate(
-            new List<(Func<LocalReplay, bool>, string)>
-            {
-                new(
-                    x => x.Details.Turns.Count < turn,
-                    $"Replay {replayName} only has {foundReplay.Value!.Details.Turns.Count} turns, cannot create gif for turn {turn}")
-            });
+        var replay = await new Config(replayName, turn, fps, speed, startOffset, endOffset)
+            .Validate(
+            [
+                (x => string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created"),
+                (x => x.Turn == default, "No turn provided for the Gif being created")
+            ])
+            .Bind(x => FindReplays(x.ReplayName!, cancellationToken))
+            .Validate(
+                new List<(Func<List<LocalReplay>, bool> predicate, string error)>
+                {
+                    new(x => x.Count == 0, $"No replays found with name: {replayName}"),
+                    new(x => x.Count > 1, $"More than one replay found matching pattern: {replayName}")
+                })
+            .Bind(x => x.Single())
+            .Validate(
+                new List<(Func<LocalReplay, bool>, string)>
+                {
+                    new(
+                        x => x.Details.Turns.Count < turn,
+                        $"Replay {replayName} doesn't have {turn} turns, cannot create gif for turn {turn}")
+                })
+            .ConfigureAwait(false);
 
         if (!replay.IsValid)
         {
@@ -137,17 +135,10 @@ internal sealed class CreateGifHandler(
         return 0;
     }
 
-    private static Validated<LocalReplay> GetSingleReplay(Validated<List<LocalReplay>> replays) =>
-        !replays.IsValid ? new Invalid<LocalReplay>(replays.Error) : new Valid<LocalReplay>(replays.Value!.Single());
-
-    private async Task<Validated<List<LocalReplay>>> GetReplaysForPattern(
-        Validated<Config> config,
-        CancellationToken cancellationToken) =>
-        !config.IsValid
-            ? new Invalid<List<LocalReplay>>(config.Error)
-            : new Valid<List<LocalReplay>>(
-                (await replayRetriever.Retrieve(config.Value!.ReplayName!, cancellationToken).ConfigureAwait(false))
-                .ToList());
+    private async Task<List<LocalReplay>> FindReplays(string pattern, CancellationToken cancellationToken) =>
+    [
+        .. await replayRetriever.Retrieve(pattern, cancellationToken).ConfigureAwait(false)
+    ];
 
     private sealed record Config(
         string? ReplayName,
