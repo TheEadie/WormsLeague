@@ -69,16 +69,18 @@ internal sealed class HostHandler(
             context.ParseResult.GetValueForOption(Host.SkipUpload),
             context.ParseResult.GetValueForOption(Host.SkipAnnouncement),
             GetIpAddress(Domain),
-            wormsLocator.Find());
+            wormsLocator.Find()).Validate(
+            new RulesFor<Config>().Add(x => x.IpAddress.IsValid, x => x.IpAddress.Error.First())
+                .Add(x => x.GameInfo.IsInstalled, "Worms Armageddon is not installed")
+                .Build());
 
-        var validatedConfig = ValidateConfig(config);
-        if (!validatedConfig.IsValid)
+        if (!config.IsValid)
         {
-            validatedConfig.LogErrors(logger);
+            config.LogErrors(logger);
             return 1;
         }
 
-        await HostGame(validatedConfig.Value, cancellationToken).ConfigureAwait(false);
+        await HostGame(config.Value, cancellationToken).ConfigureAwait(false);
         return 0;
     }
 
@@ -106,22 +108,6 @@ internal sealed class HostHandler(
         bool SkipAnnouncement,
         Validated<string> IpAddress,
         GameInfo GameInfo);
-
-    private static Validated<Config> ValidateConfig(Config config)
-    {
-        var errors = new List<string>();
-        if (!config.IpAddress.IsValid)
-        {
-            errors.AddRange(config.IpAddress.Error);
-        }
-
-        if (!config.GameInfo.IsInstalled)
-        {
-            errors.Add("Worms Armageddon is not installed");
-        }
-
-        return errors.Count != 0 ? new Invalid<Config>(errors) : new Valid<Config>(config);
-    }
 
     private async Task<RemoteGame?> AnnounceGameToWormsHub(
         string hostIp,

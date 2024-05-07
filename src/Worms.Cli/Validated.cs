@@ -3,6 +3,27 @@ using Microsoft.Extensions.Logging;
 
 namespace Worms.Cli;
 
+internal class RulesFor<T>
+{
+    private readonly List<ValidationRule<T>> _rules = [];
+
+    public RulesFor<T> Add(Func<T, bool> rule, string message)
+    {
+        _rules.Add(new ValidationRule<T>(rule, _ => message));
+        return this;
+    }
+
+    public RulesFor<T> Add(Func<T, bool> rule, Func<T, string> message)
+    {
+        _rules.Add(new ValidationRule<T>(rule, message));
+        return this;
+    }
+
+    public IReadOnlyList<ValidationRule<T>> Build() => _rules;
+}
+
+internal record ValidationRule<T>(Func<T, bool> Predicate, Func<T, string> Error);
+
 internal abstract class Validated<T>(bool isValid, T? value, IEnumerable<string> error)
 {
     [MemberNotNullWhen(true, nameof(Value))]
@@ -52,25 +73,21 @@ internal static class ValidatedExtensions
     public static Validated<T> Validate<T>(this T value, Func<T, bool> predicate, string error) =>
         predicate(value) ? new Valid<T>(value) : new Invalid<T>(error);
 
-    public static Validated<T> Validate<T>(
-        this T value,
-        IEnumerable<(Func<T, bool> predicate, string error)> validations)
+    public static Validated<T> Validate<T>(this T value, IEnumerable<ValidationRule<T>> validations)
     {
         var errors = new List<string>();
         foreach (var (predicate, error) in validations)
         {
             if (predicate(value))
             {
-                errors.Add(error);
+                errors.Add(error(value));
             }
         }
 
         return errors.Count > 0 ? new Invalid<T>(errors) : new Valid<T>(value);
     }
 
-    public static Validated<T> Validate<T>(
-        this Validated<T> value,
-        IEnumerable<(Func<T, bool> predicate, string error)> validations)
+    public static Validated<T> Validate<T>(this Validated<T> value, IEnumerable<ValidationRule<T>> validations)
     {
         if (!value.IsValid)
         {
@@ -82,7 +99,7 @@ internal static class ValidatedExtensions
         {
             if (predicate(value.Value))
             {
-                errors.Add(error);
+                errors.Add(error(value.Value));
             }
         }
 
@@ -91,7 +108,7 @@ internal static class ValidatedExtensions
 
     public static async Task<Validated<T>> Validate<T>(
         this Task<Validated<T>> value,
-        IEnumerable<(Func<T, bool> predicate, string error)> validations)
+        IEnumerable<ValidationRule<T>> validations)
     {
         var result = await value.ConfigureAwait(false);
         if (!result.IsValid)
@@ -104,7 +121,7 @@ internal static class ValidatedExtensions
         {
             if (predicate(result.Value))
             {
-                errors.Add(error);
+                errors.Add(error(result.Value));
             }
         }
 
