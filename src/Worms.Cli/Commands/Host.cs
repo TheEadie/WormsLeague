@@ -63,17 +63,23 @@ internal sealed class HostHandler(
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
+        var dryRun = context.ParseResult.GetValueForOption(Host.DryRun);
+        var skipSchemeDownload = context.ParseResult.GetValueForOption(Host.SkipSchemeDownload);
+        var skipUpload = context.ParseResult.GetValueForOption(Host.SkipUpload);
+        var skipAnnouncement = context.ParseResult.GetValueForOption(Host.SkipAnnouncement);
         var cancellationToken = context.GetCancellationToken();
-        var config = new Config(
-            context.ParseResult.GetValueForOption(Host.DryRun),
-            context.ParseResult.GetValueForOption(Host.SkipSchemeDownload),
-            context.ParseResult.GetValueForOption(Host.SkipUpload),
-            context.ParseResult.GetValueForOption(Host.SkipAnnouncement),
-            GetIpAddress(Domain),
-            wormsLocator.Find()).Validate(
-            new RulesFor<Config>().Add(x => x.IpAddress.IsValid, x => x.IpAddress.Error.First())
-                .Add(x => x.GameInfo.IsInstalled, "Worms Armageddon is not installed")
-                .Build());
+
+        var config =
+            new Config(
+                dryRun,
+                skipSchemeDownload,
+                skipUpload,
+                skipAnnouncement,
+                GetIpAddress(Domain),
+                wormsLocator.Find()).Validate(
+                new RulesFor<Config>().Add(x => x.IpAddress.IsValid, x => x.IpAddress.Error.First())
+                    .Add(x => x.GameInfo.IsInstalled, "Worms Armageddon is not installed")
+                    .Build());
 
         if (!config.IsValid)
         {
@@ -178,23 +184,28 @@ internal sealed class HostHandler(
 
     private static Validated<string> GetIpAddress(string domain)
     {
-        var adapters = NetworkInterface.GetAllNetworkInterfaces();
-        var leagueNetworkAdapter = Array.Find(
-            adapters,
-            x => x.GetIPProperties().DnsSuffix == domain && x.OperationalStatus == OperationalStatus.Up);
+        return new Valid<NetworkInterface[]>(NetworkInterface.GetAllNetworkInterfaces()).Bind(GetAdaptersForDomain())
+            .Validate(NetworkAdapterExists())
+            .Bind(GetIpV4Address())
+            .Validate(IpV4AddressExists())
+            .Bind(x => x!);
 
-        if (leagueNetworkAdapter is null)
-        {
-            return new Invalid<string>($"No network adapter found for domain: {domain}");
-        }
+        Func<NetworkInterface[], NetworkInterface?> GetAdaptersForDomain() =>
+            x => Array.Find(
+                x,
+                a => a.GetIPProperties().DnsSuffix == domain && a.OperationalStatus == OperationalStatus.Up);
 
-        var ipAddress = leagueNetworkAdapter.GetIPProperties()
-            .UnicastAddresses.FirstOrDefault(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
-            ?.Address.ToString();
+        Func<NetworkInterface?, string?> GetIpV4Address() =>
+            x => x!.GetIPProperties()
+                .UnicastAddresses.FirstOrDefault(u => u.Address.AddressFamily == AddressFamily.InterNetwork)
+                ?.Address.ToString();
 
-        return ipAddress is null
-            ? new Invalid<string>($"No IPv4 address found for domain: {domain}")
-            : new Valid<string>(ipAddress);
+        IEnumerable<ValidationRule<NetworkInterface?>> NetworkAdapterExists() =>
+            new RulesFor<NetworkInterface?>().Add(x => x is not null, $"No network adapter found for domain: {domain}")
+                .Build();
+
+        IEnumerable<ValidationRule<string?>> IpV4AddressExists() =>
+            new RulesFor<string?>().Add(x => x is not null, $"No IPv4 address found for domain: {domain}").Build();
     }
 
     private Task DownloadLatestOptions(bool skipSchemeDownload, bool dryRun)
