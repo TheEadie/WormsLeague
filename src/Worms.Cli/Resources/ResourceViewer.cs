@@ -18,7 +18,7 @@ internal sealed class ResourceViewer<T, TParams>(
     private static IEnumerable<ValidationRule<string>> NameIsNotEmpty() =>
         new RulesFor<string>().Must(
                 x => !string.IsNullOrWhiteSpace(x),
-                "No name provided for the replay to be deleted.")
+                "No name provided for the resource to be viewed.")
             .Build();
 
     private static IEnumerable<ValidationRule<IReadOnlyCollection<T>>> Only1ResourceFound(string? name) =>
