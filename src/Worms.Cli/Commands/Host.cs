@@ -77,9 +77,9 @@ internal sealed class HostHandler(
                 skipAnnouncement,
                 GetIpAddress(Domain),
                 wormsLocator.Find()).Validate(
-                new RulesFor<Config>().Must(x => x.IpAddress.IsValid, x => x.IpAddress.Error.First())
-                    .Must(x => x.GameInfo.IsInstalled, "Worms Armageddon is not installed")
-                    .Build());
+                Valid.Rules<Config>()
+                    .Must(x => x.IpAddress.IsValid, x => x.IpAddress.Error.First())
+                    .Must(x => x.GameInfo.IsInstalled, "Worms Armageddon is not installed"));
 
         if (!config.IsValid)
         {
@@ -201,12 +201,11 @@ internal sealed class HostHandler(
                 .UnicastAddresses.FirstOrDefault(u => u.Address.AddressFamily == AddressFamily.InterNetwork)
                 ?.Address.ToString();
 
-        IEnumerable<ValidationRule<NetworkInterface?>> NetworkAdapterExists() =>
-            new RulesFor<NetworkInterface?>().Must(x => x is not null, $"No network adapter found for domain: {domain}")
-                .Build();
+        List<ValidationRule<NetworkInterface?>> NetworkAdapterExists() =>
+            Valid.Rules<NetworkInterface?>().Must(x => x is not null, $"No network adapter found for domain: {domain}");
 
-        IEnumerable<ValidationRule<string?>> IpV4AddressExists() =>
-            new RulesFor<string?>().Must(x => x is not null, $"No IPv4 address found for domain: {domain}").Build();
+        List<ValidationRule<string?>> IpV4AddressExists() =>
+            Valid.Rules<string?>().Must(x => x is not null, $"No IPv4 address found for domain: {domain}");
     }
 
     private Task DownloadLatestOptions(bool skipSchemeDownload, bool dryRun)

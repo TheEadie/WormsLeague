@@ -30,5 +30,12 @@ internal sealed class RulesFor<T>
         return this;
     }
 
-    public IReadOnlyList<ValidationRule<T>> Build() => _rules;
+    public List<ValidationRule<T>> Build() => _rules;
+
+    public static implicit operator List<ValidationRule<T>>(RulesFor<T> rules) => [.. rules.Build()];
+}
+
+internal static class Valid
+{
+    public static RulesFor<T> Rules<T>() => new();
 }

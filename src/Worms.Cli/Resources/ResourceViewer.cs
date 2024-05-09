@@ -15,14 +15,12 @@ internal sealed class ResourceViewer<T, TParams>(
 
     public void View(T resource, TParams parameters) => resourceViewer.View(resource, parameters);
 
-    private static IEnumerable<ValidationRule<string>> NameIsNotEmpty() =>
-        new RulesFor<string>().Must(
-                x => !string.IsNullOrWhiteSpace(x),
-                "No name provided for the resource to be viewed.")
-            .Build();
+    private static List<ValidationRule<string>> NameIsNotEmpty() =>
+        Valid.Rules<string>()
+            .Must(x => !string.IsNullOrWhiteSpace(x), "No name provided for the resource to be viewed.");
 
-    private static IEnumerable<ValidationRule<IReadOnlyCollection<T>>> Only1ResourceFound(string? name) =>
-        new RulesFor<IReadOnlyCollection<T>>().MustNot(x => x.Count == 0, $"No resource found with name: {name}")
-            .MustNot(x => x.Count > 1, $"More than one resource found with name matching: {name}")
-            .Build();
+    private static List<ValidationRule<IReadOnlyCollection<T>>> Only1ResourceFound(string? name) =>
+        Valid.Rules<IReadOnlyCollection<T>>()
+            .MustNot(x => x.Count == 0, $"No resource found with name: {name}")
+            .MustNot(x => x.Count > 1, $"More than one resource found with name matching: {name}");
 }

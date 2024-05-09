@@ -89,15 +89,12 @@ internal sealed class CreateSchemeHandler(
 
     private sealed record Config(string Name, string? OutputFolder, string? InputFile, bool Random, GameInfo GameInfo);
 
-    private static IReadOnlyList<ValidationRule<Config>> ValidConfig()
-    {
-        return new RulesFor<Config>()
+    private static List<ValidationRule<Config>> ValidConfig() =>
+        Valid.Rules<Config>()
             .Must(x => !string.IsNullOrWhiteSpace(x.Name), "No name provided for the Scheme being created.")
             .Must(
                 x => x.GameInfo.IsInstalled || !string.IsNullOrWhiteSpace(x.OutputFolder),
-                "Worms is not installed. Use the --resource-folder option to specify where the Scheme should be created")
-            .Build();
-    }
+                "Worms is not installed. Use the --resource-folder option to specify where the Scheme should be created");
 
     [SuppressMessage("Style", "IDE0046:Convert to conditional expression")]
     private string? LoadSchemeDefinition(Config config)

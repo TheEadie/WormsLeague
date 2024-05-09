@@ -27,14 +27,11 @@ internal sealed class ResourceGetter<T>(IResourceRetriever<T> retriever, IResour
         }
     }
 
-    private static IReadOnlyList<ValidationRule<IReadOnlyCollection<T>>> ContainsAtLeastOneResultIfSearchTerm(
-        string searchTerm)
+    private static List<ValidationRule<IReadOnlyCollection<T>>> ContainsAtLeastOneResultIfSearchTerm(string searchTerm)
     {
         var userSpecifiedName = !string.IsNullOrWhiteSpace(searchTerm)
             && !searchTerm.Contains('*', StringComparison.InvariantCulture);
-        return new RulesFor<IReadOnlyCollection<T>>().MustNot(
-                x => x.Count == 0 && userSpecifiedName,
-                $"No resources found for {searchTerm}")
-            .Build();
+        return Valid.Rules<IReadOnlyCollection<T>>()
+            .MustNot(x => x.Count == 0 && userSpecifiedName, $"No resources found for {searchTerm}");
     }
 }

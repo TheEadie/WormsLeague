@@ -121,24 +121,21 @@ internal sealed class CreateGifHandler(
         return 0;
     }
 
-    private static IReadOnlyList<ValidationRule<LocalReplay>> ValidConfigForReplay(string? replayName)
+    private static List<ValidationRule<LocalReplay>> ValidConfigForReplay(string? replayName)
     {
-        return new RulesFor<LocalReplay>().Must(
-                x => x.Details.Turns.Count == 0,
-                $"Replay {replayName} has no turns, cannot create gif")
-            .Build();
+        return Valid.Rules<LocalReplay>()
+            .Must(x => x.Details.Turns.Count == 0, $"Replay {replayName} has no turns, cannot create gif");
     }
 
-    private static IReadOnlyList<ValidationRule<List<LocalReplay>>> Only1ReplayFound(string? replayName) =>
-        new RulesFor<List<LocalReplay>>().MustNot(x => x.Count == 0, $"No replays found with name: {replayName}")
-            .MustNot(x => x.Count > 1, $"More than one replay found matching pattern: {replayName}")
-            .Build();
+    private static List<ValidationRule<List<LocalReplay>>> Only1ReplayFound(string? replayName) =>
+        Valid.Rules<List<LocalReplay>>()
+            .MustNot(x => x.Count == 0, $"No replays found with name: {replayName}")
+            .MustNot(x => x.Count > 1, $"More than one replay found matching pattern: {replayName}");
 
-    private static IReadOnlyList<ValidationRule<Config>> ValidConfig() =>
-        new RulesFor<Config>()
+    private static List<ValidationRule<Config>> ValidConfig() =>
+        Valid.Rules<Config>()
             .Must(x => string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created")
-            .Must(x => x.Turn == default, "No turn provided for the Gif being created")
-            .Build();
+            .Must(x => x.Turn == default, "No turn provided for the Gif being created");
 
     private async Task<List<LocalReplay>> FindReplays(string pattern, CancellationToken cancellationToken) =>
     [

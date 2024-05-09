@@ -13,14 +13,12 @@ internal sealed class ResourceDeleter<T>(IResourceRetriever<T> retriever, IResou
 
     public void Delete(T resource) => deleter.Delete(resource);
 
-    private static IEnumerable<ValidationRule<string>> NameIsNotEmpty() =>
-        new RulesFor<string>().Must(
-                x => !string.IsNullOrWhiteSpace(x),
-                "No name provided for the resource to be deleted.")
-            .Build();
+    private static List<ValidationRule<string>> NameIsNotEmpty() =>
+        Valid.Rules<string>()
+            .Must(x => !string.IsNullOrWhiteSpace(x), "No name provided for the resource to be deleted.");
 
-    private static IEnumerable<ValidationRule<IReadOnlyCollection<T>>> Only1ResourceFound(string? name) =>
-        new RulesFor<IReadOnlyCollection<T>>().MustNot(x => x.Count == 0, $"No resource found with name: {name}")
-            .MustNot(x => x.Count > 1, $"More than one resource found with name matching: {name}")
-            .Build();
+    private static List<ValidationRule<IReadOnlyCollection<T>>> Only1ResourceFound(string? name) =>
+        Valid.Rules<IReadOnlyCollection<T>>()
+            .MustNot(x => x.Count == 0, $"No resource found with name: {name}")
+            .MustNot(x => x.Count > 1, $"More than one resource found with name matching: {name}");
 }
