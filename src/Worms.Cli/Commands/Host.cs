@@ -184,11 +184,11 @@ internal sealed class HostHandler(
 
     private static Validated<string> GetIpAddress(string domain)
     {
-        return new Valid<NetworkInterface[]>(NetworkInterface.GetAllNetworkInterfaces()).Bind(GetAdaptersForDomain())
+        return new Valid<NetworkInterface[]>(NetworkInterface.GetAllNetworkInterfaces()).Map(GetAdaptersForDomain())
             .Validate(NetworkAdapterExists())
-            .Bind(GetIpV4Address())
+            .Map(GetIpV4Address())
             .Validate(IpV4AddressExists())
-            .Bind(x => x!);
+            .Map(x => x!);
 
         Func<NetworkInterface[], NetworkInterface?> GetAdaptersForDomain() =>
             x => Array.Find(

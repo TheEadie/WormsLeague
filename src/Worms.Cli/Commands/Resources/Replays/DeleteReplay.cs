@@ -35,9 +35,9 @@ internal sealed class DeleteReplayHandler(
         var cancellationToken = context.GetCancellationToken();
 
         var replay = await name.Validate(NameIsNotEmpty())
-            .Bind(FindReplays())
+            .Map(FindReplays())
             .Validate(Only1ReplayFound())
-            .Bind(x => x.Single())
+            .Map(x => x.Single())
             .ConfigureAwait(false);
 
         if (!replay.IsValid)

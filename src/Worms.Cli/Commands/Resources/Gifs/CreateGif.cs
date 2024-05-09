@@ -98,12 +98,12 @@ internal sealed class CreateGifHandler(
                     .Must(x => string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created")
                     .Must(x => x.Turn == default, "No turn provided for the Gif being created")
                     .Build())
-            .Bind(x => FindReplays(x.ReplayName!, cancellationToken))
+            .Map(x => FindReplays(x.ReplayName!, cancellationToken))
             .Validate(
                 new RulesFor<List<LocalReplay>>().Must(x => x.Count == 0, $"No replays found with name: {replayName}")
                     .Must(x => x.Count > 1, $"More than one replay found matching pattern: {replayName}")
                     .Build())
-            .Bind(x => x.Single())
+            .Map(x => x.Single())
             .Validate(
                 new RulesFor<LocalReplay>().Must(
                         x => x.Details.Turns.Count == 0,
