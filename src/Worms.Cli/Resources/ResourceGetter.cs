@@ -7,15 +7,12 @@ internal sealed class ResourceGetter<T>(IResourceRetriever<T> retriever, IResour
     public async Task<Validated<IReadOnlyCollection<T>>> GetResources(string name, CancellationToken cancellationToken)
     {
         var requestForAll = string.IsNullOrWhiteSpace(name);
-        var userSpecifiedName = !requestForAll && !name.Contains('*', StringComparison.InvariantCulture);
 
         var matches = requestForAll
             ? await retriever.Retrieve(cancellationToken).ConfigureAwait(false)
             : await retriever.Retrieve(name, cancellationToken).ConfigureAwait(false);
 
-        return matches.Count == 0 && userSpecifiedName
-            ? new Invalid<IReadOnlyCollection<T>>($"No resources found for '{name}'")
-            : new Valid<IReadOnlyCollection<T>>(matches);
+        return matches.Validate(ContainsAtLeastOneResultIfSearchTerm(name));
     }
 
     public void PrintResources(IReadOnlyCollection<T> resources, TextWriter writer, int outputMaxWidth)
@@ -28,5 +25,16 @@ internal sealed class ResourceGetter<T>(IResourceRetriever<T> retriever, IResour
         {
             printer.Print(writer, resources, outputMaxWidth);
         }
+    }
+
+    private static IReadOnlyList<ValidationRule<IReadOnlyCollection<T>>> ContainsAtLeastOneResultIfSearchTerm(
+        string searchTerm)
+    {
+        var userSpecifiedName = !string.IsNullOrWhiteSpace(searchTerm)
+            && !searchTerm.Contains('*', StringComparison.InvariantCulture);
+        return new RulesFor<IReadOnlyCollection<T>>().MustNot(
+                x => x.Count == 0 && userSpecifiedName,
+                $"No resources found for {searchTerm}")
+            .Build();
     }
 }

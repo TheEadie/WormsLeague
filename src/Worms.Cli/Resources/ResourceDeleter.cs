@@ -1,31 +1,26 @@
-using Worms.Cli.Commands;
+using Worms.Cli.Commands.Validation;
 
 namespace Worms.Cli.Resources;
 
-public class ResourceDeleter<T>(IResourceRetriever<T> retriever, IResourceDeleter<T> deleter)
+internal class ResourceDeleter<T>(IResourceRetriever<T> retriever, IResourceDeleter<T> deleter)
 {
-    public async Task Delete(string name, CancellationToken cancellationToken)
-    {
-        name = ValidateName(name);
-        var resource = await GetResource(name, cancellationToken).ConfigureAwait(false);
-        deleter.Delete(resource);
-    }
+    public async Task<Validated<T>> GetResource(string name, CancellationToken cancellationToken) =>
+        await name.Validate(NameIsNotEmpty())
+            .Map(x => retriever.Retrieve(x, cancellationToken))
+            .Validate(Only1ResourceFound(name))
+            .Map(x => x.Single())
+            .ConfigureAwait(false);
 
-    private async Task<T> GetResource(string name, CancellationToken cancellationToken)
-    {
-        var resourcesFound = await retriever.Retrieve(name, cancellationToken).ConfigureAwait(false);
+    public void Delete(T resource) => deleter.Delete(resource);
 
-        return resourcesFound.Count switch
-        {
-            0 => throw new ConfigurationException($"No resource found with name: {name}"),
-            1 => resourcesFound.Single(),
-            > 1 => throw new ConfigurationException($"More than one resource found with name matching: {name}"),
-            _ => throw new ArgumentOutOfRangeException(nameof(name), "Unexpected number of resources found.")
-        };
-    }
+    private static IEnumerable<ValidationRule<string>> NameIsNotEmpty() =>
+        new RulesFor<string>().Must(
+                x => !string.IsNullOrWhiteSpace(x),
+                "No name provided for the replay to be deleted.")
+            .Build();
 
-    private static string ValidateName(string name) =>
-        string.IsNullOrWhiteSpace(name)
-            ? throw new ConfigurationException("No name provided for the resource to be deleted.")
-            : name;
+    private static IEnumerable<ValidationRule<IReadOnlyCollection<T>>> Only1ResourceFound(string? name) =>
+        new RulesFor<IReadOnlyCollection<T>>().MustNot(x => x.Count == 0, $"No resource found with name: {name}")
+            .MustNot(x => x.Count > 1, $"More than one resource found with name matching: {name}")
+            .Build();
 }

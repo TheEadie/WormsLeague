@@ -22,8 +22,7 @@ internal sealed class DeleteReplay : Command
 
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class DeleteReplayHandler(
-    IResourceRetriever<LocalReplay> resourceRetriever,
-    IResourceDeleter<LocalReplay> resourceDeleter,
+    ResourceDeleter<LocalReplay> resourceDeleter,
     ILogger<DeleteReplayHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
@@ -34,11 +33,7 @@ internal sealed class DeleteReplayHandler(
         var name = context.ParseResult.GetValueForArgument(DeleteReplay.ReplayName);
         var cancellationToken = context.GetCancellationToken();
 
-        var replay = await name.Validate(NameIsNotEmpty())
-            .Map(FindReplays())
-            .Validate(Only1ReplayFound())
-            .Map(x => x.Single())
-            .ConfigureAwait(false);
+        var replay = await resourceDeleter.GetResource(name, cancellationToken).ConfigureAwait(false);
 
         if (!replay.IsValid)
         {
@@ -48,20 +43,5 @@ internal sealed class DeleteReplayHandler(
 
         resourceDeleter.Delete(replay.Value);
         return 0;
-
-        static IEnumerable<ValidationRule<string>> NameIsNotEmpty() =>
-            new RulesFor<string>().Must(
-                    x => !string.IsNullOrWhiteSpace(x),
-                    "No name provided for the replay to be deleted.")
-                .Build();
-
-        Func<string, Task<IReadOnlyCollection<LocalReplay>>> FindReplays() =>
-            async x => await resourceRetriever.Retrieve(x, cancellationToken).ConfigureAwait(false);
-
-        IEnumerable<ValidationRule<IReadOnlyCollection<LocalReplay>>> Only1ReplayFound() =>
-            new RulesFor<IReadOnlyCollection<LocalReplay>>()
-                .MustNot(x => x.Count == 0, $"No replay found with name: {name}")
-                .MustNot(x => x.Count > 1, $"More than one replay found with name matching: {name}")
-                .Build();
     }
 }

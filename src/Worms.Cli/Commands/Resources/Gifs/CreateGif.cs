@@ -92,23 +92,12 @@ internal sealed class CreateGifHandler(
         var endOffset = context.ParseResult.GetValueForOption(CreateGif.EndOffset);
         var cancellationToken = context.GetCancellationToken();
 
-        var replay = await new Config(replayName, turn, fps, speed, startOffset, endOffset)
-            .Validate(
-                new RulesFor<Config>()
-                    .Must(x => string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created")
-                    .Must(x => x.Turn == default, "No turn provided for the Gif being created")
-                    .Build())
+        var config = new Config(replayName, turn, fps, speed, startOffset, endOffset);
+        var replay = await config.Validate(ValidConfig())
             .Map(x => FindReplays(x.ReplayName!, cancellationToken))
-            .Validate(
-                new RulesFor<List<LocalReplay>>().Must(x => x.Count == 0, $"No replays found with name: {replayName}")
-                    .Must(x => x.Count > 1, $"More than one replay found matching pattern: {replayName}")
-                    .Build())
+            .Validate(Only1ReplayFound(replayName))
             .Map(x => x.Single())
-            .Validate(
-                new RulesFor<LocalReplay>().Must(
-                        x => x.Details.Turns.Count == 0,
-                        $"Replay {replayName} has no turns, cannot create gif")
-                    .Build())
+            .Validate(ValidConfigForReplay(replayName))
             .ConfigureAwait(false);
 
         if (!replay.IsValid)
@@ -131,6 +120,25 @@ internal sealed class CreateGifHandler(
         await Console.Out.WriteLineAsync(gif.Path).ConfigureAwait(false);
         return 0;
     }
+
+    private static IReadOnlyList<ValidationRule<LocalReplay>> ValidConfigForReplay(string? replayName)
+    {
+        return new RulesFor<LocalReplay>().Must(
+                x => x.Details.Turns.Count == 0,
+                $"Replay {replayName} has no turns, cannot create gif")
+            .Build();
+    }
+
+    private static IReadOnlyList<ValidationRule<List<LocalReplay>>> Only1ReplayFound(string? replayName) =>
+        new RulesFor<List<LocalReplay>>().MustNot(x => x.Count == 0, $"No replays found with name: {replayName}")
+            .MustNot(x => x.Count > 1, $"More than one replay found matching pattern: {replayName}")
+            .Build();
+
+    private static IReadOnlyList<ValidationRule<Config>> ValidConfig() =>
+        new RulesFor<Config>()
+            .Must(x => string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created")
+            .Must(x => x.Turn == default, "No turn provided for the Gif being created")
+            .Build();
 
     private async Task<List<LocalReplay>> FindReplays(string pattern, CancellationToken cancellationToken) =>
     [

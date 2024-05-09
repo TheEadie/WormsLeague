@@ -184,7 +184,8 @@ internal sealed class HostHandler(
 
     private static Validated<string> GetIpAddress(string domain)
     {
-        return new Valid<NetworkInterface[]>(NetworkInterface.GetAllNetworkInterfaces()).Map(GetAdaptersForDomain())
+        return NetworkInterface.GetAllNetworkInterfaces()
+            .Bind(GetAdaptersForDomain())
             .Validate(NetworkAdapterExists())
             .Map(GetIpV4Address())
             .Validate(IpV4AddressExists())
