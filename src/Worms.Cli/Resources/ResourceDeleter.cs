@@ -2,7 +2,7 @@ using Worms.Cli.Commands.Validation;
 
 namespace Worms.Cli.Resources;
 
-internal class ResourceDeleter<T>(IResourceRetriever<T> retriever, IResourceDeleter<T> deleter)
+internal sealed class ResourceDeleter<T>(IResourceRetriever<T> retriever, IResourceDeleter<T> deleter)
 {
     public async Task<Validated<T>> GetResource(string name, CancellationToken cancellationToken) =>
         await name.Validate(NameIsNotEmpty())

@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Microsoft.Extensions.Logging;
+using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 
@@ -40,18 +41,17 @@ internal sealed class ViewReplayHandler(
     {
         var name = context.ParseResult.GetValueForArgument(ViewReplay.ReplayName);
         var turn = context.ParseResult.GetValueForOption(ViewReplay.Turn);
+        var cancellationToken = context.GetCancellationToken();
 
-        try
+        var replay = await resourceViewer.GetResource(name, cancellationToken).ConfigureAwait(false);
+
+        if (!replay.IsValid)
         {
-            await resourceViewer.View(name, new LocalReplayViewParameters(turn), context.GetCancellationToken())
-                .ConfigureAwait(false);
-        }
-        catch (ConfigurationException exception)
-        {
-            logger.LogError("{Message}", exception.Message);
+            replay.LogErrors(logger);
             return 1;
         }
 
+        resourceViewer.View(replay.Value, new LocalReplayViewParameters(turn));
         return 0;
     }
 }
