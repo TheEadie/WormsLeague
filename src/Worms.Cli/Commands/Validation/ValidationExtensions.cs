@@ -10,7 +10,7 @@ internal static class ValidationExtensions
         var errors = new List<string>();
         foreach (var (predicate, error) in validations)
         {
-            if (predicate(value))
+            if (!predicate(value))
             {
                 errors.Add(error(value));
             }
