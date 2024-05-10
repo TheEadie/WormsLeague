@@ -124,7 +124,7 @@ internal sealed class CreateGifHandler(
     private static List<ValidationRule<LocalReplay>> ValidConfigForReplay(string? replayName)
     {
         return Valid.Rules<LocalReplay>()
-            .Must(x => x.Details.Turns.Count == 0, $"Replay {replayName} has no turns, cannot create gif");
+            .Must(x => x.Details.Turns.Count > 0, $"Replay {replayName} has no turns, cannot create gif");
     }
 
     private static List<ValidationRule<List<LocalReplay>>> Only1ReplayFound(string? replayName) =>
@@ -134,8 +134,8 @@ internal sealed class CreateGifHandler(
 
     private static List<ValidationRule<Config>> ValidConfig() =>
         Valid.Rules<Config>()
-            .Must(x => string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created")
-            .Must(x => x.Turn == default, "No turn provided for the Gif being created");
+            .Must(x => !string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created")
+            .Must(x => x.Turn != default, "No turn provided for the Gif being created");
 
     private async Task<List<LocalReplay>> FindReplays(string pattern, CancellationToken cancellationToken) =>
     [
