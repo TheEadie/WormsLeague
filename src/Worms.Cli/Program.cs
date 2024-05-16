@@ -1,9 +1,12 @@
 using System.CommandLine.Builder;
+using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using OpenTelemetry.Trace;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
 using Worms.Cli.Logging;
@@ -15,6 +18,11 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
+        var startTime = DateTime.UtcNow;
+        var tracerProvider = Telemetry.TracerProvider;
+        var span = Telemetry.Source.StartActivity(ActivityKind.Server, startTime: startTime, name: "worms");
+        _ = span?.AddEvent(new ActivityEvent("Telemetry setup complete"));
+
         var serviceCollection = new ServiceCollection().AddHttpClient()
             .AddWormsCliLogging(GetLogLevel(args))
             .AddWormsArmageddonFilesServices()
@@ -23,12 +31,33 @@ internal static class Program
             .AddWormsCliServices();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
+        _ = span?.AddEvent(new ActivityEvent("DI registration complete"));
 
-        return await CliStructure.BuildCommandLine(serviceProvider)
+        var result = await CliStructure.BuildCommandLine(serviceProvider)
             .UseDefaults()
+            .UseExceptionHandler(ExceptionHandler)
             .Build()
             .InvokeAsync(args)
             .ConfigureAwait(false);
+
+        _ = span?.SetTag(Telemetry.Attributes.Process_Exit_Code, result);
+
+        span?.Stop();
+        tracerProvider?.Dispose();
+
+        return result!;
+    }
+
+    private static void ExceptionHandler(Exception exception, InvocationContext context)
+    {
+        if (exception is not OperationCanceledException)
+        {
+            context.Console.Error.Write(context.LocalizationResources.ExceptionHandlerHeader());
+            Activity.Current?.RecordException(exception);
+            _ = Activity.Current?.SetStatus(ActivityStatusCode.Error);
+        }
+
+        context.ExitCode = 1;
     }
 
     [SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "This is more readable")]
