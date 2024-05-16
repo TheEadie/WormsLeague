@@ -15,23 +15,22 @@ namespace Worms.Cli.Commands;
 internal sealed class Host : Command
 {
     public static readonly Option<bool> DryRun = new(
-        new[]
-        {
+        [
             "--dry-run",
             "-dr"
-        },
+        ],
         "When set the CLI will print what will happen rather than running the commands");
 
     public static readonly Option<bool> SkipSchemeDownload = new(
-        new[] { "--skip-scheme-download" },
+        ["--skip-scheme-download"],
         "Don't download the latest schemes before starting the game");
 
     public static readonly Option<bool> SkipUpload = new(
-        new[] { "--skip-upload" },
+        ["--skip-upload"],
         "Don't Upload the replay to Worms Hub when the game finishes");
 
     public static readonly Option<bool> SkipAnnouncement = new(
-        new[] { "--skip-announcement" },
+        ["--skip-announcement"],
         "Don't announce the game to Slack or Worms Hub");
 
     public Host()

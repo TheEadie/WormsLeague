@@ -14,22 +14,20 @@ internal sealed class CreateScheme : Command
     public static readonly Argument<string> SchemeName = new("name", "The name of the Scheme to be created");
 
     public static readonly Option<string> InputFile = new(
-        new[]
-        {
+        [
             "--file",
             "-f"
-        },
+        ],
         "File to load the Scheme definition from");
 
     public static readonly Option<string> ResourceFolder = new(
-        new[]
-        {
+        [
             "--resource-folder",
             "-r"
-        },
+        ],
         "Override the folder that the Scheme will be created in");
 
-    public static readonly Option<bool> Random = new(new[] { "--random" }, "Generate a scheme randomnly");
+    public static readonly Option<bool> Random = new(["--random"], "Generate a scheme randomnly");
 
     public CreateScheme()
         : base("scheme", "Create Worms Schemes (.wsc files)")

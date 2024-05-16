@@ -286,6 +286,8 @@ dotnet_diagnostic.IDE0005.severity = suggestion
 dotnet_analyzer_diagnostic.category-roslynator.severity = warning
 # RCS1181 prevents use of simple comments to explain private fields
 dotnet_diagnostic.RCS1181.severity = none
+# RCS1123 fights with IDE0047
+dotnet_diagnostic.RCS1123.severity = none
 
 
 [*.{yml,aiproj,appxmanifest,axml,build,config,csproj,dbml,discomap,DotSettings,dtd,json,jsproj,lsproj,njsproj,nuspec,proj,props,resjson,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]

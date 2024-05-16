@@ -11,11 +11,10 @@ internal sealed class ViewReplay : Command
     public static readonly Argument<string> ReplayName = new("name", "The name of the Replay to be viewed");
 
     public static readonly Option<uint> Turn = new(
-        new[]
-        {
+        [
             "--turn",
             "-t"
-        },
+        ],
         "The turn you wish to start the replay from");
 
     public ViewReplay()

@@ -17,7 +17,7 @@ internal sealed class ColorFormatter : ConsoleFormatter, IDisposable
 
     private bool ConsoleColorFormattingEnabled =>
         _formatterOptions.ColorBehavior == LoggerColorBehavior.Enabled
-        || (_formatterOptions.ColorBehavior == LoggerColorBehavior.Default && !Console.IsOutputRedirected);
+        || _formatterOptions.ColorBehavior == LoggerColorBehavior.Default && !Console.IsOutputRedirected;
 
     public ColorFormatter(IOptionsMonitor<ColorLoggerOptions> options)
         : base(nameof(ColorFormatter)) =>

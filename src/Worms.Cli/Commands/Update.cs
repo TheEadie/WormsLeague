@@ -7,11 +7,10 @@ namespace Worms.Cli.Commands;
 internal sealed class Update : Command
 {
     public static readonly Option<bool> Force = new(
-        new[]
-        {
+        [
             "--force",
             "-f"
-        },
+        ],
         "Forces the latest version to be downloaded and installed even if the CLI is already up to date");
 
     public Update()

@@ -10,54 +10,48 @@ namespace Worms.Cli.Commands.Resources.Gifs;
 internal sealed class CreateGif : Command
 {
     public static readonly Option<string> ReplayName = new(
-        new[]
-        {
+        [
             "--replay",
             "-r"
-        },
+        ],
         "The replay name");
 
     public static readonly Option<uint> Turn = new(
-        new[]
-        {
+        [
             "--turn",
             "-t"
-        },
+        ],
         "The turn number");
 
     public static readonly Option<uint> FramesPerSecond = new(
-        new[]
-        {
+        [
             "--frames-per-second",
             "-fps"
-        },
+        ],
         () => 5,
         "The number of frames per second");
 
     public static readonly Option<uint> Speed = new(
-        new[]
-        {
+        [
             "--speed",
             "-s"
-        },
+        ],
         () => 2,
         "Speed multiplier for the gif");
 
     public static readonly Option<uint> StartOffset = new(
-        new[]
-        {
+        [
             "--start-offset",
             "-so"
-        },
+        ],
         () => 0,
         "Offset for the start of the gif in seconds");
 
     public static readonly Option<uint> EndOffset = new(
-        new[]
-        {
+        [
             "--end-offset",
             "-eo"
-        },
+        ],
         () => 0,
         "Offset for the end of the gif in seconds");
 
