@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Microsoft.Extensions.Logging;
+using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Schemes;
 
@@ -22,7 +23,6 @@ internal sealed class GetScheme : Command
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetriever, ILogger<GetSchemeHandler> logger)
     : ICommandHandler
 {
@@ -32,20 +32,18 @@ internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetrie
     public async Task<int> InvokeAsync(InvocationContext context)
     {
         var name = context.ParseResult.GetValueForArgument(GetScheme.SchemeName);
+        var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
         var cancellationToken = context.GetCancellationToken();
 
-        try
+        var schemes = await schemesRetriever.GetResources(name, cancellationToken).ConfigureAwait(false);
+
+        if (!schemes.IsValid)
         {
-            var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-            await schemesRetriever.PrintResources(name, Console.Out, windowWidth, cancellationToken)
-                .ConfigureAwait(false);
-        }
-        catch (ConfigurationException exception)
-        {
-            logger.LogError("{Message}", exception.Message);
+            schemes.LogErrors(logger);
             return 1;
         }
 
+        schemesRetriever.PrintResources(schemes.Value, Console.Out, windowWidth);
         return 0;
     }
 }

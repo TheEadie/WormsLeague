@@ -1,38 +1,37 @@
-using Worms.Cli.Commands;
+using Worms.Cli.Commands.Validation;
 
 namespace Worms.Cli.Resources;
 
-public class ResourceGetter<T>(IResourceRetriever<T> retriever, IResourcePrinter<T> printer)
+internal sealed class ResourceGetter<T>(IResourceRetriever<T> retriever, IResourcePrinter<T> printer)
 {
-    public async Task PrintResources(
-        string name,
-        TextWriter writer,
-        int outputMaxWidth,
-        CancellationToken cancellationToken)
+    public async Task<Validated<IReadOnlyCollection<T>>> GetResources(string name, CancellationToken cancellationToken)
     {
         var requestForAll = string.IsNullOrWhiteSpace(name);
-        var userSpecifiedName = !requestForAll && !name.Contains('*', StringComparison.InvariantCulture);
+
         var matches = requestForAll
             ? await retriever.Retrieve(cancellationToken).ConfigureAwait(false)
             : await retriever.Retrieve(name, cancellationToken).ConfigureAwait(false);
 
-        if (userSpecifiedName)
+        return matches.Validate(ContainsAtLeastOneResultIfSearchTerm(name));
+    }
+
+    public void PrintResources(IReadOnlyCollection<T> resources, TextWriter writer, int outputMaxWidth)
+    {
+        if (resources.Count == 1)
         {
-            switch (matches.Count)
-            {
-                case 0:
-                    throw new ConfigurationException($"No resources found with name: {name}");
-                case 1:
-                    printer.Print(writer, matches.Single(), outputMaxWidth);
-                    break;
-                default:
-                    printer.Print(writer, matches, outputMaxWidth);
-                    break;
-            }
+            printer.Print(writer, resources.Single(), outputMaxWidth);
         }
         else
         {
-            printer.Print(writer, matches, outputMaxWidth);
+            printer.Print(writer, resources, outputMaxWidth);
         }
+    }
+
+    private static List<ValidationRule<IReadOnlyCollection<T>>> ContainsAtLeastOneResultIfSearchTerm(string searchTerm)
+    {
+        var userSpecifiedName = !string.IsNullOrWhiteSpace(searchTerm)
+            && !searchTerm.Contains('*', StringComparison.InvariantCulture);
+        return Valid.Rules<IReadOnlyCollection<T>>()
+            .MustNot(x => x.Count == 0 && userSpecifiedName, $"No resources found for {searchTerm}");
     }
 }

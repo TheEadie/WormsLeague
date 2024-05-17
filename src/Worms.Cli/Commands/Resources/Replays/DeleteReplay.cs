@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Microsoft.Extensions.Logging;
+using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 
@@ -32,16 +33,15 @@ internal sealed class DeleteReplayHandler(
         var name = context.ParseResult.GetValueForArgument(DeleteReplay.ReplayName);
         var cancellationToken = context.GetCancellationToken();
 
-        try
+        var replay = await resourceDeleter.GetResource(name, cancellationToken).ConfigureAwait(false);
+
+        if (!replay.IsValid)
         {
-            await resourceDeleter.Delete(name, cancellationToken).ConfigureAwait(false);
-        }
-        catch (ConfigurationException exception)
-        {
-            logger.LogError("{Message}", exception.Message);
+            replay.LogErrors(logger);
             return 1;
         }
 
+        resourceDeleter.Delete(replay.Value);
         return 0;
     }
 }

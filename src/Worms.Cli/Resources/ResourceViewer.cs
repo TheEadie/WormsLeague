@@ -1,31 +1,26 @@
-using Worms.Cli.Commands;
+using Worms.Cli.Commands.Validation;
 
 namespace Worms.Cli.Resources;
 
-public class ResourceViewer<T, TParams>(IResourceRetriever<T> retriever, IResourceViewer<T, TParams> resourceViewer)
+internal sealed class ResourceViewer<T, TParams>(
+    IResourceRetriever<T> retriever,
+    IResourceViewer<T, TParams> resourceViewer)
 {
-    public async Task View(string name, TParams parameters, CancellationToken cancellationToken)
-    {
-        name = ValidateName(name);
-        var resource = await GetResource(name, cancellationToken).ConfigureAwait(false);
-        await resourceViewer.View(resource, parameters).ConfigureAwait(false);
-    }
+    public async Task<Validated<T>> GetResource(string name, CancellationToken cancellationToken) =>
+        await name.Validate(NameIsNotEmpty())
+            .Map(x => retriever.Retrieve(x, cancellationToken))
+            .Validate(Only1ResourceFound(name))
+            .Map(x => x.Single())
+            .ConfigureAwait(false);
 
-    private async Task<T> GetResource(string name, CancellationToken cancellationToken)
-    {
-        var resourcesFound = await retriever.Retrieve(name, cancellationToken).ConfigureAwait(false);
+    public void View(T resource, TParams parameters) => resourceViewer.View(resource, parameters);
 
-        return resourcesFound.Count switch
-        {
-            0 => throw new ConfigurationException($"No resource found with name: {name}"),
-            1 => resourcesFound.Single(),
-            > 1 => throw new ConfigurationException($"More than one resource found with name matching: {name}"),
-            _ => throw new ArgumentOutOfRangeException(nameof(name), "Unexpected number of resources found.")
-        };
-    }
+    private static List<ValidationRule<string>> NameIsNotEmpty() =>
+        Valid.Rules<string>()
+            .Must(x => !string.IsNullOrWhiteSpace(x), "No name provided for the resource to be viewed.");
 
-    private static string ValidateName(string name) =>
-        string.IsNullOrWhiteSpace(name)
-            ? throw new ConfigurationException("No name provided for the resource to be viewed.")
-            : name;
+    private static List<ValidationRule<IReadOnlyCollection<T>>> Only1ResourceFound(string? name) =>
+        Valid.Rules<IReadOnlyCollection<T>>()
+            .MustNot(x => x.Count == 0, $"No resource found with name: {name}")
+            .MustNot(x => x.Count > 1, $"More than one resource found with name matching: {name}");
 }

@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
+using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Schemes;
 
@@ -45,7 +46,6 @@ internal sealed class CreateScheme : Command
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class CreateSchemeHandler(
     IResourceCreator<LocalScheme, LocalSchemeCreateParameters> schemeCreator,
-    IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters> randomSchemeCreator,
     IFileSystem fileSystem,
     IWormsLocator wormsLocator,
     ILogger<CreateSchemeHandler> logger) : ICommandHandler
@@ -55,71 +55,72 @@ internal sealed class CreateSchemeHandler(
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
-        var name = context.ParseResult.GetValueForArgument(CreateScheme.SchemeName);
-        var resourceFolder = context.ParseResult.GetValueForOption(CreateScheme.ResourceFolder);
-        var inputFile = context.ParseResult.GetValueForOption(CreateScheme.InputFile);
-        var random = context.ParseResult.GetValueForOption(CreateScheme.Random);
         var cancellationToken = context.GetCancellationToken();
 
-        var outputFolder = resourceFolder;
-        Func<Task<LocalScheme>> creator;
+        var config = new Config(
+            context.ParseResult.GetValueForArgument(CreateScheme.SchemeName),
+            context.ParseResult.GetValueForOption(CreateScheme.ResourceFolder),
+            context.ParseResult.GetValueForOption(CreateScheme.InputFile),
+            context.ParseResult.GetValueForOption(CreateScheme.Random),
+            wormsLocator.Find());
 
-        try
+        var createParams = config.Validate(ValidConfig())
+            .Map(x => x with { OutputFolder = x.GameInfo.IsInstalled ? x.GameInfo.SchemesFolder : x.OutputFolder })
+            .Map(
+                x => new LocalSchemeCreateParameters(
+                    x.Name,
+                    CreateFolderIfDoesNotExist(x.OutputFolder!),
+                    x.Random,
+                    LoadSchemeDefinition(x)));
+
+        if (!createParams.IsValid)
         {
-            var validatedName = ValidateName(name);
-            outputFolder = ValidateOutputFolder(outputFolder);
-            if (!random)
-            {
-                var (definition, source) = ValidateSchemeDefinition(inputFile);
-                creator = () => schemeCreator.Create(
-                    new LocalSchemeCreateParameters(validatedName, outputFolder, definition),
-                    cancellationToken);
-                logger.LogDebug("Scheme definition being read from {Source}", source);
-            }
-            else
-            {
-                creator = () => randomSchemeCreator.Create(
-                    new LocalSchemeCreateRandomParameters(validatedName, outputFolder),
-                    cancellationToken);
-            }
-        }
-        catch (ConfigurationException exception)
-        {
-            logger.LogError("{Message}", exception.Message);
+            createParams.LogErrors(logger);
             return 1;
         }
 
-        logger.LogInformation("Writing Scheme to {Folder}", outputFolder);
-
-        try
-        {
-            var scheme = await creator().ConfigureAwait(false);
-            await Console.Out.WriteLineAsync(scheme.Path).ConfigureAwait(false);
-        }
-        catch (FormatException exception)
-        {
-            logger.LogError("Failed to read Scheme definition: {Message}", exception.Message);
-            return 1;
-        }
-
+        logger.LogInformation("Writing Scheme to {Folder}", createParams.Value.Folder);
+        var scheme = await schemeCreator.Create(createParams.Value, cancellationToken).ConfigureAwait(false);
+        await Console.Out.WriteLineAsync(scheme.Path).ConfigureAwait(false);
         return 0;
     }
 
-    private string ValidateOutputFolder(string? outputFolder)
+    private sealed record Config(string Name, string? OutputFolder, string? InputFile, bool Random, GameInfo GameInfo);
+
+    private static List<ValidationRule<Config>> ValidConfig() =>
+        Valid.Rules<Config>()
+            .Must(x => !string.IsNullOrWhiteSpace(x.Name), "No name provided for the Scheme being created.")
+            .Must(
+                x => x.GameInfo.IsInstalled || !string.IsNullOrWhiteSpace(x.OutputFolder),
+                "Worms is not installed. Use the --resource-folder option to specify where the Scheme should be created");
+
+    [SuppressMessage("Style", "IDE0046:Convert to conditional expression")]
+    private string? LoadSchemeDefinition(Config config)
     {
-        if (string.IsNullOrWhiteSpace(outputFolder))
+        if (config.Random)
         {
-            var gameInfo = wormsLocator.Find();
-
-            if (!gameInfo.IsInstalled)
-            {
-                throw new ConfigurationException(
-                    "Worms is not installed. Use the --resource-folder option to specify where the Scheme should be created");
-            }
-
-            outputFolder = gameInfo.SchemesFolder;
+            logger.LogDebug("Scheme definition being read from {Source}", "random");
+            return null;
         }
 
+        if (!string.IsNullOrWhiteSpace(config.InputFile))
+        {
+            logger.LogDebug("Scheme definition being read from file: {FilePath}", config.InputFile);
+            return fileSystem.File.ReadAllText(config.InputFile);
+        }
+
+        if (Console.IsInputRedirected)
+        {
+            logger.LogDebug("Scheme definition being read from {Source}", "std in");
+            return Console.In.ReadToEnd();
+        }
+
+        throw new ArgumentException(
+            "No Scheme definition provided. Provide the definition using std in or the --file option");
+    }
+
+    private string CreateFolderIfDoesNotExist(string outputFolder)
+    {
         if (fileSystem.Directory.Exists(outputFolder))
         {
             return outputFolder;
@@ -130,26 +131,4 @@ internal sealed class CreateSchemeHandler(
 
         return outputFolder;
     }
-
-    [SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "This is more readable")]
-    private (string, string) ValidateSchemeDefinition(string? filename)
-    {
-        if (!string.IsNullOrWhiteSpace(filename))
-        {
-            return (fileSystem.File.ReadAllText(filename), $"file: + {filename}");
-        }
-
-        if (Console.IsInputRedirected)
-        {
-            return (Console.In.ReadToEnd(), "std in");
-        }
-
-        throw new ConfigurationException(
-            "No Scheme definition provided. Provide the definition using std in or the --file option");
-    }
-
-    private static string ValidateName(string name) =>
-        !string.IsNullOrWhiteSpace(name)
-            ? name
-            : throw new ConfigurationException("No name provided for the Scheme being created.");
 }

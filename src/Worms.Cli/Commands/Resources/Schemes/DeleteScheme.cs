@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Microsoft.Extensions.Logging;
+using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Schemes;
 
@@ -32,16 +33,15 @@ internal sealed class DeleteSchemeHandler(
         var name = context.ParseResult.GetValueForArgument(DeleteScheme.SchemeName);
         var cancellationToken = context.GetCancellationToken();
 
-        try
+        var scheme = await resourceDeleter.GetResource(name, cancellationToken).ConfigureAwait(false);
+
+        if (!scheme.IsValid)
         {
-            await resourceDeleter.Delete(name, cancellationToken).ConfigureAwait(false);
-        }
-        catch (ConfigurationException exception)
-        {
-            logger.LogError("{Message}", exception.Message);
+            scheme.LogErrors(logger);
             return 1;
         }
 
+        resourceDeleter.Delete(scheme.Value);
         return 0;
     }
 }

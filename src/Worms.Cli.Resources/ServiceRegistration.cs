@@ -3,6 +3,7 @@ using System.IO.Abstractions;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
 using Worms.Armageddon.Files.Schemes.Random;
+using Worms.Cli.Resources.Local.Folders;
 using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
@@ -24,7 +25,6 @@ public static class ServiceRegistration
             .AddScoped<IRandomSchemeGenerator, RandomSchemeGenerator>()
             .AddScoped<IResourceRetriever<LocalScheme>, LocalSchemesRetriever>()
             .AddScoped<IResourceCreator<LocalScheme, LocalSchemeCreateParameters>, LocalSchemeCreator>()
-            .AddScoped<IResourceCreator<LocalScheme, LocalSchemeCreateRandomParameters>, LocalSchemeRandomCreator>()
             .AddScoped<IResourceDeleter<LocalScheme>, LocalSchemeDeleter>()
             .AddScoped<IRemoteLeagueRetriever, RemoteLeagueRetriever>()
             .AddScoped<IRemoteSchemeDownloader, RemoteSchemeDownloader>()
@@ -58,4 +58,12 @@ public static class ServiceRegistration
 
         throw new PlatformNotSupportedException("This platform is not supported");
     }
+
+    private static IServiceCollection AddLinuxServices(this IServiceCollection builder) =>
+        builder.AddScoped<IFolderOpener, LinuxFolderOpener>()
+            .AddScoped<ICliUpdateDownloader, LinuxCliUpdateDownloader>();
+
+    private static IServiceCollection AddWindowsServices(this IServiceCollection builder) =>
+        builder.AddScoped<IFolderOpener, WindowsFolderOpener>()
+            .AddScoped<ICliUpdateDownloader, WindowsCliUpdateDownloader>();
 }

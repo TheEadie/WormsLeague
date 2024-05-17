@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Microsoft.Extensions.Logging;
+using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Replays;
@@ -85,69 +86,61 @@ internal sealed class CreateGifHandler(
         var endOffset = context.ParseResult.GetValueForOption(CreateGif.EndOffset);
         var cancellationToken = context.GetCancellationToken();
 
-        LocalReplay replay;
+        var config = new Config(replayName, turn, fps, speed, startOffset, endOffset);
+        var replay = await config.Validate(ValidConfig())
+            .Map(x => FindReplays(x.ReplayName!, cancellationToken))
+            .Validate(Only1ReplayFound(replayName))
+            .Map(x => x.Single())
+            .Validate(ValidConfigForReplay(replayName))
+            .ConfigureAwait(false);
 
-        try
+        if (!replay.IsValid)
         {
-            replay = await ValidateReplay(replayName, turn, cancellationToken).ConfigureAwait(false);
-        }
-        catch (ConfigurationException exception)
-        {
-            logger.LogError("{Message}", exception.Message);
+            replay.LogErrors(logger);
             return 1;
         }
 
-        try
-        {
-            logger.LogInformation("Creating gif for {ReplayName}, turn {Turn} ...", replayName, turn);
-            var gif = await gifCreator.Create(
-                    new LocalGifCreateParameters(
-                        replay,
-                        turn,
-                        TimeSpan.FromSeconds(startOffset),
-                        TimeSpan.FromSeconds(endOffset),
-                        fps,
-                        speed),
-                    cancellationToken)
-                .ConfigureAwait(false);
-            await Console.Out.WriteLineAsync(gif.Path).ConfigureAwait(false);
-        }
-        catch (FormatException exception)
-        {
-            logger.LogError("Failed to create gif: {Message}", exception.Message);
-            return 1;
-        }
-
+        logger.LogInformation("Creating gif for {ReplayName}, turn {Turn} ...", replayName, turn);
+        var gif = await gifCreator.Create(
+                new LocalGifCreateParameters(
+                    replay.Value,
+                    turn,
+                    TimeSpan.FromSeconds(startOffset),
+                    TimeSpan.FromSeconds(endOffset),
+                    fps,
+                    speed),
+                cancellationToken)
+            .ConfigureAwait(false);
+        await Console.Out.WriteLineAsync(gif.Path).ConfigureAwait(false);
         return 0;
     }
 
-    private async Task<LocalReplay> ValidateReplay(string? replay, uint turn, CancellationToken cancellationToken)
+    private static List<ValidationRule<LocalReplay>> ValidConfigForReplay(string? replayName)
     {
-        if (string.IsNullOrWhiteSpace(replay))
-        {
-            throw new ConfigurationException("No replay provided for the Gif being created");
-        }
-
-        if (turn == default)
-        {
-            throw new ConfigurationException("No turn provided for the Gif being created");
-        }
-
-        var replays = await replayRetriever.Retrieve(replay, cancellationToken).ConfigureAwait(false);
-
-        if (replays.Count == 0)
-        {
-            throw new ConfigurationException($"No replays found with name: {replay}");
-        }
-
-        if (replays.Count > 1)
-        {
-            throw new ConfigurationException($"More than one replay found matching pattern: {replay}");
-        }
-
-        var foundReplay = replays.Single();
-        return foundReplay.Details.Turns.Count < turn
-            ? throw new ConfigurationException($"Replay {replay} does not have a turn {turn}")
-            : foundReplay;
+        return Valid.Rules<LocalReplay>()
+            .Must(x => x.Details.Turns.Count > 0, $"Replay {replayName} has no turns, cannot create gif");
     }
+
+    private static List<ValidationRule<List<LocalReplay>>> Only1ReplayFound(string? replayName) =>
+        Valid.Rules<List<LocalReplay>>()
+            .MustNot(x => x.Count == 0, $"No replays found with name: {replayName}")
+            .MustNot(x => x.Count > 1, $"More than one replay found matching pattern: {replayName}");
+
+    private static List<ValidationRule<Config>> ValidConfig() =>
+        Valid.Rules<Config>()
+            .Must(x => !string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created")
+            .Must(x => x.Turn != default, "No turn provided for the Gif being created");
+
+    private async Task<List<LocalReplay>> FindReplays(string pattern, CancellationToken cancellationToken) =>
+    [
+        .. await replayRetriever.Retrieve(pattern, cancellationToken).ConfigureAwait(false)
+    ];
+
+    private sealed record Config(
+        string? ReplayName,
+        uint Turn,
+        uint FramesPerSecond,
+        uint Speed,
+        uint StartOffset,
+        uint EndOffset);
 }
