@@ -12,7 +12,7 @@
       "extends": "monorepo:dotnet",
       "groupName": ".NET",
       "additionalBranchPrefix": ""
-    },
+    }
   ],
   "masterIssue": true
 }
