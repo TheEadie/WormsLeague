@@ -1,5 +1,6 @@
 using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
+using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -56,6 +57,8 @@ internal static class Program
         if (exception is not OperationCanceledException)
         {
             context.Console.Error.Write(context.LocalizationResources.ExceptionHandlerHeader());
+            context.Console.Error.WriteLine(exception.Message);
+
             Activity.Current?.RecordException(exception);
             _ = Activity.Current?.SetStatus(ActivityStatusCode.Error);
         }
