@@ -18,7 +18,6 @@ internal sealed class Update : Command
         AddOption(Force);
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class UpdateHandler(CliUpdater cliUpdater) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
@@ -26,7 +25,10 @@ internal sealed class UpdateHandler(CliUpdater cliUpdater) : ICommandHandler
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
+        using var span = Telemetry.Source.StartActivity("update");
+
         var force = context.ParseResult.GetValueForOption(Update.Force);
+        _ = span?.AddTag(Telemetry.Attributes.Update_Force, force);
 
         await cliUpdater.DownloadAndInstall(force).ConfigureAwait(false);
 
