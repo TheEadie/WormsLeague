@@ -34,7 +34,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task<LatestCliDtoV1> GetLatestCliDetails()
     {
-        using var span = Telemetry.Source.StartActivity("GET api/v1/files/cli");
+        using var span = Telemetry.Source.StartActivity(Telemetry.Attributes.GetLatestCliDetails.SpanName);
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/files/cli", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<LatestCliDtoV1>(httpClient, () => httpClient.GetAsync(path))
@@ -43,8 +43,8 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task<byte[]> DownloadLatestCli(string platform)
     {
-        using var span = Telemetry.Source.StartActivity("GET api/v1/files/cli/{platform}");
-        _ = span?.AddTag(Telemetry.Attributes.API_DownloadLatestCLI_Platform, platform);
+        using var span = Telemetry.Source.StartActivity(Telemetry.Attributes.DownloadLatestCLI.SpanName);
+        _ = span?.AddTag(Telemetry.Attributes.DownloadLatestCLI.Platform, platform);
 
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/files/cli/{platform}", UriKind.Relative);

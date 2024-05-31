@@ -11,6 +11,15 @@ internal static class Telemetry
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Using underscores to namespace attributes")]
     internal static class Attributes
     {
-        public const string API_DownloadLatestCLI_Platform = "worms.api.download_latest_cli.platform";
+        internal static class DownloadLatestCLI
+        {
+            public const string SpanName = "GET api/v1/files/cli/{platform}";
+            public const string Platform = "worms.api.download_latest_cli.platform";
+        }
+
+        internal static class GetLatestCliDetails
+        {
+            public const string SpanName = "GET api/v1/files/cli";
+        }
     }
 }

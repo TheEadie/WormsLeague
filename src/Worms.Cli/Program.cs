@@ -20,8 +20,11 @@ internal static class Program
     {
         var startTime = DateTime.UtcNow;
         var tracerProvider = Telemetry.TracerProvider;
-        var span = Telemetry.Source.StartActivity(ActivityKind.Server, startTime: startTime, name: "worms");
-        _ = span?.AddEvent(new ActivityEvent("Telemetry setup complete"));
+        var span = Telemetry.Source.StartActivity(
+            ActivityKind.Server,
+            startTime: startTime,
+            name: Telemetry.Spans.Worms);
+        _ = span?.AddEvent(Telemetry.Events.TelemetrySetupComplete);
 
         var serviceCollection = new ServiceCollection().AddHttpClient()
             .AddWormsCliLogging(GetLogLevel(args))
@@ -31,7 +34,7 @@ internal static class Program
             .AddWormsCliServices();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
-        _ = span?.AddEvent(new ActivityEvent("DI registration complete"));
+        _ = span?.AddEvent(Telemetry.Events.DiSetupComplete);
 
         var result = await CliStructure.BuildCommandLine(serviceProvider)
             .UseDefaults()
@@ -40,7 +43,7 @@ internal static class Program
             .InvokeAsync(args)
             .ConfigureAwait(false);
 
-        _ = span?.SetTag(Telemetry.Attributes.Process_Exit_Code, result);
+        _ = span?.SetTag(Telemetry.Attributes.ProcessExitCode, result);
 
         span?.Stop();
         tracerProvider?.Dispose();

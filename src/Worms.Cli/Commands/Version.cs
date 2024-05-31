@@ -14,15 +14,15 @@ internal sealed class VersionHandler(IWormsLocator wormsLocator, CliInfoRetrieve
 
     public Task<int> InvokeAsync(InvocationContext context)
     {
-        using var span = Telemetry.Source.StartActivity("version");
+        using var span = Telemetry.Source.StartActivity(Telemetry.Spans.Version);
 
         var (cliVersion, gameVersion) = GetVersions();
 
         context.Console.WriteLine($"Worms CLI: {cliVersion.ToString(3)}");
         context.Console.WriteLine($"Worms Armageddon: {gameVersion?.ToString(4) ?? "Not Installed"}");
 
-        _ = span?.SetTag(Telemetry.Attributes.Version_CliVersion, cliVersion);
-        _ = span?.SetTag(Telemetry.Attributes.Version_WormsArmageddonVersion, gameVersion);
+        _ = span?.SetTag(Telemetry.Attributes.Version.CliVersion, cliVersion);
+        _ = span?.SetTag(Telemetry.Attributes.Version.WormsArmageddonVersion, gameVersion);
         return Task.FromResult(0);
     }
 

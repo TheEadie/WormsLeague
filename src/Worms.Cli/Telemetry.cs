@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
@@ -28,15 +27,35 @@ internal static class Telemetry
                 })
         .Build();
 
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Using underscores to namespace attributes")]
+    internal static class Spans
+    {
+        public const string Worms = "worms";
+        public const string Version = "version";
+        public const string Update = "update";
+    }
+
     internal static class Attributes
     {
-        public const string Process_Exit_Code = "process.exit.code";
-        public const string Version_CliVersion = "worms.version.cli_version";
-        public const string Version_WormsArmageddonVersion = "worms.version.worms_armageddon_version";
-        public const string Update_Force = "worms.update.force";
-        public const string Update_LatestVersion = "worms.update.latest_version";
-        public const string Update_UpdateFolderExists = "worms.download_update.update_folder_exists";
-        public const string Update_NumberOfFiles = "worms.update.number_of_files";
+        public const string ProcessExitCode = "process.exit.code";
+
+        internal static class Version
+        {
+            public const string CliVersion = "worms.version.cli_version";
+            public const string WormsArmageddonVersion = "worms.version.worms_armageddon_version";
+        }
+
+        internal static class Update
+        {
+            public const string Force = "worms.update.force";
+            public const string LatestCliVersion = "worms.update.latest_cli_version";
+            public const string UpdateFolderExists = "worms.update.update_folder_exists";
+            public const string NumberOfFiles = "worms.update.number_of_files";
+        }
+    }
+
+    internal static class Events
+    {
+        public static ActivityEvent DiSetupComplete = new("di.setup.complete");
+        public static ActivityEvent TelemetrySetupComplete = new("telemetry.setup.complete");
     }
 }
