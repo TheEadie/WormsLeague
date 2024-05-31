@@ -21,7 +21,7 @@ internal sealed class CliUpdater(
 
         var latestCliVersion = await cliUpdateRetriever.GetLatestCliVersion().ConfigureAwait(false);
         logger.LogDebug("Latest version: {Version}", latestCliVersion);
-        _ = Activity.Current?.SetTag(Telemetry.Attributes.Update_LatestVersion, latestCliVersion);
+        _ = Activity.Current?.SetTag(Telemetry.Attributes.Update.LatestCliVersion, latestCliVersion);
 
         if (cliInfo.Version >= latestCliVersion && !force)
         {
@@ -47,7 +47,7 @@ internal sealed class CliUpdater(
         logger.LogInformation("Downloading Worms CLI {Version}...", latestCliVersion);
 
         var updateFolderExists = fileSystem.Directory.Exists(updateFolder);
-        _ = Activity.Current?.AddTag(Telemetry.Attributes.Update_UpdateFolderExists, updateFolderExists);
+        _ = Activity.Current?.AddTag(Telemetry.Attributes.Update.UpdateFolderExists, updateFolderExists);
 
         if (updateFolderExists)
         {
@@ -76,7 +76,7 @@ internal sealed class CliUpdater(
         fileSystem.File.Move(updatePath, installPath);
 
         var files = Directory.GetFiles(updateFolder);
-        _ = Activity.Current?.AddTag(Telemetry.Attributes.Update_NumberOfFiles, files.Length + 1);
+        _ = Activity.Current?.AddTag(Telemetry.Attributes.Update.NumberOfFiles, files.Length + 1);
 
         foreach (var file in files)
         {
