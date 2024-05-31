@@ -19,7 +19,7 @@ internal static class Telemetry
         .SetResourceBuilder(
             ResourceBuilder.CreateDefault()
                 .AddService(SourceName, serviceVersion: Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3)))
-        .AddConsoleExporter()
+        .AddHttpClientInstrumentation()
         .AddOtlpExporter(
             option =>
                 {
@@ -31,9 +31,12 @@ internal static class Telemetry
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Using underscores to namespace attributes")]
     internal static class Attributes
     {
-        public const string Name = "name";
         public const string Process_Exit_Code = "process.exit.code";
         public const string Version_CliVersion = "worms.version.cli_version";
         public const string Version_WormsArmageddonVersion = "worms.version.worms_armageddon_version";
+        public const string Update_Force = "worms.update.force";
+        public const string Update_LatestVersion = "worms.update.latest_version";
+        public const string Update_UpdateFolderExists = "worms.download_update.update_folder_exists";
+        public const string Update_NumberOfFiles = "worms.update.number_of_files";
     }
 }
