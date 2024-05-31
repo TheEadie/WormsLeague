@@ -153,7 +153,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         HttpResponseMessage? response = null;
 
         const int maxRetries = 3;
-        var delayBetweenRetries = 1000;
+        var delayBetweenRetries = 500;
         for (var i = 0; i < maxRetries; i++)
         {
             response = await apiCall().ConfigureAwait(false);
@@ -173,7 +173,11 @@ internal sealed class WormsServerApi : IWormsServerApi
                 return response;
             }
 
-            await Task.Delay(delayBetweenRetries).ConfigureAwait(false);
+            if (i != maxRetries - 1)
+            {
+                await Task.Delay(delayBetweenRetries).ConfigureAwait(false);
+            }
+
             delayBetweenRetries *= 2;
         }
 
