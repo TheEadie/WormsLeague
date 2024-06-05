@@ -29,25 +29,24 @@ internal static class Telemetry
 
     internal static class Spans
     {
-        public const string Worms = "worms";
-        public const string Version = "version";
-        public const string Update = "update";
-    }
-
-    internal static class Attributes
-    {
-        public const string ProcessExitCode = "process.exit.code";
-        public const string Verbose = "worms.verbose";
-        public const string Quiet = "worms.quiet";
+        internal static class Root
+        {
+            public const string SpanName = "worms";
+            public const string ProcessExitCode = "process.exit.code";
+            public const string Verbose = "worms.verbose";
+            public const string Quiet = "worms.quiet";
+        }
 
         internal static class Version
         {
+            public const string SpanName = "version";
             public const string CliVersion = "worms.version.cli_version";
             public const string WormsArmageddonVersion = "worms.version.worms_armageddon_version";
         }
 
         internal static class Update
         {
+            public const string SpanName = "update";
             public const string Force = "worms.update.force";
             public const string LatestCliVersion = "worms.update.latest_cli_version";
             public const string UpdateFolderExists = "worms.update.update_folder_exists";

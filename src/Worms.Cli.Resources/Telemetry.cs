@@ -9,7 +9,7 @@ internal static class Telemetry
     public static readonly ActivitySource Source = new(SourceName);
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Using underscores to namespace attributes")]
-    internal static class Attributes
+    internal static class Spans
     {
         internal static class DownloadLatestCLI
         {
