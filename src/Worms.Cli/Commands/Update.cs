@@ -25,10 +25,10 @@ internal sealed class UpdateHandler(CliUpdater cliUpdater) : ICommandHandler
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
-        using var span = Telemetry.Source.StartActivity(Telemetry.Spans.Update);
+        using var span = Telemetry.Source.StartActivity(Telemetry.Spans.Update.SpanName);
 
         var force = context.ParseResult.GetValueForOption(Update.Force);
-        _ = span?.AddTag(Telemetry.Attributes.Update.Force, force);
+        _ = span?.AddTag(Telemetry.Spans.Update.Force, force);
 
         await cliUpdater.DownloadAndInstall(force).ConfigureAwait(false);
 

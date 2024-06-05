@@ -24,7 +24,7 @@ internal static class Program
         var span = Telemetry.Source.StartActivity(
             ActivityKind.Server,
             startTime: startTime,
-            name: Telemetry.Spans.Worms);
+            name: Telemetry.Spans.Root.SpanName);
         _ = span?.AddEvent(Telemetry.Events.TelemetrySetupComplete);
 
         var serviceCollection = new ServiceCollection().AddHttpClient()
@@ -44,7 +44,7 @@ internal static class Program
             .InvokeAsync(args)
             .ConfigureAwait(false);
 
-        _ = span?.SetTag(Telemetry.Attributes.ProcessExitCode, result);
+        _ = span?.SetTag(Telemetry.Spans.Root.ProcessExitCode, result);
 
         span?.Stop();
         tracerProvider?.Dispose();
@@ -72,8 +72,8 @@ internal static class Program
         var verbose = args.Contains("-v") || args.Contains("--verbose");
         var quiet = args.Contains("-q") || args.Contains("--quiet");
 
-        _ = Activity.Current?.SetTag(Telemetry.Attributes.Verbose, verbose);
-        _ = Activity.Current?.SetTag(Telemetry.Attributes.Quiet, quiet);
+        _ = Activity.Current?.SetTag(Telemetry.Spans.Root.Verbose, verbose);
+        _ = Activity.Current?.SetTag(Telemetry.Spans.Root.Quiet, quiet);
 
         if (verbose)
         {
