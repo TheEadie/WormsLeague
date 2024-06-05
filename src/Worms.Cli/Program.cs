@@ -20,7 +20,9 @@ internal static class Program
     public static async Task<int> Main(string[] args)
     {
         var startTime = DateTime.UtcNow;
-        var tracerProvider = Telemetry.TracerProvider;
+        var tracerProvider = Environment.GetEnvironmentVariable("WORMS_DISABLE_TELEMETRY") is null
+            ? Telemetry.TracerProvider
+            : null;
         var span = Telemetry.Source.StartActivity(
             ActivityKind.Server,
             startTime: startTime,
