@@ -37,6 +37,8 @@ internal static class Telemetry
     internal static class Attributes
     {
         public const string ProcessExitCode = "process.exit.code";
+        public const string Verbose = "worms.verbose";
+        public const string Quiet = "worms.quiet";
 
         internal static class Version
         {

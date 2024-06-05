@@ -69,12 +69,18 @@ internal static class Program
     [SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "This is more readable")]
     private static LogLevel GetLogLevel(string[] args)
     {
-        if (args.Contains("-v") || args.Contains("--verbose"))
+        var verbose = args.Contains("-v") || args.Contains("--verbose");
+        var quiet = args.Contains("-q") || args.Contains("--quiet");
+
+        _ = Activity.Current?.SetTag(Telemetry.Attributes.Verbose, verbose);
+        _ = Activity.Current?.SetTag(Telemetry.Attributes.Quiet, quiet);
+
+        if (verbose)
         {
             return LogLevel.Debug;
         }
 
-        if (args.Contains("-q") || args.Contains("--quiet"))
+        if (quiet)
         {
             return LogLevel.Error;
         }
