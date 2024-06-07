@@ -11,6 +11,7 @@ using OpenTelemetry.Trace;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
 using Worms.Cli.Logging;
+using Worms.Cli.Middleware;
 using Worms.Cli.Resources;
 
 namespace Worms.Cli;
@@ -20,9 +21,7 @@ internal static class Program
     public static async Task<int> Main(string[] args)
     {
         var startTime = DateTime.UtcNow;
-        using var tracerProvider = Environment.GetEnvironmentVariable("WORMS_DISABLE_TELEMETRY") is null
-            ? Telemetry.TracerProvider
-            : null;
+        using var tracerProvider = Telemetry.TracerProvider;
         using var span = Telemetry.Source.StartActivity(
             ActivityKind.Server,
             startTime: startTime,
@@ -41,6 +40,7 @@ internal static class Program
 
         var result = await CliStructure.BuildCommandLine(serviceProvider)
             .UseDefaults()
+            .AddMiddleware(serviceProvider.GetService<LogUserId>()!.GetMiddleware())
             .UseExceptionHandler(ExceptionHandler)
             .Build()
             .InvokeAsync(args)

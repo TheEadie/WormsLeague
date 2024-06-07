@@ -13,19 +13,24 @@ internal static class Telemetry
 
     public static readonly ActivitySource Source = new(SourceName);
 
-    public static readonly TracerProvider? TracerProvider = Sdk.CreateTracerProviderBuilder()
-        .AddSource(SourceName)
-        .SetResourceBuilder(
-            ResourceBuilder.CreateDefault()
-                .AddService(SourceName, serviceVersion: Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3)))
-        .AddHttpClientInstrumentation()
-        .AddOtlpExporter(
-            option =>
-                {
-                    option.Endpoint = new Uri("https://api.honeycomb.io");
-                    option.Headers = $"x-honeycomb-team={HoneycombApiKey}";
-                })
-        .Build();
+    public static readonly TracerProvider? TracerProvider =
+        Environment.GetEnvironmentVariable("WORMS_DISABLE_TELEMETRY") is null
+            ? Sdk.CreateTracerProviderBuilder()
+                .AddSource(SourceName)
+                .SetResourceBuilder(
+                    ResourceBuilder.CreateDefault()
+                        .AddService(
+                            SourceName,
+                            serviceVersion: Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3)))
+                .AddHttpClientInstrumentation()
+                .AddOtlpExporter(
+                    option =>
+                        {
+                            option.Endpoint = new Uri("https://api.honeycomb.io");
+                            option.Headers = $"x-honeycomb-team={HoneycombApiKey}";
+                        })
+                .Build()
+            : null;
 
     internal static class Spans
     {

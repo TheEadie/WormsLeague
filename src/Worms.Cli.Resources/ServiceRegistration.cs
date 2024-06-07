@@ -37,6 +37,7 @@ public static class ServiceRegistration
             .AddScoped<ITokenStore, TokenStore>()
             .AddScoped<ILoginService, DeviceCodeLoginService>()
             .AddScoped<IAccessTokenRefreshService, AccessTokenRefreshService>()
+            .AddScoped<IUserDetailsService, UserDetailsService>()
             .AddScoped<IWormsServerApi, WormsServerApi>()
             .AddScoped<IResourceRetriever<RemoteGame>, RemoteGameRetriever>()
             .AddScoped<IResourceCreator<RemoteGame, string>, RemoteGameCreator>()
