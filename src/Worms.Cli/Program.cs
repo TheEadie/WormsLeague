@@ -20,10 +20,10 @@ internal static class Program
     public static async Task<int> Main(string[] args)
     {
         var startTime = DateTime.UtcNow;
-        var tracerProvider = Environment.GetEnvironmentVariable("WORMS_DISABLE_TELEMETRY") is null
+        using var tracerProvider = Environment.GetEnvironmentVariable("WORMS_DISABLE_TELEMETRY") is null
             ? Telemetry.TracerProvider
             : null;
-        var span = Telemetry.Source.StartActivity(
+        using var span = Telemetry.Source.StartActivity(
             ActivityKind.Server,
             startTime: startTime,
             name: Telemetry.Spans.Root.SpanName);
@@ -47,9 +47,6 @@ internal static class Program
             .ConfigureAwait(false);
 
         _ = span?.SetTag(Telemetry.Spans.Root.ProcessExitCode, result);
-
-        span?.Stop();
-        tracerProvider?.Dispose();
 
         return result!;
     }
