@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using Worms.Cli.CommandLine;
 
 namespace Worms.Cli.Commands;
@@ -25,10 +26,10 @@ internal sealed class UpdateHandler(CliUpdater cliUpdater) : ICommandHandler
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
-        using var span = Telemetry.Source.StartActivity(Telemetry.Spans.Update.SpanName);
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Update.SpanName);
 
         var force = context.ParseResult.GetValueForOption(Update.Force);
-        _ = span?.AddTag(Telemetry.Spans.Update.Force, force);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Update.Force, force);
 
         await cliUpdater.DownloadAndInstall(force).ConfigureAwait(false);
 

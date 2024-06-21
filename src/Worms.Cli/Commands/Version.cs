@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using Worms.Armageddon.Game;
 using Worms.Cli.CommandLine;
 
@@ -14,15 +15,15 @@ internal sealed class VersionHandler(IWormsLocator wormsLocator, CliInfoRetrieve
 
     public Task<int> InvokeAsync(InvocationContext context)
     {
-        using var span = Telemetry.Source.StartActivity(Telemetry.Spans.Version.SpanName);
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Version.SpanName);
 
         var (cliVersion, gameVersion) = GetVersions();
 
         context.Console.WriteLine($"Worms CLI: {cliVersion.ToString(3)}");
         context.Console.WriteLine($"Worms Armageddon: {gameVersion?.ToString(4) ?? "Not Installed"}");
 
-        _ = span?.SetTag(Telemetry.Spans.Version.CliVersion, cliVersion);
-        _ = span?.SetTag(Telemetry.Spans.Version.WormsArmageddonVersion, gameVersion);
+        _ = Activity.Current?.SetTag(Telemetry.Spans.Version.CliVersion, cliVersion);
+        _ = Activity.Current?.SetTag(Telemetry.Spans.Version.WormsArmageddonVersion, gameVersion);
         return Task.FromResult(0);
     }
 
