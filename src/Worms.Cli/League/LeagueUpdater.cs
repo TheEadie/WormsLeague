@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources.Remote.Leagues;
@@ -13,11 +14,17 @@ internal sealed class LeagueUpdater(
 {
     public async Task Update(string leagueName)
     {
+        _ = Activity.Current?.SetTag(Telemetry.Spans.League.Id, leagueName);
+
         var latestVersion = await remoteLeagueRetriever.Retrieve(leagueName).ConfigureAwait(false);
         var schemesFolder = wormsLocator.Find().SchemesFolder;
-        var downloadFileName = $"{leagueName}.{latestVersion.Version.ToString(3)}.wsc";
+        var version = latestVersion.Version.ToString(3);
+        var downloadFileName = $"{leagueName}.{version}.wsc";
 
         logger.LogInformation("Downloading Scheme: {FileName}", downloadFileName);
+        _ = Activity.Current?.SetTag(Telemetry.Spans.Scheme.Id, leagueName);
+        _ = Activity.Current?.SetTag(Telemetry.Spans.Scheme.Version, version);
+
         await remoteSchemeDownloader.Download(leagueName, downloadFileName, schemesFolder).ConfigureAwait(false);
     }
 }
