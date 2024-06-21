@@ -62,6 +62,31 @@ internal static class Telemetry
             public const string UpdateFolderExists = "worms.update.update_folder_exists";
             public const string NumberOfFiles = "worms.update.number_of_files";
         }
+
+        internal static class Host
+        {
+            public const string SpanName = "worms host";
+            public const string DryRun = "worms.host.dry_run";
+            public const string SkipSchemeDownload = "worms.host.skip_scheme_download";
+            public const string SkipUpload = "worms.host.skip_upload";
+            public const string SkipAnnouncement = "worms.host.skip_announcement";
+            public const string IpAddressFound = "worms.host.ip_address_found";
+            public const string WormsArmageddonIsInstalled = "worms.host.worms_armageddon_is_installed";
+            public const string WormsArmageddonVersion = "worms.version.worms_armageddon_version";
+            public const string LeagueId = "worms.host.league_id";
+            public const string SchemeVersion = "worms.host.scheme_version";
+        }
+
+        internal static class League
+        {
+            public const string Id = "worms.league.id";
+        }
+
+        internal static class Scheme
+        {
+            public const string Id = "worms.scheme.id";
+            public const string Version = "worms.scheme.version";
+        }
     }
 
     internal static class Events

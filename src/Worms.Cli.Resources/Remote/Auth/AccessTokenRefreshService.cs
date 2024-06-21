@@ -9,6 +9,8 @@ internal sealed class AccessTokenRefreshService(IHttpClientFactory httpClientFac
 
     public async Task<AccessTokens> RefreshAccessTokens(AccessTokens current)
     {
+        using var span = Telemetry.Source.StartActivity(Telemetry.Spans.GetAuthTokens.SpanName);
+
         if (current.RefreshToken is null)
         {
             throw new InvalidOperationException("Cannot refresh access tokens without a refresh token");

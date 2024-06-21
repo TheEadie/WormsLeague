@@ -9,13 +9,21 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService stea
         return Task.Run(
             async () =>
                 {
-                    var gameInfo = wormsLocator.Find();
+                    using var span = Telemetry.Source.StartActivity(
+                        Telemetry.Spans.WormsArmageddon.SpanName,
+                        ActivityKind.Client);
 
+                    var gameInfo = wormsLocator.Find();
                     var args = string.Join(" ", wormsArgs);
+
+                    _ = span?.SetTag(Telemetry.Spans.WormsArmageddon.Version, gameInfo.Version);
+                    _ = span?.SetTag(Telemetry.Spans.WormsArmageddon.Args, args);
+
                     using (var process = Process.Start(gameInfo.ExeLocation, args))
                     {
                         if (process == null)
                         {
+                            _ = span?.SetStatus(ActivityStatusCode.Error);
                             throw new InvalidOperationException("Unable to start worms process");
                         }
 
