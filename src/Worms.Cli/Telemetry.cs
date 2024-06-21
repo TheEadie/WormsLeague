@@ -42,6 +42,11 @@ internal static class Telemetry
             public const string Quiet = "worms.quiet";
         }
 
+        internal static class Auth
+        {
+            public const string SpanName = "worms auth";
+        }
+
         internal static class Version
         {
             public const string SpanName = "worms version";

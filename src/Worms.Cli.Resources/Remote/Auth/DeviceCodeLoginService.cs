@@ -43,6 +43,7 @@ internal sealed class DeviceCodeLoginService(
 
     private async Task<DeviceAuthorizationResponse> RequestDeviceCode(CancellationToken cancellationToken)
     {
+        using var span = Telemetry.Source.StartActivity(Telemetry.Spans.RequestDeviceCode.SpanName);
         using var httpClient = httpClientFactory.CreateClient();
         httpClient.BaseAddress = new Uri(Authority);
 
@@ -90,6 +91,7 @@ internal sealed class DeviceCodeLoginService(
         ILogger logger,
         CancellationToken cancellationToken)
     {
+        using var span = Telemetry.Source.StartActivity(Telemetry.Spans.GetAuthTokens.SpanName);
         using var cancellationTokenSource = new CancellationTokenSource();
         var timeout = TimeSpan.FromSeconds(deviceCodeResponse.ExpiresIn);
         cancellationTokenSource.CancelAfter(timeout);

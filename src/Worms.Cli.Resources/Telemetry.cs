@@ -11,6 +11,16 @@ internal static class Telemetry
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Using underscores to namespace attributes")]
     internal static class Spans
     {
+        internal static class RequestDeviceCode
+        {
+            public const string SpanName = "POST oauth/device/code";
+        }
+
+        internal static class GetAuthTokens
+        {
+            public const string SpanName = "POST oauth/token";
+        }
+
         internal static class DownloadLatestCLI
         {
             public const string SpanName = "GET api/v1/files/cli/{platform}";
