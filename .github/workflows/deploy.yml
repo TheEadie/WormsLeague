@@ -48,10 +48,12 @@ jobs:
             migrate
             info
             -locations="filesystem:/github/workspace/src/database/migrations"
-            -configFiles="/github/workspace/src/database/flyway.conf"
+            -configFiles="/github/workspace/src/database/flyway.toml"
             -url="${{ steps.pulumi-up.outputs.database-jdbc }}"
             -user="${{ steps.pulumi-up.outputs.database-user }}"
             -password="${{ steps.pulumi-up.outputs.database-password }}"
             -target=${{ steps.database-version.outputs.version }}
         env:
-          FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}
+          FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
+          FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
+

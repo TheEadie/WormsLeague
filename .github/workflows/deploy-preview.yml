@@ -62,7 +62,7 @@ jobs:
           args: >-
             check -changes -drift
             -locations="filesystem:/github/workspace/src/database/migrations"
-            -configFiles="/github/workspace/src/database/flyway.conf"
+            -configFiles="/github/workspace/src/database/flyway.toml"
             -url="${{ steps.preview.outputs.database-jdbc }}"
             -user="${{ steps.preview.outputs.database-user }}"
             -password="${{ steps.preview.outputs.database-password }}"
@@ -72,7 +72,8 @@ jobs:
             -target=${{ steps.database-version.outputs.version }}
             -reportFilename="/github/workspace/src/database/reports/report.htm"
         env:
-          FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}
+          FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
+          FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
 
       - name: Get Summary
         id: summary

@@ -40,7 +40,8 @@ jobs:
     name: Build - Database
     runs-on: ubuntu-latest
     env:
-      FLYWAY_LICENSE_KEY: ${{ secrets.FLYWAY_LICENSE_KEY }}
+      FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
+      FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
 
     services:
       postgres:
@@ -66,7 +67,7 @@ jobs:
         with:
           args: >-
             -locations="filesystem:/github/workspace/src/database/migrations"
-            -configFiles="/github/workspace/src/database/flyway.conf"
+            -configFiles="/github/workspace/src/database/flyway.toml"
             -url="jdbc:postgresql://postgres:5432/worms"
             -user="worms"
             -password="worms"
