@@ -7,12 +7,14 @@ locations = [ "filesystem:migrations" ]
 mixed = true
 outOfOrder = true
 validateMigrationNaming = true
-publishRepublishResult = true
+publishResult = true
 
 [flywayDesktop]
 developmentEnvironment = "development"
 shadowEnvironment = "shadow"
 schemaModel = "./schema-model"
+
+
 
 [redgateCompare]
 filterFile = "filter.rgf"
