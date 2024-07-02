@@ -1,0 +1,17 @@
+id = "a7bc3a93-22da-49dc-8985-cebbe1add3bd"
+name = "worms"
+databaseType = "PostgreSql"
+
+[flyway]
+locations = [ "filesystem:migrations" ]
+mixed = true
+outOfOrder = true
+validateMigrationNaming = true
+
+[flywayDesktop]
+developmentEnvironment = "development"
+shadowEnvironment = "shadow"
+schemaModel = "./schema-model"
+
+[redgateCompare]
+filterFile = "filter.rgf"
