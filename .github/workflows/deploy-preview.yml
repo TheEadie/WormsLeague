@@ -61,14 +61,12 @@ jobs:
         with:
           args: >-
             check -changes -drift
-            -locations="filesystem:/github/workspace/src/database/migrations"
-            -configFiles="/github/workspace/src/database/flyway.toml"
+            -workingDirectory=/github/workspace/src/database
+            -check.buildEnvironment=build
+            -environment=production
             -url="${{ steps.preview.outputs.database-jdbc }}"
             -user="${{ steps.preview.outputs.database-user }}"
             -password="${{ steps.preview.outputs.database-password }}"
-            -check.buildUrl="jdbc:postgresql://postgres:5432/worms"
-            -check.buildUser="worms"
-            -check.buildPassword="worms"
             -target=${{ steps.database-version.outputs.version }}
             -reportFilename="/github/workspace/src/database/reports/report.htm"
         env:

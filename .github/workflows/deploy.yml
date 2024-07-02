@@ -47,8 +47,8 @@ jobs:
             info
             migrate
             info
-            -locations="filesystem:/github/workspace/src/database/migrations"
-            -configFiles="/github/workspace/src/database/flyway.toml"
+            -workingDirectory=/github/workspace/src/database
+            -environment=production
             -url="${{ steps.pulumi-up.outputs.database-jdbc }}"
             -user="${{ steps.pulumi-up.outputs.database-user }}"
             -password="${{ steps.pulumi-up.outputs.database-password }}"
