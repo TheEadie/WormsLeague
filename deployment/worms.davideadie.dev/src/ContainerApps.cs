@@ -126,7 +126,7 @@ public static class ContainerApps
                         new ContainerArgs
                         {
                             Name = "gateway",
-                            Image = "theeadie/worms-server-gateway:0.5.14",
+                            Image = "theeadie/worms-server-gateway:0.5.15",
                             Env = new InputList<EnvironmentVarArgs>
                             {
                                 new EnvironmentVarArgs
