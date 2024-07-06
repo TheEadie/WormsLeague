@@ -1,9 +1,9 @@
 using NUnit.Framework;
 using Syroot.Worms.Armageddon;
 
-namespace Worms.Armageddon.Files.Tests.Schemes;
+namespace Worms.Armageddon.Files.Tests.Schemes.TestData;
 
-public static class TestSchemes
+public static partial class TestSchemes
 {
     public static IEnumerable<TestCaseData> Schemes()
     {
