@@ -61,7 +61,7 @@ public static class TestSchemes
             yield return new TestCaseData(scheme).SetName(property.Name);
         }
 
-        foreach (var property in typeof(Scheme.ExtendedOptions).GetProperties())
+        foreach (var property in typeof(Scheme.ExtendedOptions).GetProperties().Where(x => x.CanWrite))
         {
             var scheme = new Scheme { ObjectCount = 10 };
 
