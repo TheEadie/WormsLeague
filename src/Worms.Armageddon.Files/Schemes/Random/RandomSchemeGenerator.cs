@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using Syroot.Worms.Armageddon;
 
@@ -7,586 +6,33 @@ namespace Worms.Armageddon.Files.Schemes.Random;
 [SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Not used for security")]
 public class RandomSchemeGenerator : IRandomSchemeGenerator
 {
-    private readonly System.Random _rng = new();
-
-    private static readonly IDictionary<Weapon, byte[]> Powers = new ReadOnlyDictionary<Weapon, byte[]>(
-        new Dictionary<Weapon, byte[]>
-        {
-            {
-                Weapon.Bazooka, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.HomingMissile, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.Mortar, new byte[]
-                {
-                    10,
-                    5,
-                    11,
-                    18,
-                    6,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    8,
-                    13,
-                    9,
-                    14
-                }
-            },
-            {
-                Weapon.Grenade, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.ClusterBomb, new byte[]
-                {
-                    10,
-                    5,
-                    11,
-                    18,
-                    6,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    8,
-                    13,
-                    9,
-                    14
-                }
-            },
-            {
-                Weapon.Skunk, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    12,
-                    1,
-                    18,
-                    2,
-                    13,
-                    8,
-                    3,
-                    9,
-                    4,
-                    14
-                }
-            },
-            {
-                Weapon.PetrolBomb, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.BananaBomb, new byte[]
-                {
-                    //255,
-                    10,
-                    11,
-                    18,
-                    5,
-                    6,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    8,
-                    13,
-                    9,
-                    14
-                }
-            },
-            {
-                Weapon.Handgun, new byte[]
-                {
-                    10,
-                    0,
-                    2,
-                    4,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.Shotgun, new byte[]
-                {
-                    10,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.Uzi, new byte[]
-                {
-                    10,
-                    0,
-                    2,
-                    4,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.Minigun, new byte[]
-                {
-                    10,
-                    0,
-                    2,
-                    4,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.Longbow, new byte[]
-                {
-                    0,
-                    1,
-                    2,
-                    3,
-                    4
-                }
-            },
-            {
-                Weapon.Airstrike, new byte[]
-                {
-                    10,
-                    5,
-                    11,
-                    6,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    8,
-                    13,
-                    9,
-                    14
-                }
-            },
-            {
-                Weapon.NapalmStrike, new byte[]
-                {
-                    10,
-                    5,
-                    11,
-                    6,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    8,
-                    13,
-                    9,
-                    14
-                }
-            },
-            {
-                Weapon.Mine, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.Firepunch, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.Dragonball, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.Kamikaze, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            { Weapon.Prod, new byte[] { 2 } },
-            {
-                Weapon.BattleAxe, new byte[]
-                {
-                    0,
-                    1,
-                    2,
-                    3,
-                    4
-                }
-            },
-            {
-                Weapon.Blowtorch, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.PneumaticDrill, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            { Weapon.Girder, new byte[] { 3 } },
-            { Weapon.NinjaRope, new byte[] { 4 } },
-            { Weapon.Parachute, new byte[] { 0 } },
-            { Weapon.Bungee, new byte[] { 0 } },
-            { Weapon.Teleport, new byte[] { 0 } },
-            {
-                Weapon.Dynamite, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.Sheep, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.BaseballBat, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.Flamethrower, new byte[]
-                {
-                    20,
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.HomingPigeon, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.MadCow, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.HolyHandGrenade, new byte[]
-                {
-                    255,
-                    0,
-                    1,
-                    2,
-                    3
-                }
-            },
-            {
-                Weapon.OldWoman, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.SheepLauncher, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.SuperSheep, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            {
-                Weapon.MoleBomb, new byte[]
-                {
-                    10,
-                    11,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    18,
-                    13,
-                    14
-                }
-            },
-            { Weapon.Jetpack, new byte[] { 0 } },
-            { Weapon.LowGravity, new byte[] { 0 } },
-            { Weapon.LaserSight, new byte[] { 0 } },
-            { Weapon.FastWalk, new byte[] { 0 } },
-            { Weapon.Invisibility, new byte[] { 0 } },
-            { Weapon.DamageX2, new byte[] { 0 } },
-            { Weapon.Freeze, new byte[] { 0 } },
-            { Weapon.SuperBananaBomb, new byte[] { 0 } },
-            { Weapon.MineStrike, new byte[] { 0 } },
-            { Weapon.GirderStarterPack, new byte[] { 0 } },
-            { Weapon.Earthquake, new byte[] { 0 } },
-            { Weapon.ScalesOfJustice, new byte[] { 0 } },
-            { Weapon.MingVase, new byte[] { 0 } },
-            { Weapon.MikesCarpetBomb, new byte[] { 0 } },
-            { Weapon.MagicBullet, new byte[] { 0 } },
-            { Weapon.NuclearTest, new byte[] { 0 } },
-            { Weapon.SelectWorm, new byte[] { 0 } },
-            { Weapon.SalvationArmy, new byte[] { 0 } },
-            { Weapon.MoleSquadron, new byte[] { 0 } },
-            { Weapon.MBBomb, new byte[] { 0 } },
-            { Weapon.ConcreteDonkey, new byte[] { 0 } },
-            { Weapon.SuicideBomber, new byte[] { 0 } },
-            { Weapon.SheepStrike, new byte[] { 0 } },
-            { Weapon.MailStrike, new byte[] { 0 } },
-            { Weapon.Armageddon, new byte[] { 0 } },
-        });
-
-    public Scheme Generate()
+    public Scheme Generate(int? seed = null)
     {
+        var rng = seed.HasValue ? new System.Random(seed.Value) : new System.Random(DateTime.Now.Millisecond);
+
         var scheme = CreateBaseScheme();
-        RandomizeWeapons(scheme);
-        RandomUtilities(scheme);
-        RandomMovementTools(scheme);
+        RandomizeWeapons(scheme, rng);
+        RandomUtilities(scheme, rng);
+        RandomMovementTools(scheme, rng);
 
         scheme.Weapons[Weapon.NinjaRope].Ammo = 10;
 
         return scheme;
     }
 
-    private bool IsMovement(Weapon weapon)
+    private static void RandomizeWeapons(Scheme scheme, System.Random rng)
     {
-        return new[]
-        {
-            Weapon.NinjaRope,
-            Weapon.Parachute,
-            Weapon.Bungee
-        }.Contains(weapon);
-    }
-
-    private bool IsUtility(Weapon weapon)
-    {
-        return new[]
-        {
-            Weapon.Prod,
-            Weapon.Teleport,
-            Weapon.Girder,
-            Weapon.Jetpack,
-            Weapon.LowGravity,
-            Weapon.LaserSight,
-            Weapon.FastWalk,
-            Weapon.Invisibility,
-            Weapon.Freeze,
-            Weapon.SelectWorm
-        }.Contains(weapon);
-    }
-
-    private void RandomizeWeapons(Scheme scheme)
-    {
-        var allWeapons = Powers.Keys.Where(x => !IsMovement(x) && !IsUtility(x) && !x.IsSuperWeapon()).ToArray();
-        var starting = DecideGuaranteedStartingWeapons(allWeapons).ToArray();
-        var powerful = DecideGuaranteedPowerfulWeapons(starting).ToArray();
+        var allWeapons = Enum.GetValues<Weapon>().Where(x => x.IsRegularWeapon()).ToArray();
+        var starting = DecideGuaranteedStartingWeapons(allWeapons, rng).ToArray();
+        var powerful = DecideGuaranteedPowerfulWeapons(starting, rng).ToArray();
 
         foreach (var weaponName in allWeapons)
         {
             var ammo = starting.Contains(weaponName) ? (sbyte) 1 : (sbyte) 0;
             var power = powerful.Contains(weaponName)
-                ? Powers[weaponName].Last()
-                : Powers[weaponName].RandomChoice(_rng);
-            var delay = DecideWeaponDelay(power, Powers[weaponName]);
+                ? WeaponUtils.ValidPowerSettings[weaponName].Last()
+                : WeaponUtils.ValidPowerSettings[weaponName].RandomChoice(rng);
+            var delay = DecideWeaponDelay(power, WeaponUtils.ValidPowerSettings[weaponName], rng);
 
             scheme.Weapons[weaponName].Ammo = ammo;
             scheme.Weapons[weaponName].Power = power;
@@ -595,13 +41,13 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
         }
     }
 
-    private void RandomUtilities(Scheme scheme)
+    private static void RandomUtilities(Scheme scheme, System.Random rng)
     {
-        foreach (var utilityName in Powers.Keys.Where(IsUtility).ToArray())
+        foreach (var utilityName in Enum.GetValues<Weapon>().Where(x => x.IsUtility()).ToArray())
         {
-            var ammo = (sbyte) _rng.Next(2);
-            var delay = DecideUtilityDelay();
-            var power = Powers[utilityName].First();
+            var ammo = (sbyte) rng.Next(2);
+            var delay = DecideUtilityDelay(rng);
+            var power = WeaponUtils.ValidPowerSettings[utilityName].First();
 
             scheme.Weapons[utilityName].Ammo = ammo;
             scheme.Weapons[utilityName].Power = power;
@@ -610,11 +56,11 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
         }
     }
 
-    private void RandomMovementTools(Scheme scheme)
+    private static void RandomMovementTools(Scheme scheme, System.Random rng)
     {
-        foreach (var movementName in Powers.Keys.Where(IsMovement).ToArray())
+        foreach (var movementName in Enum.GetValues<Weapon>().Where(x => x.IsMovement()).ToArray())
         {
-            var power = Powers[movementName].RandomChoice(_rng);
+            var power = WeaponUtils.ValidPowerSettings[movementName].RandomChoice(rng);
 
             scheme.Weapons[movementName].Ammo = 10;
             scheme.Weapons[movementName].Power = power;
@@ -623,13 +69,19 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
         }
     }
 
-    private IEnumerable<Weapon> DecideGuaranteedStartingWeapons(Weapon[] configWeapons) =>
-        configWeapons.Shuffle(_rng).Distinct().Take(4);
+    private static IEnumerable<Weapon> DecideGuaranteedStartingWeapons(Weapon[] configWeapons, System.Random rng) =>
+        configWeapons.Shuffle(rng).Distinct().Take(4);
 
-    private IEnumerable<Weapon> DecideGuaranteedPowerfulWeapons(IEnumerable<Weapon> startingWeapons) =>
-        Powers.Where(x => x.Value.Length > 1).Select(x => x.Key).Except(startingWeapons).Shuffle(_rng).Take(5);
+    private static IEnumerable<Weapon> DecideGuaranteedPowerfulWeapons(
+        IEnumerable<Weapon> startingWeapons,
+        System.Random rng) =>
+        WeaponUtils.ValidPowerSettings.Where(x => x.Value.Length > 1)
+            .Select(x => x.Key)
+            .Except(startingWeapons)
+            .Shuffle(rng)
+            .Take(5);
 
-    private sbyte DecideWeaponDelay(byte powerValue, byte[] powerValues)
+    private static sbyte DecideWeaponDelay(byte powerValue, byte[] powerValues, System.Random rng)
     {
         var powerFraction = powerValues.FractionThrough(powerValue);
 
@@ -648,10 +100,10 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
             Tuple.Create((sbyte) 4, larger),
             Tuple.Create((sbyte) 5, larger)
         };
-        return sections.RouletteWheel(_rng);
+        return sections.RouletteWheel(rng);
     }
 
-    private sbyte DecideUtilityDelay()
+    private static sbyte DecideUtilityDelay(System.Random rng)
     {
         var sections = new[]
         {
@@ -661,7 +113,7 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
             Tuple.Create((sbyte) 4, 2),
             Tuple.Create((sbyte) 5, 1)
         };
-        return sections.RouletteWheel(_rng);
+        return sections.RouletteWheel(rng);
     }
 
     private static Scheme CreateBaseScheme()

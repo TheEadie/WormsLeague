@@ -3,6 +3,7 @@ using NUnit.Framework;
 using Shouldly;
 using Syroot.Worms.Armageddon;
 using Worms.Armageddon.Files.Schemes.Text;
+using Worms.Armageddon.Files.Tests.Schemes.TestData;
 
 namespace Worms.Armageddon.Files.Tests.Schemes;
 

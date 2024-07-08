@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Worms.Armageddon.Files.Replays.Text;
 using Worms.Armageddon.Files.Replays.Text.Parsers;
 using Worms.Armageddon.Files.Schemes.Binary;
+using Worms.Armageddon.Files.Schemes.Random;
 using Worms.Armageddon.Files.Schemes.Text;
 
 namespace Worms.Armageddon.Files;
@@ -20,5 +21,6 @@ public static class ServiceRegistration
             .AddScoped<IReplayLineParser, StartOfTurnParser>()
             .AddScoped<IReplayLineParser, WeaponUsedParser>()
             .AddScoped<IReplayLineParser, DamageParser>()
-            .AddScoped<IReplayLineParser, EndOfTurnParser>();
+            .AddScoped<IReplayLineParser, EndOfTurnParser>()
+            .AddScoped<IRandomSchemeGenerator, RandomSchemeGenerator>();
 }

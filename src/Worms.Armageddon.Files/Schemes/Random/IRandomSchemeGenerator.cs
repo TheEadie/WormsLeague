@@ -4,5 +4,5 @@ namespace Worms.Armageddon.Files.Schemes.Random;
 
 public interface IRandomSchemeGenerator
 {
-    Scheme Generate();
+    Scheme Generate(int? seed = null);
 }
