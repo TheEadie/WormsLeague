@@ -80,7 +80,7 @@ internal sealed class SchemeTextWriter : ISchemeTextWriter
         textWriter.WriteLine("(See http://worms2d.info/Weapons for what various power settings will do)");
         textWriter.WriteLine();
 
-        foreach (var weaponName in Enum.GetValues<Weapon>())
+        foreach (var weaponName in WeaponUtils.AllWeapons())
         {
             var weapon = definition.Weapons[weaponName];
             var ammoPadding = weapon.Ammo > 9 ? "   " : "    ";

@@ -67,7 +67,7 @@ internal sealed class SchemeTextReader : ISchemeTextReader
         _ = ReadNextLine(b);
         _ = ReadNextLine(b);
 
-        foreach (var weaponName in Enum.GetValues<Weapon>())
+        foreach (var weaponName in WeaponUtils.AllWeapons())
         {
             var (ammo, power, delay, prob) = GetWeaponDetails(b);
             scheme.Weapons[weaponName].Ammo = ammo;

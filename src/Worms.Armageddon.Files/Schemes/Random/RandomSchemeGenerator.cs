@@ -22,7 +22,7 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
 
     private static void RandomizeWeapons(Scheme scheme, System.Random rng)
     {
-        var allWeapons = Enum.GetValues<Weapon>().Where(x => x.IsRegularWeapon()).ToArray();
+        var allWeapons = WeaponUtils.AllWeapons().Where(x => x.IsRegularWeapon()).ToArray();
         var starting = DecideGuaranteedStartingWeapons(allWeapons, rng).ToArray();
         var powerful = DecideGuaranteedPowerfulWeapons(starting, rng).ToArray();
 
@@ -30,9 +30,9 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
         {
             var ammo = starting.Contains(weaponName) ? (sbyte) 1 : (sbyte) 0;
             var power = powerful.Contains(weaponName)
-                ? WeaponUtils.ValidPowerSettings[weaponName].Last()
-                : WeaponUtils.ValidPowerSettings[weaponName].RandomChoice(rng);
-            var delay = DecideWeaponDelay(power, WeaponUtils.ValidPowerSettings[weaponName], rng);
+                ? weaponName.GetPowerSettings().Last()
+                : weaponName.GetPowerSettings().RandomChoice(rng);
+            var delay = DecideWeaponDelay(power, weaponName.GetPowerSettings(), rng);
 
             scheme.Weapons[weaponName].Ammo = ammo;
             scheme.Weapons[weaponName].Power = power;
@@ -43,11 +43,11 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
 
     private static void RandomUtilities(Scheme scheme, System.Random rng)
     {
-        foreach (var utilityName in Enum.GetValues<Weapon>().Where(x => x.IsUtility()).ToArray())
+        foreach (var utilityName in WeaponUtils.AllWeapons().Where(x => x.IsUtility()).ToArray())
         {
             var ammo = (sbyte) rng.Next(2);
             var delay = DecideUtilityDelay(rng);
-            var power = WeaponUtils.ValidPowerSettings[utilityName].First();
+            var power = utilityName.GetPowerSettings().First();
 
             scheme.Weapons[utilityName].Ammo = ammo;
             scheme.Weapons[utilityName].Power = power;
@@ -58,9 +58,9 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
 
     private static void RandomMovementTools(Scheme scheme, System.Random rng)
     {
-        foreach (var movementName in Enum.GetValues<Weapon>().Where(x => x.IsMovement()).ToArray())
+        foreach (var movementName in WeaponUtils.AllWeapons().Where(x => x.IsMovement()).ToArray())
         {
-            var power = WeaponUtils.ValidPowerSettings[movementName].RandomChoice(rng);
+            var power = movementName.GetPowerSettings().RandomChoice(rng);
 
             scheme.Weapons[movementName].Ammo = 10;
             scheme.Weapons[movementName].Power = power;
@@ -75,8 +75,8 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
     private static IEnumerable<Weapon> DecideGuaranteedPowerfulWeapons(
         IEnumerable<Weapon> startingWeapons,
         System.Random rng) =>
-        WeaponUtils.ValidPowerSettings.Where(x => x.Value.Length > 1)
-            .Select(x => x.Key)
+        WeaponUtils.AllWeapons()
+            .Where(x => x.GetPowerSettings().Length > 1)
             .Except(startingWeapons)
             .Shuffle(rng)
             .Take(5);
@@ -162,7 +162,7 @@ public class RandomSchemeGenerator : IRandomSchemeGenerator
             SuperWeapons = true
         };
 
-        foreach (var weaponName in Enum.GetValues<Weapon>())
+        foreach (var weaponName in WeaponUtils.AllWeapons())
         {
             (sbyte ammo, byte power, sbyte delay, sbyte prob) = (0, 1, 0, 0);
             scheme.Weapons[weaponName].Ammo = ammo;

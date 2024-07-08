@@ -24,7 +24,7 @@ public class RandomSchemeGeneratorShould
     public void Select4StartingWeapons()
     {
         var scheme = _generator.Generate();
-        var total = Enum.GetValues<Weapon>().Where(x => x.IsRegularWeapon()).Count(x => scheme.Weapons[x].Ammo == 1);
+        var total = WeaponUtils.AllWeapons().Where(x => x.IsRegularWeapon()).Count(x => scheme.Weapons[x].Ammo == 1);
         total.ShouldBe(4);
     }
 
@@ -33,11 +33,11 @@ public class RandomSchemeGeneratorShould
     {
         var scheme = _generator.Generate();
 
-        var found = Enum.GetValues<Weapon>()
+        var found = WeaponUtils.AllWeapons()
             .Where(
                 x => x.IsRegularWeapon()
-                    && WeaponUtils.ValidPowerSettings[x].Length > 1
-                    && scheme.Weapons[x].Power == WeaponUtils.ValidPowerSettings[x].Last());
+                    && x.GetPowerSettings().Length > 1
+                    && scheme.Weapons[x].Power == x.GetPowerSettings().Last());
 
         var total = found.Count();
 
@@ -66,7 +66,7 @@ public class RandomSchemeGeneratorShould
         var scheme = _generator.Generate(seed);
 
         _ = expected.ShouldNotBeNull();
-        foreach (var weapon in Enum.GetValues<Weapon>())
+        foreach (var weapon in WeaponUtils.AllWeapons())
         {
             scheme.Weapons[weapon].Ammo.ShouldBe(expected.Weapons[weapon].Ammo, $"Weapon name: {weapon}");
         }
@@ -79,7 +79,7 @@ public class RandomSchemeGeneratorShould
         var scheme = _generator.Generate(seed);
 
         _ = expected.ShouldNotBeNull();
-        foreach (var weapon in Enum.GetValues<Weapon>())
+        foreach (var weapon in WeaponUtils.AllWeapons())
         {
             if (scheme.Weapons[weapon].Ammo == 0)
             {
@@ -97,7 +97,7 @@ public class RandomSchemeGeneratorShould
         var scheme = _generator.Generate(seed);
 
         _ = expected.ShouldNotBeNull();
-        foreach (var weapon in Enum.GetValues<Weapon>())
+        foreach (var weapon in WeaponUtils.AllWeapons())
         {
             if (scheme.Weapons[weapon].Ammo == 0)
             {

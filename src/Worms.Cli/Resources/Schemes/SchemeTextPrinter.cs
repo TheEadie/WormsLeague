@@ -1,5 +1,6 @@
 using System.Globalization;
 using Syroot.Worms.Armageddon;
+using Worms.Armageddon.Files.Schemes;
 using Worms.Armageddon.Files.Schemes.Text;
 using Worms.Cli.Logging.TableOutput;
 using Worms.Cli.Resources.Local.Schemes;
@@ -40,7 +41,7 @@ internal sealed class SchemeTextPrinter(ISchemeTextWriter schemeTextWriter) : IR
     private static string GetWeaponSummary(Scheme.WeaponList weapons)
     {
         var summary = "";
-        foreach (var weaponName in Enum.GetValues<Weapon>())
+        foreach (var weaponName in WeaponUtils.AllWeapons())
         {
             var weapon = weapons[weaponName];
             if (weapon.Ammo > 0)
