@@ -66,12 +66,8 @@ jobs:
         uses: docker://redgate/flyway:10
         with:
           args: >-
-            -locations="filesystem:/github/workspace/src/database/migrations"
-            -configFiles="/github/workspace/src/database/flyway.toml"
-            -url="jdbc:postgresql://postgres:5432/worms"
-            -user="worms"
-            -password="worms"
-            -schemas="public"
+            -workingDirectory=/github/workspace/src/database
+            -environment=build
             info
             migrate
             info
