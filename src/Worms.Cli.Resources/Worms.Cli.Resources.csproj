@@ -10,7 +10,7 @@
     <PackageReference Include="System.IO.Abstractions" Version="21.0.22"/>
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.9.1"/>
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="8.0.6"/>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="8.0.7"/>
   </ItemGroup>
 
   <ItemGroup>
