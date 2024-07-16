@@ -35,6 +35,11 @@ internal static class Telemetry
             public const string SpanName = "GET api/v1/files/schemes/{id}";
         }
 
+        internal static class GetGames
+        {
+            public const string SpanName = "GET api/v1/games";
+        }
+
         internal static class CreateGame
         {
             public const string SpanName = "POST api/v1/games";

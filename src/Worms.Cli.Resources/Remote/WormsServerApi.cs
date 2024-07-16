@@ -36,6 +36,7 @@ internal sealed class WormsServerApi : IWormsServerApi
     public async Task<LatestCliDtoV1> GetLatestCliDetails()
     {
         using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.GetLatestCliDetails.SpanName);
+
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/files/cli", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<LatestCliDtoV1>(httpClient, () => httpClient.GetAsync(path))
@@ -77,6 +78,8 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
     {
+        using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.GetGames.SpanName);
+
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<IReadOnlyCollection<GamesDtoV1>>(
