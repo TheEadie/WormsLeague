@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Worms.Cli.Resources.Remote.Updates;
@@ -20,6 +21,7 @@ internal sealed class CliUpdater(
 
         var latestCliVersion = await cliUpdateRetriever.GetLatestCliVersion().ConfigureAwait(false);
         logger.LogDebug("Latest version: {Version}", latestCliVersion);
+        _ = Activity.Current?.SetTag(Telemetry.Spans.Update.LatestCliVersion, latestCliVersion);
 
         if (cliInfo.Version >= latestCliVersion && !force)
         {
@@ -44,12 +46,16 @@ internal sealed class CliUpdater(
     {
         logger.LogInformation("Downloading Worms CLI {Version}...", latestCliVersion);
 
-        if (fileSystem.Directory.Exists(updateFolder))
+        var updateFolderExists = fileSystem.Directory.Exists(updateFolder);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Update.UpdateFolderExists, updateFolderExists);
+
+        if (updateFolderExists)
         {
             fileSystem.Directory.Delete(updateFolder, true);
         }
 
         _ = fileSystem.Directory.CreateDirectory(updateFolder);
+
         await cliUpdateDownloader.DownloadLatestCli(updateFolder).ConfigureAwait(false);
         logger.LogInformation("Downloading Complete");
     }
@@ -69,7 +75,10 @@ internal sealed class CliUpdater(
         logger.LogDebug("Moving {Source} to {Destination}", updatePath, installPath);
         fileSystem.File.Move(updatePath, installPath);
 
-        foreach (var file in Directory.GetFiles(updateFolder))
+        var files = Directory.GetFiles(updateFolder);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Update.NumberOfFiles, files.Length + 1);
+
+        foreach (var file in files)
         {
             var destination = Path.Combine(cliInfo.Folder, Path.GetFileName(file));
             logger.LogDebug("Copying {Source} to {Destination}", file, destination);

@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
@@ -62,32 +63,43 @@ internal sealed class HostHandler(
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
-        var dryRun = context.ParseResult.GetValueForOption(Host.DryRun);
-        var skipSchemeDownload = context.ParseResult.GetValueForOption(Host.SkipSchemeDownload);
-        var skipUpload = context.ParseResult.GetValueForOption(Host.SkipUpload);
-        var skipAnnouncement = context.ParseResult.GetValueForOption(Host.SkipAnnouncement);
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Host.SpanName);
         var cancellationToken = context.GetCancellationToken();
 
-        var config =
-            new Config(
-                dryRun,
-                skipSchemeDownload,
-                skipUpload,
-                skipAnnouncement,
-                GetIpAddress(Domain),
-                wormsLocator.Find()).Validate(
-                Valid.Rules<Config>()
-                    .Must(x => x.IpAddress.IsValid, x => x.IpAddress.Error.First())
-                    .Must(x => x.GameInfo.IsInstalled, "Worms Armageddon is not installed"));
+        var config = new Config(
+            context.ParseResult.GetValueForOption(Host.DryRun),
+            context.ParseResult.GetValueForOption(Host.SkipSchemeDownload),
+            context.ParseResult.GetValueForOption(Host.SkipUpload),
+            context.ParseResult.GetValueForOption(Host.SkipAnnouncement),
+            GetIpAddress(Domain),
+            wormsLocator.Find());
 
-        if (!config.IsValid)
+        RecordTelemetryForConfig(config);
+
+        var validatedConfig = config.Validate(
+            Valid.Rules<Config>()
+                .Must(x => x.IpAddress.IsValid, x => x.IpAddress.Error.First())
+                .Must(x => x.GameInfo.IsInstalled, "Worms Armageddon is not installed"));
+
+        if (!validatedConfig.IsValid)
         {
-            config.LogErrors(logger);
+            validatedConfig.LogErrors(logger);
             return 1;
         }
 
-        await HostGame(config.Value, cancellationToken).ConfigureAwait(false);
+        await HostGame(validatedConfig.Value, cancellationToken).ConfigureAwait(false);
         return 0;
+    }
+
+    private static void RecordTelemetryForConfig(Config config)
+    {
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Host.DryRun, config.DryRun);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Host.SkipSchemeDownload, config.SkipSchemeDownload);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Host.SkipUpload, config.SkipUpload);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Host.SkipAnnouncement, config.SkipAnnouncement);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Host.IpAddressFound, config.IpAddress.IsValid);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Host.WormsArmageddonIsInstalled, config.GameInfo.IsInstalled);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Host.WormsArmageddonVersion, config.GameInfo.Version);
     }
 
     private async Task HostGame(Config config, CancellationToken cancellationToken)

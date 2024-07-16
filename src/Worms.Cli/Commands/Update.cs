@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using Worms.Cli.CommandLine;
 
 namespace Worms.Cli.Commands;
@@ -18,7 +19,6 @@ internal sealed class Update : Command
         AddOption(Force);
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class UpdateHandler(CliUpdater cliUpdater) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
@@ -26,7 +26,10 @@ internal sealed class UpdateHandler(CliUpdater cliUpdater) : ICommandHandler
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Update.SpanName);
+
         var force = context.ParseResult.GetValueForOption(Update.Force);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Update.Force, force);
 
         await cliUpdater.DownloadAndInstall(force).ConfigureAwait(false);
 

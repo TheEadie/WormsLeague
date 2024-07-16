@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using Worms.Cli.Resources.Remote.Auth;
 
 namespace Worms.Cli.Commands;
@@ -18,6 +19,7 @@ internal sealed class AuthHandler(ILoginService loginService) : ICommandHandler
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Auth.SpanName);
         await loginService.RequestLogin(CancellationToken.None).ConfigureAwait(false);
         return 0;
     }

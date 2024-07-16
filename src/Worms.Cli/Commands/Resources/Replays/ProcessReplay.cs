@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game.Replays;
 using Worms.Cli.Resources;
@@ -34,6 +35,7 @@ internal sealed class ProcessReplayHandler(
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Replay.SpanNameProcess);
         var name = context.ParseResult.GetValueForArgument(ProcessReplay.ReplayName);
         var cancellationToken = context.GetCancellationToken();
 

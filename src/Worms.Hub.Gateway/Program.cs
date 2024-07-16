@@ -23,6 +23,7 @@ builder.Services.AddAuthentication()
             });
 builder.Services.AddAuthorization();
 builder.Services.AddGatewayServices();
+builder.Services.AddOpenTelemetryWormsHub();
 
 var app = builder.Build();
 app.UseHttpsRedirection();

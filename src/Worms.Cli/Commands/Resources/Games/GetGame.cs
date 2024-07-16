@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
@@ -30,6 +31,7 @@ internal sealed class GetGameHandler(ResourceGetter<RemoteGame> gameRetriever, I
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Game.SpanNameGet);
         var name = context.ParseResult.GetValueForArgument(GetGame.GameName);
         var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
         var cancellationToken = context.GetCancellationToken();

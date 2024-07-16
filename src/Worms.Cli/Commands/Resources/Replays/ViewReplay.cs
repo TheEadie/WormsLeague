@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
@@ -38,6 +39,7 @@ internal sealed class ViewReplayHandler(
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Replay.SpanNameView);
         var name = context.ParseResult.GetValueForArgument(ViewReplay.ReplayName);
         var turn = context.ParseResult.GetValueForOption(ViewReplay.Turn);
         var cancellationToken = context.GetCancellationToken();

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO.Abstractions;
 using System.Net;
 using System.Net.Http.Headers;
@@ -34,6 +35,8 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task<LatestCliDtoV1> GetLatestCliDetails()
     {
+        using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.GetLatestCliDetails.SpanName);
+
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/files/cli", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<LatestCliDtoV1>(httpClient, () => httpClient.GetAsync(path))
@@ -42,6 +45,9 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task<byte[]> DownloadLatestCli(string platform)
     {
+        using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.DownloadLatestCli.SpanName);
+        _ = span?.AddTag(Telemetry.Spans.DownloadLatestCli.Platform, platform);
+
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/files/cli/{platform}", UriKind.Relative);
         return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path))
@@ -50,6 +56,9 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task<LeagueDtoV1> GetLeague(string id)
     {
+        using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.GetLeague.SpanName);
+        _ = span?.AddTag(Telemetry.Spans.League.Id, id);
+
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/leagues/{id}", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<LeagueDtoV1>(httpClient, () => httpClient.GetAsync(path))
@@ -58,6 +67,9 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task<byte[]> DownloadScheme(string id)
     {
+        using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.DownloadScheme.SpanName);
+        _ = span?.AddTag(Telemetry.Spans.Scheme.Id, id);
+
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/files/schemes/{id}", UriKind.Relative);
         return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path))
@@ -66,6 +78,8 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
     {
+        using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.GetGames.SpanName);
+
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<IReadOnlyCollection<GamesDtoV1>>(
@@ -76,6 +90,8 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task<GamesDtoV1> CreateGame(CreateGameDtoV1 createParams)
     {
+        using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.CreateGame.SpanName);
+
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<GamesDtoV1>(
@@ -86,6 +102,10 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task UpdateGame(GamesDtoV1 newGameDetails)
     {
+        using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.UpdateGame.SpanName);
+        _ = span?.AddTag(Telemetry.Spans.Game.Id, newGameDetails.Id);
+        _ = span?.AddTag(Telemetry.Spans.Game.Status, newGameDetails.Status);
+
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/games", UriKind.Relative);
         await CallApiRefreshAccessTokenIfInvalid(
@@ -96,6 +116,9 @@ internal sealed class WormsServerApi : IWormsServerApi
 
     public async Task<ReplayDtoV1> CreateReplay(CreateReplayDtoV1 createParams)
     {
+        using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.CreateReplay.SpanName);
+        _ = span?.AddTag(Telemetry.Spans.Replay.Id, createParams.Name);
+
         using var httpClient = _httpClientFactory.CreateClient();
         using var form = new MultipartFormDataContent();
         var allBytes = await _fileSystem.File.ReadAllBytesAsync(createParams.ReplayFilePath).ConfigureAwait(false);
@@ -149,7 +172,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         HttpResponseMessage? response = null;
 
         const int maxRetries = 3;
-        var delayBetweenRetries = 1000;
+        var delayBetweenRetries = 500;
         for (var i = 0; i < maxRetries; i++)
         {
             response = await apiCall().ConfigureAwait(false);
@@ -169,7 +192,11 @@ internal sealed class WormsServerApi : IWormsServerApi
                 return response;
             }
 
-            await Task.Delay(delayBetweenRetries).ConfigureAwait(false);
+            if (i != maxRetries - 1)
+            {
+                await Task.Delay(delayBetweenRetries).ConfigureAwait(false);
+            }
+
             delayBetweenRetries *= 2;
         }
 

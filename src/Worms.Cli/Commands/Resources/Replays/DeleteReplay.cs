@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
@@ -30,6 +31,7 @@ internal sealed class DeleteReplayHandler(
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Replay.SpanNameDelete);
         var name = context.ParseResult.GetValueForArgument(DeleteReplay.ReplayName);
         var cancellationToken = context.GetCancellationToken();
 

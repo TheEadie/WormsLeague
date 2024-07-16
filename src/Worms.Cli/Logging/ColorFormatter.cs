@@ -49,6 +49,11 @@ internal sealed class ColorFormatter : ConsoleFormatter, IDisposable
                 case LogLevel.Error:
                 case LogLevel.Critical:
                     textWriter.WriteWithColor(message, ConsoleColor.Red);
+                    if (logEntry.Exception != null)
+                    {
+                        textWriter.WriteWithColor(logEntry.Exception.Message, ConsoleColor.DarkRed);
+                    }
+
                     break;
                 case LogLevel.None:
                     break;

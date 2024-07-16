@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Worms.Hub.Gateway.API.Middleware;
 
 internal sealed class LoggingMiddleware(RequestDelegate next, ILogger<LoggingMiddleware> logger)
@@ -12,6 +14,7 @@ internal sealed class LoggingMiddleware(RequestDelegate next, ILogger<LoggingMid
             request.Method,
             request.Path,
             username);
+        _ = Activity.Current?.SetTag("user.id", username);
 
         await next(context).ConfigureAwait(false);
 
