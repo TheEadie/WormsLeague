@@ -40,6 +40,8 @@ internal static class Telemetry
             public const string ProcessExitCode = "process.exit.code";
             public const string Verbose = "worms.verbose";
             public const string Quiet = "worms.quiet";
+            public const string UserId = "user.id";
+            public const string LoggedIn = "user.logged_in";
         }
 
         internal static class Auth

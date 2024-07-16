@@ -14,11 +14,13 @@ public class LogUserId(IUserDetailsService userDetailsService, ILogger<LogUserId
                 {
                     var anonymisedUserId = userDetailsService.GetAnonymisedUserId();
                     logger.Log(LogLevel.Debug, "Logged in to Worms Hub as {UserId}", anonymisedUserId);
-                    _ = Activity.Current?.SetTag("user.id", anonymisedUserId);
+                    _ = Activity.Current?.SetTag(Telemetry.Spans.Root.LoggedIn, true);
+                    _ = Activity.Current?.SetTag(Telemetry.Spans.Root.UserId, anonymisedUserId);
                 }
                 else
                 {
                     logger.Log(LogLevel.Debug, "Not logged in to Worms Hub");
+                    _ = Activity.Current?.SetTag(Telemetry.Spans.Root.LoggedIn, false);
                 }
 
                 await next(context).ConfigureAwait(false);
