@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Worms.Cli.Commands.Validation;
 using Worms.Cli.Resources;
@@ -31,6 +32,7 @@ internal sealed class GetReplayHandler(ResourceGetter<LocalReplay> replayRetriev
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Replay.SpanNameGet);
         var name = context.ParseResult.GetValueForArgument(GetReplay.ReplayName);
         var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
         var cancellationToken = context.GetCancellationToken();

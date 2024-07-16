@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -55,6 +56,7 @@ internal sealed class CreateSchemeHandler(
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Scheme.SpanNameCreate);
         var cancellationToken = context.GetCancellationToken();
 
         var config = new Config(

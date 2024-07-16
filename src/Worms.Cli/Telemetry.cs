@@ -75,19 +75,42 @@ internal static class Telemetry
             public const string IpAddressFound = "worms.host.ip_address_found";
             public const string WormsArmageddonIsInstalled = "worms.host.worms_armageddon_is_installed";
             public const string WormsArmageddonVersion = "worms.version.worms_armageddon_version";
-            public const string LeagueId = "worms.host.league_id";
-            public const string SchemeVersion = "worms.host.scheme_version";
+        }
+
+        internal static class Game
+        {
+            public const string SpanNameGet = "worms get games";
+        }
+
+        internal static class Gif
+        {
+            public const string SpanNameBrowse = "worms browse gifs";
+            public const string SpanNameCreate = "worms create gifs";
+        }
+
+        internal static class Replay
+        {
+            public const string SpanNameGet = "worms get replays";
+            public const string SpanNameBrowse = "worms browse replays";
+            public const string SpanNameDelete = "worms delete replays";
+            public const string SpanNameProcess = "worms process replays";
+            public const string SpanNameView = "worms view replays";
+        }
+
+        internal static class Scheme
+        {
+            public const string SpanNameGet = "worms get schemes";
+            public const string SpanNameCreate = "worms create schemes";
+            public const string SpanNameDelete = "worms delete schemes";
+            public const string SpanNameBrowse = "worms browse schemes";
+
+            public const string Id = "worms.scheme.id";
+            public const string Version = "worms.scheme.version";
         }
 
         internal static class League
         {
             public const string Id = "worms.league.id";
-        }
-
-        internal static class Scheme
-        {
-            public const string Id = "worms.scheme.id";
-            public const string Version = "worms.scheme.version";
         }
     }
 

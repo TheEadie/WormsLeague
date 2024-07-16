@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Cli.Resources.Local.Folders;
@@ -27,6 +28,7 @@ internal sealed class BrowseSchemeHandler(
 
     public Task<int> InvokeAsync(InvocationContext context)
     {
+        _ = Activity.Current?.SetTag("name", Telemetry.Spans.Scheme.SpanNameBrowse);
         var worms = wormsLocator.Find();
 
         if (!worms.IsInstalled)
