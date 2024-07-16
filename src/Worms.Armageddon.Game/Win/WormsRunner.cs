@@ -9,7 +9,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService stea
         return Task.Run(
             async () =>
                 {
-                    using var span = Telemetry.Source.StartActivity(
+                    using var span = Activity.Current?.Source.StartActivity(
                         Telemetry.Spans.WormsArmageddon.SpanName,
                         ActivityKind.Client);
 

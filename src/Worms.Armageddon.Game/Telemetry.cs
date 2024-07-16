@@ -1,12 +1,7 @@
-using System.Diagnostics;
-
 namespace Worms.Armageddon.Game;
 
 public static class Telemetry
 {
-    private const string SourceName = "Worms.CLI";
-    public static readonly ActivitySource Source = new(SourceName);
-
     internal static class Spans
     {
         internal static class WormsArmageddon
