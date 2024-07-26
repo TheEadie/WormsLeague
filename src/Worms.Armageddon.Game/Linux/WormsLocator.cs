@@ -14,7 +14,7 @@ internal sealed class WormsLocator : IWormsLocator
             return GameInfo.NotInstalled;
         }
 
-        var rootLocation = Path.Combine(userHomeDirectory, "games", "worms");
+        var rootLocation = Path.Combine(userHomeDirectory, ".wine", "drive_c", "WA");
         var exeLocation = Path.Combine(rootLocation, processName + ".exe");
         var schemesFolder = Path.Combine(rootLocation, "User", "Schemes");
         var gamesFolder = Path.Combine(rootLocation, "User", "Games");
