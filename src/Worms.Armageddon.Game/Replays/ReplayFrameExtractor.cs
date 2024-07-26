@@ -19,7 +19,7 @@ internal sealed class ReplayFrameExtractor(IWormsRunner wormsRunner) : IReplayFr
 
         return wormsRunner.RunWorms(
             "/getvideo",
-            $"\"{replayPath}\"",
+            $"'{replayPath}'",
             fps.ToString(CultureInfo.CurrentCulture),
             start,
             end,
