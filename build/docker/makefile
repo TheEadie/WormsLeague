@@ -51,7 +51,8 @@ $1.package: $1.version
 		--build-arg VERSION=$$($1_VERSION) \
 		--cache-from=type=gha,scope=package \
 		--cache-from=type=gha,scope=build \
-		--cache-to=type=gha,mode=max,scope=package
+		--cache-to=type=gha,mode=max,scope=package \
+		--load
 	@echo ""
 
 ## Release
