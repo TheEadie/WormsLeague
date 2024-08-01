@@ -5,7 +5,6 @@ using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
 using Storage = Pulumi.AzureNative.Storage;
 using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
-using GetCertificate = Pulumi.AzureNative.App.GetCertificate;
 
 namespace worms.davideadie.dev;
 
@@ -73,19 +72,10 @@ public static class ContainerApps
         // Get the SSL cert when deploying to prod only
         if (Pulumi.Deployment.Instance.StackName == "prod")
         {
-            var certificate = GetCertificate.Invoke(
-                new()
-                {
-                    CertificateName = "worms",
-                    EnvironmentName = "Worms-Hub",
-                    ResourceGroupName = resourceGroup.Name,
-                });
-
             customDomainArgs.Add(
                 new CustomDomainArgs
                 {
                     BindingType = "SniEnabled",
-                    CertificateId = certificate.Apply(x => x.Id),
                     Name = "worms.davideadie.dev",
                 });
         }
