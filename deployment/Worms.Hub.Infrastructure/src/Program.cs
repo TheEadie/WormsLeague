@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Pulumi;
 
-namespace worms.davideadie.dev;
+namespace Worms.Hub.Infrastructure;
 
 public static class Program
 {

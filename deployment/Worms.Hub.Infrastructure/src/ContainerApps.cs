@@ -1,3 +1,4 @@
+using System;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
@@ -5,9 +6,8 @@ using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
 using Storage = Pulumi.AzureNative.Storage;
 using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
-using GetCertificate = Pulumi.AzureNative.App.GetCertificate;
 
-namespace worms.davideadie.dev;
+namespace Worms.Hub.Infrastructure;
 
 public static class ContainerApps
 {
@@ -38,7 +38,8 @@ public static class ContainerApps
                     LogAnalyticsConfiguration = new LogAnalyticsConfigurationArgs
                     {
                         CustomerId = logAnalytics.CustomerId,
-                        SharedKey = logAnalyticsSharedKeys.Apply(x => x.PrimarySharedKey)
+                        SharedKey = logAnalyticsSharedKeys.Apply(
+                            x => x.PrimarySharedKey ?? throw new Exception("No primary shared key found")),
                     }
                 }
             });
@@ -73,19 +74,10 @@ public static class ContainerApps
         // Get the SSL cert when deploying to prod only
         if (Pulumi.Deployment.Instance.StackName == "prod")
         {
-            var certificate = GetCertificate.Invoke(
-                new()
-                {
-                    CertificateName = "worms",
-                    EnvironmentName = "Worms-Hub",
-                    ResourceGroupName = resourceGroup.Name,
-                });
-
             customDomainArgs.Add(
                 new CustomDomainArgs
                 {
                     BindingType = "SniEnabled",
-                    CertificateId = certificate.Apply(x => x.Id),
                     Name = "worms.davideadie.dev",
                 });
         }
@@ -105,8 +97,8 @@ public static class ContainerApps
                         TargetPort = 8080,
                         CustomDomains = customDomainArgs,
                     },
-                    Secrets = new InputList<SecretArgs>()
-                    {
+                    Secrets =
+                    [
                         new SecretArgs
                         {
                             Name = "database-connection",
@@ -117,7 +109,7 @@ public static class ContainerApps
                             Name = "slack-hook-url",
                             Value = config.RequireSecret("slack_hook_url"),
                         }
-                    }
+                    ]
                 },
                 Template = new TemplateArgs
                 {
@@ -127,8 +119,8 @@ public static class ContainerApps
                         {
                             Name = "gateway",
                             Image = "theeadie/worms-server-gateway:0.5.21",
-                            Env = new InputList<EnvironmentVarArgs>
-                            {
+                            Env =
+                            [
                                 new EnvironmentVarArgs
                                 {
                                     Name = "WORMS_STORAGE__TempReplayFolder",
@@ -154,7 +146,7 @@ public static class ContainerApps
                                     Name = "WORMS_SlackWebHookURL",
                                     SecretRef = "slack-hook-url",
                                 }
-                            },
+                            ],
                             VolumeMounts =
                             {
                                 new VolumeMountArgs

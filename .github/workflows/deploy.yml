@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     paths:
-      - "deployment/worms.davideadie.dev/**"
+      - "deployment/Worms.Hub.Infrastructure/**"
       - ".github/workflows/deploy.yml"
     branches:
       - main
@@ -28,7 +28,7 @@ jobs:
         with:
           command: up
           stack-name: prod
-          work-dir: deployment/worms.davideadie.dev
+          work-dir: deployment/Worms.Hub.Infrastructure
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -38,7 +38,7 @@ jobs:
 
       - name: Get Version
         id: database-version
-        run: echo "version=$(cat deployment/worms.davideadie.dev/database-version.txt)" >> $GITHUB_OUTPUT
+        run: echo "version=$(cat deployment/Worms.Hub.Infrastructure/database-version.txt)" >> $GITHUB_OUTPUT
 
       - name: Run Flyway Migrate
         uses: docker://redgate/flyway:10

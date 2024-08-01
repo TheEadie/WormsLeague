@@ -2,7 +2,7 @@ using Pulumi;
 using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
 
-namespace worms.davideadie.dev;
+namespace Worms.Hub.Infrastructure;
 
 public class WormsHub : Stack
 {
@@ -16,7 +16,7 @@ public class WormsHub : Stack
     public Output<string> DatabaseAdoNet { get; set; }
 
     [Output("database-user")]
-    public Output<string> DatabaseUser { get; set; }
+    public Output<string?> DatabaseUser { get; set; }
 
     [Output("database-password")]
     public Output<string> DatabasePassword { get; set; }
@@ -60,6 +60,6 @@ public class WormsHub : Stack
 
         var protocol = isProd ? "https://" : "http://";
 
-        ApiUrl = Output.Format($"{protocol}{containerApp.Configuration.Apply(c => c.Ingress).Apply(i => i.Fqdn)}");
+        ApiUrl = Output.Format($"{protocol}{containerApp.Configuration.Apply(c => c?.Ingress).Apply(i => i?.Fqdn)}");
     }
 }
