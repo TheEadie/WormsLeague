@@ -1,4 +1,4 @@
-namespace worms.davideadie.dev;
+namespace Worms.Hub.Infrastructure;
 
 public static class Utils
 {

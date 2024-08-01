@@ -3,7 +3,7 @@ name: Deploy - Preview
 on:
   pull_request:
     paths:
-      - "deployment/worms.davideadie.dev/**"
+      - "deployment/Worms.Hub.Infrastructure/**"
       - "build/flyway-summary.sh"
       - ".github/workflows/deploy.yml"
 
@@ -39,7 +39,7 @@ jobs:
         with:
           command: preview
           stack-name: prod
-          work-dir: deployment/worms.davideadie.dev
+          work-dir: deployment/Worms.Hub.Infrastructure
           comment-on-pr: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
@@ -51,7 +51,7 @@ jobs:
 
       - name: Get Database Version
         id: database-version
-        run: echo "version=$(cat deployment/worms.davideadie.dev/database-version.txt)" >> $GITHUB_OUTPUT
+        run: echo "version=$(cat deployment/Worms.Hub.Infrastructure/database-version.txt)" >> $GITHUB_OUTPUT
 
       - name: Create Reports Folder
         run: mkdir src/database/reports

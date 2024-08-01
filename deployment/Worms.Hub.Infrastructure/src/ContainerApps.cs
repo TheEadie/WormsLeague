@@ -1,3 +1,4 @@
+using System;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
@@ -6,7 +7,7 @@ using Pulumi.AzureNative.Resources;
 using Storage = Pulumi.AzureNative.Storage;
 using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
 
-namespace worms.davideadie.dev;
+namespace Worms.Hub.Infrastructure;
 
 public static class ContainerApps
 {
@@ -25,6 +26,11 @@ public static class ContainerApps
                 WorkspaceName = logAnalytics.Name
             });
 
+        if (logAnalyticsSharedKeys is null)
+        {
+            throw new Exception("Failed to get the shared keys for the Log Analytics workspace");
+        }
+
         var kubeEnv = new ManagedEnvironment(
             "azure-container-apps-environment",
             new()
@@ -37,7 +43,8 @@ public static class ContainerApps
                     LogAnalyticsConfiguration = new LogAnalyticsConfigurationArgs
                     {
                         CustomerId = logAnalytics.CustomerId,
-                        SharedKey = logAnalyticsSharedKeys.Apply(x => x.PrimarySharedKey)
+                        SharedKey = logAnalyticsSharedKeys.Apply(
+                            x => x.PrimarySharedKey ?? throw new Exception("No primary shared key found")),
                     }
                 }
             });
@@ -95,8 +102,8 @@ public static class ContainerApps
                         TargetPort = 8080,
                         CustomDomains = customDomainArgs,
                     },
-                    Secrets = new InputList<SecretArgs>()
-                    {
+                    Secrets =
+                    [
                         new SecretArgs
                         {
                             Name = "database-connection",
@@ -107,7 +114,7 @@ public static class ContainerApps
                             Name = "slack-hook-url",
                             Value = config.RequireSecret("slack_hook_url"),
                         }
-                    }
+                    ]
                 },
                 Template = new TemplateArgs
                 {
@@ -117,8 +124,8 @@ public static class ContainerApps
                         {
                             Name = "gateway",
                             Image = "theeadie/worms-server-gateway:0.5.21",
-                            Env = new InputList<EnvironmentVarArgs>
-                            {
+                            Env =
+                            [
                                 new EnvironmentVarArgs
                                 {
                                     Name = "WORMS_STORAGE__TempReplayFolder",
@@ -144,7 +151,7 @@ public static class ContainerApps
                                     Name = "WORMS_SlackWebHookURL",
                                     SecretRef = "slack-hook-url",
                                 }
-                            },
+                            ],
                             VolumeMounts =
                             {
                                 new VolumeMountArgs

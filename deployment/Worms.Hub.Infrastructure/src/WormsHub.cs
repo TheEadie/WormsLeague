@@ -2,7 +2,7 @@ using Pulumi;
 using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
 
-namespace worms.davideadie.dev;
+namespace Worms.Hub.Infrastructure;
 
 public class WormsHub : Stack
 {
