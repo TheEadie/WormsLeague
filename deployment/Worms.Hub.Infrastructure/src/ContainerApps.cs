@@ -26,11 +26,6 @@ public static class ContainerApps
                 WorkspaceName = logAnalytics.Name
             });
 
-        if (logAnalyticsSharedKeys is null)
-        {
-            throw new Exception("Failed to get the shared keys for the Log Analytics workspace");
-        }
-
         var kubeEnv = new ManagedEnvironment(
             "azure-container-apps-environment",
             new()
