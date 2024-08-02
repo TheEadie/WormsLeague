@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
@@ -11,7 +12,7 @@ namespace Worms.Hub.Infrastructure;
 
 public static class ContainerApps
 {
-    public static ContainerApp Config(
+    public static async Task<ContainerApp> Config(
         ResourceGroup resourceGroup,
         Config config,
         Workspace logAnalytics,
@@ -19,6 +20,8 @@ public static class ContainerApps
         Storage.FileShare fileShare,
         Output<string> databaseConnectionString)
     {
+        var domainName = config.Get("domain");
+
         var logAnalyticsSharedKeys = GetSharedKeys.Invoke(
             new()
             {
@@ -71,14 +74,42 @@ public static class ContainerApps
 
         var customDomainArgs = new InputList<CustomDomainArgs>();
 
-        // Get the SSL cert when deploying to prod only
-        if (Pulumi.Deployment.Instance.StackName == "prod")
+        // Managed Cert will only exist from second run
+        GetCertificateResult? certificate = null;
+
+        try
+        {
+            certificate = await GetCertificate.InvokeAsync(
+                new()
+                {
+                    CertificateName = "worms-hub-certificate",
+                    EnvironmentName = kubeEnv.GetResourceName(),
+                    ResourceGroupName = resourceGroup.GetResourceName()
+                });
+        }
+        catch (Exception)
+        {
+            // Certificate not found
+        }
+
+
+        if (certificate is not null)
         {
             customDomainArgs.Add(
                 new CustomDomainArgs
                 {
                     BindingType = "SniEnabled",
-                    Name = "worms.davideadie.dev",
+                    CertificateId = certificate.Id,
+                    Name = domainName,
+                });
+        }
+        else
+        {
+            customDomainArgs.Add(
+                new CustomDomainArgs
+                {
+                    BindingType = "Disabled",
+                    Name = domainName,
                 });
         }
 
@@ -171,6 +202,21 @@ public static class ContainerApps
                             StorageName = managedEnvironmentsStorage.Name,
                         }
                     }
+                }
+            });
+
+        // Create a managed certificate - Must be done after env has custom domain added
+        var cert = new ManagedCertificate(
+            "worms-hub-certificate",
+            new()
+            {
+                ManagedCertificateName = "worms-hub-certificate",
+                ResourceGroupName = resourceGroup.Name,
+                EnvironmentName = kubeEnv.Name,
+                Properties = new ManagedCertificatePropertiesArgs()
+                {
+                    SubjectName = domainName,
+                    DomainControlValidation = "HTTP"
                 }
             });
 

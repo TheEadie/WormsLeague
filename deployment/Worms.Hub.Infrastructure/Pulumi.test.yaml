@@ -1,4 +1,5 @@
 config:
   azure-native:location: northeurope
+  worms.davideadie.dev:domain: worms-test.davideadie.dev
   worms.davideadie.dev:slack_hook_url:
     secure: AAABANi2KS6KFb/mnNmv5rsAZ9PeBl5dSJ1gxstw37Sixi0k2Vjbz4CCSnImDcCGA3BURUqLUI7TicF+UQm6kBu2Cttb

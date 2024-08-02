@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Pulumi;
 using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
@@ -50,13 +51,15 @@ public class WormsHub : Stack
         DatabaseUser = server.AdministratorLogin;
         DatabasePassword = databasePassword;
 
-        var containerApp = ContainerApps.Config(
+        var containerApp = Task.Run(() => ContainerApps.Config(
             resourceGroup,
             config,
             logAnalytics,
             storage,
             fileShare,
-            DatabaseAdoNet);
+            DatabaseAdoNet))
+            .GetAwaiter()
+            .GetResult();
 
         var protocol = isProd ? "https://" : "http://";
 
