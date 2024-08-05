@@ -7,6 +7,7 @@ using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
 using Storage = Pulumi.AzureNative.Storage;
 using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
+using Cloudflare = Pulumi.Cloudflare;
 
 namespace Worms.Hub.Infrastructure;
 
@@ -20,7 +21,9 @@ public static class ContainerApps
         Storage.FileShare fileShare,
         Output<string> databaseConnectionString)
     {
-        var domainName = config.Get("domain");
+        var subdomain = config.Get("subdomain");
+        var domain = config.Get("domain");
+        var url = subdomain + "." + domain;
 
         var logAnalyticsSharedKeys = GetSharedKeys.Invoke(
             new()
@@ -46,6 +49,26 @@ public static class ContainerApps
                     }
                 }
             });
+
+        var ipAddress = kubeEnv.StaticIp;
+        var challengeTxtValue = kubeEnv.CustomDomainConfiguration.Apply(x => x?.CustomDomainVerificationId ?? "");
+        var zoneId = Cloudflare.GetZone.Invoke(new(){Name = domain}).Apply(x => x.Id);
+
+        _ = new Cloudflare.Record("dns-entry-ip", new()
+        {
+            ZoneId = zoneId,
+            Name = subdomain,
+            Value = ipAddress,
+            Type = "A"
+        });
+
+        _ = new Cloudflare.Record("dns-entry-txt", new()
+        {
+            ZoneId = zoneId,
+            Name = "asuid." + subdomain,
+            Value = challengeTxtValue,
+            Type = "TXT"
+        });
 
         var managedEnvironmentsStorage = new ManagedEnvironmentsStorage(
             "azure-container-apps-storage",
@@ -75,23 +98,22 @@ public static class ContainerApps
         var customDomainArgs = new InputList<CustomDomainArgs>();
 
         // Managed Cert will only exist from second run
-        GetCertificateResult? certificate = null;
+        GetManagedCertificateResult? certificate = null;
 
         try
         {
-            certificate = await GetCertificate.InvokeAsync(
+            certificate = await GetManagedCertificate.InvokeAsync(
                 new()
                 {
-                    CertificateName = "worms-hub-certificate",
-                    EnvironmentName = kubeEnv.GetResourceName(),
-                    ResourceGroupName = resourceGroup.GetResourceName()
+                    ManagedCertificateName = "worms-hub-certificate",
+                    EnvironmentName = "Worms-Hub",
+                    ResourceGroupName = "Worms-Hub-test"
                 });
         }
         catch (Exception)
         {
             // Certificate not found
         }
-
 
         if (certificate is not null)
         {
@@ -100,7 +122,7 @@ public static class ContainerApps
                 {
                     BindingType = "SniEnabled",
                     CertificateId = certificate.Id,
-                    Name = domainName,
+                    Name = url,
                 });
         }
         else
@@ -109,7 +131,7 @@ public static class ContainerApps
                 new CustomDomainArgs
                 {
                     BindingType = "Disabled",
-                    Name = domainName,
+                    Name = url,
                 });
         }
 
@@ -215,10 +237,11 @@ public static class ContainerApps
                 EnvironmentName = kubeEnv.Name,
                 Properties = new ManagedCertificatePropertiesArgs()
                 {
-                    SubjectName = domainName,
+                    SubjectName = url,
                     DomainControlValidation = "HTTP"
                 }
-            });
+            },
+            new CustomResourceOptions { DependsOn = { containerApp } });
 
         return containerApp;
     }
