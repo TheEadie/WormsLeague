@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Pulumi;
 using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
+using Worms.Hub.Infrastructure.ContainerApps;
 
 namespace Worms.Hub.Infrastructure;
 
@@ -24,14 +25,14 @@ public class WormsHub : Stack
 
     public WormsHub()
     {
-        var isProd = Pulumi.Deployment.Instance.StackName == "prod";
         var config = new Config();
 
-        // Create an Azure Resource Group
+        // Resource Group
         var resourceGroup = new ResourceGroup(
             "resource-group",
             new() { ResourceGroupName = Utils.GetResourceName("Worms-Hub") });
 
+        // Log Analytics space
         var logAnalytics = new Workspace(
             "workspace",
             new()
@@ -40,6 +41,7 @@ public class WormsHub : Stack
                 ResourceGroupName = resourceGroup.Name,
             });
 
+        // Storage
         var storage = StorageAccount.Config(resourceGroup, config);
         var fileShare = FileShare.Config(resourceGroup, storage, config);
         var (server, database, databasePassword) = Database.Config(resourceGroup, config);
@@ -51,18 +53,13 @@ public class WormsHub : Stack
         DatabaseUser = server.AdministratorLogin;
         DatabasePassword = databasePassword;
 
-        var containerApp = Task.Run(() => ContainerApps.Config(
-            resourceGroup,
-            config,
-            logAnalytics,
-            storage,
-            fileShare,
-            DatabaseAdoNet))
-            .GetAwaiter()
-            .GetResult();
+        // Containers
+        var (containerApp, containerAppStorage) = Environment.Config(resourceGroup, logAnalytics, storage, fileShare);
 
-        var protocol = isProd ? "https://" : "http://";
+        // Gateway
+        Dns.Config(config, containerApp);
+        var gateway = Task.Run(() => Gateway.Config(resourceGroup, config, containerApp, containerAppStorage, DatabaseAdoNet)).GetAwaiter().GetResult();
 
-        ApiUrl = Output.Format($"{protocol}{containerApp.Configuration.Apply(c => c?.Ingress).Apply(i => i?.Fqdn)}");
+        ApiUrl = Output.Format($"https://{gateway.Configuration.Apply(c => c?.Ingress).Apply(i => i?.Fqdn)}");
     }
 }
