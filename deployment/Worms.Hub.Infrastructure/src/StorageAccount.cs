@@ -12,7 +12,7 @@ public static class StorageAccount
             "storage-account",
             new()
             {
-                AccountName = "wormstest",
+                AccountName = Utils.GetResourceNameAlphaNumericOnly("wormstest"),
                 ResourceGroupName = resourceGroup.Name,
                 LargeFileSharesState = Storage.LargeFileSharesState.Enabled,
                 Kind = Storage.Kind.StorageV2,

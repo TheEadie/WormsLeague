@@ -17,7 +17,7 @@ public static class FileShare
             {
                 AccountName = storageAccount.Name,
                 ResourceGroupName = resourceGroup.Name,
-                EnabledProtocols = Storage.EnabledProtocols.SMB,
+                ShareName = "file-share",
             });
     }
 }

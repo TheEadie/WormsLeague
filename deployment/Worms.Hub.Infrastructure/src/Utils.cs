@@ -7,4 +7,10 @@ public static class Utils
         var stack = Pulumi.Deployment.Instance.StackName;
         return stack == "prod" ? name : $"{name}-{stack}";
     }
+
+    public static string GetResourceNameAlphaNumericOnly(string name)
+    {
+        var stack = Pulumi.Deployment.Instance.StackName;
+        return stack == "prod" ? name : $"{name}{stack}";
+    }
 }

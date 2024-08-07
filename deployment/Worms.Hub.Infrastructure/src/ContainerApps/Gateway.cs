@@ -1,86 +1,26 @@
 using System;
+using System.Threading.Tasks;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
-using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
-using Storage = Pulumi.AzureNative.Storage;
 using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
 
-namespace Worms.Hub.Infrastructure;
+namespace Worms.Hub.Infrastructure.ContainerApps;
 
-public static class ContainerApps
+public static class Gateway
 {
-    public static ContainerApp Config(
+    public static async Task<ContainerApp> Config(
         ResourceGroup resourceGroup,
         Config config,
-        Workspace logAnalytics,
-        Storage.StorageAccount storageAccount,
-        Storage.FileShare fileShare,
+        ManagedEnvironment managedEnvironment,
+        ManagedEnvironmentsStorage managedEnvironmentStorage,
         Output<string> databaseConnectionString)
     {
-        var logAnalyticsSharedKeys = GetSharedKeys.Invoke(
-            new()
-            {
-                ResourceGroupName = resourceGroup.Name,
-                WorkspaceName = logAnalytics.Name
-            });
-
-        var kubeEnv = new ManagedEnvironment(
-            "azure-container-apps-environment",
-            new()
-            {
-                EnvironmentName = "Worms-Hub",
-                ResourceGroupName = resourceGroup.Name,
-                AppLogsConfiguration = new AppLogsConfigurationArgs
-                {
-                    Destination = "log-analytics",
-                    LogAnalyticsConfiguration = new LogAnalyticsConfigurationArgs
-                    {
-                        CustomerId = logAnalytics.CustomerId,
-                        SharedKey = logAnalyticsSharedKeys.Apply(
-                            x => x.PrimarySharedKey ?? throw new Exception("No primary shared key found")),
-                    }
-                }
-            });
-
-        var managedEnvironmentsStorage = new ManagedEnvironmentsStorage(
-            "azure-container-apps-storage",
-            new()
-            {
-                StorageName = "worms-hub-storage",
-                ResourceGroupName = resourceGroup.Name,
-                EnvironmentName = kubeEnv.Name,
-                Properties = new ManagedEnvironmentStoragePropertiesArgs
-                {
-                    AzureFile = new AzureFilePropertiesArgs
-                    {
-                        AccessMode = AccessMode.ReadWrite,
-                        AccountKey = Storage.ListStorageAccountKeys.Invoke(
-                                new()
-                                {
-                                    ResourceGroupName = resourceGroup.Name,
-                                    AccountName = storageAccount.Name
-                                })
-                            .Apply(x => x.Keys[0].Value),
-                        AccountName = storageAccount.Name,
-                        ShareName = fileShare.Name,
-                    },
-                },
-            });
-
-        var customDomainArgs = new InputList<CustomDomainArgs>();
-
-        // Get the SSL cert when deploying to prod only
-        if (Pulumi.Deployment.Instance.StackName == "prod")
-        {
-            customDomainArgs.Add(
-                new CustomDomainArgs
-                {
-                    BindingType = "SniEnabled",
-                    Name = "worms.davideadie.dev",
-                });
-        }
+        var subdomain = config.Require("subdomain");
+        var domain = config.Require("domain");
+        var url = $"{subdomain}.{domain}";
+        var certificateId = await GetManagedCertificateId();
 
         var containerApp = new ContainerApp(
             "worms-hub-gateway",
@@ -88,14 +28,29 @@ public static class ContainerApps
             {
                 ContainerAppName = "worms-gateway",
                 ResourceGroupName = resourceGroup.Name,
-                ManagedEnvironmentId = kubeEnv.Id,
+                ManagedEnvironmentId = managedEnvironment.Id,
                 Configuration = new ConfigurationArgs
                 {
                     Ingress = new IngressArgs
                     {
                         External = true,
                         TargetPort = 8080,
-                        CustomDomains = customDomainArgs,
+                        CustomDomains = certificateId is not null ?
+                        [
+                            new CustomDomainArgs
+                            {
+                                BindingType = "SniEnabled",
+                                CertificateId = certificateId,
+                                Name = url,
+                            }
+                        ] :
+                        [
+                            new CustomDomainArgs
+                            {
+                                Name = url,
+                                BindingType = "Disabled",
+                            }
+                        ]
                     },
                     Secrets =
                     [
@@ -168,12 +123,51 @@ public static class ContainerApps
                         {
                             Name = "worms-hub-volume",
                             StorageType = StorageType.AzureFile,
-                            StorageName = managedEnvironmentsStorage.Name,
+                            StorageName = managedEnvironmentStorage.Name,
                         }
                     }
                 }
             });
 
+        // Create a managed certificate - Must be done after env has custom domain added
+        _ = new ManagedCertificate(
+            "worms-hub-certificate",
+            new()
+            {
+                ManagedCertificateName = "worms-hub-certificate",
+                ResourceGroupName = resourceGroup.Name,
+                EnvironmentName = managedEnvironment.Name,
+                Properties = new ManagedCertificatePropertiesArgs()
+                {
+                    SubjectName = url,
+                    DomainControlValidation = "HTTP"
+                }
+            },
+            new CustomResourceOptions { DependsOn = { containerApp } });
+
         return containerApp;
+    }
+
+    private static async Task<string?> GetManagedCertificateId()
+    {
+        // Managed Cert will only exist from second run
+        GetManagedCertificateResult? certificate = null;
+
+        try
+        {
+            certificate = await GetManagedCertificate.InvokeAsync(
+                new()
+                {
+                    ManagedCertificateName = "worms-hub-certificate",
+                    EnvironmentName = "Worms-Hub",
+                    ResourceGroupName = Utils.GetResourceName("Worms-Hub")
+                });
+        }
+        catch (Exception)
+        {
+            // Certificate not found
+        }
+
+        return certificate?.Id;
     }
 }

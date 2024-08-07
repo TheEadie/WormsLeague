@@ -5,8 +5,5 @@ namespace Worms.Hub.Infrastructure;
 
 public static class Program
 {
-    public static Task<int> Main()
-    {
-        return Deployment.RunAsync<WormsHub>();
-    }
+    public static Task<int> Main() => Deployment.RunAsync<WormsHub>();
 }
