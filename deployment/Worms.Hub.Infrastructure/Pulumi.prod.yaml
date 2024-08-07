@@ -2,5 +2,5 @@ config:
   azure-native:location: northeurope
   worms-hub:domain: davideadie.dev
   worms-hub:slack_hook_url:
-    secure: AAABAJJds0CqFrxrEAzqlacvLr+wJ9HSE5idZ4LJpCdEmDJVmYwgFNWKQQOAOvKHo/EXHdrvLB1qw+EAsFUKeqltTo25bDJVblFBTenskUpyQbhNLx9idtlEV+Tz44PEAX570ExqggwWq1nD/A==
+    secure: AAABAFCWyz8K+xluP2PyHN10orbX/aJ0au6VA9LhpnfpuBb21ZT4jd84/EeHXLrpBkCaGuQs3uR68K9ZLJbFnbDptwR1QjHMk4Bm73HI1/TTCbpzqZ4nS4S80JSaPL9o2qoqczZc6ogbjbArKw==
   worms-hub:subdomain: worms
