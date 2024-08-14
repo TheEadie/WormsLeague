@@ -6,24 +6,17 @@ using Worms.Hub.Infrastructure.ContainerApps;
 
 namespace Worms.Hub.Infrastructure;
 
-public class WormsHub : Stack
+public static class WormsHub
 {
-    [Output("api-url")]
-    public Output<string> ApiUrl { get; set; }
+    public record Result(
+        Output<string> DatabaseJdbc,
+        Output<string> DatabaseAdoNet,
+        Output<string?> DatabaseUser,
+        Output<string> DatabasePassword,
+        Output<string> ApiUrl
+    );
 
-    [Output("database-jdbc")]
-    public Output<string> DatabaseJdbc { get; set; }
-
-    [Output("database-adonet")]
-    public Output<string> DatabaseAdoNet { get; set; }
-
-    [Output("database-user")]
-    public Output<string?> DatabaseUser { get; set; }
-
-    [Output("database-password")]
-    public Output<string> DatabasePassword { get; set; }
-
-    public WormsHub()
+    public static async Task<Result> Create()
     {
         var config = new Config();
 
@@ -46,20 +39,21 @@ public class WormsHub : Stack
         var fileShare = FileShare.Config(resourceGroup, storage, config);
         var (server, database, databasePassword) = Database.Config(resourceGroup, config);
 
-        DatabaseJdbc = Output.Format(
+        var databaseJdbc = Output.Format(
             $"jdbc:postgresql://{server.FullyQualifiedDomainName}/{database.Name}?user={server.AdministratorLogin}&password={databasePassword}");
-        DatabaseAdoNet = Output.Format(
+        var databaseAdoNet = Output.Format(
             $"Server={server.FullyQualifiedDomainName};Port=5432;Database={database.Name};User Id={server.AdministratorLogin};Password={databasePassword}");
-        DatabaseUser = server.AdministratorLogin;
-        DatabasePassword = databasePassword;
+        var databaseUser = server.AdministratorLogin;
 
         // Containers
         var (containerApp, containerAppStorage) = Environment.Config(resourceGroup, logAnalytics, storage, fileShare);
 
         // Gateway
         Dns.Config(config, containerApp);
-        var gateway = Task.Run(() => Gateway.Config(resourceGroup, config, containerApp, containerAppStorage, DatabaseAdoNet)).GetAwaiter().GetResult();
+        var gateway = await Gateway.Config(resourceGroup, config, containerApp, containerAppStorage, databaseAdoNet);
 
-        ApiUrl = Output.Format($"https://{gateway.Configuration.Apply(c => c?.Ingress).Apply(i => i?.Fqdn)}");
+        var apiUrl = Output.Format($"https://{gateway.Configuration.Apply(c => c?.Ingress).Apply(i => i?.Fqdn)}");
+
+        return new Result(databaseJdbc, databaseAdoNet, databaseUser, databasePassword, apiUrl);
     }
 }

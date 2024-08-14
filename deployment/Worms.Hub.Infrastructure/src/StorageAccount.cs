@@ -6,9 +6,8 @@ namespace Worms.Hub.Infrastructure;
 
 public static class StorageAccount
 {
-    public static Storage.StorageAccount Config(ResourceGroup resourceGroup, Config config)
-    {
-        return new Storage.StorageAccount(
+    public static Storage.StorageAccount Config(ResourceGroup resourceGroup, Config config) =>
+        new(
             "storage-account",
             new()
             {
@@ -21,5 +20,4 @@ public static class StorageAccount
                     Name = Storage.SkuName.Standard_LRS,
                 },
             });
-    }
 }

@@ -7,7 +7,7 @@ using Storage = Pulumi.AzureNative.Storage;
 
 namespace Worms.Hub.Infrastructure.ContainerApps;
 
-public class Environment
+public static class Environment
 {
     public static (ManagedEnvironment, ManagedEnvironmentsStorage) Config(
         ResourceGroup resourceGroup,
