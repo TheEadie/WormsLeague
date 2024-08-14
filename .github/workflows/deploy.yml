@@ -22,6 +22,17 @@ jobs:
         with:
           dotnet-version: 8.x
 
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: |
+            {
+              "clientSecret":  "${{ secrets.ARM_CLIENT_SECRET }}",
+              "subscriptionId":  "${{ secrets.ARM_SUBSCRIPTION_ID }}",
+              "tenantId":  "${{ secrets.ARM_TENANT_ID }}",
+              "clientId":  "${{ secrets.ARM_CLIENT_ID }}"
+            }
+
       - name: Pulumi Up
         id: pulumi-up
         uses: pulumi/actions@v5
@@ -53,4 +64,3 @@ jobs:
         env:
           FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
           FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
-
