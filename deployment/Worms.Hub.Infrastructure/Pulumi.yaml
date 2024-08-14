@@ -5,3 +5,4 @@ config:
     azure-native:location: northeurope
     worms-hub:domain: davideadie.dev
     worms-hub:gateway-image: theeadie/worms-server-gateway:0.5.21
+    worms-hub:database-version: 0.2.1

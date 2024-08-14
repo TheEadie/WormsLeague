@@ -50,10 +50,6 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: Get Database Version
-        id: database-version
-        run: echo "version=$(cat deployment/Worms.Hub.Infrastructure/database-version.txt)" >> $GITHUB_OUTPUT
-
       - name: Create Reports Folder
         run: mkdir src/database/reports
 
@@ -68,7 +64,7 @@ jobs:
             -url="${{ steps.preview.outputs.database-jdbc }}"
             -user="${{ steps.preview.outputs.database-user }}"
             -password="${{ steps.preview.outputs.database-password }}"
-            -target=${{ steps.database-version.outputs.version }}
+            -target=${{ steps.preview.outputs.database-version }}
             -reportFilename="/github/workspace/src/database/reports/report.htm"
         env:
           FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}

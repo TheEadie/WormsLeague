@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Pulumi;
 using Pulumi.AzureNative.Resources;
 using DBForPostgreSQL = Pulumi.AzureNative.DBforPostgreSQL;
@@ -6,10 +7,12 @@ namespace Worms.Hub.Infrastructure;
 
 public static class Database
 {
-    public static (DBForPostgreSQL.Server, DBForPostgreSQL.Database, Output<string>) Config(
+    public static (DBForPostgreSQL.Server, DBForPostgreSQL.Database, Output<string>, Output<string> Version) Config(
         ResourceGroup resourceGroup,
         Config config)
     {
+        var version = Output<string>.Create(Task.FromResult(config.Require("database-version")));
+
         var randomPassword = new Pulumi.Random.RandomPassword(
             "database-password",
             new()
@@ -63,6 +66,6 @@ public static class Database
                 StartIpAddress = "0.0.0.0",
             });
 
-        return (server, database, randomPassword.Result);
+        return (server, database, randomPassword.Result, version);
     }
 }

@@ -17,6 +17,7 @@ public static class Program
                         { "database-adonet", result.DatabaseAdoNet },
                         { "database-user", result.DatabaseUser },
                         { "database-password", result.DatabasePassword },
+                        { "database-version", result.DatabaseVersion },
                         { "api-url", result.ApiUrl }
                     };
                 });

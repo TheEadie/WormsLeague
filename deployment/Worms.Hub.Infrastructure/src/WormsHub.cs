@@ -13,6 +13,7 @@ public static class WormsHub
         Output<string> DatabaseAdoNet,
         Output<string?> DatabaseUser,
         Output<string> DatabasePassword,
+        Output<string> DatabaseVersion,
         Output<string> ApiUrl
     );
 
@@ -37,7 +38,7 @@ public static class WormsHub
         // Storage
         var storage = StorageAccount.Config(resourceGroup, config);
         var fileShare = FileShare.Config(resourceGroup, storage, config);
-        var (server, database, databasePassword) = Database.Config(resourceGroup, config);
+        var (server, database, databasePassword, databaseVersion) = Database.Config(resourceGroup, config);
 
         var databaseJdbc = Output.Format(
             $"jdbc:postgresql://{server.FullyQualifiedDomainName}/{database.Name}?user={server.AdministratorLogin}&password={databasePassword}");
@@ -54,6 +55,6 @@ public static class WormsHub
 
         var apiUrl = Output.Format($"https://{gateway.Configuration.Apply(c => c?.Ingress).Apply(i => i?.Fqdn)}");
 
-        return new Result(databaseJdbc, databaseAdoNet, databaseUser, databasePassword, apiUrl);
+        return new Result(databaseJdbc, databaseAdoNet, databaseUser, databasePassword, databaseVersion, apiUrl);
     }
 }
