@@ -4,6 +4,7 @@ using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.Resources;
+using Pulumi.Command.Local;
 using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
 
 namespace Worms.Hub.Infrastructure.ContainerApps;
@@ -17,6 +18,7 @@ public static class Gateway
         ManagedEnvironmentsStorage managedEnvironmentStorage,
         Output<string> databaseConnectionString)
     {
+        var image = config.Require("gateway-image");
         var subdomain = config.Require("subdomain");
         var domain = config.Require("domain");
         var url = $"{subdomain}.{domain}";
@@ -73,7 +75,7 @@ public static class Gateway
                         new ContainerArgs
                         {
                             Name = "gateway",
-                            Image = "theeadie/worms-server-gateway:0.5.21",
+                            Image = image,
                             Env =
                             [
                                 new EnvironmentVarArgs
@@ -130,7 +132,7 @@ public static class Gateway
             });
 
         // Create a managed certificate - Must be done after env has custom domain added
-        _ = new ManagedCertificate(
+        var managedCert = new ManagedCertificate(
             "worms-hub-certificate",
             new()
             {
@@ -144,6 +146,14 @@ public static class Gateway
                 }
             },
             new CustomResourceOptions { DependsOn = { containerApp } });
+
+        _ = new Command(
+            "bind-certificate",
+            new CommandArgs
+            {
+                Create = Output.Format($"az containerapp hostname bind  --resource-group {resourceGroup.Name} --name {containerApp.Name} --hostname {url} --certificate {managedCert.Id}"),
+                Delete = Output.Format($"az containerapp hostname delete --resource-group {resourceGroup.Name} --name {containerApp.Name} --hostname {url} --yes")
+            },new CustomResourceOptions { DependsOn = { managedCert } });
 
         return containerApp;
     }

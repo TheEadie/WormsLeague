@@ -37,10 +37,6 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: Get Version
-        id: database-version
-        run: echo "version=$(cat deployment/Worms.Hub.Infrastructure/database-version.txt)" >> $GITHUB_OUTPUT
-
       - name: Run Flyway Migrate
         uses: docker://redgate/flyway:10
         with:
@@ -53,7 +49,7 @@ jobs:
             -url="${{ steps.pulumi-up.outputs.database-jdbc }}"
             -user="${{ steps.pulumi-up.outputs.database-user }}"
             -password="${{ steps.pulumi-up.outputs.database-password }}"
-            -target=${{ steps.database-version.outputs.version }}
+            -target=${{ steps.pulumi-up.outputs.database-version }}
         env:
           FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
           FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}

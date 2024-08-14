@@ -9,9 +9,8 @@ public static class FileShare
     public static Storage.FileShare Config(
         ResourceGroup resourceGroup,
         Storage.StorageAccount storageAccount,
-        Config config)
-    {
-        return new Storage.FileShare(
+        Config config) =>
+        new(
             "file-share",
             new()
             {
@@ -19,5 +18,4 @@ public static class FileShare
                 ResourceGroupName = resourceGroup.Name,
                 ShareName = "file-share",
             });
-    }
 }

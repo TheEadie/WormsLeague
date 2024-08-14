@@ -4,7 +4,7 @@ using Cloudflare = Pulumi.Cloudflare;
 
 namespace Worms.Hub.Infrastructure.ContainerApps;
 
-public class Dns
+public static class Dns
 {
     public static void Config(Config config, ManagedEnvironment managedEnvironment)
     {
