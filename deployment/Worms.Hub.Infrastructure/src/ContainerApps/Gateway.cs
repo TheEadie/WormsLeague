@@ -4,6 +4,7 @@ using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.Resources;
+using Pulumi.Command.Local;
 using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
 
 namespace Worms.Hub.Infrastructure.ContainerApps;
@@ -130,7 +131,7 @@ public static class Gateway
             });
 
         // Create a managed certificate - Must be done after env has custom domain added
-        _ = new ManagedCertificate(
+        var managedCert = new ManagedCertificate(
             "worms-hub-certificate",
             new()
             {
@@ -144,6 +145,14 @@ public static class Gateway
                 }
             },
             new CustomResourceOptions { DependsOn = { containerApp } });
+
+        _ = new Command(
+            "bind-certificate",
+            new CommandArgs
+            {
+                Create = Output.Format($"az containerapp hostname bind  --resource-group {resourceGroup.Name} --name {containerApp.Name} --hostname {url} --certificate {managedCert.Id}"),
+                Delete = Output.Format($"az containerapp hostname delete --resource-group {resourceGroup.Name} --name {containerApp.Name} --hostname {url} --yes")
+            },new CustomResourceOptions { DependsOn = { managedCert } });
 
         return containerApp;
     }
