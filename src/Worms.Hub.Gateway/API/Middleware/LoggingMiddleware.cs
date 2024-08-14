@@ -11,8 +11,8 @@ internal sealed class LoggingMiddleware(RequestDelegate next, ILogger<LoggingMid
         logger.Log(
             LogLevel.Information,
             "Request: {Method} {Path} by {Username}",
-            request.Method,
-            request.Path,
+            EscapeNewLines(request.Method),
+            EscapeNewLines(request.Path),
             username);
         _ = Activity.Current?.SetTag("user.id", username);
 
@@ -22,11 +22,14 @@ internal sealed class LoggingMiddleware(RequestDelegate next, ILogger<LoggingMid
         logger.Log(
             LogLevel.Information,
             "Response: {Method} {Path} by {Username}: {Code}",
-            request.Method,
-            request.Path,
+            EscapeNewLines(request.Method),
+            EscapeNewLines(request.Path),
             username,
             response.StatusCode);
     }
+
+    private static string EscapeNewLines(string input) =>
+        input.Replace(Environment.NewLine, "", StringComparison.InvariantCulture);
 }
 
 public static class LoggingMiddlewareExtensions
