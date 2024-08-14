@@ -18,6 +18,7 @@ public static class Gateway
         ManagedEnvironmentsStorage managedEnvironmentStorage,
         Output<string> databaseConnectionString)
     {
+        var image = config.Require("gateway-image");
         var subdomain = config.Require("subdomain");
         var domain = config.Require("domain");
         var url = $"{subdomain}.{domain}";
@@ -74,7 +75,7 @@ public static class Gateway
                         new ContainerArgs
                         {
                             Name = "gateway",
-                            Image = "theeadie/worms-server-gateway:0.5.21",
+                            Image = image,
                             Env =
                             [
                                 new EnvironmentVarArgs
