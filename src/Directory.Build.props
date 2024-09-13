@@ -9,6 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Roslynator.Analyzers" Version="4.12.4"/>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.12.5"/>
   </ItemGroup>
 </Project>
