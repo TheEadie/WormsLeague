@@ -1,6 +1,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Worms.Hub.Gateway;
 using Worms.Hub.Gateway.API.Middleware;
+using Worms.Hub.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddSimpleConsole(options => options.SingleLine = true);
@@ -22,7 +23,7 @@ builder.Services.AddAuthentication()
                 };
             });
 builder.Services.AddAuthorization();
-builder.Services.AddGatewayServices();
+builder.Services.AddHubStorageServices().AddGatewayServices();
 builder.Services.AddOpenTelemetryWormsHub();
 
 var app = builder.Build();

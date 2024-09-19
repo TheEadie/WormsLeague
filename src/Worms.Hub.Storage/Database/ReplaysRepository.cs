@@ -1,9 +1,10 @@
 using System.Globalization;
 using Dapper;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
-using Worms.Hub.Gateway.Domain;
+using Worms.Hub.Storage.Domain;
 
-namespace Worms.Hub.Gateway.Storage.Database;
+namespace Worms.Hub.Storage.Database;
 
 internal sealed class ReplaysRepository(IConfiguration configuration) : IRepository<Replay>
 {
