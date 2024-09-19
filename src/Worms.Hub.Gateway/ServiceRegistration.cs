@@ -1,6 +1,6 @@
+using Worms.Hub.Gateway.Announcers;
+using Worms.Hub.Gateway.Announcers.Slack;
 using Worms.Hub.Gateway.API.Validators;
-using Worms.Hub.Gateway.Domain.Announcers;
-using Worms.Hub.Gateway.Domain.Announcers.Slack;
 
 namespace Worms.Hub.Gateway;
 
