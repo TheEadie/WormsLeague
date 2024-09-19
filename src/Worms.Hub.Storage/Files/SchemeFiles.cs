@@ -1,8 +1,9 @@
-using Worms.Hub.Gateway.Domain;
+using Microsoft.Extensions.Configuration;
+using Worms.Hub.Storage.Domain;
 
-namespace Worms.Hub.Gateway.Storage.Files;
+namespace Worms.Hub.Storage.Files;
 
-internal sealed class SchemeFiles(IConfiguration configuration)
+public sealed class SchemeFiles(IConfiguration configuration)
 {
     private const string VersionFilename = "version.txt";
 

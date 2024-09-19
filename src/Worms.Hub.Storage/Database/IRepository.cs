@@ -1,4 +1,4 @@
-namespace Worms.Hub.Gateway.Storage.Database;
+namespace Worms.Hub.Storage.Database;
 
 public interface IRepository<T>
 {
