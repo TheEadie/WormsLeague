@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Gateway.API.DTOs;
-using Worms.Hub.Gateway.Domain.Announcers;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
 
