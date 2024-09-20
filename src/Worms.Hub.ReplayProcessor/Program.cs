@@ -3,9 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Hub.ReplayProcessor;
+using Worms.Hub.Storage;
 
 var configuration = new ConfigurationBuilder().AddEnvironmentVariables("WORMS_").Build();
 var serviceProvider = new ServiceCollection().AddReplayProcessorServices()
+    .AddHubStorageServices()
     .AddWormsArmageddonGameServices()
     .AddLogging(builder => builder.AddConsole())
     .AddSingleton<IConfiguration>(configuration)
@@ -13,4 +15,4 @@ var serviceProvider = new ServiceCollection().AddReplayProcessorServices()
 
 var processor = serviceProvider.GetService<Processor>();
 
-await processor!.ProcessReplay(args[0]).ConfigureAwait(false);
+await processor!.ProcessReplay().ConfigureAwait(false);
