@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Game.Replays;
@@ -10,21 +11,28 @@ public class Processor(
     IWormsLocator wormsLocator,
     IReplayLogGenerator logGenerator,
     IRepository<Replay> replayRepository,
+    IConfiguration configuration,
     ILogger<Processor> logger)
 {
-    public async Task ProcessReplay(string replayPath)
+    public async Task ProcessReplay()
     {
         logger.LogInformation("Starting replay processor...");
 
         // TODO Get replay ID from queue
+        const string id = "1";
 
         // Check replay is in database
-        var replay = replayRepository.GetAll().FirstOrDefault(x => x.Filename == replayPath);
+        var replay = replayRepository.GetAll().FirstOrDefault(x => x.Id == id);
         if (replay is null)
         {
-            logger.LogError("Replay not found in database: {ReplayPath}", replayPath);
+            logger.LogError("Replay not found in database: {Id}", id);
             return;
         }
+
+        var tempReplayFolderPath = configuration["Storage:TempReplayFolder"]
+            ?? throw new ArgumentException("Temp replay folder not configured");
+
+        var replayPath = Path.Combine(tempReplayFolderPath, replay.Filename);
 
         // Check game is installed
         if (!GameIsInstalled())
@@ -45,7 +53,11 @@ public class Processor(
         var replayLog = await File.ReadAllTextAsync(logPath).ConfigureAwait(false);
 
         // Update the database with the log
-        var updatedReplay = replay with { FullLog = replayLog };
+        var updatedReplay = replay with
+        {
+            Status = "Processed",
+            FullLog = replayLog
+        };
         replayRepository.Update(updatedReplay);
 
         logger.LogInformation("Replay processor finished.");
