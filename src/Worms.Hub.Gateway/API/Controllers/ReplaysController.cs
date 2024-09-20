@@ -3,13 +3,14 @@ using Worms.Hub.Gateway.API.DTOs;
 using Worms.Hub.Gateway.API.Validators;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
+using Worms.Hub.Storage.Files;
 
 namespace Worms.Hub.Gateway.API.Controllers;
 
 internal sealed class ReplaysController(
     IRepository<Replay> repository,
     ReplayFileValidator replayFileValidator,
-    IConfiguration configuration,
+    ReplayFiles replayFiles,
     ILogger<ReplaysController> logger) : V1ApiController
 {
     [HttpPost]
@@ -28,35 +29,9 @@ internal sealed class ReplaysController(
             return BadRequest("Invalid replay file");
         }
 
-        var tempFilename =
-            await SaveFileToTempLocation(parameters.ReplayFile, fileNameForDisplay).ConfigureAwait(false);
+        var tempFilename = await replayFiles.SaveFileContents(parameters.ReplayFile.OpenReadStream())
+            .ConfigureAwait(false);
         var replay = repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename, null));
         return ReplayDto.FromDomain(replay);
-    }
-
-    private async Task<string> SaveFileToTempLocation(IFormFile replayFile, string fileNameForDisplay)
-    {
-        var generatedFileName = Path.GetRandomFileName();
-
-        var tempReplayFolderPath = configuration["Storage:TempReplayFolder"]
-            ?? throw new ArgumentException("Temp replay folder not configured");
-
-        if (!Path.Exists(tempReplayFolderPath))
-        {
-            _ = Directory.CreateDirectory(tempReplayFolderPath);
-        }
-
-        var saveFilePath = Path.Combine(tempReplayFolderPath, generatedFileName);
-
-        logger.Log(
-            LogLevel.Information,
-            "Saving replay file {Filename} to {Filepath}",
-            fileNameForDisplay,
-            saveFilePath);
-
-        var fileStream = System.IO.File.Create(saveFilePath);
-        await using var stream = fileStream.ConfigureAwait(false);
-        await replayFile.CopyToAsync(fileStream).ConfigureAwait(false);
-        return generatedFileName;
     }
 }

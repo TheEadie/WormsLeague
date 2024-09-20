@@ -1,9 +1,9 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Game.Replays;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
+using Worms.Hub.Storage.Files;
 
 namespace Worms.Hub.ReplayProcessor;
 
@@ -11,7 +11,7 @@ public class Processor(
     IWormsLocator wormsLocator,
     IReplayLogGenerator logGenerator,
     IRepository<Replay> replayRepository,
-    IConfiguration configuration,
+    ReplayFiles replayFiles,
     ILogger<Processor> logger)
 {
     public async Task ProcessReplay()
@@ -29,10 +29,7 @@ public class Processor(
             return;
         }
 
-        var tempReplayFolderPath = configuration["Storage:TempReplayFolder"]
-            ?? throw new ArgumentException("Temp replay folder not configured");
-
-        var replayPath = Path.Combine(tempReplayFolderPath, replay.Filename);
+        var replayPath = replayFiles.GetReplayPath(replay);
 
         // Check game is installed
         if (!GameIsInstalled())
@@ -42,7 +39,7 @@ public class Processor(
 
         // Generate replay log
         await logGenerator.GenerateReplayLog(replayPath).ConfigureAwait(false);
-        var logPath = GetLogPath(replayPath);
+        var logPath = replayFiles.GetLogPath(replay);
 
         if (logPath is null)
         {
@@ -61,22 +58,6 @@ public class Processor(
         replayRepository.Update(updatedReplay);
 
         logger.LogInformation("Replay processor finished.");
-    }
-
-    private static string? GetLogPath(string waGamePath)
-    {
-        var fileName = waGamePath.EndsWith(".WAGame", StringComparison.InvariantCultureIgnoreCase)
-            ? Path.GetFileNameWithoutExtension(waGamePath)
-            : waGamePath;
-        var folder = Path.GetDirectoryName(waGamePath);
-
-        if (folder is null)
-        {
-            return null;
-        }
-
-        var logPath = Path.Combine(folder, fileName + ".log");
-        return File.Exists(logPath) ? logPath : null;
     }
 
     private bool GameIsInstalled()
