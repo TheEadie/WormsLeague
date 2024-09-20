@@ -65,7 +65,9 @@ public class Processor(
 
     private static string? GetLogPath(string waGamePath)
     {
-        var fileName = Path.GetFileNameWithoutExtension(waGamePath);
+        var fileName = waGamePath.EndsWith(".WAGame", StringComparison.InvariantCultureIgnoreCase)
+            ? Path.GetFileNameWithoutExtension(waGamePath)
+            : waGamePath;
         var folder = Path.GetDirectoryName(waGamePath);
 
         if (folder is null)
