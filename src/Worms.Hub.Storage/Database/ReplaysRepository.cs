@@ -14,8 +14,8 @@ internal sealed class ReplaysRepository(IConfiguration configuration) : IReposit
         using var connection = new NpgsqlConnection(connectionString);
 
         var dbObjects = connection.Query<ReplayDb>("SELECT id, name, status, filename FROM replays");
-        return dbObjects
-            .Select(x => new Replay(x.Id.ToString(CultureInfo.InvariantCulture), x.Name, x.Status, x.Filename))
+        return dbObjects.Select(
+                x => new Replay(x.Id.ToString(CultureInfo.InvariantCulture), x.Name, x.Status, x.Filename, x.FullLog))
             .ToList();
     }
 
@@ -24,15 +24,16 @@ internal sealed class ReplaysRepository(IConfiguration configuration) : IReposit
         var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "INSERT INTO replays "
-            + "(name, status, filename) "
-            + "VALUES (@name, @status, @filename) "
+            + "(name, status, filename, fullLog) "
+            + "VALUES (@name, @status, @filename, @fullLog) "
             + "RETURNING id";
 
         var parameters = new
         {
             name = item.Name,
             status = item.Status,
-            filename = item.Filename
+            filename = item.Filename,
+            fullLog = item.FullLog
         };
 
         var created = connection.QuerySingle<string>(sql, parameters);
@@ -46,7 +47,8 @@ internal sealed class ReplaysRepository(IConfiguration configuration) : IReposit
         const string sql = "UPDATE replays SET "
             + "name = @name, "
             + "status = @status, "
-            + "filename = @filename "
+            + "filename = @filename, "
+            + "fullLog = @fullLog "
             + "WHERE id = @id";
 
         var parameters = new
@@ -54,11 +56,12 @@ internal sealed class ReplaysRepository(IConfiguration configuration) : IReposit
             id = int.Parse(item.Id, CultureInfo.InvariantCulture),
             name = item.Name,
             status = item.Status,
-            filename = item.Filename
+            filename = item.Filename,
+            fullLog = item.FullLog
         };
 
         _ = connection.Execute(sql, parameters);
     }
 }
 
-public record ReplayDb(int Id, string Name, string Status, string Filename);
+public record ReplayDb(int Id, string Name, string Status, string Filename, string FullLog);
