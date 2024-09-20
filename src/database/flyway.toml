@@ -2,7 +2,6 @@ id = "a7bc3a93-22da-49dc-8985-cebbe1add3bd"
 name = "worms"
 databaseType = "PostgreSql"
 
-# Used in CI pipeline since I haven't tried if Docker in Docker works on GitHub Actions to use the provisioner
 [environments.build]
 url = "jdbc:postgresql://postgres:5432/worms"
 user = "worms"

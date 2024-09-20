@@ -30,7 +30,7 @@ internal sealed class ReplaysController(
 
         var tempFilename =
             await SaveFileToTempLocation(parameters.ReplayFile, fileNameForDisplay).ConfigureAwait(false);
-        var replay = repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename));
+        var replay = repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename, null));
         return ReplayDto.FromDomain(replay);
     }
 
