@@ -6,6 +6,14 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator) : IWormsRunner
 {
     public Task RunWorms(params string[] wormsArgs)
     {
+        // Replace " with ' in the args
+        // Wine doesn't like using "s around arguments
+        // Windows doesn't like using 's around arguments
+        for (var i = 0; i < wormsArgs.Length; i++)
+        {
+            wormsArgs[i] = wormsArgs[i].Replace("\"", "'", StringComparison.InvariantCulture);
+        }
+
         return Task.Run(
             async () =>
                 {
