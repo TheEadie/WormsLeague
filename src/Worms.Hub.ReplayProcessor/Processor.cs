@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Game.Replays;
 
@@ -6,25 +7,17 @@ namespace Worms.Hub.ReplayProcessor;
 public class Processor(
     IWormsLocator wormsLocator,
     IReplayLogGenerator logGenerator,
-    IReplayFrameExtractor replayFrameExtractor)
+    IReplayFrameExtractor replayFrameExtractor,
+    ILogger<Processor> logger)
 {
     public async Task ProcessReplay(string replayPath)
     {
-        Console.WriteLine("Starting replay processor...");
+        logger.LogInformation("Starting replay processor...");
 
         // TODO Get message from queue
 
-        var userHomeDirectory = Environment.GetEnvironmentVariable("HOME");
-        var gameInfo = wormsLocator.Find();
-
-        if (gameInfo.IsInstalled)
+        if (!GameIsInstalled())
         {
-            Console.WriteLine("Game found at: {0}", gameInfo.ExeLocation);
-        }
-        else
-        {
-            Console.WriteLine("Looking in {0}", userHomeDirectory);
-            Console.WriteLine("Game not found. Please install the game and try again.");
             return;
         }
 
@@ -32,6 +25,27 @@ public class Processor(
             .ConfigureAwait(false);
         await logGenerator.GenerateReplayLog(replayPath).ConfigureAwait(false);
 
-        Console.WriteLine("Replay processor finished.");
+        // TODO Update Database and File share
+
+        logger.LogInformation("Replay processor finished.");
+    }
+
+    private bool GameIsInstalled()
+    {
+        var userHomeDirectory = Environment.GetEnvironmentVariable("HOME");
+        var gameInfo = wormsLocator.Find();
+
+        if (gameInfo.IsInstalled)
+        {
+            logger.LogDebug("Game found at: {Path}", gameInfo.ExeLocation);
+        }
+        else
+        {
+            logger.LogInformation("Looking in {Directory}", userHomeDirectory);
+            logger.LogError("Game not found. Please install the game and try again.");
+            return false;
+        }
+
+        return true;
     }
 }
