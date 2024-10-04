@@ -4,11 +4,13 @@ using Worms.Hub.Gateway.API.Validators;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
 using Worms.Hub.Storage.Files;
+using Worms.Hub.Storage.Queues;
 
 namespace Worms.Hub.Gateway.API.Controllers;
 
 internal sealed class ReplaysController(
     IRepository<Replay> repository,
+    IMessageQueue<ReplayToProcessMessage> replayProcessor,
     ReplayFileValidator replayFileValidator,
     ReplayFiles replayFiles,
     ILogger<ReplaysController> logger) : V1ApiController
@@ -32,6 +34,11 @@ internal sealed class ReplaysController(
         var tempFilename = await replayFiles.SaveFileContents(parameters.ReplayFile.OpenReadStream())
             .ConfigureAwait(false);
         var replay = repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename, null));
+
+        // Enqueue the replay for processing
+        var message = new ReplayToProcessMessage(replay.Id);
+        await replayProcessor.EnqueueMessage(message).ConfigureAwait(false);
+
         return ReplayDto.FromDomain(replay);
     }
 }

@@ -4,10 +4,12 @@ using Worms.Armageddon.Game.Replays;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
 using Worms.Hub.Storage.Files;
+using Worms.Hub.Storage.Queues;
 
 namespace Worms.Hub.ReplayProcessor;
 
 public class Processor(
+    IMessageQueue<ReplayToProcessMessage> messageQueue,
     IWormsLocator wormsLocator,
     IReplayLogGenerator logGenerator,
     IRepository<Replay> replayRepository,
@@ -18,14 +20,18 @@ public class Processor(
     {
         logger.LogInformation("Starting replay processor...");
 
-        // TODO Get replay ID from queue
-        const string id = "1";
+        var (message, token) = await messageQueue.DequeueMessage().ConfigureAwait(false);
+        if (message is null || token is null)
+        {
+            logger.LogInformation("No messages to process.");
+            return;
+        }
 
         // Check replay is in database
-        var replay = replayRepository.GetAll().FirstOrDefault(x => x.Id == id);
+        var replay = replayRepository.GetAll().FirstOrDefault(x => x.Id == message.ReplayId);
         if (replay is null)
         {
-            logger.LogError("Replay not found in database: {Id}", id);
+            logger.LogError("Replay not found in database: {Id}", message.ReplayId);
             return;
         }
 
@@ -56,6 +62,9 @@ public class Processor(
             FullLog = replayLog
         };
         replayRepository.Update(updatedReplay);
+
+        // Delete the message from the queue
+        await messageQueue.DeleteMessage(token).ConfigureAwait(false);
 
         logger.LogInformation("Replay processor finished.");
     }
