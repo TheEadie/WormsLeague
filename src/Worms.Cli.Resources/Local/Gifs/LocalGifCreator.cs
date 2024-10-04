@@ -45,7 +45,12 @@ internal sealed class LocalGifCreator(
         }
     }
 
-    private void CreateGifFromFiles(string framesFolder, string outputFile, uint animationDelay, int width, int height)
+    private void CreateGifFromFiles(
+        string framesFolder,
+        string outputFile,
+        uint animationDelay,
+        uint width,
+        uint height)
     {
         var frames = fileSystem.Directory.GetFiles(framesFolder, "*.png");
 
@@ -54,7 +59,7 @@ internal sealed class LocalGifCreator(
         {
             var image = new MagickImage(file);
             image.Resize(width, height);
-            image.AnimationDelay = (int) animationDelay;
+            image.AnimationDelay = animationDelay;
             collection.Add(image);
         }
 
