@@ -1,9 +1,10 @@
-using Microsoft.Extensions.DependencyInjection;
+using Worms.Armageddon.Game;
+using Worms.Hub.Storage;
 
 namespace Worms.Hub.ReplayProcessor;
 
 public static class ServiceRegistration
 {
     public static IServiceCollection AddReplayProcessorServices(this IServiceCollection builder) =>
-        builder.AddScoped<Processor>();
+        builder.AddHubStorageServices().AddWormsArmageddonGameServices().AddScoped<Processor>();
 }

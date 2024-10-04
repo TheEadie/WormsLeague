@@ -1,18 +1,26 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Worms.Armageddon.Game;
 using Worms.Hub.ReplayProcessor;
-using Worms.Hub.Storage;
 
 var configuration = new ConfigurationBuilder().AddEnvironmentVariables("WORMS_").Build();
-var serviceProvider = new ServiceCollection().AddReplayProcessorServices()
-    .AddHubStorageServices()
-    .AddWormsArmageddonGameServices()
-    .AddLogging(builder => builder.AddConsole())
-    .AddSingleton<IConfiguration>(configuration)
-    .BuildServiceProvider();
 
-var processor = serviceProvider.GetService<Processor>();
+// Run as a batch job when in Production
+// These means we can scale to zero when there are no messages to process
+if (configuration["BATCH"] == "true")
+{
+    var serviceProvider = new ServiceCollection().AddReplayProcessorServices()
+        .AddLogging(builder => builder.AddConsole())
+        .AddSingleton<IConfiguration>(configuration)
+        .BuildServiceProvider();
+    var processor = serviceProvider.GetService<Processor>();
+    await processor!.ProcessReplay().ConfigureAwait(false);
+    return;
+}
 
-await processor!.ProcessReplay().ConfigureAwait(false);
+// Run as a hosted service when in Development
+// This means we can run continuously and check for messages
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureLogging((_, builder) => builder.AddConsole())
+    .ConfigureServices(s => s.AddReplayProcessorServices())
+    .ConfigureServices(services => services.AddHostedService<CheckForMessagesService>())
+    .Build();
+
+await host.RunAsync().ConfigureAwait(false);

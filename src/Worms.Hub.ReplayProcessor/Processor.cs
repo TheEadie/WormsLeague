@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Game.Replays;
 using Worms.Hub.Storage.Database;
