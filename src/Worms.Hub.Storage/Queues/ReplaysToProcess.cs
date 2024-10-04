@@ -7,6 +7,14 @@ internal sealed class ReplaysToProcess : IMessageQueue<ReplayToProcessMessage>
     private const string ConnectionString = "UseDevelopmentStorage=true";
     private const string QueueName = "replays-to-process";
 
+    public async Task<int> GetLength()
+    {
+        var queueClient = new QueueClient(ConnectionString, QueueName);
+        _ = queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
+        var properties = await queueClient.GetPropertiesAsync().ConfigureAwait(false);
+        return properties.Value.ApproximateMessagesCount;
+    }
+
     public async Task EnqueueMessage(ReplayToProcessMessage message)
     {
         var queueClient = new QueueClient(ConnectionString, QueueName);
@@ -19,7 +27,7 @@ internal sealed class ReplaysToProcess : IMessageQueue<ReplayToProcessMessage>
         var queueClient = new QueueClient(ConnectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
         var message = await queueClient.ReceiveMessageAsync().ConfigureAwait(false);
-        return message is null
+        return message.Value is null
             ? (null, null)
             : (new ReplayToProcessMessage(message.Value.MessageText),
                 new MessageDetails(message.Value.MessageId, message.Value.PopReceipt));
