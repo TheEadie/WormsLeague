@@ -1,30 +1,33 @@
 using Azure.Storage.Queues;
+using Microsoft.Extensions.Configuration;
 
 namespace Worms.Hub.Storage.Queues;
 
-internal sealed class ReplaysToProcess : IMessageQueue<ReplayToProcessMessage>
+internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQueue<ReplayToProcessMessage>
 {
-    private const string ConnectionString = "UseDevelopmentStorage=true";
     private const string QueueName = "replays-to-process";
 
-    public async Task<int> GetLength()
+    public async Task<bool> HasPendingMessage()
     {
-        var queueClient = new QueueClient(ConnectionString, QueueName);
-        _ = queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
-        var properties = await queueClient.GetPropertiesAsync().ConfigureAwait(false);
-        return properties.Value.ApproximateMessagesCount;
+        var connectionString = configuration.GetConnectionString("Storage");
+        var queueClient = new QueueClient(connectionString, QueueName);
+        _ = await queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
+        var peekedMessage = await queueClient.PeekMessageAsync().ConfigureAwait(false);
+        return peekedMessage.Value is not null;
     }
 
     public async Task EnqueueMessage(ReplayToProcessMessage message)
     {
-        var queueClient = new QueueClient(ConnectionString, QueueName);
+        var connectionString = configuration.GetConnectionString("Storage");
+        var queueClient = new QueueClient(connectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
         _ = await queueClient.SendMessageAsync(message.ReplayId).ConfigureAwait(false);
     }
 
     public async Task<(ReplayToProcessMessage?, MessageDetails?)> DequeueMessage()
     {
-        var queueClient = new QueueClient(ConnectionString, QueueName);
+        var connectionString = configuration.GetConnectionString("Storage");
+        var queueClient = new QueueClient(connectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
         var message = await queueClient.ReceiveMessageAsync().ConfigureAwait(false);
         return message.Value is null
@@ -35,7 +38,8 @@ internal sealed class ReplaysToProcess : IMessageQueue<ReplayToProcessMessage>
 
     public async Task DeleteMessage(MessageDetails messageDetails)
     {
-        var queueClient = new QueueClient(ConnectionString, QueueName);
+        var connectionString = configuration.GetConnectionString("Storage");
+        var queueClient = new QueueClient(connectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
         _ = await queueClient.DeleteMessageAsync(messageDetails.MessageId, messageDetails.PopReceipt)
             .ConfigureAwait(false);

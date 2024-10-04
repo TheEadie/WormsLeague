@@ -13,9 +13,7 @@ internal sealed class CheckForMessagesService(IServiceProvider serviceProvider) 
         await Task.Yield();
         while (!stoppingToken.IsCancellationRequested)
         {
-            var messageCount = await messageQueue.GetLength().ConfigureAwait(false);
-
-            if (messageCount > 0)
+            if (await messageQueue.HasPendingMessage().ConfigureAwait(false))
             {
                 await processor.ProcessReplay().ConfigureAwait(false);
             }

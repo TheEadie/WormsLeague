@@ -5,7 +5,7 @@ namespace Worms.Hub.Storage.Queues;
 [SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix")]
 public interface IMessageQueue<T>
 {
-    Task<int> GetLength();
+    Task<bool> HasPendingMessage();
 
     Task EnqueueMessage(T message);
 
