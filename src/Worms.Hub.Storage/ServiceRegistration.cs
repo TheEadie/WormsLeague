@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
 using Worms.Hub.Storage.Files;
+using Worms.Hub.Storage.Queues;
 
 namespace Worms.Hub.Storage;
 
@@ -12,5 +13,6 @@ public static class ServiceRegistration
             .AddScoped<IRepository<Replay>, ReplaysRepository>()
             .AddScoped<CliFiles>()
             .AddScoped<ReplayFiles>()
-            .AddScoped<SchemeFiles>();
+            .AddScoped<SchemeFiles>()
+            .AddScoped<IMessageQueue<ReplayToProcessMessage>, ReplaysToProcess>();
 }

@@ -1,5 +1,15 @@
-version: "3.8"
 services:
+    azure-storage:
+        image: mcr.microsoft.com/azure-storage/azurite
+        ports:
+            - "10000:10000"
+            - "10001:10001"
+            - "10002:10002"
+        healthcheck:
+            test: nc 127.0.0.1 10000 -z
+            interval: 1s
+            retries: 30
+
     database:
         image: "postgres:15"
         environment:
@@ -50,3 +60,5 @@ services:
         depends_on:
             flyway-init:
                 condition: service_completed_successfully
+            azure-storage:
+                condition: service_healthy
