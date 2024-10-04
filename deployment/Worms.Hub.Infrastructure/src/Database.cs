@@ -27,7 +27,7 @@ public static class Database
             {
                 ServerName = Utils.GetResourceName("worms"),
                 ResourceGroupName = resourceGroup.Name,
-                Version = DBForPostgreSQL.ServerVersion.ServerVersion_14,
+                Version = "15",
                 AdministratorLogin = "worms_user",
                 AdministratorLoginPassword = randomPassword.Result,
                 CreateMode = "Default",
