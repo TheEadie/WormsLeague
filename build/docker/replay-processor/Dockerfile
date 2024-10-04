@@ -5,10 +5,12 @@ WORKDIR /app
 COPY src/Directory.Build.props .
 COPY .editorconfig .
 COPY src/Worms.Armageddon.Game/Worms.Armageddon.Game.csproj ./src/Worms.Armageddon.Game/Worms.Armageddon.Game.csproj
+COPY src/Worms.Hub.Storage/Worms.Hub.Storage.csproj ./src/Worms.Hub.Storage/Worms.Hub.Storage.csproj
 COPY src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj ./src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj
 RUN dotnet restore src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj
 
 COPY src/Worms.Armageddon.Game ./src/Worms.Armageddon.Game
+COPY src/Worms.Hub.Storage ./src/Worms.Hub.Storage
 COPY src/Worms.Hub.ReplayProcessor ./src/Worms.Hub.ReplayProcessor
 ARG VERSION=0.0.1
 RUN dotnet publish \
@@ -42,7 +44,7 @@ RUN apt-get update \
   && apt-get install -y software-properties-common \
   && apt-key add /tmp/winehq.key \
   && add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ jammy main' \
-  && rm /tmp/winehq.key \ 
+  && rm /tmp/winehq.key \
   && rm -rf /var/lib/apt/lists/*
 
 # AMD 32-bit deps for Wine
