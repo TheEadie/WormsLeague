@@ -1,8 +1,9 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace Worms.Armageddon.Game.Linux;
 
-internal sealed class WormsRunner(IWormsLocator wormsLocator) : IWormsRunner
+internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunner> logger) : IWormsRunner
 {
     public Task RunWorms(params string[] wormsArgs)
     {
@@ -20,7 +21,8 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator) : IWormsRunner
                     var gameInfo = wormsLocator.Find();
                     var args = string.Join(" ", wormsArgs);
 
-                    Console.WriteLine("ARGS: " + args);
+                    logger.Log(LogLevel.Debug, "Running Worms Armageddon: {Path}", gameInfo.ExeLocation);
+                    logger.Log(LogLevel.Debug, "Args: {Arguments}", args);
                     var processStartInfo = new ProcessStartInfo
                     {
                         FileName = "/bin/bash",
@@ -48,21 +50,21 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator) : IWormsRunner
                 });
     }
 
-    private static async Task PrintStdOut(Process process)
+    private async Task PrintStdOut(Process process)
     {
         while (!process.StandardOutput.EndOfStream)
         {
             var line = await process.StandardOutput.ReadLineAsync().ConfigureAwait(false);
-            await Console.Error.WriteLineAsync("StdOut: " + line).ConfigureAwait(false);
+            logger.Log(LogLevel.Debug, "StdOut: {Message}", line);
         }
     }
 
-    private static async Task PrintStdErr(Process process)
+    private async Task PrintStdErr(Process process)
     {
         while (!process.StandardError.EndOfStream)
         {
             var line = await process.StandardError.ReadLineAsync().ConfigureAwait(false);
-            await Console.Error.WriteLineAsync("StdErr: " + line).ConfigureAwait(false);
+            logger.Log(LogLevel.Debug, "StdErr: {Message}", line);
         }
     }
 }
