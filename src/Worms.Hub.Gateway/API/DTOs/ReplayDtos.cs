@@ -1,4 +1,4 @@
-using Worms.Hub.Gateway.Domain;
+using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Gateway.API.DTOs;
 

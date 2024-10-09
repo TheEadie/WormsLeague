@@ -6,6 +6,7 @@ table "public"."replays" {
     name = "replays_pk"
     objectType = primaryKey
   }
+  owner = worms
   columns = (
     column "id" {
       type = integer
@@ -19,6 +20,9 @@ table "public"."replays" {
       type = text
     }
     column "filename" {
+      type = text
+    }
+    column "fulllog" {
       type = text
     }
   )

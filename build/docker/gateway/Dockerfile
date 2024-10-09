@@ -1,17 +1,18 @@
 #### Build ####
 FROM mcr.microsoft.com/dotnet/sdk:8.0.403@sha256:ff705b99a06144190e2638f8ede64a753915df5ea27fff55f58d0eb5f7054b0b AS build
 WORKDIR /app
-ARG PROJECT="Worms.Hub.Gateway.csproj"
 
 COPY src/Directory.Build.props .
 COPY .editorconfig .
-COPY src/Worms.Hub.Gateway/${PROJECT} ./${PROJECT}
-RUN dotnet restore ${PROJECT}
+COPY src/Worms.Hub.Storage/Worms.Hub.Storage.csproj ./src/Worms.Hub.Storage/Worms.Hub.Storage.csproj
+COPY src/Worms.Hub.Gateway/Worms.Hub.Gateway.csproj ./src/Worms.Hub.Gateway/Worms.Hub.Gateway.csproj
+RUN dotnet restore src/Worms.Hub.Gateway/Worms.Hub.Gateway.csproj
 
-COPY src/Worms.Hub.Gateway .
+COPY src/Worms.Hub.Storage ./src/Worms.Hub.Storage
+COPY src/Worms.Hub.Gateway ./src/Worms.Hub.Gateway
 ARG VERSION=0.0.1
 RUN dotnet publish \
-    ${PROJECT} \
+    src/Worms.Hub.Gateway/Worms.Hub.Gateway.csproj \
     -c Release \
     -o out \
     --no-restore \
@@ -19,7 +20,7 @@ RUN dotnet publish \
     -p:Version=${VERSION}
 
 #### Test ####
-FROM build as test
+FROM build AS test
 RUN dotnet test --no-restore --no-build --verbosity normal
 
 #### Runtime ####

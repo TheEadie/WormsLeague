@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Worms.Hub.Gateway.API.DTOs;
 using Worms.Hub.Gateway.API.Validators;
-using Worms.Hub.Gateway.Domain;
-using Worms.Hub.Gateway.Storage.Files;
+using Worms.Hub.Storage.Domain;
+using Worms.Hub.Storage.Files;
 
 namespace Worms.Hub.Gateway.API.Controllers;
 

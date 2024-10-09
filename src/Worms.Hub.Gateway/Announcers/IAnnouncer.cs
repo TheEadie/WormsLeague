@@ -1,4 +1,4 @@
-namespace Worms.Hub.Gateway.Domain.Announcers;
+namespace Worms.Hub.Gateway.Announcers;
 
 public interface ISlackAnnouncer
 {

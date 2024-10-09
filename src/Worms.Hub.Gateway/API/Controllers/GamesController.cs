@@ -1,17 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Gateway.API.DTOs;
-using Worms.Hub.Gateway.Domain.Announcers;
-using Worms.Hub.Gateway.Storage.Database;
+using Worms.Hub.Storage.Database;
+using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Gateway.API.Controllers;
 
 internal sealed class GamesController(
-    IRepository<GameDto> repository,
+    IRepository<Game> repository,
     ISlackAnnouncer slackAnnouncer,
     ILogger<GamesController> logger) : V1ApiController
 {
     [HttpGet]
-    public ActionResult<IReadOnlyCollection<GameDto>> Get() => repository.GetAll().ToList();
+    public ActionResult<IReadOnlyCollection<GameDto>> Get() => repository.GetAll().Select(GameDto.FromDomain).ToList();
 
     [HttpGet("{id}")]
     public ActionResult<GameDto> Get(string id)
@@ -24,14 +25,15 @@ internal sealed class GamesController(
             return NotFound($"Game with Id = {id} not found");
         }
 
-        return new GameDto(found.Id, found.Status, found.HostMachine);
+        return GameDto.FromDomain(found);
     }
 
     [HttpPost]
     public async Task<ActionResult<GameDto>> Post(CreateGameDto parameters)
     {
         await slackAnnouncer.AnnounceGameStarting(parameters.HostMachine).ConfigureAwait(false);
-        return repository.Create(new GameDto("0", "Pending", parameters.HostMachine));
+        var game = repository.Create(new Game("0", "Pending", parameters.HostMachine));
+        return GameDto.FromDomain(game);
     }
 
     [HttpPut]
@@ -44,7 +46,7 @@ internal sealed class GamesController(
             return NotFound($"Game with Id = {game.Id} not found");
         }
 
-        repository.Update(game);
+        repository.Update(game.ToDomain());
         return Ok();
     }
 }
