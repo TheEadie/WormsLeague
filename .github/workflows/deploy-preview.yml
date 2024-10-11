@@ -75,12 +75,12 @@ jobs:
         run: echo "summary=$(build/flyway-summary.sh src/database/reports/report.json)" >> $GITHUB_OUTPUT
 
       - name: Comment on PR
-        uses: thollander/actions-comment-pull-request@v2
+        uses: thollander/actions-comment-pull-request@v3
         with:
           mode: recreate
           message: |
             ${{ steps.summary.outputs.summary }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
