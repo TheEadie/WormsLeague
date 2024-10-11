@@ -1,5 +1,15 @@
-version: "3.8"
 services:
+    azure-storage:
+        image: mcr.microsoft.com/azure-storage/azurite
+        ports:
+            - "10000:10000"
+            - "10001:10001"
+            - "10002:10002"
+        healthcheck:
+            test: nc 127.0.0.1 10000 -z
+            interval: 1s
+            retries: 30
+
     database:
         image: "postgres:15"
         environment:
@@ -43,6 +53,7 @@ services:
             - ./sample-data:/data
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
+            - WORMS_CONNECTIONSTRINGS__STORAGE=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://host.docker.internal:10000/devstoreaccount1;QueueEndpoint=http://host.docker.internal:10001/devstoreaccount1;
             - WORMS_CONNECTIONSTRINGS__DATABASE=Server=database;Port=5432;Database=worms;Username=worms;Password=worms
             - WORMS_STORAGE__TEMPREPLAYFOLDER=/data/replays
             - WORMS_STORAGE__CLIFOLDER=/data/cli
@@ -50,3 +61,22 @@ services:
         depends_on:
             flyway-init:
                 condition: service_completed_successfully
+            azure-storage:
+                condition: service_healthy
+
+    worms-replay-processor:
+        build:
+            dockerfile: build/docker/replay-processor/Dockerfile
+            context: .
+        volumes:
+            - ./sample-data:/data
+            - /home/eadie/games/worms:/root/.wine/drive_c/WA
+        environment:
+            - WORMS_CONNECTIONSTRINGS__STORAGE=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://host.docker.internal:10000/devstoreaccount1;QueueEndpoint=http://host.docker.internal:10001/devstoreaccount1;
+            - WORMS_CONNECTIONSTRINGS__DATABASE=Server=database;Port=5432;Database=worms;Username=worms;Password=worms
+            - WORMS_STORAGE__TEMPREPLAYFOLDER=/data/replays
+        depends_on:
+            flyway-init:
+                condition: service_completed_successfully
+            azure-storage:
+                condition: service_healthy

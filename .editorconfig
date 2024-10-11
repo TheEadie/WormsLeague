@@ -280,6 +280,8 @@ dotnet_diagnostic.CA1812.severity = none
 dotnet_diagnostic.CA1848.severity = none
 # CA1308 tries to make user facing string upper case
 dotnet_diagnostic.CA1308.severity = none
+# CA1303 wants localization of text - I'm unlikely to do this
+dotnet_diagnostic.CA1303.severity = none
 # Workaround for https://github.com/dotnet/roslyn/issues/41640
 dotnet_diagnostic.IDE0005.severity = suggestion
 

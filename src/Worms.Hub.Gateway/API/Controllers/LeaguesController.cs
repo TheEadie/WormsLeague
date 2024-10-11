@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Worms.Hub.Gateway.API.DTOs;
-using Worms.Hub.Gateway.Storage.Files;
+using Worms.Hub.Storage.Files;
 
 namespace Worms.Hub.Gateway.API.Controllers;
 
