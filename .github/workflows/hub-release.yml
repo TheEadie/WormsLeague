@@ -4,10 +4,40 @@ on:
   workflow_call:
 
 jobs:
+
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      gateway: ${{ steps.filter.outputs.gateway || steps.filter.outputs.common }}
+      replay-processor: ${{ steps.filter.outputs.replay-processor || steps.filter.outputs.common }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Filter
+      uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          gateway:
+            - 'src/Worms.Hub.Gateway/**'
+            - 'src/Worms.Hub.Storage/**'
+          replay-processor:
+            - 'src/Worms.Hub.ReplayProcessor/**'
+            - 'src/Worms.Hub.Storage/**'
+            - 'src/Worms.Armageddon.Game/**'
+          common:
+            - 'src/Directory.Build.props'
+            - '.github/workflows/hub-*.yml'
+            - 'build/docker/**'
+
   release-gateway-github:
     name: Gateway - GitHub
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    needs: changes
+    if: ${{ needs.changes.outputs.gateway == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout
@@ -22,7 +52,8 @@ jobs:
   release-gateway-dockerhub:
     name: Gateway - DockerHub
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    needs: changes
+    if: ${{ needs.changes.outputs.gateway == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout
@@ -52,7 +83,8 @@ jobs:
   release-replay-processor-github:
     name: Replay Processor - GitHub
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    needs: changes
+    if: ${{ needs.changes.outputs.replay-processor == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout
@@ -67,7 +99,8 @@ jobs:
   release-replay-processor-dockerhub:
     name: Replay Processor - DockerHub
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    needs: changes
+    if: ${{ needs.changes.outputs.replay-processor == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout

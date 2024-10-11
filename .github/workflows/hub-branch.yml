@@ -19,3 +19,7 @@ jobs:
     name: Build
     uses: ./.github/workflows/hub-build.yml
 
+  release:
+    name: Release
+    needs: build
+    uses: ./.github/workflows/hub-release.yml
