@@ -1,0 +1,95 @@
+name: Hub - Release
+
+on:
+  workflow_call:
+
+jobs:
+  release-gateway-github:
+    name: Gateway - GitHub
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Release
+        run: |
+          make gateway.release.github GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
+  release-gateway-dockerhub:
+    name: Gateway - DockerHub
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Expose GitHub Runtime
+        uses: crazy-max/ghaction-github-runtime@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: theeadie
+          password: ${{ secrets.DockerHubAccessToken }}
+
+      - name: Release
+        run: |
+          make gateway.release.dockerhub
+
+  release-replay-processor-github:
+    name: Replay Processor - GitHub
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Release
+        run: |
+          make replay-processor.release.github GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
+  release-replay-processor-dockerhub:
+    name: Replay Processor - DockerHub
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Expose GitHub Runtime
+        uses: crazy-max/ghaction-github-runtime@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: theeadie
+          password: ${{ secrets.DockerHubAccessToken }}
+
+      - name: Release
+        run: |
+          make replay-processor.release.dockerhub
