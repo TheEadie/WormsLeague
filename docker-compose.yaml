@@ -11,7 +11,7 @@ services:
             retries: 30
 
     database:
-        image: "postgres:15"
+        image: "postgres:17"
         environment:
             - POSTGRES_USER=worms
             - POSTGRES_PASSWORD=worms
