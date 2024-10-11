@@ -70,8 +70,8 @@ $1.release.dockerhub: $1.version
 		-t $$($1_IMAGE_NAME):$$($1_VERSION_MAJOR).$$($1_VERSION_MINOR) \
 		--build-arg VERSION=$$($1_VERSION) \
 		--push \
-		--cache-from=type=gha,scope=package \
-		--cache-to=type=gha,mode=max,scope=package
+		--cache-from=type=gha,scope=package-$$($1_IMAGE_NAME) \
+		--cache-to=type=gha,mode=max,scope=package-$$($1_IMAGE_NAME)
 	@echo ""
 
 endef
