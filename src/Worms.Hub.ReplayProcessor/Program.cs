@@ -10,7 +10,7 @@ var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentD
 if (configuration["BATCH"] == "true")
 {
     var serviceProvider = new ServiceCollection().AddReplayProcessorServices()
-        .AddLogging(builder => builder.AddConsole())
+        .AddLogging(builder => builder.AddSimpleConsole(c => c.SingleLine = true))
         .AddSingleton<IConfiguration>(configuration)
         .BuildServiceProvider();
     var processor = serviceProvider.GetService<Processor>();
@@ -21,7 +21,7 @@ if (configuration["BATCH"] == "true")
 // Run as a hosted service when in Development
 // This means we can run continuously and check for messages
 var host = Host.CreateDefaultBuilder(args)
-    .ConfigureLogging((_, builder) => builder.AddConsole())
+    .ConfigureLogging((_, builder) => builder.AddSimpleConsole(c => c.SingleLine = true))
     .ConfigureAppConfiguration(config => config.AddConfiguration(configuration))
     .ConfigureServices(s => s.AddReplayProcessorServices())
     .ConfigureServices(services => services.AddHostedService<CheckForMessagesService>())
