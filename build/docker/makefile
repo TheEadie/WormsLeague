@@ -29,8 +29,8 @@ $1.build: $1.version
 		-t $$($1_IMAGE_NAME):$$($1_VERSION)-build \
 		--build-arg VERSION=$$($1_VERSION) \
 		--target build \
-		--cache-from=type=gha,scope=build \
-		--cache-to=type=gha,mode=max,scope=build
+		--cache-from=type=gha,scope=build-$$($1_IMAGE_NAME) \
+		--cache-to=type=gha,mode=max,scope=build-$$($1_IMAGE_NAME)
 	@echo ""
 
 $1.test: $1.version
@@ -39,9 +39,9 @@ $1.test: $1.version
 		-t $$($1_IMAGE_NAME):$$($1_VERSION)-build \
 		--build-arg VERSION=$$($1_VERSION) \
 		--target test \
-		--cache-from=type=gha,scope=test \
-		--cache-from=type=gha,scope=build \
-		--cache-to=type=gha,mode=max,scope=test
+		--cache-from=type=gha,scope=test-$$($1_IMAGE_NAME) \
+		--cache-from=type=gha,scope=build-$$($1_IMAGE_NAME) \
+		--cache-to=type=gha,mode=max,scope=test-$$($1_IMAGE_NAME)
 	@echo ""
 
 $1.package: $1.version
@@ -49,9 +49,9 @@ $1.package: $1.version
 		-f build/docker/$1/Dockerfile \
 		-t $$($1_IMAGE_NAME):$$($1_VERSION) \
 		--build-arg VERSION=$$($1_VERSION) \
-		--cache-from=type=gha,scope=package \
-		--cache-from=type=gha,scope=build \
-		--cache-to=type=gha,mode=max,scope=package
+		--cache-from=type=gha,scope=package-$$($1_IMAGE_NAME) \
+		--cache-from=type=gha,scope=build-$$($1_IMAGE_NAME) \
+		--cache-to=type=gha,mode=max,scope=package-$$($1_IMAGE_NAME)
 	@echo ""
 
 ## Release
