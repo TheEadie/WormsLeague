@@ -80,7 +80,7 @@ jobs:
           mode: recreate
           message: |
             ${{ steps.summary.outputs.summary }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
