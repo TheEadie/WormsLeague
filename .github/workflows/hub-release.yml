@@ -9,8 +9,8 @@ jobs:
     name: Detect Changes
     runs-on: ubuntu-latest
     outputs:
-      gateway: ${{ steps.filter.outputs.gateway || steps.filter.outputs.common }}
-      replay-processor: ${{ steps.filter.outputs.replay-processor || steps.filter.outputs.common }}
+      gateway: ${{ steps.filter.outputs.gateway == 'true' || steps.filter.outputs.common == 'true' }}
+      replay-processor: ${{ steps.filter.outputs.replay-processor == 'true' || steps.filter.outputs.common == 'true' }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
