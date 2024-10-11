@@ -4,15 +4,6 @@ on:
   push:
     branches:
       - "main"
-    paths:
-      - "src/Directory.Build.props"
-      - "src/Worms.Hub*/**"
-      - "src/database/**"
-      - "build/docker/**"
-      - "build/release-github.sh"
-      - "build/version.sh"
-      - ".github/workflows/hub-*.yml"
-
 
 jobs:
   build:
