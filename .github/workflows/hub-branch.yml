@@ -1,7 +1,9 @@
-name: Hub
+name: Hub - Branches
 
 on:
   push:
+    branches-ignore:
+      - "main"
     paths:
       - "src/Directory.Build.props"
       - "src/Worms.Hub*/**"
@@ -9,7 +11,6 @@ on:
       - "build/docker/**"
       - "build/release-github.sh"
       - "build/version.sh"
-      - ".github/workflows/hub.yml"
       - ".github/workflows/hub-*.yml"
 
 
@@ -18,7 +19,3 @@ jobs:
     name: Build
     uses: ./.github/workflows/hub-build.yml
 
-  release:
-    name: Release
-    needs: build
-    uses: ./.github/workflows/hub-release.yml
