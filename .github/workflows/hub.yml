@@ -10,6 +10,8 @@ on:
       - "build/release-github.sh"
       - "build/version.sh"
       - ".github/workflows/hub.yml"
+      - ".github/workflows/hub-*.yml"
+
 
 jobs:
   build:

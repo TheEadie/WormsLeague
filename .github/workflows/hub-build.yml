@@ -85,14 +85,3 @@ jobs:
             info
             migrate
             info
-
-  overall-build:
-    name: Overall Build
-    needs:
-      - build-gateway
-      - build-replay-processor
-      - build-database
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check
-        run: echo "Checked"
