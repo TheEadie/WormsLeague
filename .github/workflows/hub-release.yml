@@ -24,14 +24,16 @@ jobs:
           gateway:
             - 'src/Worms.Hub.Gateway/**'
             - 'src/Worms.Hub.Storage/**'
+            - 'build/docker/gateway/**'
           replay-processor:
             - 'src/Worms.Hub.ReplayProcessor/**'
             - 'src/Worms.Hub.Storage/**'
             - 'src/Worms.Armageddon.Game/**'
+            - 'build/docker/replay-processor/**'
           common:
             - 'src/Directory.Build.props'
             - '.github/workflows/hub-*.yml'
-            - 'build/docker/**'
+            - 'build/docker/makefile'
 
   release-gateway-github:
     name: Gateway - GitHub
