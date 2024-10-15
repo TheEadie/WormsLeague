@@ -1,10 +1,10 @@
-name: Deploy
+name: Deploy - Main
 
 on:
   push:
     paths:
       - "deployment/Worms.Hub.Infrastructure/**"
-      - ".github/workflows/deploy.yml"
+      - ".github/workflows/deploy-main.yml"
     branches:
       - main
 

@@ -1,0 +1,21 @@
+name: Code - Branches
+
+on:
+  push:
+    branches-ignore:
+      - "main"
+    paths:
+      - "src/**"
+      - "build/**"
+      - ".github/workflows/code-*.yml"
+
+jobs:
+  build-hub:
+    name: Build - Hub
+    uses: ./.github/workflows/build-hub.yml
+    secrets: inherit
+
+  build-cli:
+    name: Build - CLI
+    uses: ./.github/workflows/build-cli.yml
+    secrets: inherit
