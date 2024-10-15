@@ -6,6 +6,10 @@ on:
       - "main"
     paths:
       - "src/**"
+      - "build/**"
+      - ".github/workflows/code-*.yml"
+      - ".github/workflows/build-*.yml"
+      - ".github/workflows/release-*.yml"
 
 jobs:
   build-hub:
