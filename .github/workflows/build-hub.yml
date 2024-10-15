@@ -1,4 +1,4 @@
-name: Hub - Build
+name: ZZ - Build - Hub
 
 on:
   workflow_call:

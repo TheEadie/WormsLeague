@@ -1,0 +1,93 @@
+name: ZZ - Release - CLI
+
+on:
+  workflow_call:
+
+jobs:
+
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      clis: ${{ steps.filter.outputs.clis == 'true' }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Filter
+      uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          clis:
+            - 'src/Worms.CLI.*/**'
+            - 'src/Worms.Armageddon.Files/**'
+            - 'src/Worms.Armageddon.Game/**'
+            - 'src/Directory.Build.props'
+            - 'build/cli/**'
+            - '.github/workflows/hub-*.yml'
+
+  release-cli-github:
+    name: Release - GitHub
+    needs: changes
+    runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.clis == 'true' && github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: win-x64
+          path: .artifacts/win-x64/
+      - name: Release
+        run: make cli.release.github GitHubAuthToken=${{ secrets.GITHUB_TOKEN }} GitHubRepo=${{ github.repository }}
+
+  release-cli-wormshub:
+    name: Release - Worms Hub
+    needs: changes
+    runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.clis == 'true' && github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download build - win-x64
+        uses: actions/download-artifact@v4
+        with:
+          name: win-x64
+          path: .artifacts/win-x64/
+      - name: Download build - linux-x64
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-x64
+          path: .artifacts/linux-x64/
+      - name: Release
+        run: make cli.release.wormshub WormsHubClientId=${{ secrets.WORMSHUB_CLIENTID }} WormsHubClientSecret=${{ secrets.WORMSHUB_CLIENTSECRET }}
+
+  release-cli-dockerhub:
+    name: Release - DockerHub
+    needs: changes
+    runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.clis == 'true' && github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-musl-x64
+          path: .artifacts/linux-musl-x64/
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: theeadie
+          password: ${{ secrets.DockerHubAccessToken }}
+      - name: Release
+        run: make cli.release.dockerhub
