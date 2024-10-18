@@ -38,10 +38,11 @@ public static class WormsHub
         // Storage
         var storage = StorageAccount.Config(resourceGroup, config);
         var fileShare = FileShare.Config(resourceGroup, storage, config);
+        var queue = Queue.Config(resourceGroup, storage, config);
         var (server, database, databasePassword, databaseVersion) = Database.Config(resourceGroup, config);
 
         var databaseJdbc = Output.Format(
-            $"jdbc:postgresql://{server.FullyQualifiedDomainName}/{database.Name}?user={server.AdministratorLogin}&password={databasePassword}");
+            $"jdbc:postgresql://{server.FullyQualifiedDomainName}/{database.Name}");
         var databaseAdoNet = Output.Format(
             $"Server={server.FullyQualifiedDomainName};Port=5432;Database={database.Name};User Id={server.AdministratorLogin};Password={databasePassword}");
         var databaseUser = server.AdministratorLogin;
