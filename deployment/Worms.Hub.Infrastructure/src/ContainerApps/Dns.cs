@@ -21,7 +21,7 @@ public static class Dns
             {
                 ZoneId = zoneId,
                 Name = subdomain,
-                Value = ipAddress,
+                Content = ipAddress,
                 Type = "A"
             });
 
@@ -31,7 +31,7 @@ public static class Dns
             {
                 ZoneId = zoneId,
                 Name = "asuid." + subdomain,
-                Value = challengeTxtValue,
+                Content = challengeTxtValue,
                 Type = "TXT"
             });
     }
