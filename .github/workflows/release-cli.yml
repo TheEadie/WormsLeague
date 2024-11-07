@@ -21,7 +21,8 @@ jobs:
       with:
         filters: |
           clis:
-            - 'src/Worms.CLI.*/**'
+            - 'src/Worms.Cli/**'
+            - 'src/Worms.Cli.*/**'
             - 'src/Worms.Armageddon.Files/**'
             - 'src/Worms.Armageddon.Game/**'
             - 'src/Directory.Build.props'
