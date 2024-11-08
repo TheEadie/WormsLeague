@@ -16,7 +16,7 @@ internal sealed class BrowseGif : Command
 
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class BrowseGifHandler(
-    IWormsLocator wormsLocator,
+    IWormsArmageddon wormsArmageddon,
     IFolderOpener folderOpener,
     ILogger<BrowseGifHandler> logger) : ICommandHandler
 {
@@ -26,7 +26,7 @@ internal sealed class BrowseGifHandler(
     public Task<int> InvokeAsync(InvocationContext context)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Gif.SpanNameBrowse);
-        var worms = wormsLocator.Find();
+        var worms = wormsArmageddon.FindInstallation();
 
         if (!worms.IsInstalled)
         {

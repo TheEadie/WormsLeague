@@ -19,7 +19,7 @@ internal sealed class BrowseReplay : Command
 
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class BrowseReplayHandler(
-    IWormsLocator wormsLocator,
+    IWormsArmageddon wormsArmageddon,
     IFolderOpener folderOpener,
     ILogger<BrowseReplayHandler> logger) : ICommandHandler
 {
@@ -29,7 +29,7 @@ internal sealed class BrowseReplayHandler(
     public Task<int> InvokeAsync(InvocationContext context)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Replay.SpanNameBrowse);
-        var worms = wormsLocator.Find();
+        var worms = wormsArmageddon.FindInstallation();
 
         if (!worms.IsInstalled)
         {

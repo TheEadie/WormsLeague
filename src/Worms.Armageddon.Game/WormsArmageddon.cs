@@ -2,9 +2,11 @@ using System.Globalization;
 
 namespace Worms.Armageddon.Game;
 
-internal sealed class WormsArmageddon(IWormsRunner wormsRunner) : IWormsArmageddon
+internal sealed class WormsArmageddon(IWormsRunner wormsRunner, IWormsLocator wormsLocator) : IWormsArmageddon
 {
     private const string TimeFormatString = @"hh\:mm\:ss\.ff";
+
+    public GameInfo FindInstallation() => wormsLocator.Find();
 
     public Task Host() => wormsRunner.RunWorms("wa://");
 

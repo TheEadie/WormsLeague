@@ -2,6 +2,8 @@ namespace Worms.Armageddon.Game;
 
 public interface IWormsArmageddon
 {
+    GameInfo FindInstallation();
+
     Task Host();
 
     Task GenerateReplayLog(string replayPath);

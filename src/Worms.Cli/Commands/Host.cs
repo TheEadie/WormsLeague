@@ -46,7 +46,6 @@ internal sealed class Host : Command
 }
 
 internal sealed class HostHandler(
-    IWormsLocator wormsLocator,
     IWormsArmageddon wormsArmageddon,
     LeagueUpdater leagueUpdater,
     IResourceCreator<RemoteGame, string> remoteGameCreator,
@@ -72,7 +71,7 @@ internal sealed class HostHandler(
             context.ParseResult.GetValueForOption(Host.SkipUpload),
             context.ParseResult.GetValueForOption(Host.SkipAnnouncement),
             GetIpAddress(Domain),
-            wormsLocator.Find());
+            wormsArmageddon.FindInstallation());
 
         RecordTelemetryForConfig(config);
 
