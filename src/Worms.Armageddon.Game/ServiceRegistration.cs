@@ -31,7 +31,9 @@ public static class ServiceRegistration
     private static IServiceCollection AddWindowsServices(this IServiceCollection builder) =>
         builder.AddScoped<ISteamService, SteamService>()
             .AddScoped<IWormsLocator, WormsLocator>()
-            .AddScoped<IWormsRunner, WormsRunner>();
+            .AddScoped<IWormsRunner, WormsRunner>()
+            .AddScoped<IRegistry, Registry>()
+            .AddScoped<IFileVersionInfo, FileVersionInfo>();
 
     private static IServiceCollection AddLinuxServices(this IServiceCollection builder) =>
         builder.AddScoped<IWormsLocator, Linux.WormsLocator>().AddScoped<IWormsRunner, Linux.WormsRunner>();
