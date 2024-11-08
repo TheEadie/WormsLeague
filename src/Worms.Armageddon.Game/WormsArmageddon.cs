@@ -1,10 +1,19 @@
 using System.Globalization;
 
-namespace Worms.Armageddon.Game.Replays;
+namespace Worms.Armageddon.Game;
 
-internal sealed class ReplayFrameExtractor(IWormsRunner wormsRunner) : IReplayFrameExtractor
+internal sealed class WormsArmageddon(IWormsRunner wormsRunner) : IWormsArmageddon
 {
     private const string TimeFormatString = @"hh\:mm\:ss\.ff";
+
+    public Task Host() => wormsRunner.RunWorms("wa://");
+
+    public Task GenerateReplayLog(string replayPath) => wormsRunner.RunWorms("/getlog", $"\"{replayPath}\"", "/quiet");
+
+    public Task PlayReplay(string replayPath) => wormsRunner.RunWorms("/play", $"\"{replayPath}\"", "/quiet");
+
+    public Task PlayReplay(string replayPath, TimeSpan startTime) =>
+        wormsRunner.RunWorms("/playat", $"\"{replayPath}\"", startTime.ToString(), "/quiet");
 
     public Task ExtractReplayFrames(
         string replayPath,
