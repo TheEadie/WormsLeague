@@ -9,7 +9,7 @@ namespace Worms.Cli.League;
 internal sealed class LeagueUpdater(
     IRemoteLeagueRetriever remoteLeagueRetriever,
     IRemoteSchemeDownloader remoteSchemeDownloader,
-    IWormsLocator wormsLocator,
+    IWormsArmageddon wormsArmageddon,
     ILogger<LeagueUpdater> logger)
 {
     public async Task Update(string leagueName)
@@ -17,7 +17,7 @@ internal sealed class LeagueUpdater(
         _ = Activity.Current?.SetTag(Telemetry.Spans.League.Id, leagueName);
 
         var latestVersion = await remoteLeagueRetriever.Retrieve(leagueName);
-        var schemesFolder = wormsLocator.Find().SchemesFolder;
+        var schemesFolder = wormsArmageddon.FindInstallation().SchemesFolder;
         var version = latestVersion.Version.ToString(3);
         var downloadFileName = $"{leagueName}.{version}.wsc";
 
