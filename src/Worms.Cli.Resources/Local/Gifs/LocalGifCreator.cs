@@ -4,10 +4,8 @@ using Worms.Armageddon.Game;
 
 namespace Worms.Cli.Resources.Local.Gifs;
 
-internal sealed class LocalGifCreator(
-    IWormsArmageddon wormsArmageddon,
-    IWormsLocator wormsLocator,
-    IFileSystem fileSystem) : IResourceCreator<LocalGif, LocalGifCreateParameters>
+internal sealed class LocalGifCreator(IWormsArmageddon wormsArmageddon, IFileSystem fileSystem)
+    : IResourceCreator<LocalGif, LocalGifCreateParameters>
 {
     public async Task<LocalGif> Create(LocalGifCreateParameters parameters, CancellationToken cancellationToken)
     {
@@ -15,7 +13,7 @@ internal sealed class LocalGifCreator(
         var turn = parameters.Replay.Details.Turns.ElementAt((int) parameters.Turn - 1);
 
         var replayName = fileSystem.Path.GetFileNameWithoutExtension(replayPath);
-        var worms = wormsLocator.Find();
+        var worms = wormsArmageddon.FindInstallation();
         var framesFolder = fileSystem.Path.Combine(worms.CaptureFolder, replayName);
         var outputFileName = fileSystem.Path.Combine(
             worms.CaptureFolder,

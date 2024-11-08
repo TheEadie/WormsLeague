@@ -8,7 +8,6 @@ namespace Worms.Hub.ReplayProcessor;
 
 internal sealed class Processor(
     IMessageQueue<ReplayToProcessMessage> messageQueue,
-    IWormsLocator wormsLocator,
     IWormsArmageddon wormsArmageddon,
     IRepository<Replay> replayRepository,
     ReplayFiles replayFiles,
@@ -91,7 +90,7 @@ internal sealed class Processor(
     private bool GameIsInstalled()
     {
         var userHomeDirectory = Environment.GetEnvironmentVariable("HOME");
-        var gameInfo = wormsLocator.Find();
+        var gameInfo = wormsArmageddon.FindInstallation();
 
         if (gameInfo.IsInstalled)
         {

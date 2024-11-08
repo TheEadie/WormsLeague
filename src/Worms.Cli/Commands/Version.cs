@@ -8,7 +8,8 @@ namespace Worms.Cli.Commands;
 
 internal sealed class Version() : Command("version", "Get the current version of the Worms CLI");
 
-internal sealed class VersionHandler(IWormsLocator wormsLocator, CliInfoRetriever cliInfoRetriever) : ICommandHandler
+internal sealed class VersionHandler(IWormsArmageddon wormsArmageddon, CliInfoRetriever cliInfoRetriever)
+    : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
         Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
@@ -30,7 +31,7 @@ internal sealed class VersionHandler(IWormsLocator wormsLocator, CliInfoRetrieve
     private (System.Version CliVersion, System.Version? GameVersion) GetVersions()
     {
         var cliInfo = cliInfoRetriever.Get();
-        var gameInfo = wormsLocator.Find();
+        var gameInfo = wormsArmageddon.FindInstallation();
         return (cliInfo.Version, gameInfo.IsInstalled ? gameInfo.Version : null);
     }
 }

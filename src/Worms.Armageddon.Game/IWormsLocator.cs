@@ -1,6 +1,6 @@
 namespace Worms.Armageddon.Game;
 
-public interface IWormsLocator
+internal interface IWormsLocator
 {
     GameInfo Find();
 }

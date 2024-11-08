@@ -3,11 +3,11 @@ using Worms.Armageddon.Game;
 
 namespace Worms.Cli.Resources.Local.Replays;
 
-internal sealed class LocalReplayLocator(IWormsLocator wormsLocator, IFileSystem fileSystem) : ILocalReplayLocator
+internal sealed class LocalReplayLocator(IWormsArmageddon wormsArmageddon, IFileSystem fileSystem) : ILocalReplayLocator
 {
     public IReadOnlyCollection<ReplayPaths> GetReplayPaths(string searchPattern)
     {
-        var gameInfo = wormsLocator.Find();
+        var gameInfo = wormsArmageddon.FindInstallation();
 
         if (!gameInfo.IsInstalled)
         {

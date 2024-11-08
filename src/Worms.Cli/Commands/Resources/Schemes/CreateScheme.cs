@@ -48,7 +48,7 @@ internal sealed class CreateScheme : Command
 internal sealed class CreateSchemeHandler(
     IResourceCreator<LocalScheme, LocalSchemeCreateParameters> schemeCreator,
     IFileSystem fileSystem,
-    IWormsLocator wormsLocator,
+    IWormsArmageddon wormsArmageddon,
     ILogger<CreateSchemeHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
@@ -64,7 +64,7 @@ internal sealed class CreateSchemeHandler(
             context.ParseResult.GetValueForOption(CreateScheme.ResourceFolder),
             context.ParseResult.GetValueForOption(CreateScheme.InputFile),
             context.ParseResult.GetValueForOption(CreateScheme.Random),
-            wormsLocator.Find());
+            wormsArmageddon.FindInstallation());
 
         var createParams = config.Validate(ValidConfig())
             .Map(x => x with { OutputFolder = x.GameInfo.IsInstalled ? x.GameInfo.SchemesFolder : x.OutputFolder })
