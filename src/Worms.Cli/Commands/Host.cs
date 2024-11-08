@@ -47,7 +47,7 @@ internal sealed class Host : Command
 
 internal sealed class HostHandler(
     IWormsLocator wormsLocator,
-    IWormsRunner wormsRunner,
+    IWormsArmageddon wormsArmageddon,
     LeagueUpdater leagueUpdater,
     IResourceCreator<RemoteGame, string> remoteGameCreator,
     IRemoteGameUpdater gameUpdater,
@@ -230,7 +230,7 @@ internal sealed class HostHandler(
     private Task StartWorms(bool dryRun, CancellationToken cancellationToken)
     {
         logger.LogInformation("Starting Worms Armageddon");
-        return !dryRun ? wormsRunner.RunWorms("wa://") : Task.Delay(5000, cancellationToken);
+        return !dryRun ? wormsArmageddon.Host() : Task.Delay(5000, cancellationToken);
     }
 
     private Task WaitForGameToClose(Task runGame)

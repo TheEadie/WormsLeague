@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using Microsoft.Extensions.DependencyInjection;
-using Worms.Armageddon.Game.Replays;
 using Worms.Armageddon.Game.Win;
 
 namespace Worms.Armageddon.Game;
@@ -10,10 +9,7 @@ namespace Worms.Armageddon.Game;
 public static class ServiceRegistration
 {
     public static IServiceCollection AddWormsArmageddonGameServices(this IServiceCollection builder) =>
-        builder.AddOsServices()
-            .AddScoped<IReplayFrameExtractor, ReplayFrameExtractor>()
-            .AddScoped<IReplayLogGenerator, ReplayLogGenerator>()
-            .AddScoped<IReplayPlayer, ReplayPlayer>();
+        builder.AddOsServices().AddScoped<IWormsArmageddon, WormsArmageddon>();
 
     [SuppressMessage("Style", "IDE0046:Convert to conditional expression")]
     private static IServiceCollection AddOsServices(this IServiceCollection builder)
