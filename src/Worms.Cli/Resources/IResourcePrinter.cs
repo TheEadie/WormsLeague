@@ -1,6 +1,6 @@
 namespace Worms.Cli.Resources;
 
-public interface IResourcePrinter<in T>
+internal interface IResourcePrinter<in T>
 {
     void Print(TextWriter writer, T resource, int outputMaxWidth);
 

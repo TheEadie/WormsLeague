@@ -32,7 +32,7 @@ internal sealed class LoggingMiddleware(RequestDelegate next, ILogger<LoggingMid
         input.Replace(Environment.NewLine, "", StringComparison.InvariantCulture);
 }
 
-public static class LoggingMiddlewareExtensions
+internal static class LoggingMiddlewareExtensions
 {
     public static IApplicationBuilder UseRequestLogging(this IApplicationBuilder builder) =>
         builder.UseMiddleware<LoggingMiddleware>();

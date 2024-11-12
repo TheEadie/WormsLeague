@@ -7,7 +7,7 @@ using Worms.Armageddon.Files.Tests.Schemes.TestData;
 
 namespace Worms.Armageddon.Files.Tests.Schemes;
 
-public sealed class WscRoundTripShould : IDisposable
+internal sealed class WscRoundTripShould : IDisposable
 {
     private readonly IWscWriter _writer;
     private readonly IWscReader _reader;

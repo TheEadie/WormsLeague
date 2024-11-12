@@ -18,7 +18,7 @@ using Worms.Cli.Resources.Schemes;
 
 namespace Worms.Cli;
 
-public static class ServiceRegistration
+internal static class ServiceRegistration
 {
     public static IServiceCollection AddWormsCliServices(this IServiceCollection builder) =>
         builder.AddScoped<AuthHandler>()

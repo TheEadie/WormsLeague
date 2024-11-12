@@ -8,7 +8,7 @@ using Worms.Armageddon.Files.Tests.Schemes.TestData;
 
 namespace Worms.Armageddon.Files.Tests.Schemes;
 
-public class RandomSchemeGeneratorShould
+internal sealed class RandomSchemeGeneratorShould
 {
     private readonly IRandomSchemeGenerator _generator;
 
@@ -55,8 +55,8 @@ public class RandomSchemeGeneratorShould
 
     private static IEnumerable<TestCaseData> SchemesWithSeeds =>
     [
-        new TestCaseData(0, TestSchemes.SchemeSeed0()),
-        new TestCaseData(19010101, TestSchemes.Scheme19010101())
+        new(0, TestSchemes.SchemeSeed0()),
+        new(19010101, TestSchemes.Scheme19010101())
     ];
 
     [Test]

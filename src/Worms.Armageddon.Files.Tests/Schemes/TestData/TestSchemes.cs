@@ -3,7 +3,7 @@ using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Tests.Schemes.TestData;
 
-public static partial class TestSchemes
+internal static partial class TestSchemes
 {
     public static IEnumerable<TestCaseData> Schemes()
     {
