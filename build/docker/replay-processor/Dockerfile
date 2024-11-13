@@ -7,7 +7,7 @@ COPY .editorconfig .
 COPY src/Worms.Armageddon.Game/Worms.Armageddon.Game.csproj ./src/Worms.Armageddon.Game/Worms.Armageddon.Game.csproj
 COPY src/Worms.Hub.Storage/Worms.Hub.Storage.csproj ./src/Worms.Hub.Storage/Worms.Hub.Storage.csproj
 COPY src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj ./src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj
-RUN dotnet restore src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj
+RUN dotnet restore src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj -r linux-x64
 
 COPY src/Worms.Armageddon.Game ./src/Worms.Armageddon.Game
 COPY src/Worms.Hub.Storage ./src/Worms.Hub.Storage
@@ -18,6 +18,8 @@ RUN dotnet publish \
     -c Release \
     -o out \
     --no-restore \
+    -r linux-x64 \
+    --self-contained true \
     -p:AssemblyVersion=${VERSION} \
     -p:Version=${VERSION}
 
@@ -33,7 +35,6 @@ RUN apt-get update \
   ca-certificates \
   wget \
   gnupg \
-  dotnet-runtime-9.0 \
   && rm -rf /var/lib/apt/lists/*
 
 # Get key to Wine repo
