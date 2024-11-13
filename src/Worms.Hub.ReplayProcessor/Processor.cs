@@ -7,7 +7,7 @@ using Worms.Hub.Storage.Queues;
 
 namespace Worms.Hub.ReplayProcessor;
 
-public class Processor(
+internal sealed class Processor(
     IMessageQueue<ReplayToProcessMessage> messageQueue,
     IWormsLocator wormsLocator,
     IReplayLogGenerator logGenerator,

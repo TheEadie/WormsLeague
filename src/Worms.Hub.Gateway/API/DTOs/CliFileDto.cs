@@ -1,5 +1,5 @@
 namespace Worms.Hub.Gateway.API.DTOs;
 
-public record CliFileDto(Version LatestVersion, IDictionary<string, string> FileLocations);
+internal sealed record CliFileDto(Version LatestVersion, IDictionary<string, string> FileLocations);
 
-public record UploadCliFileDto(string Platform, Version Version, IFormFile File);
+internal sealed record UploadCliFileDto(string Platform, Version Version, IFormFile File);

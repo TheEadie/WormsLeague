@@ -7,7 +7,7 @@ using Worms.Armageddon.Files.Tests.Schemes.TestData;
 
 namespace Worms.Armageddon.Files.Tests.Schemes;
 
-public sealed class SchemeTextRoundTripShould
+internal sealed class SchemeTextRoundTripShould
 {
     private readonly ISchemeTextWriter _writer;
     private readonly ISchemeTextReader _reader;

@@ -6,7 +6,7 @@ using Worms.Armageddon.Files.Replays.Text;
 
 namespace Worms.Armageddon.Files.Tests.Replays;
 
-public sealed class ReplayTextReaderShould
+internal sealed class ReplayTextReaderShould
 {
     private readonly IReplayTextReader _replayTextReader;
 

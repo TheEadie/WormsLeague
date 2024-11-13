@@ -4,7 +4,7 @@ using Worms.Hub.Gateway.API.Validators;
 
 namespace Worms.Hub.Gateway;
 
-public static class ServiceRegistration
+internal static class ServiceRegistration
 {
     public static IServiceCollection AddGatewayServices(this IServiceCollection builder) =>
         builder.AddScoped<ISlackAnnouncer, SlackAnnouncer>()

@@ -1,5 +1,5 @@
 #### Build ####
-FROM mcr.microsoft.com/dotnet/sdk:8.0.403@sha256:b38da1961b1358940c634560747e09ef8047234e66c71033f19ac2e777f60240 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0.100@sha256:7d24e90a392e88eb56093e4eb325ff883ad609382a55d42f17fd557b997022ca AS build
 WORKDIR /app
 
 COPY src/Directory.Build.props .
@@ -7,7 +7,7 @@ COPY .editorconfig .
 COPY src/Worms.Armageddon.Game/Worms.Armageddon.Game.csproj ./src/Worms.Armageddon.Game/Worms.Armageddon.Game.csproj
 COPY src/Worms.Hub.Storage/Worms.Hub.Storage.csproj ./src/Worms.Hub.Storage/Worms.Hub.Storage.csproj
 COPY src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj ./src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj
-RUN dotnet restore src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj
+RUN dotnet restore src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj -r linux-x64
 
 COPY src/Worms.Armageddon.Game ./src/Worms.Armageddon.Game
 COPY src/Worms.Hub.Storage ./src/Worms.Hub.Storage
@@ -18,6 +18,8 @@ RUN dotnet publish \
     -c Release \
     -o out \
     --no-restore \
+    -r linux-x64 \
+    --self-contained true \
     -p:AssemblyVersion=${VERSION} \
     -p:Version=${VERSION}
 
@@ -33,7 +35,6 @@ RUN apt-get update \
   ca-certificates \
   wget \
   gnupg \
-  dotnet-runtime-8.0 \
   && rm -rf /var/lib/apt/lists/*
 
 # Get key to Wine repo

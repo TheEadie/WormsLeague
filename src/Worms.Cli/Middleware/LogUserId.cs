@@ -5,7 +5,7 @@ using Worms.Cli.Resources.Remote.Auth;
 
 namespace Worms.Cli.Middleware;
 
-public class LogUserId(IUserDetailsService userDetailsService, ILogger<LogUserId> logger)
+internal sealed class LogUserId(IUserDetailsService userDetailsService, ILogger<LogUserId> logger)
 {
     public InvocationMiddleware GetMiddleware() =>
         async (context, next) =>

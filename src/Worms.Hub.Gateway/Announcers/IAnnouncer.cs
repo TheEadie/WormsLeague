@@ -1,6 +1,6 @@
 namespace Worms.Hub.Gateway.Announcers;
 
-public interface ISlackAnnouncer
+internal interface ISlackAnnouncer
 {
     Task AnnounceGameStarting(string hostName);
 }

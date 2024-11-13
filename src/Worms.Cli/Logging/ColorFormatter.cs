@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Worms.Cli.Logging;
 
-public sealed class ColorLoggerOptions : ConsoleFormatterOptions
+internal sealed class ColorLoggerOptions : ConsoleFormatterOptions
 {
     public LoggerColorBehavior ColorBehavior { get; set; }
 }
