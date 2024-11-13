@@ -81,6 +81,8 @@ csharp_style_namespace_declarations = file_scoped # (IDE0160 & IDE0161)
 resharper_namespace_body = file_scoped # Temp Resharper setting for line above
 csharp_style_prefer_method_group_conversion = true # (IDE0200) - Unable to find Resharper setting
 csharp_style_prefer_top_level_statements = true # (IDE0210 & IDE0211) - Unable to find Resharper setting
+csharp_style_prefer_primary_constructors = true # (IDE0290)
+csharp_prefer_system_threading_lock = true # (IDE0330)
 
 # Expression-bodied members
 csharp_style_expression_bodied_constructors = when_on_single_line # (IDE0021)
@@ -125,6 +127,8 @@ csharp_style_prefer_null_check_over_type_check = true # (IDE0150) - Unable to fi
 csharp_style_prefer_tuple_swap = true # (IDE0180) - Unable to find Resharper setting
 dotnet_style_prefer_foreach_explicit_cast_in_source = when_strongly_typed # (IDE0220) - Unable to find Resharper setting
 csharp_style_prefer_utf8_string_literals = true # (IDE0230) - Unable to find Resharper setting
+dotnet_style_prefer_collection_expression = when_types_loosely_match # (IDE0300 & IDE0301)
+
 
 # Field preferences
 dotnet_style_readonly_field = true # (IDE0044)
@@ -139,6 +143,7 @@ dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
 csharp_prefer_static_local_function = true # (IDE0062)
 csharp_style_prefer_readonly_struct = true # (IDE0250) - Unable to find Resharper setting
 csharp_style_prefer_readonly_struct_member = true # (IDE0251) - Unable to find Resharper setting
+csharp_prefer_static_anonymous_function = true # (IDE0320)
 
 # New-line preferences
 # No options
