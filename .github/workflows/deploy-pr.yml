@@ -54,7 +54,7 @@ jobs:
         run: mkdir src/database/reports
 
       - name: Run Flyway Report
-        uses: docker://redgate/flyway:10
+        uses: docker://redgate/flyway:11
         with:
           args: >-
             check -changes -drift
