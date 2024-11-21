@@ -6,6 +6,8 @@ databaseType = "PostgreSql"
 url = "jdbc:postgresql://postgres:5432/worms"
 user = "worms"
 password = "worms"
+provisioner = "clean"
+cleanDisabled = "false"
 
 [flyway]
 locations = [ "filesystem:migrations" ]
