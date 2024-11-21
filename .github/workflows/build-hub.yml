@@ -77,7 +77,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Test Flyway Migrations
-        uses: docker://redgate/flyway:10
+        uses: docker://redgate/flyway:11
         with:
           args: >-
             -workingDirectory=/github/workspace/src/database
