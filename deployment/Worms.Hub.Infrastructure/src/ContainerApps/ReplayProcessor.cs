@@ -89,8 +89,8 @@ public static class ReplayProcessor
                                 new VolumeMountArgs
                                 {
                                     VolumeName = "worms-hub-volume",
-                                    SubPath = "game/",
-                                    MountPath = "/root/.wine/drive_c/",
+                                    SubPath = "game/WA/",
+                                    MountPath = "/game",
                                 }
                             }
                         }
