@@ -6,8 +6,9 @@ namespace Worms.Hub.Infrastructure;
 
 public static class StorageAccount
 {
-    public static Storage.StorageAccount Config(ResourceGroup resourceGroup, Config config) =>
-        new(
+    public static (Storage.StorageAccount storageAccount, Output<string> accessToken) Config(ResourceGroup resourceGroup, Config config)
+    {
+        var storage = new Storage.StorageAccount(
             "storage-account",
             new()
             {
@@ -20,4 +21,11 @@ public static class StorageAccount
                     Name = Storage.SkuName.Standard_LRS,
                 },
             });
+        var accessKey = Output.Tuple(resourceGroup.Name, storage.Name)
+            .Apply(
+                async x => (await Storage.ListStorageAccountKeys.InvokeAsync(
+                    new Storage.ListStorageAccountKeysArgs {AccountName = x.Item2, ResourceGroupName = x.Item1})).Keys[0].Value);
+        return (storage, accessKey);
+    }
+
 }
