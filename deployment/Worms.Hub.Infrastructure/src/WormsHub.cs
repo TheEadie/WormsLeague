@@ -61,7 +61,7 @@ public static class WormsHub
 
         // Gateway
         Dns.Config(config, containerApp);
-        var gateway = await Gateway.Config(resourceGroup, config, containerApp, containerAppStorage, databaseAdoNet);
+        var gateway = await Gateway.Config(resourceGroup, config, containerApp, containerAppStorage, databaseAdoNet, queueConnStr);
 
         // Replay Processor
         var replayProcessor = ReplayProcessor.Config(resourceGroup, config, containerApp, containerAppStorage, databaseAdoNet, queueConnStr);
