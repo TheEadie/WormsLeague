@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Pulumi;
 using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
+using Pulumi.AzureNative.Storage;
 using Worms.Hub.Infrastructure.ContainerApps;
 
 namespace Worms.Hub.Infrastructure;
@@ -38,6 +39,7 @@ public static class WormsHub
         // Storage
         var storage = StorageAccount.Config(resourceGroup, config);
         var fileShare = FileShare.Config(resourceGroup, storage, config);
+        var queue = Queue.Config(resourceGroup, storage, config);
         var (server, database, databasePassword, databaseVersion) = Database.Config(resourceGroup, config);
 
         var databaseJdbc = Output.Format(
@@ -46,12 +48,23 @@ public static class WormsHub
             $"Server={server.FullyQualifiedDomainName};Port=5432;Database={database.Name};User Id={server.AdministratorLogin};Password={databasePassword}");
         var databaseUser = server.AdministratorLogin;
 
+        var accessKey = Output.Tuple(resourceGroup.Name, storage.Name).Apply(async x =>
+            (await ListStorageAccountKeys.InvokeAsync(new ListStorageAccountKeysArgs
+            {
+                AccountName = x.Item2,
+                ResourceGroupName = x.Item1,
+            })).Keys[0].Value);
+        var queueConnStr = Output.Format($"DefaultEndpointsProtocol=https;AccountName={storage.Name};AccountKey={accessKey}");
+
         // Containers
         var (containerApp, containerAppStorage) = Environment.Config(resourceGroup, logAnalytics, storage, fileShare);
 
         // Gateway
         Dns.Config(config, containerApp);
-        var gateway = await Gateway.Config(resourceGroup, config, containerApp, containerAppStorage, databaseAdoNet);
+        var gateway = await Gateway.Config(resourceGroup, config, containerApp, containerAppStorage, databaseAdoNet, queueConnStr);
+
+        // Replay Processor
+        var replayProcessor = ReplayProcessor.Config(resourceGroup, config, containerApp, containerAppStorage, databaseAdoNet, queueConnStr);
 
         var apiUrl = Output.Format($"https://{gateway.Configuration.Apply(c => c?.Ingress).Apply(i => i?.Fqdn)}");
 

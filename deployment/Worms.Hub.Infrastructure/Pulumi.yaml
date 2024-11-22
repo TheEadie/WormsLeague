@@ -5,4 +5,5 @@ config:
     azure-native:location: northeurope
     worms-hub:domain: davideadie.dev
     worms-hub:gateway-image: theeadie/worms-server-gateway:0.6.2
+    worms-hub:replay-processor-image: theeadie/worms-hub-replay-processor:0.2.3
     worms-hub:database-version: 0.2.1

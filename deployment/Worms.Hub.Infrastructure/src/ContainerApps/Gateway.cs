@@ -16,7 +16,8 @@ public static class Gateway
         Config config,
         ManagedEnvironment managedEnvironment,
         ManagedEnvironmentsStorage managedEnvironmentStorage,
-        Output<string> databaseConnectionString)
+        Output<string> databaseConnectionString,
+        Output<string> queueConnectionString)
     {
         var image = config.Require("gateway-image");
         var subdomain = config.Require("subdomain");
@@ -63,6 +64,11 @@ public static class Gateway
                         },
                         new SecretArgs
                         {
+                            Name = "queue-connection",
+                            Value = queueConnectionString,
+                        },
+                        new SecretArgs
+                        {
                             Name = "slack-hook-url",
                             Value = config.RequireSecret("slack_hook_url"),
                         }
@@ -97,6 +103,11 @@ public static class Gateway
                                 {
                                     Name = "WORMS_CONNECTIONSTRINGS__DATABASE",
                                     SecretRef = "database-connection",
+                                },
+                                new EnvironmentVarArgs
+                                {
+                                    Name = "WORMS_CONNECTIONSTRINGS__STORAGE",
+                                    SecretRef = "queue-connection",
                                 },
                                 new EnvironmentVarArgs
                                 {

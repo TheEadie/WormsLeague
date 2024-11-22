@@ -4,6 +4,7 @@ using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
@@ -28,12 +29,15 @@ internal static class Program
             name: Telemetry.Spans.Root.SpanName);
         _ = span?.AddEvent(Telemetry.Events.TelemetrySetupComplete);
 
+        var configuration = new ConfigurationBuilder().AddEnvironmentVariables("WORMS_").Build();
+
         var serviceCollection = new ServiceCollection().AddHttpClient()
             .AddWormsCliLogging(GetLogLevel(args))
             .AddWormsArmageddonFilesServices()
             .AddWormsArmageddonGameServices()
             .AddWormsCliResourcesServices()
-            .AddWormsCliServices();
+            .AddWormsCliServices()
+            .AddSingleton<IConfiguration>(configuration);
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         _ = span?.AddEvent(Telemetry.Events.DiSetupComplete);

@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 using Worms.Cli.Resources.Remote.Auth;
 
 namespace Worms.Cli.Resources.Remote;
@@ -20,17 +21,15 @@ internal sealed class WormsServerApi : IWormsServerApi
         IAccessTokenRefreshService accessTokenRefreshService,
         ITokenStore tokenStore,
         IFileSystem fileSystem,
-        IHttpClientFactory httpClientFactory)
+        IHttpClientFactory httpClientFactory,
+        IConfiguration config)
     {
         _accessTokenRefreshService = accessTokenRefreshService;
         _tokenStore = tokenStore;
         _fileSystem = fileSystem;
         _httpClientFactory = httpClientFactory;
-#if DEBUG
-        _baseUri = new Uri("http://localhost:5005/");
-#else
-        _baseUri = new Uri("https://worms.davideadie.dev/");
-#endif
+        var url = config["WORMSHUB_URL"] ?? "https://worms.davideadie.dev/";
+        _baseUri = new Uri(url);
     }
 
     public async Task<LatestCliDtoV1> GetLatestCliDetails()
