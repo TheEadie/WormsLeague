@@ -2,3 +2,5 @@ config:
   worms-hub:slack_hook_url:
     secure: AAABALd+pKgZTMNqRUNq86YIneHsqbzGvE7BO3QBzA3sp6mN767fmYvVgSwrNebHZjnz/Un9xeng5Bo2ykuP0OBASmFztfdIc3XS00sfGcCbyKHG6hdZJJRZA3nhqgJMQyqr/ocp4/Z02jOwEQ==
   worms-hub:subdomain: worms
+  worms-hub:cloudflare-token:
+    secure: AAABAD61YIOHwXljGiPqE2hP9DpWHGeWeaq8bpbnot2WWx5Br97WHMQ1qPBWYjma9nT7K8yMG3lFr3nkKwCHcR1HNH9prh6+
