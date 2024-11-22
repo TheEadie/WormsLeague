@@ -62,7 +62,7 @@ internal static class Program
             context.Console.Error.Write(context.LocalizationResources.ExceptionHandlerHeader());
             context.Console.Error.WriteLine(exception.Message);
 
-            Activity.Current?.RecordException(exception);
+            _ = Activity.Current?.AddException(exception);
             _ = Activity.Current?.SetStatus(ActivityStatusCode.Error);
         }
 
