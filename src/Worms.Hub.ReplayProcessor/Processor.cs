@@ -39,7 +39,28 @@ internal sealed class Processor(
         // Check game is installed
         if (!GameIsInstalled())
         {
-            return;
+            const string copyLocation = "/game/";
+            const string installLocation = "/root/.wine/drive_c/";
+
+            logger.LogInformation($"Game not found. Checking {copyLocation} directory...");
+            if (Directory.Exists(copyLocation))
+            {
+                logger.LogInformation($"Game files found in {copyLocation} directory. Moving to {installLocation}");
+                Directory.Move(copyLocation, installLocation);
+                logger.LogInformation("Game files moved successfully.");
+            }
+            else
+            {
+                logger.LogError($"Game not installed and Game files not found in {copyLocation} directory.");
+                return;
+            }
+
+            // Check game is installed again
+            if (!GameIsInstalled())
+            {
+                logger.LogError("Game not found. Please install the game and try again.");
+                return;
+            }
         }
 
         // Generate replay log
