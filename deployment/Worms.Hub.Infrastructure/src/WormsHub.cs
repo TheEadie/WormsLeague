@@ -39,7 +39,7 @@ public static class WormsHub
         // Storage
         var storage = StorageAccount.Config(resourceGroup, config);
         var fileShare = FileShare.Config(resourceGroup, storage, config);
-        var queue = Queue.Config(resourceGroup, storage, config);
+
         var (server, database, databasePassword, databaseVersion) = Database.Config(resourceGroup, config);
 
         var databaseJdbc = Output.Format(
