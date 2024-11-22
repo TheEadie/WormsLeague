@@ -10,7 +10,7 @@ var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentD
 if (configuration["BATCH"] == "true")
 {
     var serviceProvider = new ServiceCollection().AddReplayProcessorServices()
-        .AddLogging(builder => builder.AddSimpleConsole(c => c.SingleLine = true))
+        .AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug).AddSimpleConsole(c => c.SingleLine = true))
         .AddSingleton<IConfiguration>(configuration)
         .BuildServiceProvider();
     var processor = serviceProvider.GetService<Processor>();
