@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
@@ -16,6 +17,8 @@ public static class ReplayProcessor
         Output<string> queueConnectionString)
     {
         var image = config.Require("replay-processor-image");
+        var storageAccountName = Utils.GetResourceNameAlphaNumericOnly("wormstest");
+        var queueName = "replays-to-parse";
 
         var containerApp = new Job(
             "worms-hub-replay-processor",
@@ -26,14 +29,42 @@ public static class ReplayProcessor
                 EnvironmentId = managedEnvironment.Id,
                 Configuration = new JobConfigurationArgs
                 {
-                    ManualTriggerConfig = new JobConfigurationManualTriggerConfigArgs
+                    EventTriggerConfig = new JobConfigurationEventTriggerConfigArgs
                     {
                         Parallelism = 1,
                         ReplicaCompletionCount = 1,
+                        Scale = new JobScaleArgs
+                        {
+                            MaxExecutions = 10,
+                            MinExecutions = 0,
+                            PollingInterval = 60,
+                            Rules = new[]
+                            {
+                                new JobScaleRuleArgs
+                                {
+                                    Auth = new[]
+                                    {
+                                        new ScaleRuleAuthArgs
+                                        {
+                                            SecretRef = "queue-connection",
+                                            TriggerParameter = "connection",
+                                        },
+                                    },
+                                    Metadata = new Dictionary<string, string>
+                                    {
+                                        {"accountName",storageAccountName},
+                                        {"queueName",queueName},
+                                        {"queueLength","1"}
+                                    },
+                                    Name = "queue",
+                                    Type = "azure-queue",
+                                },
+                            },
+                        },
                     },
                     ReplicaRetryLimit = 10,
                     ReplicaTimeout = 3600,
-                    TriggerType = TriggerType.Manual,
+                    TriggerType = TriggerType.Event,
                     Secrets =
                     [
                         new SecretArgs
