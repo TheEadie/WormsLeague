@@ -18,7 +18,7 @@ public static class ReplayProcessor
     {
         var image = config.Require("replay-processor-image");
         var storageAccountName = Utils.GetResourceNameAlphaNumericOnly("wormstest");
-        var queueName = "replays-to-parse";
+        var queueName = "replays-to-process";
 
         var containerApp = new Job(
             "worms-hub-replay-processor",
