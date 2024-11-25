@@ -14,6 +14,12 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService stea
                         ActivityKind.Client);
 
                     var gameInfo = wormsLocator.Find();
+                    if (!gameInfo.IsInstalled)
+                    {
+                        _ = span?.SetStatus(ActivityStatusCode.Error);
+                        throw new InvalidOperationException("Worms Armageddon is not installed");
+                    }
+
                     var args = string.Join(" ", wormsArgs);
 
                     _ = span?.SetTag(Telemetry.Spans.WormsArmageddon.Version, gameInfo.Version);
