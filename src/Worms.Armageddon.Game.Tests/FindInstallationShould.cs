@@ -6,7 +6,7 @@ using Worms.Armageddon.Game.Win;
 
 namespace Worms.Armageddon.Game.Tests;
 
-public class FindInstallationShould
+internal sealed class FindInstallationShould
 {
     private readonly IWormsArmageddon _wormsArmageddon;
     private readonly IRegistry _registry;
