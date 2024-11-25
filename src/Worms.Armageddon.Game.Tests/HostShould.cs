@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Worms.Armageddon.Game.Tests;
 
-public class HostShould
+internal sealed class HostShould
 {
     private readonly IWormsArmageddon _wormsArmageddon;
     private readonly IWormsRunner _runner;
