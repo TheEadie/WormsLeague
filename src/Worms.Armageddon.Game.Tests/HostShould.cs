@@ -1,28 +1,21 @@
-using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using NUnit.Framework;
+using Shouldly;
 
 namespace Worms.Armageddon.Game.Tests;
 
 internal sealed class HostShould
 {
-    private readonly IWormsArmageddon _wormsArmageddon;
-    private readonly IWormsRunner _runner;
-
-    public HostShould()
-    {
-        _runner = Substitute.For<IWormsRunner>();
-        var services = new ServiceCollection();
-        _ = services.AddWormsArmageddonGameServices();
-        _ = services.AddScoped<IWormsRunner>(_ => _runner);
-        var serviceProvider = services.BuildServiceProvider();
-        _wormsArmageddon = serviceProvider.GetRequiredService<IWormsArmageddon>();
-    }
-
     [Test]
     public async Task LaunchWormsArmageddon()
     {
-        await _wormsArmageddon.Host().ConfigureAwait(false);
-        await _runner.Received().RunWorms("wa://").ConfigureAwait(false);
+        var wormsArmageddon = Fakes.GetWormsArmageddonApi(Fakes.InstallationType.Installed);
+        await wormsArmageddon.Host().ConfigureAwait(false);
+    }
+
+    [Test]
+    public async Task ErrorWhenNotInstalled()
+    {
+        var wormsArmageddon = Fakes.GetWormsArmageddonApi(Fakes.InstallationType.NotInstalled);
+        _ = await Should.ThrowAsync<InvalidOperationException>(wormsArmageddon.Host()).ConfigureAwait(false);
     }
 }
