@@ -46,6 +46,11 @@ internal static class Fakes
         var fileVersionInfo = Substitute.For<IFileVersionInfo>();
         _ = fileVersionInfo.GetVersionInfo(@"C:\WormsArmageddon\WA.exe").Returns(new Version(3, 8, 0, 0));
 
-        return builder.AddScoped<IRegistry>(_ => registry).AddScoped<IFileVersionInfo>(_ => fileVersionInfo);
+        var wormsRunner = Substitute.For<IWormsRunner>();
+        _ = wormsRunner.RunWorms("wa://").Returns(Task.CompletedTask);
+
+        return builder.AddScoped<IRegistry>(_ => registry)
+            .AddScoped<IFileVersionInfo>(_ => fileVersionInfo)
+            .AddScoped<IWormsRunner>(_ => wormsRunner);
     }
 }

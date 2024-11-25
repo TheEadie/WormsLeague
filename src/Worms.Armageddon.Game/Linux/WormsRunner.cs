@@ -19,6 +19,11 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
             async () =>
                 {
                     var gameInfo = wormsLocator.Find();
+                    if (!gameInfo.IsInstalled)
+                    {
+                        throw new InvalidOperationException("Worms Armageddon is not installed");
+                    }
+
                     var args = string.Join(" ", wormsArgs);
 
                     logger.Log(LogLevel.Debug, "Running Worms Armageddon: {Path}", gameInfo.ExeLocation);
