@@ -1,6 +1,8 @@
+using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Worms.Armageddon.Game.System;
 using Worms.Armageddon.Game.Win;
 
 namespace Worms.Armageddon.Game.Tests.Framework;
@@ -40,19 +42,29 @@ internal static class FakeDependencies
 
     private static IServiceCollection AddInstalledWormsArmageddon(this IServiceCollection builder)
     {
+        var linuxUserHome = Environment.GetEnvironmentVariable("HOME");
+
         var registry = Substitute.For<IRegistry>();
         _ = registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Team17SoftwareLTD\WormsArmageddon", "Path", null)
             .Returns(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\");
 
+        var fileSystem = Substitute.For<IFileSystem>();
+        _ = fileSystem.File.Exists(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\WA.exe")
+            .Returns(true);
+        _ = fileSystem.File.Exists($"{linuxUserHome}/.wine/drive_c/WA/WA.exe").Returns(true);
+
+        var currentVersion = new Version(3, 8, 1, 0);
         var fileVersionInfo = Substitute.For<IFileVersionInfo>();
         _ = fileVersionInfo.GetVersionInfo(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\WA.exe")
-            .Returns(new Version(3, 8, 1, 0));
+            .Returns(currentVersion);
+        _ = fileVersionInfo.GetVersionInfo($"{linuxUserHome}/.wine/drive_c/WA/WA.exe").Returns(currentVersion);
 
         var wormsRunner = Substitute.For<IWormsRunner>();
         _ = wormsRunner.RunWorms("wa://").Returns(Task.CompletedTask);
 
         return builder.AddScoped<IRegistry>(_ => registry)
             .AddScoped<IFileVersionInfo>(_ => fileVersionInfo)
-            .AddScoped<IWormsRunner>(_ => wormsRunner);
+            .AddScoped<IWormsRunner>(_ => wormsRunner)
+            .AddScoped<IFileSystem>(_ => fileSystem);
     }
 }
