@@ -1,14 +1,17 @@
 using NUnit.Framework;
 using Shouldly;
+using Worms.Armageddon.Game.Tests.Framework;
 
 namespace Worms.Armageddon.Game.Tests;
 
-internal sealed class FindInstallationShould
+[FakeDependencies]
+[RealDependencies]
+internal sealed class FindInstallationShould(ApiType apiType)
 {
     [Test]
     public void NotFindAnInstallationWhenNotInstalled()
     {
-        var wormsArmageddon = Fakes.GetWormsArmageddonApi(Fakes.InstallationType.NotInstalled);
+        var wormsArmageddon = Api.GetWormsArmageddon(apiType, InstallationType.NotInstalled);
 
         var info = wormsArmageddon.FindInstallation();
         info.ShouldBe(GameInfo.NotInstalled);
@@ -17,15 +20,15 @@ internal sealed class FindInstallationShould
     [Test]
     public void FindInstallationFromRegistry()
     {
-        var wormsArmageddon = Fakes.GetWormsArmageddonApi(Fakes.InstallationType.Installed);
+        var wormsArmageddon = Api.GetWormsArmageddon(apiType, InstallationType.Installed);
 
         var info = wormsArmageddon.FindInstallation();
         info.IsInstalled.ShouldBe(true);
-        info.ExeLocation.ShouldBe(@"C:\WormsArmageddon\WA.exe");
+        info.ExeLocation.ShouldBe(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\WA.exe");
         info.ProcessName.ShouldBe("WA");
-        info.Version.ShouldBe(new Version(3, 8, 0, 0));
-        info.SchemesFolder.ShouldBe(@"C:\WormsArmageddon\User\Schemes");
-        info.ReplayFolder.ShouldBe(@"C:\WormsArmageddon\User\Games");
-        info.CaptureFolder.ShouldBe(@"C:\WormsArmageddon\User\Capture");
+        info.Version.ShouldBe(new Version(3, 8, 1, 0));
+        info.SchemesFolder.ShouldBe(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Schemes");
+        info.ReplayFolder.ShouldBe(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Games");
+        info.CaptureFolder.ShouldBe(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Capture");
     }
 }
