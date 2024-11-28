@@ -7,6 +7,9 @@ internal sealed class FakeDependenciesAttribute() : TestFixtureAttribute(ApiType
 internal sealed class RealDependenciesAttribute : TestFixtureAttribute
 {
     public RealDependenciesAttribute()
-        : base(ApiType.RealDependencies) =>
+        : base(ApiType.RealDependencies)
+    {
         Explicit = true;
+        Reason = "Real dependencies need setting up";
+    }
 }

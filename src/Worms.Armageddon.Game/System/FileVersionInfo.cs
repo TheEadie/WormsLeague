@@ -1,10 +1,10 @@
-namespace Worms.Armageddon.Game.Win;
+namespace Worms.Armageddon.Game.System;
 
 internal class FileVersionInfo : IFileVersionInfo
 {
     public Version GetVersionInfo(string fileName)
     {
-        var fileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(fileName);
+        var fileVersionInfo = global::System.Diagnostics.FileVersionInfo.GetVersionInfo(fileName);
         return new Version(
             fileVersionInfo.ProductMajorPart,
             fileVersionInfo.ProductMinorPart,

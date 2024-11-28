@@ -33,7 +33,7 @@ cli.build.docker: cli.version
 cli.test: cli.test.unit
 
 cli.test.unit: cli.build.exe
-	@dotnet test "src/Worms.Armageddon.Files.Tests/Worms.Armageddon.Files.Tests.csproj"
+	@dotnet test
 	@echo ""
 
 ## Package

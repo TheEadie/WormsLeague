@@ -1,3 +1,4 @@
+using System.Runtime.Versioning;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Armageddon.Game.Tests.Framework;
@@ -18,6 +19,7 @@ internal sealed class FindInstallationShould(ApiType apiType)
     }
 
     [Test]
+    [SupportedOSPlatform("windows")]
     public void FindInstallationFromRegistry()
     {
         var wormsArmageddon = Api.GetWormsArmageddon(apiType, InstallationType.Installed);
@@ -30,5 +32,22 @@ internal sealed class FindInstallationShould(ApiType apiType)
         info.SchemesFolder.ShouldBe(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Schemes");
         info.ReplayFolder.ShouldBe(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Games");
         info.CaptureFolder.ShouldBe(@"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Capture");
+    }
+
+    [Test]
+    [SupportedOSPlatform("linux")]
+    public void FindInstallationFromUserHome()
+    {
+        var linuxUserHome = Environment.GetEnvironmentVariable("HOME");
+        var wormsArmageddon = Api.GetWormsArmageddon(apiType, InstallationType.Installed);
+
+        var info = wormsArmageddon.FindInstallation();
+        info.IsInstalled.ShouldBe(true);
+        info.ExeLocation.ShouldBe($"{linuxUserHome}/.wine/drive_c/WA/WA.exe");
+        info.ProcessName.ShouldBe("WA");
+        info.Version.ShouldBe(new Version(3, 8, 1, 0));
+        info.SchemesFolder.ShouldBe($"{linuxUserHome}/.wine/drive_c/WA/User/Schemes");
+        info.ReplayFolder.ShouldBe($"{linuxUserHome}/.wine/drive_c/WA/User/Games");
+        info.CaptureFolder.ShouldBe($"{linuxUserHome}/.wine/drive_c/WA/User/Capture");
     }
 }
