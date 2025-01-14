@@ -1,5 +1,5 @@
 #### Build ####
-FROM mcr.microsoft.com/dotnet/sdk:9.0.101@sha256:3fcf6f1e809c0553f9feb222369f58749af314af6f063f389cbd2f913b4ad556 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0.101@sha256:26d070b5f4f32fbf3223f24cd27c5aef94f9074e54270eca2239b833563f6221 AS build
 WORKDIR /app
 
 COPY src/Directory.Build.props .
@@ -24,7 +24,7 @@ FROM build AS test
 RUN dotnet test --no-restore --no-build --verbosity normal
 
 #### Runtime ####
-FROM mcr.microsoft.com/dotnet/aspnet:9.0.0@sha256:b4bea3a52a0a77317fa93c5bbdb076623f81e3e2f201078d89914da71318b5d8
+FROM mcr.microsoft.com/dotnet/aspnet:9.0.0@sha256:ccbfa267780c99ec81252a8e5133db55aa5325fd4eeeb532d3108bcbdca339b5
 WORKDIR /app
 COPY --from=build /app/out .
 ENTRYPOINT ["./Worms.Hub.Gateway"]
