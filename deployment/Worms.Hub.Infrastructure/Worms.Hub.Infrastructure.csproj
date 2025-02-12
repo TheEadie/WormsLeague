@@ -10,7 +10,7 @@
   <ItemGroup>
       <PackageReference Include="Pulumi.AzureNative" Version="2.*" />
       <PackageReference Include="Pulumi.Cloudflare" Version="5.49.0" />
-      <PackageReference Include="Pulumi.Command" Version="1.0.1" />
+      <PackageReference Include="Pulumi.Command" Version="1.0.2" />
       <PackageReference Include="Pulumi.Random" Version="4.17.0" />
   </ItemGroup>
 
