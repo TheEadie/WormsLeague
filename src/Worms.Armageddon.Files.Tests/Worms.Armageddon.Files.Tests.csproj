@@ -5,7 +5,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="5.0.0"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
     <PackageReference Include="Shouldly" Version="4.3.0"/>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2"/>
   </ItemGroup>
 
   <ItemGroup>
