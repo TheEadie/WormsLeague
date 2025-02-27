@@ -1,18 +1,28 @@
 {
-  "extends": ["config:base", "group:dotNetCore"],
-  "regexManagers": [
+  "extends": [
+    "config:recommended",
+    "group:dotNetCore"
+  ],
+  "customManagers": [
     {
-      "fileMatch": ["(^|/)Pulumi\\.*\\.yaml$"],
-      "matchStrings": ["(?<depName>.*?):(?<currentValue>.*?)( |\\n)"],
+      "customType": "regex",
+      "fileMatch": [
+        "(^|/)Pulumi\\.*\\.yaml$"
+      ],
+      "matchStrings": [
+        "(?<depName>.*?):(?<currentValue>.*?)( |\\n)"
+      ],
       "datasourceTemplate": "docker"
     }
   ],
   "packageRules": [
     {
-      "extends": "monorepo:dotnet",
+      "extends": [
+        "monorepo:dotnet"
+      ],
       "groupName": ".NET",
       "additionalBranchPrefix": ""
     }
   ],
-  "masterIssue": true
+  "dependencyDashboard": true
 }
