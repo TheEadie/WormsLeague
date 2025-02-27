@@ -41,7 +41,7 @@ internal sealed class TableBuilder(int outputWidth)
         adjustedColumns.Add(
             new TableColumn(
                 TrimText(lastColumn.Heading, remainingWidth),
-                lastColumn.Rows.Select(x => TrimText(x, remainingWidth)).ToList(),
+                [.. lastColumn.Rows.Select(x => TrimText(x, remainingWidth))],
                 remainingWidth));
 
         return new Table(adjustedColumns, adjustedColumns.Max(x => x.Rows.Count));

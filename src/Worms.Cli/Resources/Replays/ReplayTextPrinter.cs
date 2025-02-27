@@ -13,14 +13,13 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
 
         tableBuilder.AddColumn(
             "NAME",
-            resources.Select(x => x.Details.Date.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture))
-                .ToList());
-        tableBuilder.AddColumn("CONTEXT", resources.Select(x => x.Context).ToList());
-        tableBuilder.AddColumn("PROCESSED", resources.Select(x => x.Details.Processed.ToString()).ToList());
-        tableBuilder.AddColumn("WINNER", resources.Select(x => x.Details.Winner).ToList());
+            [.. resources.Select(x => x.Details.Date.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture))]);
+        tableBuilder.AddColumn("CONTEXT", [.. resources.Select(x => x.Context)]);
+        tableBuilder.AddColumn("PROCESSED", [.. resources.Select(x => x.Details.Processed.ToString())]);
+        tableBuilder.AddColumn("WINNER", [.. resources.Select(x => x.Details.Winner)]);
         tableBuilder.AddColumn(
             "TEAMS",
-            resources.Select(x => string.Join(", ", x.Details.Teams.Select(t => t.Name))).ToList());
+            [.. resources.Select(x => string.Join(", ", x.Details.Teams.Select(t => t.Name)))]);
 
         var table = tableBuilder.Build();
         TablePrinter.Print(writer, table);
@@ -41,9 +40,9 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
 
             writer.WriteLine("Teams:");
             var teamsTable = new TableBuilder(outputMaxWidth);
-            teamsTable.AddColumn("NAME", resource.Details.Teams.Select(x => x.Name).ToList());
-            teamsTable.AddColumn("PLAYER", resource.Details.Teams.Select(x => x.Machine).ToList());
-            teamsTable.AddColumn("COLOUR", resource.Details.Teams.Select(x => x.Colour.ToString()).ToList());
+            teamsTable.AddColumn("NAME", [.. resource.Details.Teams.Select(x => x.Name)]);
+            teamsTable.AddColumn("PLAYER", [.. resource.Details.Teams.Select(x => x.Machine)]);
+            teamsTable.AddColumn("COLOUR", [.. resource.Details.Teams.Select(x => x.Colour.ToString())]);
             TablePrinter.Print(writer, teamsTable.Build());
             writer.WriteLine();
 
@@ -51,14 +50,14 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
             var turnsTable = new TableBuilder(outputMaxWidth);
             turnsTable.AddColumn(
                 "NUM",
-                resource.Details.Turns.Select((_, i) => (i + 1).ToString(CultureInfo.CurrentCulture)).ToList());
-            turnsTable.AddColumn("TEAM", resource.Details.Turns.Select(x => x.Team.Name).ToList());
+                [.. resource.Details.Turns.Select((_, i) => (i + 1).ToString(CultureInfo.CurrentCulture))]);
+            turnsTable.AddColumn("TEAM", [.. resource.Details.Turns.Select(x => x.Team.Name)]);
             turnsTable.AddColumn(
                 "WEAPONS",
-                resource.Details.Turns.Select(x => string.Join(", ", x.Weapons.Select(GetWeaponText))).ToList());
+                [.. resource.Details.Turns.Select(x => string.Join(", ", x.Weapons.Select(GetWeaponText)))]);
             turnsTable.AddColumn(
                 "DAMAGE",
-                resource.Details.Turns.Select(x => string.Join(", ", x.Damage.Select(GetDamageText))).ToList());
+                [.. resource.Details.Turns.Select(x => string.Join(", ", x.Damage.Select(GetDamageText)))]);
             TablePrinter.Print(writer, turnsTable.Build());
             writer.WriteLine();
 

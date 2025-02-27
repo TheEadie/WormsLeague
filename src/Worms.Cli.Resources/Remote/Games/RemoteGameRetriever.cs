@@ -14,7 +14,7 @@ internal sealed class RemoteGameRetriever(IWormsServerApi api, ILogger<RemoteGam
         try
         {
             var apiGames = await api.GetGames().ConfigureAwait(false);
-            return apiGames.Select(x => new RemoteGame(x.Id, x.Status, x.HostMachine)).ToList();
+            return [.. apiGames.Select(x => new RemoteGame(x.Id, x.Status, x.HostMachine))];
         }
         catch (HttpRequestException e)
         {
