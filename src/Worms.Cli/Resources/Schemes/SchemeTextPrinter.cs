@@ -11,19 +11,19 @@ internal sealed class SchemeTextPrinter(ISchemeTextWriter schemeTextWriter) : IR
     public void Print(TextWriter writer, IReadOnlyCollection<LocalScheme> resources, int outputMaxWidth)
     {
         var tableBuilder = new TableBuilder(outputMaxWidth);
-        tableBuilder.AddColumn("NAME", resources.Select(x => x.Name).ToList());
-        tableBuilder.AddColumn("CONTEXT", resources.Select(x => x.Context).ToList());
+        tableBuilder.AddColumn("NAME", [.. resources.Select(x => x.Name)]);
+        tableBuilder.AddColumn("CONTEXT", [.. resources.Select(x => x.Context)]);
         tableBuilder.AddColumn(
             "HEALTH",
-            resources.Select(x => x.Details.WormEnergy.ToString(CultureInfo.CurrentCulture)).ToList());
+            [.. resources.Select(x => x.Details.WormEnergy.ToString(CultureInfo.CurrentCulture))]);
         tableBuilder.AddColumn(
             "TURN-TIME",
-            resources.Select(x => GetTurnTime(x.Details.TurnTimeInfinite, x.Details.TurnTime)).ToList());
+            [.. resources.Select(x => GetTurnTime(x.Details.TurnTimeInfinite, x.Details.TurnTime))]);
         tableBuilder.AddColumn(
             "ROUND-TIME",
-            resources.Select(x => GetRoundTime(x.Details.RoundTimeMinutes, x.Details.RoundTimeSeconds)).ToList());
-        tableBuilder.AddColumn("WORM-SELECT", resources.Select(x => x.Details.WormSelect.ToString()).ToList());
-        tableBuilder.AddColumn("WEAPONS", resources.Select(x => GetWeaponSummary(x.Details.Weapons)).ToList());
+            [.. resources.Select(x => GetRoundTime(x.Details.RoundTimeMinutes, x.Details.RoundTimeSeconds))]);
+        tableBuilder.AddColumn("WORM-SELECT", [.. resources.Select(x => x.Details.WormSelect.ToString())]);
+        tableBuilder.AddColumn("WEAPONS", [.. resources.Select(x => GetWeaponSummary(x.Details.Weapons))]);
 
         var table = tableBuilder.Build();
         TablePrinter.Print(writer, table);

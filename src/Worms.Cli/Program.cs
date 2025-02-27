@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using OpenTelemetry.Trace;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
 using Worms.Cli.Logging;
