@@ -31,8 +31,7 @@ internal sealed class ReplaysController(
             return BadRequest("Invalid replay file");
         }
 
-        var tempFilename = await replayFiles.SaveFileContents(parameters.ReplayFile.OpenReadStream())
-            ;
+        var tempFilename = await replayFiles.SaveFileContents(parameters.ReplayFile.OpenReadStream());
         var replay = repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename, null));
 
         // Enqueue the replay for processing

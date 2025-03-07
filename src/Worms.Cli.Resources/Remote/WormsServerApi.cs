@@ -38,8 +38,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/files/cli", UriKind.Relative);
-        return await CallApiRefreshAccessTokenIfInvalid<LatestCliDtoV1>(httpClient, () => httpClient.GetAsync(path))
-            ;
+        return await CallApiRefreshAccessTokenIfInvalid<LatestCliDtoV1>(httpClient, () => httpClient.GetAsync(path));
     }
 
     public async Task<byte[]> DownloadLatestCli(string platform)
@@ -49,8 +48,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/files/cli/{platform}", UriKind.Relative);
-        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path))
-            ;
+        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path));
     }
 
     public async Task<LeagueDtoV1> GetLeague(string id)
@@ -60,8 +58,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/leagues/{id}", UriKind.Relative);
-        return await CallApiRefreshAccessTokenIfInvalid<LeagueDtoV1>(httpClient, () => httpClient.GetAsync(path))
-            ;
+        return await CallApiRefreshAccessTokenIfInvalid<LeagueDtoV1>(httpClient, () => httpClient.GetAsync(path));
     }
 
     public async Task<byte[]> DownloadScheme(string id)
@@ -71,8 +68,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/files/schemes/{id}", UriKind.Relative);
-        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path))
-            ;
+        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path));
     }
 
     public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
@@ -83,8 +79,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<IReadOnlyCollection<GamesDtoV1>>(
                 httpClient,
-                () => httpClient.GetAsync(path))
-            ;
+                () => httpClient.GetAsync(path));
     }
 
     public async Task<GamesDtoV1> CreateGame(CreateGameDtoV1 createParams)
@@ -95,8 +90,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<GamesDtoV1>(
                 httpClient,
-                () => httpClient.PostAsJsonAsync(path, createParams, JsonContext.Default.CreateGameDtoV1))
-            ;
+                () => httpClient.PostAsJsonAsync(path, createParams, JsonContext.Default.CreateGameDtoV1));
     }
 
     public async Task UpdateGame(GamesDtoV1 newGameDetails)
@@ -109,8 +103,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         var path = new Uri("api/v1/games", UriKind.Relative);
         await CallApiRefreshAccessTokenIfInvalid(
                 httpClient,
-                () => httpClient.PutAsJsonAsync(path, newGameDetails, JsonContext.Default.GamesDtoV1))
-            ;
+                () => httpClient.PutAsJsonAsync(path, newGameDetails, JsonContext.Default.GamesDtoV1));
     }
 
     public async Task<ReplayDtoV1> CreateReplay(CreateReplayDtoV1 createParams)
@@ -129,8 +122,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         form.Add(fileContent, "ReplayFile", _fileSystem.Path.GetFileName(createParams.ReplayFilePath));
 
         var path = new Uri("api/v1/replays", UriKind.Relative);
-        return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(httpClient, () => httpClient.PostAsync(path, form))
-            ;
+        return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(httpClient, () => httpClient.PostAsync(path, form));
     }
 
     private async Task<T> CallApiRefreshAccessTokenIfInvalid<T>(

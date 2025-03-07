@@ -28,8 +28,7 @@ internal sealed class AccessTokenRefreshService(IHttpClientFactory httpClientFac
                 { "refresh_token", current.RefreshToken }
             });
 
-        var response = await httpClient.PostAsync(new Uri("oauth/token", UriKind.Relative), content)
-            ;
+        var response = await httpClient.PostAsync(new Uri("oauth/token", UriKind.Relative), content);
 
         _ = response.EnsureSuccessStatusCode();
 

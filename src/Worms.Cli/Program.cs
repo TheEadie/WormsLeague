@@ -46,8 +46,7 @@ internal static class Program
             .AddMiddleware(serviceProvider.GetService<LogUserId>()!.GetMiddleware())
             .UseExceptionHandler(ExceptionHandler)
             .Build()
-            .InvokeAsync(args)
-            ;
+            .InvokeAsync(args);
 
         _ = span?.SetTag(Telemetry.Spans.Root.ProcessExitCode, result);
 

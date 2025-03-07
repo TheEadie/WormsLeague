@@ -70,8 +70,7 @@ internal sealed class DeviceCodeLoginService(
             var jsonResponse = await JsonSerializer.DeserializeAsync(
                     streamAsync,
                     JsonContext.Default.DeviceAuthorizationResponse,
-                    cancellationToken)
-                ;
+                    cancellationToken);
 
             if (jsonResponse is null)
             {
@@ -116,8 +115,7 @@ internal sealed class DeviceCodeLoginService(
                     { "client_id", ClientId }
                 });
 
-            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, cancellationToken)
-                ;
+            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
@@ -126,8 +124,7 @@ internal sealed class DeviceCodeLoginService(
                 return await JsonSerializer.DeserializeAsync(
                         streamAsync,
                         JsonContext.Default.TokenResponse,
-                        cancellationToken)
-                    ;
+                        cancellationToken);
             }
 
             var stringContent = await response.Content.ReadAsStringAsync(cancellationToken);

@@ -111,11 +111,9 @@ internal sealed class HostHandler(
                 config.IpAddress.Value!,
                 config.SkipAnnouncement,
                 config.DryRun,
-                cancellationToken)
-            ;
+                cancellationToken);
         await WaitForGameToClose(runGame);
-        await MarkGameCompleteOnWormsHub(game, config.SkipAnnouncement, config.DryRun, cancellationToken)
-            ;
+        await MarkGameCompleteOnWormsHub(game, config.SkipAnnouncement, config.DryRun, cancellationToken);
         await UploadReplayToWormsHub(config.SkipUpload, config.DryRun, cancellationToken);
     }
 
@@ -188,8 +186,7 @@ internal sealed class HostHandler(
         {
             _ = await remoteReplayCreator.Create(
                     new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
-                    cancellationToken)
-                ;
+                    cancellationToken);
         }
     }
 

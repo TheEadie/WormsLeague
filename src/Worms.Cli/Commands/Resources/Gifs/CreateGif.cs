@@ -93,8 +93,7 @@ internal sealed class CreateGifHandler(
             .Map(x => FindReplays(x.ReplayName!, cancellationToken))
             .Validate(Only1ReplayFound(replayName))
             .Map(x => x.Single())
-            .Validate(ValidConfigForReplay(replayName))
-            ;
+            .Validate(ValidConfigForReplay(replayName));
 
         if (!replay.IsValid)
         {
