@@ -14,9 +14,6 @@ include build/docker/$1/config.mk
 .PHONY: $1.build $1.test $1.package
 
 $1_VERSION := $$(shell build/version.sh $$($1_NEXT_VERSION) $$($1_TAG_PREFIX) 2> /dev/null)
-$1_VERSION_MAJOR := $$(word 1,$$(subst ., ,$$($1_VERSION)))
-$1_VERSION_MINOR := $$(word 2,$$(subst ., ,$$($1_VERSION)))
-$1_VERSION_PATCH := $$(word 3,$$(subst ., ,$$($1_VERSION)))
 
 ## Build
 $1.version:
@@ -24,34 +21,15 @@ $1.version:
 	@echo ""
 
 $1.build: $1.version
-	@docker buildx build . \
-		-f build/docker/$1/Dockerfile \
-		-t $$($1_IMAGE_NAME):$$($1_VERSION)-build \
-		--build-arg VERSION=$$($1_VERSION) \
-		--target build \
-		--cache-from=type=gha,scope=build-$$($1_IMAGE_NAME) \
-		--cache-to=type=gha,mode=max,scope=build-$$($1_IMAGE_NAME)
+	@VERSION=$$($1_VERSION) docker buildx bake -f build/docker/docker-bake.hcl -f build/docker/$1/docker-bake.hcl build
 	@echo ""
 
 $1.test: $1.version
-	@docker buildx build . \
-		-f build/docker/$1/Dockerfile \
-		-t $$($1_IMAGE_NAME):$$($1_VERSION)-build \
-		--build-arg VERSION=$$($1_VERSION) \
-		--target test \
-		--cache-from=type=gha,scope=test-$$($1_IMAGE_NAME) \
-		--cache-from=type=gha,scope=build-$$($1_IMAGE_NAME) \
-		--cache-to=type=gha,mode=max,scope=test-$$($1_IMAGE_NAME)
+	@VERSION=$$($1_VERSION) docker buildx bake -f build/docker/docker-bake.hcl -f build/docker/$1/docker-bake.hcl test
 	@echo ""
 
 $1.package: $1.version
-	@docker buildx build . \
-		-f build/docker/$1/Dockerfile \
-		-t $$($1_IMAGE_NAME):$$($1_VERSION) \
-		--build-arg VERSION=$$($1_VERSION) \
-		--cache-from=type=gha,scope=package-$$($1_IMAGE_NAME) \
-		--cache-from=type=gha,scope=build-$$($1_IMAGE_NAME) \
-		--cache-to=type=gha,mode=max,scope=package-$$($1_IMAGE_NAME)
+	@VERSION=$$($1_VERSION) docker buildx bake -f build/docker/docker-bake.hcl -f build/docker/$1/docker-bake.hcl package
 	@echo ""
 
 ## Release
@@ -62,16 +40,7 @@ $1.release.github: $1.version
 	@echo ""
 
 $1.release.dockerhub: $1.version
-	@docker buildx build . \
-		-f build/docker/$1/Dockerfile \
-		-t $$($1_IMAGE_NAME):latest \
-		-t $$($1_IMAGE_NAME):$$($1_VERSION) \
-		-t $$($1_IMAGE_NAME):$$($1_VERSION_MAJOR) \
-		-t $$($1_IMAGE_NAME):$$($1_VERSION_MAJOR).$$($1_VERSION_MINOR) \
-		--build-arg VERSION=$$($1_VERSION) \
-		--push \
-		--cache-from=type=gha,scope=package-$$($1_IMAGE_NAME) \
-		--cache-to=type=gha,mode=max,scope=package-$$($1_IMAGE_NAME)
+	@VERSION=$$($1_VERSION) docker buildx bake -f build/docker/docker-bake.hcl -f build/docker/$1/docker-bake.hcl package --push
 	@echo ""
 
 endef
