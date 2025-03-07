@@ -49,7 +49,7 @@ internal sealed class ProcessReplayHandler(
         foreach (var replayPath in await replayRetriever.Retrieve(pattern, cancellationToken))
         {
             logger.LogInformation("Processing: {Path}", replayPath.Paths.WAgamePath);
-            await wormsArmageddon.GenerateReplayLog(replayPath.Paths.WAgamePath).ConfigureAwait(false);
+            await wormsArmageddon.GenerateReplayLog(replayPath.Paths.WAgamePath);
         }
 
         return 0;
