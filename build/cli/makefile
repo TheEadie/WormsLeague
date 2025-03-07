@@ -25,7 +25,7 @@ cli.build.exe: cli.version
 	@echo ""
 
 cli.build.docker: cli.version
-	@VERSION=$(cli_VERSION) docker buildx bake -f build/cli/docker-bake.hcl package
+	@VERSION=$(cli_VERSION) docker buildx bake -f docker-bake.hcl -f build/cli/docker-bake.hcl package
 	@echo ""
 
 ## Test
@@ -97,7 +97,7 @@ cli.release.github: cli.version
 	@echo ""
 
 cli.release.dockerhub: cli.build.docker cli.version
-	@VERSION=$(cli_VERSION) docker buildx bake -f build/cli/docker-bake.hcl package --push
+	@VERSION=$(cli_VERSION) docker buildx bake -f docker-bake.hcl -f build/cli/docker-bake.hcl package --push
 	@echo ""
 
 cli.release.wormshub: cli.version

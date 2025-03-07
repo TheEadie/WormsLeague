@@ -21,15 +21,15 @@ $1.version:
 	@echo ""
 
 $1.build: $1.version
-	@VERSION=$$($1_VERSION) docker buildx bake -f build/docker/docker-bake.hcl -f build/docker/$1/docker-bake.hcl build
+	@VERSION=$$($1_VERSION) docker buildx bake -f docker-bake.hcl -f build/docker/$1/docker-bake.hcl build
 	@echo ""
 
 $1.test: $1.version
-	@VERSION=$$($1_VERSION) docker buildx bake -f build/docker/docker-bake.hcl -f build/docker/$1/docker-bake.hcl test
+	@VERSION=$$($1_VERSION) docker buildx bake -f docker-bake.hcl -f build/docker/$1/docker-bake.hcl test
 	@echo ""
 
 $1.package: $1.version
-	@VERSION=$$($1_VERSION) docker buildx bake -f build/docker/docker-bake.hcl -f build/docker/$1/docker-bake.hcl package
+	@VERSION=$$($1_VERSION) docker buildx bake -f docker-bake.hcl -f build/docker/$1/docker-bake.hcl package
 	@echo ""
 
 ## Release
@@ -40,7 +40,7 @@ $1.release.github: $1.version
 	@echo ""
 
 $1.release.dockerhub: $1.version
-	@VERSION=$$($1_VERSION) docker buildx bake -f build/docker/docker-bake.hcl -f build/docker/$1/docker-bake.hcl package --push
+	@VERSION=$$($1_VERSION) docker buildx bake -f docker-bake.hcl -f build/docker/$1/docker-bake.hcl package --push
 	@echo ""
 
 endef

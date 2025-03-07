@@ -1,6 +1,6 @@
 ﻿variable "IMAGE_NAME" {}
-variable "VERSION" {}
 variable "DOCKERFILE_PATH" {}
+variable "VERSION" {}
 
 target "build" {
   inherits = ["base"]
