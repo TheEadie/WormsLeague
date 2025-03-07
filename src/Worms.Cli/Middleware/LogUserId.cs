@@ -23,6 +23,6 @@ internal sealed class LogUserId(IUserDetailsService userDetailsService, ILogger<
                     _ = Activity.Current?.SetTag(Telemetry.Spans.Root.LoggedIn, false);
                 }
 
-                await next(context).ConfigureAwait(false);
+                await next(context);
             };
 }

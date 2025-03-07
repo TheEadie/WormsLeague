@@ -11,8 +11,8 @@ internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQ
     {
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
-        _ = await queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
-        var peekedMessage = await queueClient.PeekMessageAsync().ConfigureAwait(false);
+        _ = await queueClient.CreateIfNotExistsAsync();
+        var peekedMessage = await queueClient.PeekMessageAsync();
         return peekedMessage.Value is not null;
     }
 
@@ -20,16 +20,16 @@ internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQ
     {
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
-        _ = await queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
-        _ = await queueClient.SendMessageAsync(message.ReplayId).ConfigureAwait(false);
+        _ = await queueClient.CreateIfNotExistsAsync();
+        _ = await queueClient.SendMessageAsync(message.ReplayId);
     }
 
     public async Task<(ReplayToProcessMessage?, MessageDetails?)> DequeueMessage()
     {
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
-        _ = await queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
-        var message = await queueClient.ReceiveMessageAsync().ConfigureAwait(false);
+        _ = await queueClient.CreateIfNotExistsAsync();
+        var message = await queueClient.ReceiveMessageAsync();
         return message.Value is null
             ? (null, null)
             : (new ReplayToProcessMessage(message.Value.MessageText),
@@ -40,8 +40,7 @@ internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQ
     {
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
-        _ = await queueClient.CreateIfNotExistsAsync().ConfigureAwait(false);
-        _ = await queueClient.DeleteMessageAsync(messageDetails.MessageId, messageDetails.PopReceipt)
-            .ConfigureAwait(false);
+        _ = await queueClient.CreateIfNotExistsAsync();
+        _ = await queueClient.DeleteMessageAsync(messageDetails.MessageId, messageDetails.PopReceipt);
     }
 }

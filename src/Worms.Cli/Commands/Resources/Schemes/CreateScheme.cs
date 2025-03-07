@@ -52,7 +52,7 @@ internal sealed class CreateSchemeHandler(
     ILogger<CreateSchemeHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -82,8 +82,8 @@ internal sealed class CreateSchemeHandler(
         }
 
         logger.LogInformation("Writing Scheme to {Folder}", createParams.Value.Folder);
-        var scheme = await schemeCreator.Create(createParams.Value, cancellationToken).ConfigureAwait(false);
-        await Console.Out.WriteLineAsync(scheme.Path).ConfigureAwait(false);
+        var scheme = await schemeCreator.Create(createParams.Value, cancellationToken);
+        await Console.Out.WriteLineAsync(scheme.Path);
         return 0;
     }
 

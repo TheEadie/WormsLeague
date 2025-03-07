@@ -12,7 +12,7 @@ public sealed class CliFiles(IConfiguration configuration)
     public async Task<CliInfo> GetLatestDetails()
     {
         var (latest, platformFilePaths) = GetFilesPaths();
-        var versionContent = await File.ReadAllTextAsync(latest).ConfigureAwait(false);
+        var versionContent = await File.ReadAllTextAsync(latest);
 
         var version = Version.TryParse(versionContent, out var parsedVersion)
             ? parsedVersion
@@ -40,15 +40,15 @@ public sealed class CliFiles(IConfiguration configuration)
         var filePath = platformFilePaths[platform];
 
         var fileStream = new FileStream(filePath, FileMode.Create);
-        await fileContentsStream.CopyToAsync(fileStream).ConfigureAwait(false);
-        await fileStream.DisposeAsync().ConfigureAwait(false);
+        await fileContentsStream.CopyToAsync(fileStream);
+        await fileStream.DisposeAsync();
     }
 
     public async Task SaveLatestVersion(Version version)
     {
         _ = version ?? throw new ArgumentNullException(nameof(version));
         var (filePath, _) = GetFilesPaths();
-        await File.WriteAllTextAsync(filePath, version.ToString()).ConfigureAwait(false);
+        await File.WriteAllTextAsync(filePath, version.ToString());
     }
 
     private (string versionFilePath, IDictionary<Platform, string> platformFilePaths) GetFilesPaths()

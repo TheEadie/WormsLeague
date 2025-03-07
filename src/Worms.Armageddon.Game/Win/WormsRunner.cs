@@ -27,7 +27,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService stea
                             throw new InvalidOperationException("Unable to start worms process");
                         }
 
-                        await process.WaitForExitAsync().ConfigureAwait(false);
+                        await process.WaitForExitAsync();
                     }
 
                     steamService.WaitForSteamPrompt();
@@ -36,7 +36,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService stea
 
                     if (wormsProcess is not null)
                     {
-                        await wormsProcess.WaitForExitAsync().ConfigureAwait(false);
+                        await wormsProcess.WaitForExitAsync();
                     }
 
                     return Task.CompletedTask;

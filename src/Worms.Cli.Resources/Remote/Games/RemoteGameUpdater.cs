@@ -9,7 +9,7 @@ internal sealed class RemoteGameUpdater(IWormsServerApi api, ILogger<RemoteGameU
     {
         try
         {
-            await api.UpdateGame(new GamesDtoV1(game.Id, "Complete", game.HostMachine)).ConfigureAwait(false);
+            await api.UpdateGame(new GamesDtoV1(game.Id, "Complete", game.HostMachine));
         }
         catch (HttpRequestException e)
         {

@@ -19,7 +19,7 @@ internal sealed class Processor(
     {
         logger.LogInformation("Starting replay processor...");
 
-        var (message, token) = await messageQueue.DequeueMessage().ConfigureAwait(false);
+        var (message, token) = await messageQueue.DequeueMessage();
         if (message is null || token is null)
         {
             logger.LogInformation("No messages to process.");
@@ -64,7 +64,7 @@ internal sealed class Processor(
         }
 
         // Generate replay log
-        await logGenerator.GenerateReplayLog(replayPath).ConfigureAwait(false);
+        await logGenerator.GenerateReplayLog(replayPath);
         var logPath = replayFiles.GetLogPath(replay);
 
         if (logPath is null)
@@ -73,7 +73,7 @@ internal sealed class Processor(
             return;
         }
 
-        var replayLog = await File.ReadAllTextAsync(logPath).ConfigureAwait(false);
+        var replayLog = await File.ReadAllTextAsync(logPath);
 
         // Update the database with the log
         var updatedReplay = replay with
@@ -84,7 +84,7 @@ internal sealed class Processor(
         replayRepository.Update(updatedReplay);
 
         // Delete the message from the queue
-        await messageQueue.DeleteMessage(token).ConfigureAwait(false);
+        await messageQueue.DeleteMessage(token);
 
         logger.LogInformation("Replay processor finished.");
     }

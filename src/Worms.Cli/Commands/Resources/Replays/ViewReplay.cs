@@ -35,7 +35,7 @@ internal sealed class ViewReplayHandler(
     ILogger<ViewReplay> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -44,7 +44,7 @@ internal sealed class ViewReplayHandler(
         var turn = context.ParseResult.GetValueForOption(ViewReplay.Turn);
         var cancellationToken = context.GetCancellationToken();
 
-        var replay = await resourceViewer.GetResource(name, cancellationToken).ConfigureAwait(false);
+        var replay = await resourceViewer.GetResource(name, cancellationToken);
 
         if (!replay.IsValid)
         {

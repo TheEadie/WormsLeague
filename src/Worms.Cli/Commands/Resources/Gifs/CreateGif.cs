@@ -75,7 +75,7 @@ internal sealed class CreateGifHandler(
     ILogger<CreateGifHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -93,8 +93,7 @@ internal sealed class CreateGifHandler(
             .Map(x => FindReplays(x.ReplayName!, cancellationToken))
             .Validate(Only1ReplayFound(replayName))
             .Map(x => x.Single())
-            .Validate(ValidConfigForReplay(replayName))
-            .ConfigureAwait(false);
+            .Validate(ValidConfigForReplay(replayName));
 
         if (!replay.IsValid)
         {
@@ -104,16 +103,15 @@ internal sealed class CreateGifHandler(
 
         logger.LogInformation("Creating gif for {ReplayName}, turn {Turn} ...", replayName, turn);
         var gif = await gifCreator.Create(
-                new LocalGifCreateParameters(
-                    replay.Value,
-                    turn,
-                    TimeSpan.FromSeconds(startOffset),
-                    TimeSpan.FromSeconds(endOffset),
-                    fps,
-                    speed),
-                cancellationToken)
-            .ConfigureAwait(false);
-        await Console.Out.WriteLineAsync(gif.Path).ConfigureAwait(false);
+            new LocalGifCreateParameters(
+                replay.Value,
+                turn,
+                TimeSpan.FromSeconds(startOffset),
+                TimeSpan.FromSeconds(endOffset),
+                fps,
+                speed),
+            cancellationToken);
+        await Console.Out.WriteLineAsync(gif.Path);
         return 0;
     }
 
@@ -135,7 +133,7 @@ internal sealed class CreateGifHandler(
 
     private async Task<List<LocalReplay>> FindReplays(string pattern, CancellationToken cancellationToken) =>
     [
-        .. await replayRetriever.Retrieve(pattern, cancellationToken).ConfigureAwait(false)
+        .. await replayRetriever.Retrieve(pattern, cancellationToken)
     ];
 
     private sealed record Config(

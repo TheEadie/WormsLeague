@@ -14,7 +14,10 @@ internal sealed class GamesRepository(IConfiguration configuration) : IRepositor
         using var connection = new NpgsqlConnection(connectionString);
 
         var dbObjects = connection.Query<GamesDb>("SELECT id, status, hostmachine FROM games");
-        return [.. dbObjects.Select(x => new Game(x.Id.ToString(CultureInfo.InvariantCulture), x.Status, x.HostMachine))];
+        return
+        [
+            .. dbObjects.Select(x => new Game(x.Id.ToString(CultureInfo.InvariantCulture), x.Status, x.HostMachine))
+        ];
     }
 
     public Game Create(Game item)

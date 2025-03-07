@@ -8,7 +8,7 @@ internal sealed class RemoteSchemeDownloader(IWormsServerApi api, IFileSystem fi
     {
         var filePath = Path.Combine(destinationFolder, destinationFilename);
 
-        var bytes = await api.DownloadScheme(id).ConfigureAwait(false);
-        await fileSystem.File.WriteAllBytesAsync(filePath, bytes).ConfigureAwait(false);
+        var bytes = await api.DownloadScheme(id);
+        await fileSystem.File.WriteAllBytesAsync(filePath, bytes);
     }
 }

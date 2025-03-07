@@ -16,7 +16,7 @@ internal sealed class LeagueUpdater(
     {
         _ = Activity.Current?.SetTag(Telemetry.Spans.League.Id, leagueName);
 
-        var latestVersion = await remoteLeagueRetriever.Retrieve(leagueName).ConfigureAwait(false);
+        var latestVersion = await remoteLeagueRetriever.Retrieve(leagueName);
         var schemesFolder = wormsLocator.Find().SchemesFolder;
         var version = latestVersion.Version.ToString(3);
         var downloadFileName = $"{leagueName}.{version}.wsc";
@@ -25,6 +25,6 @@ internal sealed class LeagueUpdater(
         _ = Activity.Current?.SetTag(Telemetry.Spans.Scheme.Id, leagueName);
         _ = Activity.Current?.SetTag(Telemetry.Spans.Scheme.Version, version);
 
-        await remoteSchemeDownloader.Download(leagueName, downloadFileName, schemesFolder).ConfigureAwait(false);
+        await remoteSchemeDownloader.Download(leagueName, downloadFileName, schemesFolder);
     }
 }

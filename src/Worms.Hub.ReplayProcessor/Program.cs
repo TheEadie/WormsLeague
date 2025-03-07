@@ -14,7 +14,7 @@ if (configuration["BATCH"] == "true")
         .AddSingleton<IConfiguration>(configuration)
         .BuildServiceProvider();
     var processor = serviceProvider.GetService<Processor>();
-    await processor!.ProcessReplay().ConfigureAwait(false);
+    await processor!.ProcessReplay();
     return;
 }
 
@@ -27,4 +27,4 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services => services.AddHostedService<CheckForMessagesService>())
     .Build();
 
-await host.RunAsync().ConfigureAwait(false);
+await host.RunAsync();

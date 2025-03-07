@@ -19,7 +19,7 @@ internal sealed class CliUpdater(
         var cliInfo = cliInfoRetriever.Get();
         logger.LogDebug("Current Version: {Info}", cliInfo.ToString());
 
-        var latestCliVersion = await cliUpdateRetriever.GetLatestCliVersion().ConfigureAwait(false);
+        var latestCliVersion = await cliUpdateRetriever.GetLatestCliVersion();
         logger.LogDebug("Latest version: {Version}", latestCliVersion);
         _ = Activity.Current?.SetTag(Telemetry.Spans.Update.LatestCliVersion, latestCliVersion);
 
@@ -35,7 +35,7 @@ internal sealed class CliUpdater(
             "Worms",
             ".update");
 
-        await DownloadUpdate(latestCliVersion, updateFolder).ConfigureAwait(false);
+        await DownloadUpdate(latestCliVersion, updateFolder);
 
         InstallUpdate(cliInfo, updateFolder);
 
@@ -56,7 +56,7 @@ internal sealed class CliUpdater(
 
         _ = fileSystem.Directory.CreateDirectory(updateFolder);
 
-        await cliUpdateDownloader.DownloadLatestCli(updateFolder).ConfigureAwait(false);
+        await cliUpdateDownloader.DownloadLatestCli(updateFolder);
         logger.LogInformation("Downloading Complete");
     }
 

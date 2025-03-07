@@ -28,7 +28,7 @@ internal sealed class GetReplayHandler(ResourceGetter<LocalReplay> replayRetriev
     : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -37,7 +37,7 @@ internal sealed class GetReplayHandler(ResourceGetter<LocalReplay> replayRetriev
         var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
         var cancellationToken = context.GetCancellationToken();
 
-        var replays = await replayRetriever.GetResources(name, cancellationToken).ConfigureAwait(false);
+        var replays = await replayRetriever.GetResources(name, cancellationToken);
 
         if (!replays.IsValid)
         {

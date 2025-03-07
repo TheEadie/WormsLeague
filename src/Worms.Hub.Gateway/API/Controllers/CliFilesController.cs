@@ -18,7 +18,7 @@ internal sealed class CliFilesController(
     [HttpGet]
     public async Task<ActionResult<CliFileDto>> Get()
     {
-        var latestDetails = await cliFiles.GetLatestDetails().ConfigureAwait(false);
+        var latestDetails = await cliFiles.GetLatestDetails();
         var availablePlatforms = latestDetails.PlatformFiles.Keys.Select(x => x.ToString().ToLowerInvariant())
             .ToDictionary(x => x, x => Url.Action(action: "Get", controller: "CliFiles") + "/" + x);
         return new CliFileDto(latestDetails.Version, availablePlatforms);
@@ -32,7 +32,7 @@ internal sealed class CliFilesController(
         Justification = "Stream is disposed by File object")]
     public async Task<ActionResult<CliFileDto>> Get(string platform)
     {
-        var latestDetails = await cliFiles.GetLatestDetails().ConfigureAwait(false);
+        var latestDetails = await cliFiles.GetLatestDetails();
 
         if (!Enum.TryParse<Platform>(platform, true, out var platformChecked)
             || !latestDetails.PlatformFiles.TryGetValue(platformChecked, out _))
@@ -71,8 +71,8 @@ internal sealed class CliFilesController(
             return BadRequest("Invalid CLI file");
         }
 
-        await cliFiles.SaveLatestVersion(parameters.Version).ConfigureAwait(false);
-        await cliFiles.SaveFileContents(parameters.File.OpenReadStream(), platformChecked).ConfigureAwait(false);
-        return await Get().ConfigureAwait(false);
+        await cliFiles.SaveLatestVersion(parameters.Version);
+        await cliFiles.SaveFileContents(parameters.File.OpenReadStream(), platformChecked);
+        return await Get();
     }
 }

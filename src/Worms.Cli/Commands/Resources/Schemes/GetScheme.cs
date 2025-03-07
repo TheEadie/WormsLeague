@@ -28,7 +28,7 @@ internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetrie
     : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -37,7 +37,7 @@ internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetrie
         var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
         var cancellationToken = context.GetCancellationToken();
 
-        var schemes = await schemesRetriever.GetResources(name, cancellationToken).ConfigureAwait(false);
+        var schemes = await schemesRetriever.GetResources(name, cancellationToken);
 
         if (!schemes.IsValid)
         {

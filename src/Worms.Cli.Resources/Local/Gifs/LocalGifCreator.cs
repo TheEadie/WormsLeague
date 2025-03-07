@@ -26,11 +26,10 @@ internal sealed class LocalGifCreator(
 
         DeleteFrames(framesFolder);
         await replayFrameExtractor.ExtractReplayFrames(
-                replayPath,
-                parameters.FramesPerSecond,
-                turn.Start + parameters.StartOffset,
-                turn.End - parameters.EndOffset)
-            .ConfigureAwait(false);
+            replayPath,
+            parameters.FramesPerSecond,
+            turn.Start + parameters.StartOffset,
+            turn.End - parameters.EndOffset);
         CreateGifFromFiles(framesFolder, outputFileName, animationDelay, 640, 480);
         DeleteFrames(framesFolder);
 

@@ -17,7 +17,7 @@ internal sealed class DeviceCodeLoginService(
     public async Task RequestLogin(CancellationToken cancellationToken)
     {
         logger.LogDebug("Requesting device code...");
-        var deviceCodeResponse = await RequestDeviceCode(cancellationToken).ConfigureAwait(false);
+        var deviceCodeResponse = await RequestDeviceCode(cancellationToken);
         logger.LogInformation(
             "Please visit {VerificationUri} and enter the code: {UserCode}",
             deviceCodeResponse.VerificationUri,
@@ -27,8 +27,7 @@ internal sealed class DeviceCodeLoginService(
         BrowserLauncher.OpenBrowser(deviceCodeResponse.VerificationUriComplete.OriginalString);
 
         logger.LogDebug("Requesting tokens...");
-        var tokenResponse =
-            await RequestTokenAsync(deviceCodeResponse, logger, cancellationToken).ConfigureAwait(false);
+        var tokenResponse = await RequestTokenAsync(deviceCodeResponse, logger, cancellationToken);
 
         if (tokenResponse != null)
         {
@@ -58,20 +57,18 @@ internal sealed class DeviceCodeLoginService(
             });
 
         var response = await httpClient.PostAsync(
-                new Uri("oauth/device/code", UriKind.Relative),
-                content,
-                cancellationToken)
-            .ConfigureAwait(false);
+            new Uri("oauth/device/code", UriKind.Relative),
+            content,
+            cancellationToken);
 
         if (response.IsSuccessStatusCode)
         {
-            var streamAsync = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-            await using var stream = streamAsync.ConfigureAwait(false);
+            var streamAsync = await response.Content.ReadAsStreamAsync(cancellationToken);
+            await using var stream = streamAsync;
             var jsonResponse = await JsonSerializer.DeserializeAsync(
-                    streamAsync,
-                    JsonContext.Default.DeviceAuthorizationResponse,
-                    cancellationToken)
-                .ConfigureAwait(false);
+                streamAsync,
+                JsonContext.Default.DeviceAuthorizationResponse,
+                cancellationToken);
 
             if (jsonResponse is null)
             {
@@ -82,7 +79,7 @@ internal sealed class DeviceCodeLoginService(
             return jsonResponse;
         }
 
-        var stringContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        var stringContent = await response.Content.ReadAsStringAsync(cancellationToken);
         logger.LogError("Error requesting device code: {Error}", stringContent);
         throw new HttpRequestException(stringContent);
     }
@@ -116,21 +113,19 @@ internal sealed class DeviceCodeLoginService(
                     { "client_id", ClientId }
                 });
 
-            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, cancellationToken)
-                .ConfigureAwait(false);
+            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
-                var streamAsync = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-                await using var stream = streamAsync.ConfigureAwait(false);
+                var streamAsync = await response.Content.ReadAsStreamAsync(cancellationToken);
+                await using var stream = streamAsync;
                 return await JsonSerializer.DeserializeAsync(
-                        streamAsync,
-                        JsonContext.Default.TokenResponse,
-                        cancellationToken)
-                    .ConfigureAwait(false);
+                    streamAsync,
+                    JsonContext.Default.TokenResponse,
+                    cancellationToken);
             }
 
-            var stringContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            var stringContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
             if (stringContent.Contains("authorization_pending", StringComparison.InvariantCulture)
                 || stringContent.Contains("slow_down", StringComparison.InvariantCulture))
@@ -138,7 +133,7 @@ internal sealed class DeviceCodeLoginService(
                 logger.LogDebug(
                     "Code not yet confirmed. Retrying in {IntervalSeconds} seconds",
                     deviceCodeResponse.Interval);
-                await Task.Delay(deviceCodeResponse.Interval * 1000, cancellationToken).ConfigureAwait(false);
+                await Task.Delay(deviceCodeResponse.Interval * 1000, cancellationToken);
             }
             else
             {

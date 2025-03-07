@@ -10,10 +10,10 @@ internal sealed class LocalReplayViewer(IReplayPlayer replayPlayer)
         if (parameters.Turn != default)
         {
             var startTime = resource.Details.Turns.ElementAt((int) parameters.Turn - 1).Start;
-            await replayPlayer.Play(resource.Paths.WAgamePath, startTime).ConfigureAwait(false);
+            await replayPlayer.Play(resource.Paths.WAgamePath, startTime);
             return;
         }
 
-        await replayPlayer.Play(resource.Paths.WAgamePath).ConfigureAwait(false);
+        await replayPlayer.Play(resource.Paths.WAgamePath);
     }
 }

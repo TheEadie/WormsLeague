@@ -27,7 +27,7 @@ internal sealed class DeleteReplayHandler(
     ILogger<DeleteReplayHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -35,7 +35,7 @@ internal sealed class DeleteReplayHandler(
         var name = context.ParseResult.GetValueForArgument(DeleteReplay.ReplayName);
         var cancellationToken = context.GetCancellationToken();
 
-        var replay = await resourceDeleter.GetResource(name, cancellationToken).ConfigureAwait(false);
+        var replay = await resourceDeleter.GetResource(name, cancellationToken);
 
         if (!replay.IsValid)
         {

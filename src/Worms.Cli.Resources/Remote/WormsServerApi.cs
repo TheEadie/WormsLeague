@@ -38,8 +38,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/files/cli", UriKind.Relative);
-        return await CallApiRefreshAccessTokenIfInvalid<LatestCliDtoV1>(httpClient, () => httpClient.GetAsync(path))
-            .ConfigureAwait(false);
+        return await CallApiRefreshAccessTokenIfInvalid<LatestCliDtoV1>(httpClient, () => httpClient.GetAsync(path));
     }
 
     public async Task<byte[]> DownloadLatestCli(string platform)
@@ -49,8 +48,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/files/cli/{platform}", UriKind.Relative);
-        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path))
-            .ConfigureAwait(false);
+        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path));
     }
 
     public async Task<LeagueDtoV1> GetLeague(string id)
@@ -60,8 +58,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/leagues/{id}", UriKind.Relative);
-        return await CallApiRefreshAccessTokenIfInvalid<LeagueDtoV1>(httpClient, () => httpClient.GetAsync(path))
-            .ConfigureAwait(false);
+        return await CallApiRefreshAccessTokenIfInvalid<LeagueDtoV1>(httpClient, () => httpClient.GetAsync(path));
     }
 
     public async Task<byte[]> DownloadScheme(string id)
@@ -71,8 +68,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri($"api/v1/files/schemes/{id}", UriKind.Relative);
-        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path))
-            .ConfigureAwait(false);
+        return await CallApiBinaryRefreshAccessTokenIfInvalid(httpClient, () => httpClient.GetAsync(path));
     }
 
     public async Task<IReadOnlyCollection<GamesDtoV1>> GetGames()
@@ -82,9 +78,8 @@ internal sealed class WormsServerApi : IWormsServerApi
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<IReadOnlyCollection<GamesDtoV1>>(
-                httpClient,
-                () => httpClient.GetAsync(path))
-            .ConfigureAwait(false);
+            httpClient,
+            () => httpClient.GetAsync(path));
     }
 
     public async Task<GamesDtoV1> CreateGame(CreateGameDtoV1 createParams)
@@ -94,9 +89,8 @@ internal sealed class WormsServerApi : IWormsServerApi
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<GamesDtoV1>(
-                httpClient,
-                () => httpClient.PostAsJsonAsync(path, createParams, JsonContext.Default.CreateGameDtoV1))
-            .ConfigureAwait(false);
+            httpClient,
+            () => httpClient.PostAsJsonAsync(path, createParams, JsonContext.Default.CreateGameDtoV1));
     }
 
     public async Task UpdateGame(GamesDtoV1 newGameDetails)
@@ -108,9 +102,8 @@ internal sealed class WormsServerApi : IWormsServerApi
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/games", UriKind.Relative);
         await CallApiRefreshAccessTokenIfInvalid(
-                httpClient,
-                () => httpClient.PutAsJsonAsync(path, newGameDetails, JsonContext.Default.GamesDtoV1))
-            .ConfigureAwait(false);
+            httpClient,
+            () => httpClient.PutAsJsonAsync(path, newGameDetails, JsonContext.Default.GamesDtoV1));
     }
 
     public async Task<ReplayDtoV1> CreateReplay(CreateReplayDtoV1 createParams)
@@ -120,7 +113,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
         using var httpClient = _httpClientFactory.CreateClient();
         using var form = new MultipartFormDataContent();
-        var allBytes = await _fileSystem.File.ReadAllBytesAsync(createParams.ReplayFilePath).ConfigureAwait(false);
+        var allBytes = await _fileSystem.File.ReadAllBytesAsync(createParams.ReplayFilePath);
         using var fileContent = new ByteArrayContent(allBytes);
         fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
         using var content = new StringContent(createParams.Name);
@@ -129,19 +122,19 @@ internal sealed class WormsServerApi : IWormsServerApi
         form.Add(fileContent, "ReplayFile", _fileSystem.Path.GetFileName(createParams.ReplayFilePath));
 
         var path = new Uri("api/v1/replays", UriKind.Relative);
-        return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(httpClient, () => httpClient.PostAsync(path, form))
-            .ConfigureAwait(false);
+        return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(
+            httpClient,
+            () => httpClient.PostAsync(path, form));
     }
 
     private async Task<T> CallApiRefreshAccessTokenIfInvalid<T>(
         HttpClient client,
         Func<Task<HttpResponseMessage>> apiCall)
     {
-        var response = await CallApiWithAuthRetry(client, apiCall).ConfigureAwait(false);
-        var streamAsync = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-        await using var stream = streamAsync.ConfigureAwait(false);
-        return await JsonSerializer.DeserializeAsync(streamAsync, typeof(T), JsonContext.Default)
-            .ConfigureAwait(false) is T result
+        var response = await CallApiWithAuthRetry(client, apiCall);
+        var streamAsync = await response.Content.ReadAsStreamAsync();
+        await using var stream = streamAsync;
+        return await JsonSerializer.DeserializeAsync(streamAsync, typeof(T), JsonContext.Default) is T result
             ? result
             : throw new JsonException("The API returned success but the JSON response was empty");
     }
@@ -156,8 +149,8 @@ internal sealed class WormsServerApi : IWormsServerApi
         HttpClient client,
         Func<Task<HttpResponseMessage>> apiCall)
     {
-        var response = await CallApiWithAuthRetry(client, apiCall).ConfigureAwait(false);
-        return await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+        var response = await CallApiWithAuthRetry(client, apiCall);
+        return await response.Content.ReadAsByteArrayAsync();
     }
 
     private async Task<HttpResponseMessage> CallApiWithAuthRetry(
@@ -174,16 +167,16 @@ internal sealed class WormsServerApi : IWormsServerApi
         var delayBetweenRetries = 500;
         for (var i = 0; i < maxRetries; i++)
         {
-            response = await apiCall().ConfigureAwait(false);
+            response = await apiCall();
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 // Retry with newer access token
-                accessTokens = await _accessTokenRefreshService.RefreshAccessTokens(accessTokens).ConfigureAwait(false);
+                accessTokens = await _accessTokenRefreshService.RefreshAccessTokens(accessTokens);
                 _tokenStore.StoreAccessTokens(accessTokens);
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", accessTokens.AccessToken);
-                response = await apiCall().ConfigureAwait(false);
+                response = await apiCall();
             }
 
             if (response.IsSuccessStatusCode)
@@ -193,7 +186,7 @@ internal sealed class WormsServerApi : IWormsServerApi
 
             if (i != maxRetries - 1)
             {
-                await Task.Delay(delayBetweenRetries).ConfigureAwait(false);
+                await Task.Delay(delayBetweenRetries);
             }
 
             delayBetweenRetries *= 2;

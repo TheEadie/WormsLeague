@@ -10,7 +10,7 @@ public sealed class SchemeFiles(IConfiguration configuration)
     public async Task<League> GetLatestDetails(string id)
     {
         var (versionPath, schemePath) = GetFilesPaths(id);
-        var versionContent = await File.ReadAllTextAsync(versionPath).ConfigureAwait(false);
+        var versionContent = await File.ReadAllTextAsync(versionPath);
 
         var version = Version.TryParse(versionContent, out var parsedVersion)
             ? parsedVersion
