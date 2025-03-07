@@ -11,10 +11,7 @@ internal sealed class WormsLocator : IWormsLocator
     {
         const string processName = "WA";
 
-        var location = Registry.GetValue(
-            @"HKEY_CURRENT_USER\SOFTWARE\Team17SoftwareLTD\WormsArmageddon",
-            "Path",
-            null);
+        var location = Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Team17SoftwareLTD\WormsArmageddon", "Path", null);
 
         if (location is not string rootLocation)
         {

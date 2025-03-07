@@ -34,8 +34,7 @@ internal sealed class AccessTokenRefreshService(IHttpClientFactory httpClientFac
 
         var streamAsync = await response.Content.ReadAsStreamAsync();
         await using var stream = streamAsync;
-        var result =
-            await JsonSerializer.DeserializeAsync(streamAsync, JsonContext.Default.TokenResponse)
+        var result = await JsonSerializer.DeserializeAsync(streamAsync, JsonContext.Default.TokenResponse)
             ?? throw new JsonException("The API returned success but the JSON response was empty");
 
         return current with { AccessToken = result.AccessToken };

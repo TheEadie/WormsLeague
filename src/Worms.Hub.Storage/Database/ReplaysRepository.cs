@@ -14,8 +14,16 @@ internal sealed class ReplaysRepository(IConfiguration configuration) : IReposit
         using var connection = new NpgsqlConnection(connectionString);
 
         var dbObjects = connection.Query<ReplayDb>("SELECT id, name, status, filename, fullLog FROM replays");
-        return [.. dbObjects.Select(
-                x => new Replay(x.Id.ToString(CultureInfo.InvariantCulture), x.Name, x.Status, x.Filename, x.FullLog))];
+        return
+        [
+            .. dbObjects.Select(
+                x => new Replay(
+                    x.Id.ToString(CultureInfo.InvariantCulture),
+                    x.Name,
+                    x.Status,
+                    x.Filename,
+                    x.FullLog))
+        ];
     }
 
     public Replay Create(Replay item)

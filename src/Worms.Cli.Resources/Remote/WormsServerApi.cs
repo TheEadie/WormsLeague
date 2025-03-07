@@ -78,8 +78,8 @@ internal sealed class WormsServerApi : IWormsServerApi
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<IReadOnlyCollection<GamesDtoV1>>(
-                httpClient,
-                () => httpClient.GetAsync(path));
+            httpClient,
+            () => httpClient.GetAsync(path));
     }
 
     public async Task<GamesDtoV1> CreateGame(CreateGameDtoV1 createParams)
@@ -89,8 +89,8 @@ internal sealed class WormsServerApi : IWormsServerApi
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/games", UriKind.Relative);
         return await CallApiRefreshAccessTokenIfInvalid<GamesDtoV1>(
-                httpClient,
-                () => httpClient.PostAsJsonAsync(path, createParams, JsonContext.Default.CreateGameDtoV1));
+            httpClient,
+            () => httpClient.PostAsJsonAsync(path, createParams, JsonContext.Default.CreateGameDtoV1));
     }
 
     public async Task UpdateGame(GamesDtoV1 newGameDetails)
@@ -102,8 +102,8 @@ internal sealed class WormsServerApi : IWormsServerApi
         using var httpClient = _httpClientFactory.CreateClient();
         var path = new Uri("api/v1/games", UriKind.Relative);
         await CallApiRefreshAccessTokenIfInvalid(
-                httpClient,
-                () => httpClient.PutAsJsonAsync(path, newGameDetails, JsonContext.Default.GamesDtoV1));
+            httpClient,
+            () => httpClient.PutAsJsonAsync(path, newGameDetails, JsonContext.Default.GamesDtoV1));
     }
 
     public async Task<ReplayDtoV1> CreateReplay(CreateReplayDtoV1 createParams)
@@ -122,7 +122,9 @@ internal sealed class WormsServerApi : IWormsServerApi
         form.Add(fileContent, "ReplayFile", _fileSystem.Path.GetFileName(createParams.ReplayFilePath));
 
         var path = new Uri("api/v1/replays", UriKind.Relative);
-        return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(httpClient, () => httpClient.PostAsync(path, form));
+        return await CallApiRefreshAccessTokenIfInvalid<ReplayDtoV1>(
+            httpClient,
+            () => httpClient.PostAsync(path, form));
     }
 
     private async Task<T> CallApiRefreshAccessTokenIfInvalid<T>(
@@ -132,8 +134,7 @@ internal sealed class WormsServerApi : IWormsServerApi
         var response = await CallApiWithAuthRetry(client, apiCall);
         var streamAsync = await response.Content.ReadAsStreamAsync();
         await using var stream = streamAsync;
-        return await JsonSerializer.DeserializeAsync(streamAsync, typeof(T), JsonContext.Default)
-             is T result
+        return await JsonSerializer.DeserializeAsync(streamAsync, typeof(T), JsonContext.Default) is T result
             ? result
             : throw new JsonException("The API returned success but the JSON response was empty");
     }

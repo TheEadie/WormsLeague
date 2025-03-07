@@ -27,8 +27,7 @@ internal sealed class DeviceCodeLoginService(
         BrowserLauncher.OpenBrowser(deviceCodeResponse.VerificationUriComplete.OriginalString);
 
         logger.LogDebug("Requesting tokens...");
-        var tokenResponse =
-            await RequestTokenAsync(deviceCodeResponse, logger, cancellationToken);
+        var tokenResponse = await RequestTokenAsync(deviceCodeResponse, logger, cancellationToken);
 
         if (tokenResponse != null)
         {
@@ -58,19 +57,18 @@ internal sealed class DeviceCodeLoginService(
             });
 
         var response = await httpClient.PostAsync(
-                new Uri("oauth/device/code", UriKind.Relative),
-                content,
-                cancellationToken)
-            ;
+            new Uri("oauth/device/code", UriKind.Relative),
+            content,
+            cancellationToken);
 
         if (response.IsSuccessStatusCode)
         {
             var streamAsync = await response.Content.ReadAsStreamAsync(cancellationToken);
             await using var stream = streamAsync;
             var jsonResponse = await JsonSerializer.DeserializeAsync(
-                    streamAsync,
-                    JsonContext.Default.DeviceAuthorizationResponse,
-                    cancellationToken);
+                streamAsync,
+                JsonContext.Default.DeviceAuthorizationResponse,
+                cancellationToken);
 
             if (jsonResponse is null)
             {
@@ -122,9 +120,9 @@ internal sealed class DeviceCodeLoginService(
                 var streamAsync = await response.Content.ReadAsStreamAsync(cancellationToken);
                 await using var stream = streamAsync;
                 return await JsonSerializer.DeserializeAsync(
-                        streamAsync,
-                        JsonContext.Default.TokenResponse,
-                        cancellationToken);
+                    streamAsync,
+                    JsonContext.Default.TokenResponse,
+                    cancellationToken);
             }
 
             var stringContent = await response.Content.ReadAsStringAsync(cancellationToken);

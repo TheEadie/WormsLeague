@@ -41,7 +41,6 @@ internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQ
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync();
-        _ = await queueClient.DeleteMessageAsync(messageDetails.MessageId, messageDetails.PopReceipt)
-            ;
+        _ = await queueClient.DeleteMessageAsync(messageDetails.MessageId, messageDetails.PopReceipt);
     }
 }

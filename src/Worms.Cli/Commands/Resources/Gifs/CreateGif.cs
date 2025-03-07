@@ -103,15 +103,14 @@ internal sealed class CreateGifHandler(
 
         logger.LogInformation("Creating gif for {ReplayName}, turn {Turn} ...", replayName, turn);
         var gif = await gifCreator.Create(
-                new LocalGifCreateParameters(
-                    replay.Value,
-                    turn,
-                    TimeSpan.FromSeconds(startOffset),
-                    TimeSpan.FromSeconds(endOffset),
-                    fps,
-                    speed),
-                cancellationToken)
-            ;
+            new LocalGifCreateParameters(
+                replay.Value,
+                turn,
+                TimeSpan.FromSeconds(startOffset),
+                TimeSpan.FromSeconds(endOffset),
+                fps,
+                speed),
+            cancellationToken);
         await Console.Out.WriteLineAsync(gif.Path);
         return 0;
     }
