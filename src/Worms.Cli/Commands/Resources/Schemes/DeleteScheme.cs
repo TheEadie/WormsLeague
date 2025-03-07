@@ -27,7 +27,7 @@ internal sealed class DeleteSchemeHandler(
     ILogger<DeleteSchemeHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -35,7 +35,7 @@ internal sealed class DeleteSchemeHandler(
         var name = context.ParseResult.GetValueForArgument(DeleteScheme.SchemeName);
         var cancellationToken = context.GetCancellationToken();
 
-        var scheme = await resourceDeleter.GetResource(name, cancellationToken).ConfigureAwait(false);
+        var scheme = await resourceDeleter.GetResource(name, cancellationToken);
 
         if (!scheme.IsValid)
         {

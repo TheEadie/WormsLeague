@@ -59,7 +59,7 @@ internal sealed class HostHandler(
     private const string Domain = "red-gate.com";
 
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -87,7 +87,7 @@ internal sealed class HostHandler(
             return 1;
         }
 
-        await HostGame(validatedConfig.Value, cancellationToken).ConfigureAwait(false);
+        await HostGame(validatedConfig.Value, cancellationToken);
         return 0;
     }
 
@@ -104,7 +104,7 @@ internal sealed class HostHandler(
 
     private async Task HostGame(Config config, CancellationToken cancellationToken)
     {
-        await DownloadLatestOptions(config.SkipSchemeDownload, config.DryRun).ConfigureAwait(false);
+        await DownloadLatestOptions(config.SkipSchemeDownload, config.DryRun);
         var runGame = StartWorms(config.DryRun, cancellationToken);
 
         var game = await AnnounceGameToWormsHub(
@@ -112,11 +112,11 @@ internal sealed class HostHandler(
                 config.SkipAnnouncement,
                 config.DryRun,
                 cancellationToken)
-            .ConfigureAwait(false);
-        await WaitForGameToClose(runGame).ConfigureAwait(false);
+            ;
+        await WaitForGameToClose(runGame);
         await MarkGameCompleteOnWormsHub(game, config.SkipAnnouncement, config.DryRun, cancellationToken)
-            .ConfigureAwait(false);
-        await UploadReplayToWormsHub(config.SkipUpload, config.DryRun, cancellationToken).ConfigureAwait(false);
+            ;
+        await UploadReplayToWormsHub(config.SkipUpload, config.DryRun, cancellationToken);
     }
 
     private sealed record Config(
@@ -142,7 +142,7 @@ internal sealed class HostHandler(
         RemoteGame? game = null;
         if (!dryRun)
         {
-            game = await remoteGameCreator.Create(hostIp, cancellationToken).ConfigureAwait(false);
+            game = await remoteGameCreator.Create(hostIp, cancellationToken);
         }
 
         return game;
@@ -162,7 +162,7 @@ internal sealed class HostHandler(
         logger.LogInformation("Marking game as complete in hub");
         if (!dryRun)
         {
-            await gameUpdater.SetGameComplete(game!, cancellationToken).ConfigureAwait(false);
+            await gameUpdater.SetGameComplete(game!, cancellationToken);
         }
     }
 
@@ -174,7 +174,7 @@ internal sealed class HostHandler(
         }
 
         logger.LogInformation("Uploading replay to hub");
-        var allReplays = await localReplayRetriever.Retrieve(cancellationToken).ConfigureAwait(false);
+        var allReplays = await localReplayRetriever.Retrieve(cancellationToken);
         var replay = allReplays.MaxBy(x => x.Details.Date);
 
         if (replay is null)
@@ -189,7 +189,7 @@ internal sealed class HostHandler(
             _ = await remoteReplayCreator.Create(
                     new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
                     cancellationToken)
-                .ConfigureAwait(false);
+                ;
         }
     }
 

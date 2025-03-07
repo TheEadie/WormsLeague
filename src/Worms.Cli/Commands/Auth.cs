@@ -15,12 +15,12 @@ internal sealed class Auth : Command
 internal sealed class AuthHandler(ILoginService loginService) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Auth.SpanName);
-        await loginService.RequestLogin(CancellationToken.None).ConfigureAwait(false);
+        await loginService.RequestLogin(CancellationToken.None);
         return 0;
     }
 }

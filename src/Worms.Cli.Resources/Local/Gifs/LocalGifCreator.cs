@@ -30,7 +30,7 @@ internal sealed class LocalGifCreator(
                 parameters.FramesPerSecond,
                 turn.Start + parameters.StartOffset,
                 turn.End - parameters.EndOffset)
-            .ConfigureAwait(false);
+            ;
         CreateGifFromFiles(framesFolder, outputFileName, animationDelay, 640, 480);
         DeleteFrames(framesFolder);
 

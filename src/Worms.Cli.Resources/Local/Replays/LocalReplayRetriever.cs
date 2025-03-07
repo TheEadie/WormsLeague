@@ -21,7 +21,7 @@ internal sealed class LocalReplayRetriever(
             if (fileSystem.File.Exists(paths.LogPath))
             {
                 var content = await fileSystem.File.ReadAllTextAsync(paths.LogPath, cancellationToken)
-                    .ConfigureAwait(false);
+                    ;
                 resources.Add(new LocalReplay(paths, replayTextReader.GetModel(content)));
             }
             else

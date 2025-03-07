@@ -22,7 +22,7 @@ internal sealed class Update : Command
 internal sealed class UpdateHandler(CliUpdater cliUpdater) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -31,7 +31,7 @@ internal sealed class UpdateHandler(CliUpdater cliUpdater) : ICommandHandler
         var force = context.ParseResult.GetValueForOption(Update.Force);
         _ = Activity.Current?.AddTag(Telemetry.Spans.Update.Force, force);
 
-        await cliUpdater.DownloadAndInstall(force).ConfigureAwait(false);
+        await cliUpdater.DownloadAndInstall(force);
 
         return 0;
     }

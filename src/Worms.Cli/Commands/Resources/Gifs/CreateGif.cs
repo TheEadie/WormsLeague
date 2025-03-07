@@ -75,7 +75,7 @@ internal sealed class CreateGifHandler(
     ILogger<CreateGifHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public async Task<int> InvokeAsync(InvocationContext context)
     {
@@ -94,7 +94,7 @@ internal sealed class CreateGifHandler(
             .Validate(Only1ReplayFound(replayName))
             .Map(x => x.Single())
             .Validate(ValidConfigForReplay(replayName))
-            .ConfigureAwait(false);
+            ;
 
         if (!replay.IsValid)
         {
@@ -112,8 +112,8 @@ internal sealed class CreateGifHandler(
                     fps,
                     speed),
                 cancellationToken)
-            .ConfigureAwait(false);
-        await Console.Out.WriteLineAsync(gif.Path).ConfigureAwait(false);
+            ;
+        await Console.Out.WriteLineAsync(gif.Path);
         return 0;
     }
 
@@ -135,7 +135,7 @@ internal sealed class CreateGifHandler(
 
     private async Task<List<LocalReplay>> FindReplays(string pattern, CancellationToken cancellationToken) =>
     [
-        .. await replayRetriever.Retrieve(pattern, cancellationToken).ConfigureAwait(false)
+        .. await replayRetriever.Retrieve(pattern, cancellationToken)
     ];
 
     private sealed record Config(

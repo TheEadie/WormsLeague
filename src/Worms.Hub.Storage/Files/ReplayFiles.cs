@@ -38,9 +38,9 @@ public class ReplayFiles(IConfiguration configuration)
         var saveFilePath = Path.Combine(tempReplayFolderPath, generatedFileName);
 
         var fileStream = File.Create(saveFilePath);
-        await using var stream = fileStream.ConfigureAwait(false);
-        await fileContentsStream.CopyToAsync(fileStream).ConfigureAwait(false);
-        await fileStream.DisposeAsync().ConfigureAwait(false);
+        await using var stream = fileStream;
+        await fileContentsStream.CopyToAsync(fileStream);
+        await fileStream.DisposeAsync();
         return generatedFileName;
     }
 

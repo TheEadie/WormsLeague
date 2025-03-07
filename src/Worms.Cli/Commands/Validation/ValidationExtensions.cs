@@ -26,7 +26,7 @@ internal static class ValidationExtensions
         this Task<Validated<T>> value,
         List<ValidationRule<T>> validations)
     {
-        var result = await value.ConfigureAwait(false);
+        var result = await value;
         return result.Validate(validations);
     }
 

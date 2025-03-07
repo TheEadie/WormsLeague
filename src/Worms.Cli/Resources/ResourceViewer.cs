@@ -11,7 +11,7 @@ internal sealed class ResourceViewer<T, TParams>(
             .Map(x => retriever.Retrieve(x, cancellationToken))
             .Validate(Only1ResourceFound(name))
             .Map(x => x.Single())
-            .ConfigureAwait(false);
+            ;
 
     public void View(T resource, TParams parameters) => resourceViewer.View(resource, parameters);
 

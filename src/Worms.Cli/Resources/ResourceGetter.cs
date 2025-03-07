@@ -9,8 +9,8 @@ internal sealed class ResourceGetter<T>(IResourceRetriever<T> retriever, IResour
         var requestForAll = string.IsNullOrWhiteSpace(name);
 
         var matches = requestForAll
-            ? await retriever.Retrieve(cancellationToken).ConfigureAwait(false)
-            : await retriever.Retrieve(name, cancellationToken).ConfigureAwait(false);
+            ? await retriever.Retrieve(cancellationToken)
+            : await retriever.Retrieve(name, cancellationToken);
 
         return matches.Validate(ContainsAtLeastOneResultIfSearchTerm(name));
     }

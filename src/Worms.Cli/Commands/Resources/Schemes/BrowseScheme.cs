@@ -24,7 +24,7 @@ internal sealed class BrowseSchemeHandler(
     ILogger<BrowseSchemeHandler> logger) : ICommandHandler
 {
     public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context).ConfigureAwait(false)).GetAwaiter().GetResult();
+        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
 
     public Task<int> InvokeAsync(InvocationContext context)
     {

@@ -42,8 +42,8 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
                         var output = Task.Run(() => PrintStdOut(process));
                         var errors = Task.Run(() => PrintStdErr(process));
 
-                        await Task.WhenAll(processTask, errors, output).ConfigureAwait(false);
-                        await Console.Error.WriteLineAsync("Exit code:" + process.ExitCode).ConfigureAwait(false);
+                        await Task.WhenAll(processTask, errors, output);
+                        await Console.Error.WriteLineAsync("Exit code:" + process.ExitCode);
                     }
 
                     return Task.CompletedTask;
@@ -54,7 +54,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
     {
         while (!process.StandardOutput.EndOfStream)
         {
-            var line = await process.StandardOutput.ReadLineAsync().ConfigureAwait(false);
+            var line = await process.StandardOutput.ReadLineAsync();
             logger.Log(LogLevel.Debug, "StdOut: {Message}", line);
         }
     }
@@ -63,7 +63,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
     {
         while (!process.StandardError.EndOfStream)
         {
-            var line = await process.StandardError.ReadLineAsync().ConfigureAwait(false);
+            var line = await process.StandardError.ReadLineAsync();
             logger.Log(LogLevel.Debug, "StdErr: {Message}", line);
         }
     }

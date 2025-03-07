@@ -13,12 +13,12 @@ internal sealed class CheckForMessagesService(IServiceProvider serviceProvider) 
         await Task.Yield();
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (await messageQueue.HasPendingMessage().ConfigureAwait(false))
+            if (await messageQueue.HasPendingMessage())
             {
-                await processor.ProcessReplay().ConfigureAwait(false);
+                await processor.ProcessReplay();
             }
 
-            await Task.Delay(1000, stoppingToken).ConfigureAwait(false);
+            await Task.Delay(1000, stoppingToken);
         }
     }
 }

@@ -47,7 +47,7 @@ internal static class Program
             .UseExceptionHandler(ExceptionHandler)
             .Build()
             .InvokeAsync(args)
-            .ConfigureAwait(false);
+            ;
 
         _ = span?.SetTag(Telemetry.Spans.Root.ProcessExitCode, result);
 

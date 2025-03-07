@@ -27,7 +27,7 @@ internal sealed class SlackAnnouncer(IConfiguration configuration, ILogger<Slack
         var body = JsonSerializer.Serialize(slackMessage);
         using var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync(slackUrl, content).ConfigureAwait(false);
-        await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await client.PostAsync(slackUrl, content);
+        await response.Content.ReadAsStringAsync();
     }
 }

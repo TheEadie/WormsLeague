@@ -10,7 +10,7 @@ internal sealed class RemoteGameCreator(IWormsServerApi api, ILogger<RemoteGameC
     {
         try
         {
-            var apiGame = await api.CreateGame(new CreateGameDtoV1(parameters)).ConfigureAwait(false);
+            var apiGame = await api.CreateGame(new CreateGameDtoV1(parameters));
             return new RemoteGame(apiGame.Id, apiGame.Status, apiGame.HostMachine);
         }
         catch (HttpRequestException e)

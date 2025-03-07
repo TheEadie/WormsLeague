@@ -9,7 +9,7 @@ internal sealed class LeaguesController(SchemeFiles schemeFiles) : V1ApiControll
     [HttpGet("{id}")]
     public async Task<ActionResult<LeagueDto>> Get(string id)
     {
-        var latestDetails = await schemeFiles.GetLatestDetails(id).ConfigureAwait(false);
+        var latestDetails = await schemeFiles.GetLatestDetails(id);
         return LeagueDto.FromDomain(
             latestDetails,
             new Uri(Url.Action(action: "Get", controller: "SchemeFiles", values: new { id })!, UriKind.Relative));

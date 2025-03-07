@@ -16,7 +16,7 @@ internal sealed class LoggingMiddleware(RequestDelegate next, ILogger<LoggingMid
             username);
         _ = Activity.Current?.SetTag("user.id", username);
 
-        await next(context).ConfigureAwait(false);
+        await next(context);
 
         var response = context.Response;
         logger.Log(

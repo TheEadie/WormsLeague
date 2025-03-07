@@ -28,7 +28,7 @@ internal sealed class SchemeFilesController(SchemeFiles schemeFiles, ILogger<Sch
             return NotFound("Unknown scheme file");
         }
 
-        var latestDetails = await schemeFiles.GetLatestDetails(id).ConfigureAwait(false);
+        var latestDetails = await schemeFiles.GetLatestDetails(id);
         if (!System.IO.File.Exists(latestDetails.SchemePath))
         {
             logger.Log(LogLevel.Information, "Scheme file {Name} not found", id);

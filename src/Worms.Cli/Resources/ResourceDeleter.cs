@@ -9,7 +9,7 @@ internal sealed class ResourceDeleter<T>(IResourceRetriever<T> retriever, IResou
             .Map(x => retriever.Retrieve(x, cancellationToken))
             .Validate(Only1ResourceFound(name))
             .Map(x => x.Single())
-            .ConfigureAwait(false);
+            ;
 
     public void Delete(T resource) => deleter.Delete(resource);
 
