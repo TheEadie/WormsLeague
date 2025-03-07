@@ -12,15 +12,14 @@ internal sealed class HostShould(ApiType apiType)
     public async Task LaunchWormsArmageddon()
     {
         var wormsArmageddon = Api.GetWormsArmageddon(apiType, InstallationType.Installed);
-        await wormsArmageddon.Host().ConfigureAwait(false);
+        await wormsArmageddon.Host();
     }
 
     [Test]
     public async Task ErrorWhenNotInstalled()
     {
         var wormsArmageddon = Api.GetWormsArmageddon(apiType, InstallationType.NotInstalled);
-        var exception = await Should.ThrowAsync<InvalidOperationException>(wormsArmageddon.Host())
-            .ConfigureAwait(false);
+        var exception = await Should.ThrowAsync<InvalidOperationException>(wormsArmageddon.Host());
         exception.Message.ShouldBe("Worms Armageddon is not installed");
     }
 }
