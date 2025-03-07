@@ -2,6 +2,7 @@ using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Worms.Armageddon.Game.Fake;
 using Worms.Armageddon.Game.System;
 using Worms.Armageddon.Game.Win;
 
@@ -9,15 +10,12 @@ namespace Worms.Armageddon.Game.Tests.Framework;
 
 internal static class FakeDependencies
 {
-    public static IWormsArmageddon GetWormsArmageddonApi(InstallationType installationType)
+    public static IWormsArmageddon GetWormsArmageddonApi(FakeConfiguration configuration)
     {
         var services = new ServiceCollection().AddWormsArmageddonGameServices();
-        services = installationType switch
-        {
-            InstallationType.NotInstalled => services.AddNotInstalledWormsArmageddon(),
-            InstallationType.Installed => services.AddInstalledWormsArmageddon(),
-            _ => throw new ArgumentOutOfRangeException(nameof(installationType), installationType, null)
-        };
+        services = configuration.IsInstalled
+            ? services.AddInstalledWormsArmageddon()
+            : services.AddNotInstalledWormsArmageddon();
         var serviceProvider = services.BuildServiceProvider();
         return serviceProvider.GetRequiredService<IWormsArmageddon>();
     }

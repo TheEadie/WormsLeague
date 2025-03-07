@@ -4,6 +4,8 @@ namespace Worms.Armageddon.Game.Tests.Framework;
 
 internal sealed class FakeDependenciesAttribute() : TestFixtureAttribute(ApiType.FakeDependencies);
 
+internal sealed class FakeComponentAttribute() : TestFixtureAttribute(ApiType.FakeComponent);
+
 internal sealed class RealDependenciesAttribute : TestFixtureAttribute
 {
     public RealDependenciesAttribute()

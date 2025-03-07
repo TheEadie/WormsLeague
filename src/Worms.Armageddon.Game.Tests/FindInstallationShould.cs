@@ -1,18 +1,20 @@
 using System.Runtime.Versioning;
 using NUnit.Framework;
 using Shouldly;
+using Worms.Armageddon.Game.Fake;
 using Worms.Armageddon.Game.Tests.Framework;
 
 namespace Worms.Armageddon.Game.Tests;
 
 [FakeDependencies]
 [RealDependencies]
+[FakeComponent]
 internal sealed class FindInstallationShould(ApiType apiType)
 {
     [Test]
     public void NotFindAnInstallationWhenNotInstalled()
     {
-        var wormsArmageddon = Api.GetWormsArmageddon(apiType, InstallationType.NotInstalled);
+        var wormsArmageddon = Api.GetWormsArmageddon(apiType, new FakeConfiguration(false));
 
         var info = wormsArmageddon.FindInstallation();
         info.ShouldBe(GameInfo.NotInstalled);
@@ -22,7 +24,7 @@ internal sealed class FindInstallationShould(ApiType apiType)
     [SupportedOSPlatform("windows")]
     public void FindInstallationFromRegistry()
     {
-        var wormsArmageddon = Api.GetWormsArmageddon(apiType, InstallationType.Installed);
+        var wormsArmageddon = Api.GetWormsArmageddon(apiType, new FakeConfiguration(true));
 
         var info = wormsArmageddon.FindInstallation();
         info.IsInstalled.ShouldBe(true);
@@ -39,7 +41,7 @@ internal sealed class FindInstallationShould(ApiType apiType)
     public void FindInstallationFromUserHome()
     {
         var linuxUserHome = Environment.GetEnvironmentVariable("HOME");
-        var wormsArmageddon = Api.GetWormsArmageddon(apiType, InstallationType.Installed);
+        var wormsArmageddon = Api.GetWormsArmageddon(apiType, new FakeConfiguration(true));
 
         var info = wormsArmageddon.FindInstallation();
         info.IsInstalled.ShouldBe(true);
