@@ -25,12 +25,7 @@ cli.build.exe: cli.version
 	@echo ""
 
 cli.build.docker: cli.version
-	@docker build . \
-		-f "build/cli/Dockerfile" \
-		-t $(cli_IMAGE_NAME):latest \
-		-t $(cli_IMAGE_NAME):$(cli_VERSION) \
-		-t $(cli_IMAGE_NAME):$(cli_VERSION_MAJOR) \
-		-t $(cli_IMAGE_NAME):$(cli_VERSION_MAJOR).$(cli_VERSION_MINOR)
+	@VERSION=$(cli_VERSION) docker buildx bake -f docker-bake.hcl -f build/cli/docker-bake.hcl package
 	@echo ""
 
 ## Test
@@ -102,7 +97,7 @@ cli.release.github: cli.version
 	@echo ""
 
 cli.release.dockerhub: cli.build.docker cli.version
-	@docker push $(cli_IMAGE_NAME) --all-tags
+	@VERSION=$(cli_VERSION) docker buildx bake -f docker-bake.hcl -f build/cli/docker-bake.hcl package --push
 	@echo ""
 
 cli.release.wormshub: cli.version
