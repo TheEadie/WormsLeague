@@ -279,6 +279,7 @@ resharper_unnecessary_whitespace_highlighting = warning
 # Default severity for analyzer diagnostics with category 'Style' (IDExxxx) (escalated to build warnings)
 dotnet_analyzer_diagnostic.category-Style.severity = warning
 
+
 # CA1812 is flagged for all internal classes used in DI or Serialization
 dotnet_diagnostic.CA1812.severity = none
 # CA1848 requires a lot of code to specify Log Messages. Should only be needed in high perf
@@ -287,6 +288,8 @@ dotnet_diagnostic.CA1848.severity = none
 dotnet_diagnostic.CA1308.severity = none
 # CA1303 wants localization of text - I'm unlikely to do this
 dotnet_diagnostic.CA1303.severity = none
+# CA2007 only applies to libraries that may be consumed by UI frameworks
+dotnet_diagnostic.CA2007.severity = none
 # Workaround for https://github.com/dotnet/roslyn/issues/41640
 dotnet_diagnostic.IDE0005.severity = suggestion
 
