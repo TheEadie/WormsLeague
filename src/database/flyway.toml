@@ -9,6 +9,32 @@ password = "worms"
 provisioner = "clean"
 cleanDisabled = "false"
 
+[environments.development]
+url = "jdbc:postgresql://localhost:5432/worms"
+user = "worms"
+password = "worms"
+schemas = [ "public" ]
+displayName = "Development database"
+provisioner = "docker"
+
+[environments.development.resolvers.docker]
+waitTimeout = "1h"
+composeFile = "C:\\code\\WormsLeague\\docker-compose.yaml"
+services = [ "flyway-init" ]
+
+[environments.shadow]
+url = "jdbc:postgresql://localhost:5432/worms-shadow"
+user = "worms"
+password = "worms"
+schemas = [ "public" ]
+displayName = "Shadow database"
+provisioner = "docker"
+
+[environments.shadow.resolvers.docker]
+waitTimeout = "1h"
+composeFile = "C:\\code\\WormsLeague\\docker-compose.yaml"
+services = [ "flyway-init" ]
+
 [flyway]
 locations = [ "filesystem:migrations" ]
 mixed = true
