@@ -10,6 +10,8 @@ internal interface IWormsArmageddonBuilder
 
     IWormsArmageddonBuilder NotInstalled();
 
+    IWormsArmageddonBuilder WithReplayFilePath(string replayFilePath);
+
     IFileSystem GetFileSystem();
 
     IWormsArmageddon Build();

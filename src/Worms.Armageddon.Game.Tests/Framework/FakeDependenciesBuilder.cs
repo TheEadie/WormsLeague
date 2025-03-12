@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -18,7 +19,11 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
 
     private bool _hostCreatesReplay = true;
     private bool _isInstalled = true;
-    private string _path = @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\";
+
+    private string _path = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+        ? @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\"
+        : Environment.GetEnvironmentVariable("HOME") + "/.wine/drive_c/WA/";
+
     private Version _version = new(1, 0, 0, 0);
 
     public IWormsArmageddonBuilder WhereHostCmdDoesNotCreateReplayFile()
@@ -38,6 +43,12 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
     public IWormsArmageddonBuilder NotInstalled()
     {
         _isInstalled = false;
+        return this;
+    }
+
+    public IWormsArmageddonBuilder WithReplayFilePath(string replayFilePath)
+    {
+        _fileSystem.AddEmptyFile(replayFilePath);
         return this;
     }
 
@@ -87,6 +98,10 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         _ = _fileVersionInfo.GetVersionInfo(Path.Combine(path, "WA.exe")).Returns(version);
 
         _ = _wormsRunner.RunWorms("wa://").Returns(Task.CompletedTask).AndDoes(_ => MockHost(path));
+
+        _ = _wormsRunner.RunWorms("/getlog", Arg.Any<string>(), "/quiet")
+            .Returns(Task.CompletedTask)
+            .AndDoes(x => MockGenerateLogFile(x.ArgAt<string[]>(0)));
     }
 
     private void MockHost(string path)
@@ -98,5 +113,20 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
 
         var dateTime = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture);
         _fileSystem.AddEmptyFile(Path.Combine(path, "User", "Games", $"{dateTime} [Offline] 1-UP, 2-UP.WAGame"));
+    }
+
+    private void MockGenerateLogFile(string[] replayFilePath)
+    {
+        var replayFilePathCleaned = replayFilePath[1].Replace("\"", string.Empty, StringComparison.InvariantCulture);
+
+        if (!_fileSystem.File.Exists(replayFilePathCleaned))
+        {
+            return;
+        }
+
+        var fileName = _fileSystem.Path.GetFileNameWithoutExtension(replayFilePathCleaned);
+        var folder = _fileSystem.Path.GetDirectoryName(replayFilePathCleaned);
+        var logFilePath = Path.Combine(folder!, $"{fileName}.log");
+        _fileSystem.AddEmptyFile(logFilePath);
     }
 }

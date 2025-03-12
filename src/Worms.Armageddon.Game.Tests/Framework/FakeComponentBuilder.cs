@@ -34,6 +34,12 @@ internal sealed class FakeComponentBuilder : IWormsArmageddonBuilder
         return this;
     }
 
+    public IWormsArmageddonBuilder WithReplayFilePath(string replayFilePath)
+    {
+        _fileSystem.AddEmptyFile(replayFilePath);
+        return this;
+    }
+
     public IFileSystem GetFileSystem() => _fileSystem;
 
     public IWormsArmageddon Build()

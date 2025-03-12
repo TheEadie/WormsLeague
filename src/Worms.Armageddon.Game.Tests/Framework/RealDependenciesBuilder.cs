@@ -26,6 +26,13 @@ internal sealed class RealDependenciesBuilder : IWormsArmageddonBuilder
         return this;
     }
 
+    public IWormsArmageddonBuilder WithReplayFilePath(string replayFilePath)
+    {
+        Console.Error.WriteLine(
+            "Warning: Running unit test with real dependencies. Ensure your test environment is set up correctly.");
+        return this;
+    }
+
     public IFileSystem GetFileSystem() => new FileSystem();
 
     public IWormsArmageddon Build()

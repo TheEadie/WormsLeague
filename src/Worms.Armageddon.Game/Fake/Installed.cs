@@ -52,7 +52,15 @@ internal sealed class Installed : IWormsArmageddon
         return Task.CompletedTask;
     }
 
-    public Task GenerateReplayLog(string replayPath) => throw new NotImplementedException();
+    public Task GenerateReplayLog(string replayPath)
+    {
+        if (_fileSystem.File.Exists(replayPath))
+        {
+            _fileSystem.AddEmptyFile(replayPath.Replace(".WAGame", ".log", StringComparison.InvariantCulture));
+        }
+
+        return Task.CompletedTask;
+    }
 
     public Task PlayReplay(string replayPath) => throw new NotImplementedException();
 
