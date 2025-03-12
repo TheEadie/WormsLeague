@@ -1,4 +1,5 @@
 ﻿using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -10,6 +11,7 @@ namespace Worms.Armageddon.Game.Tests.Framework;
 internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
 {
     private readonly IServiceCollection _services = new ServiceCollection();
+    private readonly MockFileSystem _fileSystem = new();
 
     public FakeDependenciesBuilder()
     {
@@ -27,19 +29,19 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         _ = registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Team17SoftwareLTD\WormsArmageddon", "Path", null)
             .Returns(path);
 
-        var fileSystem = Substitute.For<IFileSystem>();
-        _ = fileSystem.File.Exists(exePath).Returns(true);
+        _fileSystem.AddEmptyFile(exePath);
 
         var fileVersionInfo = Substitute.For<IFileVersionInfo>();
         _ = fileVersionInfo.GetVersionInfo(exePath).Returns(version);
 
         var wormsRunner = Substitute.For<IWormsRunner>();
-        _ = wormsRunner.RunWorms("wa://").Returns(Task.CompletedTask);
+        _ = wormsRunner.RunWorms("wa://")
+            .Returns(Task.CompletedTask)
+            .AndDoes(_ => _fileSystem.AddEmptyFile(Path.Combine(path, "User", "Games", "replay.WAGame")));
 
         _ = _services.AddScoped<IRegistry>(_ => registry)
             .AddScoped<IFileVersionInfo>(_ => fileVersionInfo)
-            .AddScoped<IWormsRunner>(_ => wormsRunner)
-            .AddScoped<IFileSystem>(_ => fileSystem);
+            .AddScoped<IWormsRunner>(_ => wormsRunner);
         return this;
     }
 
@@ -62,8 +64,11 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         return this;
     }
 
+    public IFileSystem GetFileSystem() => _fileSystem;
+
     public IWormsArmageddon Build()
     {
+        _ = _services.AddScoped<IFileSystem>(_ => _fileSystem);
         var serviceProvider = _services.BuildServiceProvider();
         return serviceProvider.GetRequiredService<IWormsArmageddon>();
     }

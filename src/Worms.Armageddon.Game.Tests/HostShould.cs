@@ -23,4 +23,19 @@ internal sealed class HostShould(ApiType apiType)
         var exception = await Should.ThrowAsync<InvalidOperationException>(wormsArmageddon.Host());
         exception.Message.ShouldBe("Worms Armageddon is not installed");
     }
+
+    [Test]
+    public async Task SaveReplayFileWhenGameIsFinished()
+    {
+        var builder = A.WormsArmageddon(apiType);
+        var fileSystem = builder.GetFileSystem();
+        var wormsArmageddon = builder.Build();
+
+        await wormsArmageddon.Host();
+
+        var replayFolder = wormsArmageddon.FindInstallation().ReplayFolder;
+        var replayFile = Path.Combine(replayFolder, "replay.WAGame");
+
+        fileSystem.File.Exists(replayFile).ShouldBe(true);
+    }
 }

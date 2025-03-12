@@ -1,6 +1,9 @@
-﻿namespace Worms.Armageddon.Game.Fake;
+﻿using System.IO.Abstractions.TestingHelpers;
 
-internal sealed class Installed(string? path = null, Version? version = null) : IWormsArmageddon
+namespace Worms.Armageddon.Game.Fake;
+
+internal sealed class Installed(MockFileSystem fileSystem, string? path = null, Version? version = null)
+    : IWormsArmageddon
 {
     private readonly string _path = path ?? @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon";
     private readonly Version _version = version ?? new Version(1, 0, 0, 0);
@@ -8,16 +11,20 @@ internal sealed class Installed(string? path = null, Version? version = null) : 
     public GameInfo FindInstallation()
     {
         return new GameInfo(
-                true,
-                Path.Combine(_path, "WA.exe"),
-                "WA",
-                _version,
-                Path.Combine(_path, "User", "Schemes"),
-                Path.Combine(_path, "User", "Games"),
-                Path.Combine(_path, "User", "Capture"));
+            true,
+            Path.Combine(_path, "WA.exe"),
+            "WA",
+            _version,
+            Path.Combine(_path, "User", "Schemes"),
+            Path.Combine(_path, "User", "Games"),
+            Path.Combine(_path, "User", "Capture"));
     }
 
-    public Task Host() => Task.CompletedTask;
+    public Task Host()
+    {
+        fileSystem.AddEmptyFile(Path.Combine(_path, "User", "Games", "replay.WAGame"));
+        return Task.CompletedTask;
+    }
 
     public Task GenerateReplayLog(string replayPath) => throw new NotImplementedException();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.IO.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Worms.Armageddon.Game.Tests.Framework;
 
@@ -6,15 +7,19 @@ internal sealed class RealDependenciesBuilder : IWormsArmageddonBuilder
 {
     public IWormsArmageddonBuilder Installed(string? path = null, Version? version = null)
     {
-        Console.Error.WriteLine("Warning: Running unit test with real dependencies. Ensure your test environment is set up correctly.");
+        Console.Error.WriteLine(
+            "Warning: Running unit test with real dependencies. Ensure your test environment is set up correctly.");
         return this;
     }
 
     public IWormsArmageddonBuilder NotInstalled()
     {
-        Console.Error.WriteLine("Warning: Running unit test with real dependencies. Ensure your test environment is set up correctly.");
+        Console.Error.WriteLine(
+            "Warning: Running unit test with real dependencies. Ensure your test environment is set up correctly.");
         return this;
     }
+
+    public IFileSystem GetFileSystem() => new FileSystem();
 
     public IWormsArmageddon Build()
     {
