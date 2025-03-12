@@ -1,4 +1,5 @@
-﻿using System.IO.Abstractions;
+﻿using System.Globalization;
+using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -37,7 +38,13 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         var wormsRunner = Substitute.For<IWormsRunner>();
         _ = wormsRunner.RunWorms("wa://")
             .Returns(Task.CompletedTask)
-            .AndDoes(_ => _fileSystem.AddEmptyFile(Path.Combine(path, "User", "Games", "replay.WAGame")));
+            .AndDoes(
+                _ =>
+                    {
+                        var dateTime = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture);
+                        _fileSystem.AddEmptyFile(
+                            Path.Combine(path, "User", "Games", $"{dateTime} [Offline] 1-UP, 2-UP.WAGame"));
+                    });
 
         _ = _services.AddScoped<IRegistry>(_ => registry)
             .AddScoped<IFileVersionInfo>(_ => fileVersionInfo)

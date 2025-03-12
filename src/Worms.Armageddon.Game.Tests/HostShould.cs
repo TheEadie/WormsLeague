@@ -1,3 +1,4 @@
+using System.Globalization;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Armageddon.Game.Tests.Framework;
@@ -34,8 +35,8 @@ internal sealed class HostShould(ApiType apiType)
         await wormsArmageddon.Host();
 
         var replayFolder = wormsArmageddon.FindInstallation().ReplayFolder;
-        var replayFile = Path.Combine(replayFolder, "replay.WAGame");
-
-        fileSystem.File.Exists(replayFile).ShouldBe(true);
+        var replayFiles = fileSystem.Directory.GetFiles(replayFolder, "*.WAGame");
+        var dateAsString = DateTime.Now.ToString("yyyy-MM-dd ", CultureInfo.InvariantCulture);
+        replayFiles.ShouldContain(x => x.Contains(dateAsString) && x.EndsWith("1-UP, 2-UP.WAGame"));
     }
 }

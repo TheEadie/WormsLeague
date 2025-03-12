@@ -1,4 +1,5 @@
-﻿using System.IO.Abstractions.TestingHelpers;
+﻿using System.Globalization;
+using System.IO.Abstractions.TestingHelpers;
 
 namespace Worms.Armageddon.Game.Fake;
 
@@ -22,7 +23,8 @@ internal sealed class Installed(MockFileSystem fileSystem, string? path = null, 
 
     public Task Host()
     {
-        fileSystem.AddEmptyFile(Path.Combine(_path, "User", "Games", "replay.WAGame"));
+        var dateTime = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture);
+        fileSystem.AddEmptyFile(Path.Combine(_path, "User", "Games", $"{dateTime} [Offline] 1-UP, 2-UP.WAGame"));
         return Task.CompletedTask;
     }
 
