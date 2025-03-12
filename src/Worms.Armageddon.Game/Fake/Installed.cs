@@ -1,37 +1,20 @@
-﻿using System.Runtime.InteropServices;
+﻿namespace Worms.Armageddon.Game.Fake;
 
-namespace Worms.Armageddon.Game.Fake;
-
-internal sealed class Installed : IWormsArmageddon
+internal sealed class Installed(string? path = null, Version? version = null) : IWormsArmageddon
 {
+    private readonly string _path = path ?? @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon";
+    private readonly Version _version = version ?? new Version(1, 0, 0, 0);
+
     public GameInfo FindInstallation()
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            return new GameInfo(
+        return new GameInfo(
                 true,
-                @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\WA.exe",
+                Path.Combine(_path, "WA.exe"),
                 "WA",
-                new Version(3, 8, 1, 0),
-                @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Schemes",
-                @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Games",
-                @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon\User\Capture");
-        }
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            var linuxUserHome = Environment.GetEnvironmentVariable("HOME");
-            return new GameInfo(
-                true,
-                $"{linuxUserHome}/.wine/drive_c/WA/WA.exe",
-                "WA",
-                new Version(3, 8, 1, 0),
-                $"{linuxUserHome}/.wine/drive_c/WA/User/Schemes",
-                $"{linuxUserHome}/.wine/drive_c/WA/User/Games",
-                $"{linuxUserHome}/.wine/drive_c/WA/User/Capture");
-        }
-
-        throw new PlatformNotSupportedException($"Platform {RuntimeInformation.OSDescription} is not supported");
+                _version,
+                Path.Combine(_path, "User", "Schemes"),
+                Path.Combine(_path, "User", "Games"),
+                Path.Combine(_path, "User", "Capture"));
     }
 
     public Task Host() => Task.CompletedTask;

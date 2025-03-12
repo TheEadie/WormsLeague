@@ -4,13 +4,15 @@ namespace Worms.Armageddon.Game.Fake;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddFakeWormsArmageddonServices(
+    public static IServiceCollection AddFakeInstalledWormsArmageddonServices(
         this IServiceCollection builder,
-        FakeConfiguration fakeConfiguration)
+        string? gamePath = null,
+        Version? version = null)
     {
-        ArgumentNullException.ThrowIfNull(fakeConfiguration);
-        return fakeConfiguration.IsInstalled
-            ? builder.AddScoped<IWormsArmageddon, Installed>()
-            : builder.AddScoped<IWormsArmageddon, NotInstalled>();
+        var installed = new Installed(gamePath, version);
+        return builder.AddScoped<IWormsArmageddon>(_ => installed);
     }
+
+    public static IServiceCollection AddFakeNotInstalledWormsArmageddonServices(
+        this IServiceCollection builder) => builder.AddScoped<IWormsArmageddon, NotInstalled>();
 }
