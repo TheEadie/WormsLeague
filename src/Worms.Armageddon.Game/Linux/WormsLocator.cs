@@ -1,5 +1,5 @@
 using System.IO.Abstractions;
-using Worms.Armageddon.Game.System;
+using IFileVersionInfo = Worms.Armageddon.Game.System.IFileVersionInfo;
 
 namespace Worms.Armageddon.Game.Linux;
 

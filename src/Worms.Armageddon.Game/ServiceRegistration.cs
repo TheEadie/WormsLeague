@@ -5,6 +5,7 @@ using System.Runtime.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using Worms.Armageddon.Game.System;
 using Worms.Armageddon.Game.Win;
+using IFileVersionInfo = Worms.Armageddon.Game.System.IFileVersionInfo;
 
 namespace Worms.Armageddon.Game;
 

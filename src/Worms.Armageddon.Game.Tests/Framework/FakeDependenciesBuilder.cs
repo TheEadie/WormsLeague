@@ -2,8 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Worms.Armageddon.Game.System;
 using Worms.Armageddon.Game.Win;
+using IFileVersionInfo = Worms.Armageddon.Game.System.IFileVersionInfo;
 
 namespace Worms.Armageddon.Game.Tests.Framework;
 
