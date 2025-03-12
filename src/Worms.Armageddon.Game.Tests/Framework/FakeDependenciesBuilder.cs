@@ -4,6 +4,7 @@ using System.IO.Abstractions.TestingHelpers;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Shouldly;
 using Worms.Armageddon.Game.Win;
 using IFileVersionInfo = Worms.Armageddon.Game.System.IFileVersionInfo;
 
@@ -87,6 +88,10 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         _ = _fileVersionInfo.GetVersionInfo(Path.Combine(path, "WA.exe")).Returns(version);
 
         _ = _wormsRunner.RunWorms("wa://").Returns(Task.CompletedTask).AndDoes(_ => MockHost(path));
+
+        _ = _wormsRunner.RunWorms("/getlog", Arg.Any<string>(), "/quiet")
+            .Returns(Task.CompletedTask)
+            .AndDoes(x => MockGenerateLogFile(x.ArgAt<string[]>(0)));
     }
 
     private void MockHost(string path)
@@ -98,5 +103,12 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
 
         var dateTime = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture);
         _fileSystem.AddEmptyFile(Path.Combine(path, "User", "Games", $"{dateTime} [Offline] 1-UP, 2-UP.WAGame"));
+    }
+
+    private void MockGenerateLogFile(string[] replayFilePath)
+    {
+        var fileName = _fileSystem.Path.GetFileNameWithoutExtension(replayFilePath[1]);
+        var folder = _fileSystem.Path.GetDirectoryName(replayFilePath[1]);
+        _fileSystem.AddEmptyFile(Path.Combine(folder!, $"{fileName}.log"));
     }
 }
