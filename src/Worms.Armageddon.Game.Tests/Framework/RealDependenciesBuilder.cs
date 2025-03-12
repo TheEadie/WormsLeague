@@ -5,6 +5,13 @@ namespace Worms.Armageddon.Game.Tests.Framework;
 
 internal sealed class RealDependenciesBuilder : IWormsArmageddonBuilder
 {
+    public IWormsArmageddonBuilder WhereHostCmdDoesNotCreateReplayFile()
+    {
+        Console.Error.WriteLine(
+            "Warning: Running unit test with real dependencies. Ensure your test environment is set up correctly.");
+        return this;
+    }
+
     public IWormsArmageddonBuilder Installed(string? path = null, Version? version = null)
     {
         Console.Error.WriteLine(

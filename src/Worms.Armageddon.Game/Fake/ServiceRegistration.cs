@@ -10,9 +10,10 @@ public static class ServiceRegistration
         this IServiceCollection builder,
         MockFileSystem mockFileSystem,
         string? gamePath = null,
-        Version? version = null)
+        Version? version = null,
+        bool hostCreatesReplay = true)
     {
-        var installed = new Installed(mockFileSystem, gamePath, version);
+        var installed = new Installed(mockFileSystem, gamePath, version, hostCreatesReplay);
         return builder.AddScoped<IFileSystem>(_ => mockFileSystem).AddScoped<IWormsArmageddon>(_ => installed);
     }
 

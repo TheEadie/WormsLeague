@@ -7,20 +7,30 @@ namespace Worms.Armageddon.Game.Tests.Framework;
 
 internal sealed class FakeComponentBuilder : IWormsArmageddonBuilder
 {
-    private readonly IServiceCollection _services = new ServiceCollection();
     private readonly MockFileSystem _fileSystem = new();
 
-    public FakeComponentBuilder() => _ = Installed(); // Default to installed
+    private bool _hostCreatesReplay = true;
+    private bool _isInstalled = true;
+    private string? _path;
+    private Version? _version;
+
+    public IWormsArmageddonBuilder WhereHostCmdDoesNotCreateReplayFile()
+    {
+        _hostCreatesReplay = false;
+        return this;
+    }
 
     public IWormsArmageddonBuilder Installed(string? path = null, Version? version = null)
     {
-        _ = _services.AddFakeInstalledWormsArmageddonServices(_fileSystem, path, version);
+        _isInstalled = true;
+        _path = path;
+        _version = version;
         return this;
     }
 
     public IWormsArmageddonBuilder NotInstalled()
     {
-        _ = _services.AddFakeNotInstalledWormsArmageddonServices();
+        _isInstalled = false;
         return this;
     }
 
@@ -28,7 +38,11 @@ internal sealed class FakeComponentBuilder : IWormsArmageddonBuilder
 
     public IWormsArmageddon Build()
     {
-        var serviceProvider = _services.BuildServiceProvider();
-        return serviceProvider.GetRequiredService<IWormsArmageddon>();
+        var services = new ServiceCollection();
+        _ = _isInstalled
+            ? services.AddFakeInstalledWormsArmageddonServices(_fileSystem, _path, _version, _hostCreatesReplay)
+            : services.AddFakeNotInstalledWormsArmageddonServices();
+
+        return services.BuildServiceProvider().GetRequiredService<IWormsArmageddon>();
     }
 }

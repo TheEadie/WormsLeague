@@ -3,11 +3,31 @@ using System.IO.Abstractions.TestingHelpers;
 
 namespace Worms.Armageddon.Game.Fake;
 
-internal sealed class Installed(MockFileSystem fileSystem, string? path = null, Version? version = null)
-    : IWormsArmageddon
+internal sealed class Installed : IWormsArmageddon
 {
-    private readonly string _path = path ?? @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon";
-    private readonly Version _version = version ?? new Version(1, 0, 0, 0);
+    private readonly string _path;
+    private readonly Version _version;
+    private readonly MockFileSystem _fileSystem;
+    private readonly bool _hostCreatesReplay;
+
+    public Installed(
+        MockFileSystem fileSystem,
+        string? path = null,
+        Version? version = null,
+        bool hostCreatesReplay = true)
+    {
+        _fileSystem = fileSystem;
+        _hostCreatesReplay = hostCreatesReplay;
+        _path = path ?? @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon";
+        _version = version ?? new Version(1, 0, 0, 0);
+
+        _fileSystem.AddDirectory(_path);
+        _fileSystem.AddDirectory(Path.Combine(_path, "User"));
+        _fileSystem.AddDirectory(Path.Combine(_path, "User", "Schemes"));
+        _fileSystem.AddDirectory(Path.Combine(_path, "User", "Games"));
+        _fileSystem.AddDirectory(Path.Combine(_path, "User", "Capture"));
+        _fileSystem.AddFile(Path.Combine(_path, "WA.exe"), new MockFileData([]));
+    }
 
     public GameInfo FindInstallation()
     {
@@ -23,8 +43,12 @@ internal sealed class Installed(MockFileSystem fileSystem, string? path = null, 
 
     public Task Host()
     {
-        var dateTime = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture);
-        fileSystem.AddEmptyFile(Path.Combine(_path, "User", "Games", $"{dateTime} [Offline] 1-UP, 2-UP.WAGame"));
+        if (_hostCreatesReplay)
+        {
+            var dateTime = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture);
+            _fileSystem.AddEmptyFile(Path.Combine(_path, "User", "Games", $"{dateTime} [Offline] 1-UP, 2-UP.WAGame"));
+        }
+
         return Task.CompletedTask;
     }
 

@@ -39,4 +39,19 @@ internal sealed class HostShould(ApiType apiType)
         var dateAsString = DateTime.Now.ToString("yyyy-MM-dd ", CultureInfo.InvariantCulture);
         replayFiles.ShouldContain(x => x.Contains(dateAsString) && x.EndsWith("1-UP, 2-UP.WAGame"));
     }
+
+    [Test]
+    public async Task NotSaveReplayFileWhenGameIsNotCompleted()
+    {
+        var builder = A.WormsArmageddon(apiType).WhereHostCmdDoesNotCreateReplayFile();
+        var fileSystem = builder.GetFileSystem();
+        var wormsArmageddon = builder.Build();
+
+        await wormsArmageddon.Host();
+
+        var replayFolder = wormsArmageddon.FindInstallation().ReplayFolder;
+        var replayFiles = fileSystem.Directory.GetFiles(replayFolder, "*.WAGame");
+        var dateAsString = DateTime.Now.ToString("yyyy-MM-dd ", CultureInfo.InvariantCulture);
+        replayFiles.ShouldNotContain(x => x.Contains(dateAsString) && x.EndsWith("1-UP, 2-UP.WAGame"));
+    }
 }
