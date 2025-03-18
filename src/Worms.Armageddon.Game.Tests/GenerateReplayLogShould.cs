@@ -11,6 +11,15 @@ namespace Worms.Armageddon.Game.Tests;
 internal sealed class GenerateReplayLogShould(ApiType apiType)
 {
     [Test]
+    public async Task ErrorWhenNotInstalled()
+    {
+        var wormsArmageddon = A.WormsArmageddon(apiType).NotInstalled().Build();
+        var exception =
+            await Should.ThrowAsync<InvalidOperationException>(wormsArmageddon.GenerateReplayLog("replay.WAGame"));
+        exception.Message.ShouldBe("Worms Armageddon is not installed");
+    }
+
+    [Test]
     public async Task CreateALogFile()
     {
         var replayFolder = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? @"C:\" : "/";

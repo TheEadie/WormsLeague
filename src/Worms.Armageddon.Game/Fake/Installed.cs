@@ -62,9 +62,9 @@ internal sealed class Installed : IWormsArmageddon
         return Task.CompletedTask;
     }
 
-    public Task PlayReplay(string replayPath) => throw new NotImplementedException();
+    public Task PlayReplay(string replayPath) => Task.CompletedTask;
 
-    public Task PlayReplay(string replayPath, TimeSpan startTime) => throw new NotImplementedException();
+    public Task PlayReplay(string replayPath, TimeSpan startTime) => Task.CompletedTask;
 
     public Task ExtractReplayFrames(
         string replayPath,
