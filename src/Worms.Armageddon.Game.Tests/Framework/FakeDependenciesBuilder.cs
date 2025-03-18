@@ -101,7 +101,24 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
 
         _ = _wormsRunner.RunWorms("/getlog", Arg.Any<string>(), "/quiet")
             .Returns(Task.CompletedTask)
-            .AndDoes(x => MockGenerateLogFile(x.ArgAt<string[]>(0)));
+            .AndDoes(x => MockGenerateLogFile(x.ArgAt<string[]>(0)[1]));
+
+        _ = _wormsRunner.RunWorms(
+                "/getvideo",
+                Arg.Any<string>(), // replay file path
+                Arg.Any<string>(), // fps
+                Arg.Any<string>(), // start time
+                Arg.Any<string>(), // end time
+                Arg.Any<string>(), // x resolution
+                Arg.Any<string>(), // y resolution
+                "/quiet")
+            .Returns(Task.CompletedTask)
+            .AndDoes(
+                x => MockExtractReplayFrames(
+                    x.ArgAt<string[]>(0)[1],
+                    int.Parse(x.ArgAt<string[]>(0)[2], CultureInfo.InvariantCulture),
+                    TimeSpan.Parse(x.ArgAt<string[]>(0)[3], CultureInfo.InvariantCulture),
+                    TimeSpan.Parse(x.ArgAt<string[]>(0)[4], CultureInfo.InvariantCulture)));
     }
 
     private void MockHost(string path)
@@ -115,9 +132,9 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         _fileSystem.AddEmptyFile(Path.Combine(path, "User", "Games", $"{dateTime} [Offline] 1-UP, 2-UP.WAGame"));
     }
 
-    private void MockGenerateLogFile(string[] replayFilePath)
+    private void MockGenerateLogFile(string replayFilePath)
     {
-        var replayFilePathCleaned = replayFilePath[1].Replace("\"", string.Empty, StringComparison.InvariantCulture);
+        var replayFilePathCleaned = replayFilePath.Replace("\"", string.Empty, StringComparison.InvariantCulture);
 
         if (!_fileSystem.File.Exists(replayFilePathCleaned))
         {
@@ -128,5 +145,23 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         var folder = _fileSystem.Path.GetDirectoryName(replayFilePathCleaned);
         var logFilePath = Path.Combine(folder!, $"{fileName}.log");
         _fileSystem.AddEmptyFile(logFilePath);
+    }
+
+    private void MockExtractReplayFrames(string replayFilePath, int fps, TimeSpan startTime, TimeSpan endTime)
+    {
+        var replayFilePathCleaned = replayFilePath.Replace("\"", string.Empty, StringComparison.InvariantCulture);
+
+        if (!_fileSystem.File.Exists(replayFilePathCleaned))
+        {
+            return;
+        }
+
+        var fileName = _fileSystem.Path.GetFileNameWithoutExtension(replayFilePathCleaned);
+        var frames = fps * (endTime - startTime).TotalSeconds;
+        for (var i = 0; i < frames; i++)
+        {
+            var frameFilePath = Path.Combine(_path, "User", "Capture", $"{fileName}_{i,4}.png");
+            _fileSystem.AddEmptyFile(frameFilePath);
+        }
     }
 }

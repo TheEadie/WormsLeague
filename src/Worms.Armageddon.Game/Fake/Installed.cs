@@ -72,6 +72,18 @@ internal sealed class Installed : IWormsArmageddon
         TimeSpan startTime,
         TimeSpan endTime,
         int xResolution = 640,
-        int yResolution = 480) =>
-        throw new NotImplementedException();
+        int yResolution = 480)
+    {
+        if (_fileSystem.File.Exists(replayPath))
+        {
+            var frames = (int) ((endTime - startTime).TotalSeconds * fps);
+            var replayFileName = _fileSystem.Path.GetFileNameWithoutExtension(replayPath);
+            for (var i = 0; i < frames; i++)
+            {
+                _fileSystem.AddEmptyFile(Path.Combine(_path, "User", "Capture", $"{replayFileName}_{i,4}.png"));
+            }
+        }
+
+        return Task.CompletedTask;
+    }
 }
