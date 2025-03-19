@@ -15,7 +15,8 @@ public static class ServiceRegistration
         builder.AddOsServices()
             .AddScoped<IWormsArmageddon, WormsArmageddon>()
             .AddScoped<IFileSystem, FileSystem>()
-            .AddScoped<IFileVersionInfo, FileVersionInfo>();
+            .AddScoped<IFileVersionInfo, FileVersionInfo>()
+            .AddScoped<IProcessRunner, ProcessRunner>();
 
     [SuppressMessage("Style", "IDE0046:Convert to conditional expression")]
     private static IServiceCollection AddOsServices(this IServiceCollection builder)

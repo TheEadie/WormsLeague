@@ -1,8 +1,10 @@
 using System.Diagnostics;
+using Worms.Armageddon.Game.System;
 
 namespace Worms.Armageddon.Game.Win;
 
-internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService steamService) : IWormsRunner
+internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService steamService, IProcessRunner processRunner)
+    : IWormsRunner
 {
     public Task RunWorms(params string[] wormsArgs)
     {
@@ -25,7 +27,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService stea
                     _ = span?.SetTag(Telemetry.Spans.WormsArmageddon.Version, gameInfo.Version);
                     _ = span?.SetTag(Telemetry.Spans.WormsArmageddon.Args, args);
 
-                    using (var process = Process.Start(gameInfo.ExeLocation, args))
+                    using (var process = processRunner.Start(gameInfo.ExeLocation, args))
                     {
                         if (process == null)
                         {
@@ -49,13 +51,13 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService stea
                 });
     }
 
-    private static Process? FindWormsProcess(GameInfo gameInfo)
+    private IProcess? FindWormsProcess(GameInfo gameInfo)
     {
-        Process? wormsProcess = null;
+        IProcess? wormsProcess = null;
         for (var retryCount = 0; wormsProcess is null && retryCount <= 5; retryCount++)
         {
             Thread.Sleep(500);
-            wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
+            wormsProcess = processRunner.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
         }
 
         return wormsProcess;

@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using Worms.Armageddon.Game.System;
 
 namespace Worms.Armageddon.Game.Linux;
 
-internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunner> logger) : IWormsRunner
+internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner processRunner, ILogger<WormsRunner> logger)
+    : IWormsRunner
 {
     public Task RunWorms(params string[] wormsArgs)
     {
@@ -36,10 +38,10 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
                                      """,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
-                        WorkingDirectory = $"{gameInfo.ReplayFolder}",
+                        WorkingDirectory = $"{gameInfo.ReplayFolder}"
                     };
 
-                    using var process = Process.Start(processStartInfo);
+                    using var process = processRunner.Start(processStartInfo);
 
                     if (process is not null)
                     {
@@ -55,7 +57,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
                 });
     }
 
-    private async Task PrintStdOut(Process process)
+    private async Task PrintStdOut(IProcess process)
     {
         while (!process.StandardOutput.EndOfStream)
         {
@@ -64,7 +66,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
         }
     }
 
-    private async Task PrintStdErr(Process process)
+    private async Task PrintStdErr(IProcess process)
     {
         while (!process.StandardError.EndOfStream)
         {
