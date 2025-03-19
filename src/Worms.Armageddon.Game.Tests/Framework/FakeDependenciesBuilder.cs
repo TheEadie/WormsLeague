@@ -4,7 +4,7 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
+using Worms.Armageddon.Game.System;
 using Worms.Armageddon.Game.Win;
 using IFileVersionInfo = Worms.Armageddon.Game.System.IFileVersionInfo;
 
@@ -15,7 +15,7 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
     private readonly MockFileSystem _fileSystem = new();
     private readonly IFileVersionInfo _fileVersionInfo = Substitute.For<IFileVersionInfo>();
     private readonly IRegistry _registry = Substitute.For<IRegistry>();
-    private readonly IWormsRunner _wormsRunner = Substitute.For<IWormsRunner>();
+    private readonly IProcessRunner _processRunner = Substitute.For<IProcessRunner>();
 
     private bool _hostCreatesReplay = true;
     private bool _isInstalled = true;
@@ -66,9 +66,10 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         }
 
         return new ServiceCollection().AddWormsArmageddonGameServices()
+            .AddScoped<ISteamService>(_ => Substitute.For<ISteamService>()) // This has a thread.Sleep in it
             .AddScoped<IRegistry>(_ => _registry)
             .AddScoped<IFileVersionInfo>(_ => _fileVersionInfo)
-            .AddScoped<IWormsRunner>(_ => _wormsRunner)
+            .AddScoped<IProcessRunner>(_ => _processRunner)
             .AddScoped<IFileSystem>(_ => _fileSystem)
             .BuildServiceProvider()
             .GetRequiredService<IWormsArmageddon>();
@@ -79,8 +80,6 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         _ = _registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Team17SoftwareLTD\WormsArmageddon", "Path", null)
             .Returns((string?) null);
         _ = _fileVersionInfo.GetVersionInfo(Arg.Any<string>()).Returns(new Version(0, 0));
-        _ = _wormsRunner.RunWorms(Arg.Any<string[]>())
-            .ThrowsAsync(new InvalidOperationException("Worms Armageddon is not installed"));
     }
 
     private void MockInstallation(string path, Version version)
@@ -88,22 +87,24 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         _ = _registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Team17SoftwareLTD\WormsArmageddon", "Path", null)
             .Returns(path);
 
+        var wormsExe = Path.Combine(path, "WA.exe");
         _fileSystem.AddDirectory(path);
         _fileSystem.AddDirectory(Path.Combine(path, "User"));
         _fileSystem.AddDirectory(Path.Combine(path, "User", "Schemes"));
         _fileSystem.AddDirectory(Path.Combine(path, "User", "Games"));
         _fileSystem.AddDirectory(Path.Combine(path, "User", "Capture"));
-        _fileSystem.AddFile(Path.Combine(path, "WA.exe"), new MockFileData([]));
+        _fileSystem.AddFile(wormsExe, new MockFileData([]));
 
-        _ = _fileVersionInfo.GetVersionInfo(Path.Combine(path, "WA.exe")).Returns(version);
+        _ = _fileVersionInfo.GetVersionInfo(wormsExe).Returns(version);
 
-        _ = _wormsRunner.RunWorms("wa://").Returns(Task.CompletedTask).AndDoes(_ => MockHost(path));
+        _ = _processRunner.Start(wormsExe, "wa://").Returns(Substitute.For<IProcess>()).AndDoes(_ => MockHost(path));
 
-        _ = _wormsRunner.RunWorms("/getlog", Arg.Any<string>(), "/quiet")
-            .Returns(Task.CompletedTask)
-            .AndDoes(x => MockGenerateLogFile(x.ArgAt<string[]>(0)[1]));
+        _ = _processRunner.Start(wormsExe, "/getlog", Arg.Any<string>(), "/quiet")
+            .Returns(Substitute.For<IProcess>())
+            .AndDoes(x => MockGenerateLogFile(x.ArgAt<string[]>(1)[1]));
 
-        _ = _wormsRunner.RunWorms(
+        _ = _processRunner.Start(
+                wormsExe,
                 "/getvideo",
                 Arg.Any<string>(), // replay file path
                 Arg.Any<string>(), // fps
@@ -112,13 +113,13 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
                 Arg.Any<string>(), // x resolution
                 Arg.Any<string>(), // y resolution
                 "/quiet")
-            .Returns(Task.CompletedTask)
+            .Returns(Substitute.For<IProcess>())
             .AndDoes(
                 x => MockExtractReplayFrames(
-                    x.ArgAt<string[]>(0)[1],
-                    int.Parse(x.ArgAt<string[]>(0)[2], CultureInfo.InvariantCulture),
-                    TimeSpan.Parse(x.ArgAt<string[]>(0)[3], CultureInfo.InvariantCulture),
-                    TimeSpan.Parse(x.ArgAt<string[]>(0)[4], CultureInfo.InvariantCulture)));
+                    x.ArgAt<string[]>(1)[1],
+                    int.Parse(x.ArgAt<string[]>(1)[2], CultureInfo.InvariantCulture),
+                    TimeSpan.Parse(x.ArgAt<string[]>(1)[3], CultureInfo.InvariantCulture),
+                    TimeSpan.Parse(x.ArgAt<string[]>(1)[4], CultureInfo.InvariantCulture)));
     }
 
     private void MockHost(string path)
