@@ -37,8 +37,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner pro
                                      -c "xvfb-run wine "{gameInfo.ExeLocation}" {args}"
                                      """,
                         RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        WorkingDirectory = $"{gameInfo.ReplayFolder}"
+                        RedirectStandardError = true
                     };
 
                     using var process = processRunner.Start(processStartInfo);
@@ -50,7 +49,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner pro
                         var errors = Task.Run(() => PrintStdErr(process));
 
                         await Task.WhenAll(processTask, errors, output);
-                        await Console.Error.WriteLineAsync("Exit code:" + process.ExitCode);
+                        logger.Log(LogLevel.Debug, "Process exited with code: {ExitCode}", process.ExitCode);
                     }
 
                     return Task.CompletedTask;
@@ -59,6 +58,11 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner pro
 
     private async Task PrintStdOut(IProcess process)
     {
+        if (process.StandardOutput is null)
+        {
+            return;
+        }
+
         while (!process.StandardOutput.EndOfStream)
         {
             var line = await process.StandardOutput.ReadLineAsync();
@@ -68,6 +72,11 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner pro
 
     private async Task PrintStdErr(IProcess process)
     {
+        if (process.StandardError is null)
+        {
+            return;
+        }
+
         while (!process.StandardError.EndOfStream)
         {
             var line = await process.StandardError.ReadLineAsync();

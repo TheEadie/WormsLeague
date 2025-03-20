@@ -1,9 +1,11 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using NSubstitute.Core;
 using Worms.Armageddon.Game.System;
 using Worms.Armageddon.Game.Win;
 using IFileVersionInfo = Worms.Armageddon.Game.System.IFileVersionInfo;
@@ -71,6 +73,7 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
             .AddScoped<IFileVersionInfo>(_ => _fileVersionInfo)
             .AddScoped<IProcessRunner>(_ => _processRunner)
             .AddScoped<IFileSystem>(_ => _fileSystem)
+            .AddLogging()
             .BuildServiceProvider()
             .GetRequiredService<IWormsArmageddon>();
     }
@@ -98,10 +101,16 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
         _ = _fileVersionInfo.GetVersionInfo(wormsExe).Returns(version);
 
         _ = _processRunner.Start(wormsExe, "wa://").Returns(Substitute.For<IProcess>()).AndDoes(_ => MockHost(path));
+        _ = _processRunner.Start(Arg.Is<ProcessStartInfo>(x => x.Arguments.Contains("wa://")))
+            .Returns(Substitute.For<IProcess>())
+            .AndDoes(_ => MockHost(path));
 
         _ = _processRunner.Start(wormsExe, "/getlog", Arg.Any<string>(), "/quiet")
             .Returns(Substitute.For<IProcess>())
-            .AndDoes(x => MockGenerateLogFile(x.ArgAt<string[]>(1)[1]));
+            .AndDoes(x => MockGenerateLogFile(GetProcessRunnerArgAt(x, 1)));
+        _ = _processRunner.Start(Arg.Is<ProcessStartInfo>(x => x.Arguments.Contains("/getlog")))
+            .Returns(Substitute.For<IProcess>())
+            .AndDoes(x => MockGenerateLogFile(GetProcessRunnerArgAt(x, 1)));
 
         _ = _processRunner.Start(
                 wormsExe,
@@ -116,11 +125,24 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
             .Returns(Substitute.For<IProcess>())
             .AndDoes(
                 x => MockExtractReplayFrames(
-                    x.ArgAt<string[]>(1)[1],
-                    int.Parse(x.ArgAt<string[]>(1)[2], CultureInfo.InvariantCulture),
-                    TimeSpan.Parse(x.ArgAt<string[]>(1)[3], CultureInfo.InvariantCulture),
-                    TimeSpan.Parse(x.ArgAt<string[]>(1)[4], CultureInfo.InvariantCulture)));
+                    GetProcessRunnerArgAt(x, 1),
+                    int.Parse(GetProcessRunnerArgAt(x, 2), CultureInfo.InvariantCulture),
+                    TimeSpan.Parse(GetProcessRunnerArgAt(x, 3), CultureInfo.InvariantCulture),
+                    TimeSpan.Parse(GetProcessRunnerArgAt(x, 4), CultureInfo.InvariantCulture)));
+        _ = _processRunner.Start(Arg.Is<ProcessStartInfo>(x => x.Arguments.Contains("/getvideo")))
+            .Returns(Substitute.For<IProcess>())
+            .AndDoes(
+                x => MockExtractReplayFrames(
+                    GetProcessRunnerArgAt(x, 1),
+                    int.Parse(GetProcessRunnerArgAt(x, 2), CultureInfo.InvariantCulture),
+                    TimeSpan.Parse(GetProcessRunnerArgAt(x, 3), CultureInfo.InvariantCulture),
+                    TimeSpan.Parse(GetProcessRunnerArgAt(x, 4), CultureInfo.InvariantCulture)));
     }
+
+    private static string GetProcessRunnerArgAt(CallInfo callInfo, int pos) =>
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? callInfo.ArgAt<string[]>(1)[pos]
+            : callInfo.ArgAt<ProcessStartInfo>(0).Arguments.Split(" ")[pos + 4];
 
     private void MockHost(string path)
     {
@@ -135,7 +157,7 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
 
     private void MockGenerateLogFile(string replayFilePath)
     {
-        var replayFilePathCleaned = replayFilePath.Replace("\"", string.Empty, StringComparison.InvariantCulture);
+        var replayFilePathCleaned = replayFilePath.Trim('"').Trim('\'');
 
         if (!_fileSystem.File.Exists(replayFilePathCleaned))
         {
@@ -150,7 +172,7 @@ internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
 
     private void MockExtractReplayFrames(string replayFilePath, int fps, TimeSpan startTime, TimeSpan endTime)
     {
-        var replayFilePathCleaned = replayFilePath.Replace("\"", string.Empty, StringComparison.InvariantCulture);
+        var replayFilePathCleaned = replayFilePath.Trim('"').Trim('\'');
 
         if (!_fileSystem.File.Exists(replayFilePathCleaned))
         {
