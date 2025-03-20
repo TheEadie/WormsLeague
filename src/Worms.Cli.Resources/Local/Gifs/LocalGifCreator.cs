@@ -1,14 +1,11 @@
 using System.IO.Abstractions;
 using ImageMagick;
 using Worms.Armageddon.Game;
-using Worms.Armageddon.Game.Replays;
 
 namespace Worms.Cli.Resources.Local.Gifs;
 
-internal sealed class LocalGifCreator(
-    IReplayFrameExtractor replayFrameExtractor,
-    IWormsLocator wormsLocator,
-    IFileSystem fileSystem) : IResourceCreator<LocalGif, LocalGifCreateParameters>
+internal sealed class LocalGifCreator(IWormsArmageddon wormsArmageddon, IFileSystem fileSystem)
+    : IResourceCreator<LocalGif, LocalGifCreateParameters>
 {
     public async Task<LocalGif> Create(LocalGifCreateParameters parameters, CancellationToken cancellationToken)
     {
@@ -16,7 +13,7 @@ internal sealed class LocalGifCreator(
         var turn = parameters.Replay.Details.Turns.ElementAt((int) parameters.Turn - 1);
 
         var replayName = fileSystem.Path.GetFileNameWithoutExtension(replayPath);
-        var worms = wormsLocator.Find();
+        var worms = wormsArmageddon.FindInstallation();
         var framesFolder = fileSystem.Path.Combine(worms.CaptureFolder, replayName);
         var outputFileName = fileSystem.Path.Combine(
             worms.CaptureFolder,
@@ -25,7 +22,7 @@ internal sealed class LocalGifCreator(
         var animationDelay = 100 / parameters.FramesPerSecond / parameters.SpeedMultiplier;
 
         DeleteFrames(framesFolder);
-        await replayFrameExtractor.ExtractReplayFrames(
+        await wormsArmageddon.ExtractReplayFrames(
             replayPath,
             parameters.FramesPerSecond,
             turn.Start + parameters.StartOffset,

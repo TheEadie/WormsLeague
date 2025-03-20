@@ -19,7 +19,7 @@ internal sealed class BrowseScheme : Command
 
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class BrowseSchemeHandler(
-    IWormsLocator wormsLocator,
+    IWormsArmageddon wormsArmageddon,
     IFolderOpener folderOpener,
     ILogger<BrowseSchemeHandler> logger) : ICommandHandler
 {
@@ -29,7 +29,7 @@ internal sealed class BrowseSchemeHandler(
     public Task<int> InvokeAsync(InvocationContext context)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Scheme.SpanNameBrowse);
-        var worms = wormsLocator.Find();
+        var worms = wormsArmageddon.FindInstallation();
 
         if (!worms.IsInstalled)
         {

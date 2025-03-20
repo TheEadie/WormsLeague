@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using Worms.Armageddon.Game.System;
 
 namespace Worms.Armageddon.Game.Linux;
 
-internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunner> logger) : IWormsRunner
+internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner processRunner, ILogger<WormsRunner> logger)
+    : IWormsRunner
 {
     public Task RunWorms(params string[] wormsArgs)
     {
@@ -19,6 +21,11 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
             async () =>
                 {
                     var gameInfo = wormsLocator.Find();
+                    if (!gameInfo.IsInstalled)
+                    {
+                        throw new InvalidOperationException("Worms Armageddon is not installed");
+                    }
+
                     var args = string.Join(" ", wormsArgs);
 
                     logger.Log(LogLevel.Debug, "Running Worms Armageddon: {Path}", gameInfo.ExeLocation);
@@ -30,11 +37,10 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
                                      -c "xvfb-run wine "{gameInfo.ExeLocation}" {args}"
                                      """,
                         RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        WorkingDirectory = $"{gameInfo.ReplayFolder}",
+                        RedirectStandardError = true
                     };
 
-                    using var process = Process.Start(processStartInfo);
+                    using var process = processRunner.Start(processStartInfo);
 
                     if (process is not null)
                     {
@@ -43,15 +49,20 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
                         var errors = Task.Run(() => PrintStdErr(process));
 
                         await Task.WhenAll(processTask, errors, output);
-                        await Console.Error.WriteLineAsync("Exit code:" + process.ExitCode);
+                        logger.Log(LogLevel.Debug, "Process exited with code: {ExitCode}", process.ExitCode);
                     }
 
                     return Task.CompletedTask;
                 });
     }
 
-    private async Task PrintStdOut(Process process)
+    private async Task PrintStdOut(IProcess process)
     {
+        if (process.StandardOutput is null)
+        {
+            return;
+        }
+
         while (!process.StandardOutput.EndOfStream)
         {
             var line = await process.StandardOutput.ReadLineAsync();
@@ -59,8 +70,13 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ILogger<WormsRunne
         }
     }
 
-    private async Task PrintStdErr(Process process)
+    private async Task PrintStdErr(IProcess process)
     {
+        if (process.StandardError is null)
+        {
+            return;
+        }
+
         while (!process.StandardError.EndOfStream)
         {
             var line = await process.StandardError.ReadLineAsync();

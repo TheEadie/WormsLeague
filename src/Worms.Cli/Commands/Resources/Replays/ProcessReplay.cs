@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Worms.Armageddon.Game.Replays;
+using Worms.Armageddon.Game;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Replays;
 
@@ -26,7 +26,7 @@ internal sealed class ProcessReplay : Command
 
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class ProcessReplayHandler(
-    IReplayLogGenerator replayLogGenerator,
+    IWormsArmageddon wormsArmageddon,
     IResourceRetriever<LocalReplay> replayRetriever,
     ILogger<ProcessReplayHandler> logger) : ICommandHandler
 {
@@ -49,7 +49,7 @@ internal sealed class ProcessReplayHandler(
         foreach (var replayPath in await replayRetriever.Retrieve(pattern, cancellationToken))
         {
             logger.LogInformation("Processing: {Path}", replayPath.Paths.WAgamePath);
-            await replayLogGenerator.GenerateReplayLog(replayPath.Paths.WAgamePath);
+            await wormsArmageddon.GenerateReplayLog(replayPath.Paths.WAgamePath);
         }
 
         return 0;

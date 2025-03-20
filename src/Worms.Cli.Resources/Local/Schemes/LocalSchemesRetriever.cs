@@ -4,15 +4,17 @@ using Worms.Armageddon.Game;
 
 namespace Worms.Cli.Resources.Local.Schemes;
 
-internal sealed class LocalSchemesRetriever(IWscReader wscReader, IWormsLocator wormsLocator, IFileSystem fileSystem)
-    : IResourceRetriever<LocalScheme>
+internal sealed class LocalSchemesRetriever(
+    IWscReader wscReader,
+    IWormsArmageddon wormsArmageddon,
+    IFileSystem fileSystem) : IResourceRetriever<LocalScheme>
 {
     public Task<IReadOnlyCollection<LocalScheme>> Retrieve(CancellationToken cancellationToken) =>
         Retrieve("*", cancellationToken);
 
     public Task<IReadOnlyCollection<LocalScheme>> Retrieve(string pattern, CancellationToken cancellationToken)
     {
-        var gameInfo = wormsLocator.Find();
+        var gameInfo = wormsArmageddon.FindInstallation();
 
         if (!gameInfo.IsInstalled)
         {

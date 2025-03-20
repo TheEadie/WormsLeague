@@ -1,8 +1,9 @@
-using System.Diagnostics;
+using System.IO.Abstractions;
+using IFileVersionInfo = Worms.Armageddon.Game.System.IFileVersionInfo;
 
 namespace Worms.Armageddon.Game.Linux;
 
-internal sealed class WormsLocator : IWormsLocator
+internal sealed class WormsLocator(IFileSystem fileSystem, IFileVersionInfo fileVersionInfo) : IWormsLocator
 {
     public GameInfo Find()
     {
@@ -20,17 +21,12 @@ internal sealed class WormsLocator : IWormsLocator
         var gamesFolder = Path.Combine(rootLocation, "User", "Games");
         var captureFolder = Path.Combine(rootLocation, "User", "Capture");
 
-        if (!File.Exists(exeLocation))
+        if (!fileSystem.File.Exists(exeLocation))
         {
             return GameInfo.NotInstalled;
         }
 
-        var versionInfo = FileVersionInfo.GetVersionInfo(exeLocation);
-        var version = new Version(
-            versionInfo.ProductMajorPart,
-            versionInfo.ProductMinorPart,
-            versionInfo.ProductBuildPart,
-            versionInfo.ProductPrivatePart);
+        var version = fileVersionInfo.GetVersionInfo(exeLocation);
 
         return new GameInfo(true, exeLocation, processName, version, schemesFolder, gamesFolder, captureFolder);
     }

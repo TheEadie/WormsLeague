@@ -1,5 +1,4 @@
 using Worms.Armageddon.Game;
-using Worms.Armageddon.Game.Replays;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
 using Worms.Hub.Storage.Files;
@@ -9,8 +8,7 @@ namespace Worms.Hub.ReplayProcessor;
 
 internal sealed class Processor(
     IMessageQueue<ReplayToProcessMessage> messageQueue,
-    IWormsLocator wormsLocator,
-    IReplayLogGenerator logGenerator,
+    IWormsArmageddon wormsArmageddon,
     IRepository<Replay> replayRepository,
     ReplayFiles replayFiles,
     ILogger<Processor> logger)
@@ -64,7 +62,7 @@ internal sealed class Processor(
         }
 
         // Generate replay log
-        await logGenerator.GenerateReplayLog(replayPath);
+        await wormsArmageddon.GenerateReplayLog(replayPath);
         var logPath = replayFiles.GetLogPath(replay);
 
         if (logPath is null)
@@ -92,7 +90,7 @@ internal sealed class Processor(
     private bool GameIsInstalled()
     {
         var userHomeDirectory = Environment.GetEnvironmentVariable("HOME");
-        var gameInfo = wormsLocator.Find();
+        var gameInfo = wormsArmageddon.FindInstallation();
 
         if (gameInfo.IsInstalled)
         {

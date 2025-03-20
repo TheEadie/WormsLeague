@@ -1,8 +1,10 @@
 using System.Diagnostics;
+using Worms.Armageddon.Game.System;
 
 namespace Worms.Armageddon.Game.Win;
 
-internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService steamService) : IWormsRunner
+internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService steamService, IProcessRunner processRunner)
+    : IWormsRunner
 {
     public Task RunWorms(params string[] wormsArgs)
     {
@@ -14,12 +16,16 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService stea
                         ActivityKind.Client);
 
                     var gameInfo = wormsLocator.Find();
-                    var args = string.Join(" ", wormsArgs);
+                    if (!gameInfo.IsInstalled)
+                    {
+                        _ = span?.SetStatus(ActivityStatusCode.Error);
+                        throw new InvalidOperationException("Worms Armageddon is not installed");
+                    }
 
                     _ = span?.SetTag(Telemetry.Spans.WormsArmageddon.Version, gameInfo.Version);
-                    _ = span?.SetTag(Telemetry.Spans.WormsArmageddon.Args, args);
+                    _ = span?.SetTag(Telemetry.Spans.WormsArmageddon.Args, wormsArgs);
 
-                    using (var process = Process.Start(gameInfo.ExeLocation, args))
+                    using (var process = processRunner.Start(gameInfo.ExeLocation, wormsArgs))
                     {
                         if (process == null)
                         {
@@ -32,7 +38,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService stea
 
                     steamService.WaitForSteamPrompt();
 
-                    var wormsProcess = FindWormsProcess(gameInfo);
+                    var wormsProcess = processRunner.FindProcess(gameInfo.ProcessName);
 
                     if (wormsProcess is not null)
                     {
@@ -41,17 +47,5 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, ISteamService stea
 
                     return Task.CompletedTask;
                 });
-    }
-
-    private static Process? FindWormsProcess(GameInfo gameInfo)
-    {
-        Process? wormsProcess = null;
-        for (var retryCount = 0; wormsProcess is null && retryCount <= 5; retryCount++)
-        {
-            Thread.Sleep(500);
-            wormsProcess = Process.GetProcessesByName(gameInfo.ProcessName).FirstOrDefault();
-        }
-
-        return wormsProcess;
     }
 }
