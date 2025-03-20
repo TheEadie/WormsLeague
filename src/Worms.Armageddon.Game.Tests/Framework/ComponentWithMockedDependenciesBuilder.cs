@@ -12,7 +12,7 @@ using IFileVersionInfo = Worms.Armageddon.Game.System.IFileVersionInfo;
 
 namespace Worms.Armageddon.Game.Tests.Framework;
 
-internal sealed class FakeDependenciesBuilder : IWormsArmageddonBuilder
+internal sealed class ComponentWithMockedDependenciesBuilder : IWormsArmageddonBuilder
 {
     private readonly MockFileSystem _fileSystem = new();
     private readonly IFileVersionInfo _fileVersionInfo = Substitute.For<IFileVersionInfo>();

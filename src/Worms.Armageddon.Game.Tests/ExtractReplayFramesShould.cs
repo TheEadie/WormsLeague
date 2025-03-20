@@ -5,9 +5,8 @@ using Worms.Armageddon.Game.Tests.Framework;
 
 namespace Worms.Armageddon.Game.Tests;
 
-[FakeDependencies]
+[Component]
 [FakeComponent]
-[RealDependencies]
 internal sealed class ExtractReplayFramesShould(ApiType apiType)
 {
     [Test]
