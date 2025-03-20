@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Worms.Armageddon.Game.Fake\Worms.Armageddon.Game.Fake.csproj"/>
     <ProjectReference Include="..\Worms.Armageddon.Game\Worms.Armageddon.Game.csproj"/>
   </ItemGroup>
 
