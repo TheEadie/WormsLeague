@@ -4,9 +4,9 @@ internal sealed class Process(global::System.Diagnostics.Process process) : IPro
 {
     public Task WaitForExitAsync() => process.WaitForExitAsync();
 
-    public StreamReader StandardOutput { get; } = process.StandardOutput;
-    public StreamReader StandardError { get; } = process.StandardError;
-    public int ExitCode { get; } = process.ExitCode;
+    public StreamReader StandardOutput => process.StandardOutput;
+    public StreamReader StandardError => process.StandardError;
+    public int ExitCode => process.ExitCode;
 
     public void Dispose() => process.Dispose();
 }
