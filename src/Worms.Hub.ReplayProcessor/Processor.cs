@@ -8,7 +8,6 @@ internal sealed class Processor(
     IMessageQueue<ReplayToProcessMessage> inputQueue,
     IMessageQueue<ReplayToUpdateMessage> outputQueue,
     IWormsArmageddon wormsArmageddon,
-    IConfiguration configuration,
     ILogger<Processor> logger)
 {
     public async Task ProcessReplay()
@@ -23,10 +22,9 @@ internal sealed class Processor(
         }
 
         // Check replay is in the folder
-        var replayPath = GetReplayPath(message.ReplayFileName);
-        if (!File.Exists(replayPath))
+        if (!File.Exists(message.ReplayPath))
         {
-            logger.LogError("Replay not found on disk: {FileName}", message.ReplayFileName);
+            logger.LogError("Replay not found on disk: {ReplayPath}", message.ReplayPath);
             return;
         }
 
@@ -58,17 +56,17 @@ internal sealed class Processor(
         }
 
         // Generate replay log
-        await wormsArmageddon.GenerateReplayLog(replayPath);
-        var logPath = GetLogPath(replayPath);
+        await wormsArmageddon.GenerateReplayLog(message.ReplayPath);
+        var logPath = GetLogPath(message.ReplayPath);
 
         if (logPath is null)
         {
-            logger.LogError("Log file not found from replay path: {ReplayPath}", replayPath);
+            logger.LogError("Log file not found from replay path: {ReplayPath}", message.ReplayPath);
             return;
         }
 
         // Send a message to the replay updater queue
-        await outputQueue.EnqueueMessage(new ReplayToUpdateMessage(message.ReplayFileName));
+        await outputQueue.EnqueueMessage(new ReplayToUpdateMessage(message.ReplayPath));
 
         // Delete the message from the queue
         await inputQueue.DeleteMessage(token);
@@ -130,23 +128,14 @@ internal sealed class Processor(
         }
     }
 
-    private string GetReplayPath(string replayFileName)
+    private static string? GetLogPath(string replayPath)
     {
-        ArgumentNullException.ThrowIfNull(replayFileName);
-        return Path.Combine(GetReplayFolderPath(), replayFileName);
-    }
+        var folder = Path.GetDirectoryName(replayPath) ?? throw new ArgumentException("Replay path is invalid");
+        var fileName = replayPath.EndsWith(".WAGame", StringComparison.InvariantCultureIgnoreCase)
+            ? Path.GetFileNameWithoutExtension(replayPath)
+            : Path.GetFileName(replayPath);
 
-    private string? GetLogPath(string replayFileName)
-    {
-        ArgumentNullException.ThrowIfNull(replayFileName);
-        var fileName = replayFileName.EndsWith(".WAGame", StringComparison.InvariantCultureIgnoreCase)
-            ? Path.GetFileNameWithoutExtension(replayFileName)
-            : replayFileName;
-
-        var logPath = Path.Combine(GetReplayFolderPath(), $"{fileName}.log");
+        var logPath = Path.Combine(folder, $"{fileName}.log");
         return File.Exists(logPath) ? logPath : null;
     }
-
-    private string GetReplayFolderPath() =>
-        configuration["Storage:TempReplayFolder"] ?? throw new ArgumentException("Temp replay folder not configured");
 }

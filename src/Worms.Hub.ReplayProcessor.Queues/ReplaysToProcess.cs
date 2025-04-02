@@ -22,7 +22,7 @@ internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQ
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync();
-        _ = await queueClient.SendMessageAsync(message.ReplayFileName);
+        _ = await queueClient.SendMessageAsync(message.ReplayPath);
     }
 
     public async Task<(ReplayToProcessMessage?, MessageDetails?)> DequeueMessage()
