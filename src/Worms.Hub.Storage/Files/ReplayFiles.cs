@@ -1,23 +1,21 @@
 using Microsoft.Extensions.Configuration;
-using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Storage.Files;
 
 public class ReplayFiles(IConfiguration configuration)
 {
-    public string GetReplayPath(Replay replay)
+    public string GetReplayPath(string replayFileName)
     {
-        ArgumentNullException.ThrowIfNull(replay);
-        return Path.Combine(GetReplayFolderPath(), replay.Filename);
+        ArgumentNullException.ThrowIfNull(replayFileName);
+        return Path.Combine(GetReplayFolderPath(), replayFileName);
     }
 
-    public string? GetLogPath(Replay replay)
+    public string? GetLogPath(string replayFileName)
     {
-        ArgumentNullException.ThrowIfNull(replay);
-
-        var fileName = replay.Filename.EndsWith(".WAGame", StringComparison.InvariantCultureIgnoreCase)
-            ? Path.GetFileNameWithoutExtension(replay.Filename)
-            : replay.Filename;
+        ArgumentNullException.ThrowIfNull(replayFileName);
+        var fileName = replayFileName.EndsWith(".WAGame", StringComparison.InvariantCultureIgnoreCase)
+            ? Path.GetFileNameWithoutExtension(replayFileName)
+            : replayFileName;
 
         var logPath = Path.Combine(GetReplayFolderPath(), $"{fileName}.log");
         return File.Exists(logPath) ? logPath : null;
