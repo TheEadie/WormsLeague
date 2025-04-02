@@ -24,7 +24,7 @@ internal sealed class Processor(
         }
 
         // Check replay is in the folder
-        var replayPath = replayFiles.GetReplayPath(message.ReplayFileName);
+        var replayPath = replayFiles.GetReplayPath(message.ReplayPath);
         if (!File.Exists(replayPath))
         {
             logger.LogError("Replay not found on disk: {ReplayPath}", replayPath);
@@ -40,7 +40,7 @@ internal sealed class Processor(
         }
 
         // Check the replay exists in the database
-        var replay = replayRepository.GetAll().FirstOrDefault(r => r.Filename == message.ReplayFileName);
+        var replay = replayRepository.GetAll().FirstOrDefault(r => r.Filename == message.ReplayPath);
         if (replay is null)
         {
             logger.LogError("Replay not found in database: {ReplayPath}", replayPath);

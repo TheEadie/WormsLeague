@@ -1,3 +1,3 @@
 namespace Worms.Hub.ReplayProcessor.Queue;
 
-public record ReplayToUpdateMessage(string ReplayFileName);
+public record ReplayToUpdateMessage(string ReplayPath);
