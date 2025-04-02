@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Worms.Hub.Storage.Queues;
+namespace Worms.Hub.Queues;
 
 [SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix")]
 public interface IMessageQueue<T>

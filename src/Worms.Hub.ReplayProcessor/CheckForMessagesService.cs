@@ -1,4 +1,5 @@
-using Worms.Hub.Storage.Queues;
+using Worms.Hub.Queues;
+using Worms.Hub.ReplayProcessor.Queue;
 
 namespace Worms.Hub.ReplayProcessor;
 

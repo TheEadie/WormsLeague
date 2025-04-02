@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Worms.Armageddon.Game\Worms.Armageddon.Game.csproj"/>
+    <ProjectReference Include="..\Worms.Hub.ReplayProcessor.Queues\Worms.Hub.ReplayProcessor.Queues.csproj"/>
     <ProjectReference Include="..\Worms.Hub.Storage\Worms.Hub.Storage.csproj"/>
   </ItemGroup>
 
