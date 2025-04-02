@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Game.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Game.Fake", "src\Worms.Armageddon.Game.Fake\Worms.Armageddon.Game.Fake.csproj", "{10CB1CDA-F901-4EBC-BEE8-2C8C41DA35A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Queues", "src\Worms.Hub.Queues\Worms.Hub.Queues.csproj", "{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.ReplayProcessor.Queues", "src\Worms.Hub.ReplayProcessor.Queues\Worms.Hub.ReplayProcessor.Queues.csproj", "{31670712-E626-4150-84CE-38DEFCE45276}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +76,14 @@ Global
 		{10CB1CDA-F901-4EBC-BEE8-2C8C41DA35A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10CB1CDA-F901-4EBC-BEE8-2C8C41DA35A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10CB1CDA-F901-4EBC-BEE8-2C8C41DA35A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31670712-E626-4150-84CE-38DEFCE45276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31670712-E626-4150-84CE-38DEFCE45276}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31670712-E626-4150-84CE-38DEFCE45276}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31670712-E626-4150-84CE-38DEFCE45276}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

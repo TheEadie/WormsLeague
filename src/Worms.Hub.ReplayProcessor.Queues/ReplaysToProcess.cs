@@ -1,7 +1,8 @@
 using Azure.Storage.Queues;
 using Microsoft.Extensions.Configuration;
+using Worms.Hub.Queues;
 
-namespace Worms.Hub.Storage.Queues;
+namespace Worms.Hub.ReplayProcessor.Queue;
 
 internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQueue<ReplayToProcessMessage>
 {
