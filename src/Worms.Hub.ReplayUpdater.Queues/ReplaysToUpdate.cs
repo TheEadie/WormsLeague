@@ -4,9 +4,9 @@ using Worms.Hub.Queues;
 
 namespace Worms.Hub.ReplayProcessor.Queue;
 
-internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQueue<ReplayToProcessMessage>
+internal sealed class ReplaysToUpdate(IConfiguration configuration) : IMessageQueue<ReplayToUpdateMessage>
 {
-    private const string QueueName = "replays-to-process";
+    private const string QueueName = "replays-to-update";
 
     public async Task<bool> HasPendingMessage()
     {
@@ -17,7 +17,7 @@ internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQ
         return peekedMessage.Value is not null;
     }
 
-    public async Task EnqueueMessage(ReplayToProcessMessage message)
+    public async Task EnqueueMessage(ReplayToUpdateMessage message)
     {
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
@@ -25,7 +25,7 @@ internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQ
         _ = await queueClient.SendMessageAsync(message.ReplayFileName);
     }
 
-    public async Task<(ReplayToProcessMessage?, MessageDetails?)> DequeueMessage()
+    public async Task<(ReplayToUpdateMessage?, MessageDetails?)> DequeueMessage()
     {
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
@@ -33,7 +33,7 @@ internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQ
         var message = await queueClient.ReceiveMessageAsync();
         return message.Value is null
             ? (null, null)
-            : (new ReplayToProcessMessage(message.Value.MessageText),
+            : (new ReplayToUpdateMessage(message.Value.MessageText),
                 new MessageDetails(message.Value.MessageId, message.Value.PopReceipt));
     }
 
