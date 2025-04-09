@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/runtime-deps:9.0.3-alpine3.20@sha256:f9f15be85c20f0ca83de1e2bcefdb758e964e7cbbf7900d29cc9c3ac23c9c328
+FROM mcr.microsoft.com/dotnet/runtime-deps:9.0.4-alpine3.20@sha256:faa24fd9207bf88b1e84f78c26d1a5a02feacd453a178b2451e3e079f73fdf9a
 WORKDIR /app
 COPY ./.artifacts/linux-musl-x64/worms ./
 RUN chmod +x ./worms
