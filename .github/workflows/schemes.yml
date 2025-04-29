@@ -27,6 +27,7 @@ jobs:
         with:
           name: RGSchemes
           path: deployment/schemes/.artifacts/
+          include-hidden-files: true
 
   release:
     name: Release - GitHub

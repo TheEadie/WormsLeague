@@ -68,11 +68,11 @@ jobs:
           FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
           FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
 
-      actions-timeline:
-        name: Timeline
-        needs: [build-hub, build-cli]
-        runs-on: ubuntu-latest
-        steps:
-          - uses: Kesin11/actions-timeline@v2
-            with:
-              show-waiting-runner: true
+  actions-timeline:
+    name: Timeline
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Kesin11/actions-timeline@v2
+        with:
+          show-waiting-runner: true
