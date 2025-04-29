@@ -36,3 +36,12 @@ jobs:
     needs: build-cli
     uses: ./.github/workflows/zz-release-cli.yml
     secrets: inherit
+
+  actions-timeline:
+    name: Timeline
+    needs: [build-hub, build-cli, release-hub, release-cli]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Kesin11/actions-timeline@v2
+        with:
+          show-waiting-runner: true
