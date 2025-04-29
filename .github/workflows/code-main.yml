@@ -1,4 +1,7 @@
 name: Code - Main
+permissions:
+  contents: read
+  pull-requests: write
 
 on:
   push:
@@ -14,22 +17,31 @@ on:
 jobs:
   build-hub:
     name: Build - Hub
-    uses: ./.github/workflows/build-hub.yml
+    uses: ./.github/workflows/zz-build-hub.yml
     secrets: inherit
 
   build-cli:
     name: Build - CLI
-    uses: ./.github/workflows/build-cli.yml
+    uses: ./.github/workflows/zz-build-cli.yml
     secrets: inherit
 
   release-hub:
     name: Release - Hub
     needs: build-hub
-    uses: ./.github/workflows/release-hub.yml
+    uses: ./.github/workflows/zz-release-hub.yml
     secrets: inherit
 
   release-cli:
     name: Release - CLI
     needs: build-cli
-    uses: ./.github/workflows/release-cli.yml
+    uses: ./.github/workflows/zz-release-cli.yml
     secrets: inherit
+
+  actions-timeline:
+    name: Timeline
+    needs: [build-hub, build-cli, release-hub, release-cli]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Kesin11/actions-timeline@v2
+        with:
+          show-waiting-runner: true

@@ -1,4 +1,7 @@
 name: Deploy - PRs
+permissions:
+  contents: read
+  pull-requests: write
 
 on:
   pull_request:
@@ -86,3 +89,12 @@ jobs:
         with:
           name: Database Report
           path: src/database/reports/
+
+  actions-timeline:
+    name: Timeline
+    needs: [preview]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Kesin11/actions-timeline@v2
+        with:
+          show-waiting-runner: true
