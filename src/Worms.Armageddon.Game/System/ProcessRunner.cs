@@ -5,7 +5,7 @@ namespace Worms.Armageddon.Game.System;
 internal class ProcessRunner : IProcessRunner
 {
     public IProcess? Start(string fileName, params string[] args) =>
-        new Process(global::System.Diagnostics.Process.Start(fileName, args));
+        new Process(global::System.Diagnostics.Process.Start(fileName, string.Join(" ", args.ToList())));
 
     public IProcess? FindProcess(string processName)
     {
