@@ -16,32 +16,33 @@ namespace Worms.Cli.Commands;
 
 internal sealed class Host : Command
 {
-    public static readonly Option<bool> DryRun = new(
-        [
-            "--dry-run",
-            "-dr"
-        ],
-        "When set the CLI will print what will happen rather than running the commands");
+    public static readonly Option<bool> DryRun = new("--dry-run", "-dr")
+    {
+        Description = "When set the CLI will print what will happen rather than running the commands"
+    };
 
-    public static readonly Option<bool> SkipSchemeDownload = new(
-        ["--skip-scheme-download"],
-        "Don't download the latest schemes before starting the game");
+    public static readonly Option<bool> SkipSchemeDownload = new("--skip-scheme-download")
+    {
+        Description = "Don't download the latest schemes before starting the game"
+    };
 
-    public static readonly Option<bool> SkipUpload = new(
-        ["--skip-upload"],
-        "Don't Upload the replay to Worms Hub when the game finishes");
+    public static readonly Option<bool> SkipUpload = new("--skip-upload")
+    {
+        Description = "Don't Upload the replay to Worms Hub when the game finishes"
+    };
 
-    public static readonly Option<bool> SkipAnnouncement = new(
-        ["--skip-announcement"],
-        "Don't announce the game to Slack or Worms Hub");
+    public static readonly Option<bool> SkipAnnouncement = new("--skip-announcement")
+    {
+        Description = "Don't announce the game to Slack or Worms Hub"
+    };
 
     public Host()
         : base("host", "Host a game of worms using the latest options")
     {
-        AddOption(DryRun);
-        AddOption(SkipSchemeDownload);
-        AddOption(SkipUpload);
-        AddOption(SkipAnnouncement);
+        Options.Add(DryRun);
+        Options.Add(SkipSchemeDownload);
+        Options.Add(SkipUpload);
+        Options.Add(SkipAnnouncement);
     }
 }
 
@@ -52,24 +53,22 @@ internal sealed class HostHandler(
     IRemoteGameUpdater gameUpdater,
     IResourceRetriever<LocalReplay> localReplayRetriever,
     IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> remoteReplayCreator,
-    ILogger<HostHandler> logger) : ICommandHandler
+    ILogger<HostHandler> logger) : AsynchronousCommandLineAction
 {
     private const string LeagueName = "redgate";
     private const string Domain = "red-gate.com";
 
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(
+        ParseResult parseResult,
+        CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Host.SpanName);
-        var cancellationToken = context.GetCancellationToken();
 
         var config = new Config(
-            context.ParseResult.GetValueForOption(Host.DryRun),
-            context.ParseResult.GetValueForOption(Host.SkipSchemeDownload),
-            context.ParseResult.GetValueForOption(Host.SkipUpload),
-            context.ParseResult.GetValueForOption(Host.SkipAnnouncement),
+            parseResult.GetValue(Host.DryRun),
+            parseResult.GetValue(Host.SkipSchemeDownload),
+            parseResult.GetValue(Host.SkipUpload),
+            parseResult.GetValue(Host.SkipAnnouncement),
             GetIpAddress(Domain),
             wormsArmageddon.FindInstallation());
 

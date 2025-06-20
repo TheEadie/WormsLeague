@@ -6,5 +6,5 @@ internal sealed class Delete : Command
 {
     public Delete()
         : base("delete", "Delete a resource") =>
-        AddAlias("rm");
+        Aliases.Add("rm");
 }

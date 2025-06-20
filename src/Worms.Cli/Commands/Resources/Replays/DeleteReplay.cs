@@ -10,30 +10,28 @@ namespace Worms.Cli.Commands.Resources.Replays;
 
 internal sealed class DeleteReplay : Command
 {
-    public static readonly Argument<string> ReplayName = new("name", "The name of the Replay to be deleted");
+    public static readonly Argument<string> ReplayName = new("name")
+    {
+        Description = "The name of the Replay to be deleted"
+    };
 
     public DeleteReplay()
         : base("replay", "Delete replays (.WAgame files)")
     {
-        AddAlias("replays");
-        AddAlias("WAgame");
-        AddArgument(ReplayName);
+        Aliases.Add("replays");
+        Aliases.Add("WAgame");
+        Arguments.Add(ReplayName);
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class DeleteReplayHandler(
     ResourceDeleter<LocalReplay> resourceDeleter,
-    ILogger<DeleteReplayHandler> logger) : ICommandHandler
+    ILogger<DeleteReplayHandler> logger) : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Replay.SpanNameDelete);
-        var name = context.ParseResult.GetValueForArgument(DeleteReplay.ReplayName);
-        var cancellationToken = context.GetCancellationToken();
+        var name = parseResult.GetRequiredValue(DeleteReplay.ReplayName);
 
         var replay = await resourceDeleter.GetResource(name, cancellationToken);
 

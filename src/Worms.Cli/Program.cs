@@ -1,7 +1,3 @@
-using System.CommandLine.Builder;
-using System.CommandLine.Invocation;
-using System.CommandLine.IO;
-using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Configuration;
@@ -11,13 +7,13 @@ using Microsoft.Extensions.Logging.Console;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
 using Worms.Cli.Logging;
-using Worms.Cli.Middleware;
 using Worms.Cli.Resources;
 
 namespace Worms.Cli;
 
 internal static class Program
 {
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
     public static async Task<int> Main(string[] args)
     {
         var startTime = DateTime.UtcNow;
@@ -39,32 +35,15 @@ internal static class Program
             .AddSingleton<IConfiguration>(configuration);
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
+        var commandLineConfiguration = CliStructure.BuildCommandLine(serviceProvider);
+
         _ = span?.AddEvent(Telemetry.Events.DiSetupComplete);
 
-        var result = await CliStructure.BuildCommandLine(serviceProvider)
-            .UseDefaults()
-            .AddMiddleware(serviceProvider.GetService<LogUserId>()!.GetMiddleware())
-            .UseExceptionHandler(ExceptionHandler)
-            .Build()
-            .InvokeAsync(args);
+        var runner = serviceProvider.GetRequiredService<Runner>();
+        var result = await runner.Run(commandLineConfiguration, args);
 
         _ = span?.SetTag(Telemetry.Spans.Root.ProcessExitCode, result);
-
-        return result!;
-    }
-
-    private static void ExceptionHandler(Exception exception, InvocationContext context)
-    {
-        if (exception is not OperationCanceledException)
-        {
-            context.Console.Error.Write(context.LocalizationResources.ExceptionHandlerHeader());
-            context.Console.Error.WriteLine(exception.Message);
-
-            _ = Activity.Current?.AddException(exception);
-            _ = Activity.Current?.SetStatus(ActivityStatusCode.Error);
-        }
-
-        context.ExitCode = 1;
+        return result;
     }
 
     [SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "This is more readable")]

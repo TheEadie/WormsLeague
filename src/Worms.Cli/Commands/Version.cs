@@ -9,19 +9,16 @@ namespace Worms.Cli.Commands;
 internal sealed class Version() : Command("version", "Get the current version of the Worms CLI");
 
 internal sealed class VersionHandler(IWormsArmageddon wormsArmageddon, CliInfoRetriever cliInfoRetriever)
-    : ICommandHandler
+    : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public Task<int> InvokeAsync(InvocationContext context)
+    public override Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Version.SpanName);
 
         var (cliVersion, gameVersion) = GetVersions();
 
-        context.Console.WriteLine($"Worms CLI: {cliVersion.ToString(3)}");
-        context.Console.WriteLine($"Worms Armageddon: {gameVersion?.ToString(4) ?? "Not Installed"}");
+        Console.WriteLine($"Worms CLI: {cliVersion.ToString(3)}");
+        Console.WriteLine($"Worms Armageddon: {gameVersion?.ToString(4) ?? "Not Installed"}");
 
         _ = Activity.Current?.SetTag(Telemetry.Spans.Version.CliVersion, cliVersion);
         _ = Activity.Current?.SetTag(Telemetry.Spans.Version.WormsArmageddonVersion, gameVersion);

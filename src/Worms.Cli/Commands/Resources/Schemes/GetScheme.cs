@@ -10,32 +10,30 @@ namespace Worms.Cli.Commands.Resources.Schemes;
 
 internal sealed class GetScheme : Command
 {
-    public static readonly Argument<string> SchemeName = new(
-        "name",
-        () => "",
-        "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported");
+    public static readonly Argument<string> SchemeName = new("name")
+    {
+        Description =
+            "Optional: The name or search pattern for the Scheme to be retrieved. Wildcards (*) are supported",
+        DefaultValueFactory = _ => ""
+    };
 
     public GetScheme()
         : base("scheme", "Retrieves information for Worms Schemes (.wsc files)")
     {
-        AddAlias("schemes");
-        AddAlias("wsc");
-        AddArgument(SchemeName);
+        Aliases.Add("schemes");
+        Aliases.Add("wsc");
+        Arguments.Add(SchemeName);
     }
 }
 
 internal sealed class GetSchemeHandler(ResourceGetter<LocalScheme> schemesRetriever, ILogger<GetSchemeHandler> logger)
-    : ICommandHandler
+    : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Scheme.SpanNameGet);
-        var name = context.ParseResult.GetValueForArgument(GetScheme.SchemeName);
+        var name = parseResult.GetRequiredValue(GetScheme.SchemeName);
         var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-        var cancellationToken = context.GetCancellationToken();
 
         var schemes = await schemesRetriever.GetResources(name, cancellationToken);
 

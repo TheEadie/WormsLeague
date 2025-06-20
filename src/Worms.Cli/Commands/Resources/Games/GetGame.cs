@@ -10,31 +10,29 @@ namespace Worms.Cli.Commands.Resources.Games;
 
 internal sealed class GetGame : Command
 {
-    public static readonly Argument<string> GameName = new(
-        "name",
-        () => "",
-        "Optional: The name or search pattern for the Game to be retrieved. Wildcards (*) are supported");
+    public static readonly Argument<string> GameName = new("name")
+    {
+        Description =
+            "Optional: The name or search pattern for the Game to be retrieved. Wildcards (*) are supported",
+        DefaultValueFactory = _ => ""
+    };
 
     public GetGame()
         : base("game", "Retrieves information for current games")
     {
-        AddAlias("games");
-        AddArgument(GameName);
+        Aliases.Add("games");
+        Arguments.Add(GameName);
     }
 }
 
 internal sealed class GetGameHandler(ResourceGetter<RemoteGame> gameRetriever, ILogger<GetGameHandler> logger)
-    : ICommandHandler
+    : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Game.SpanNameGet);
-        var name = context.ParseResult.GetValueForArgument(GetGame.GameName);
+        var name = parseResult.GetRequiredValue(GetGame.GameName);
         var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-        var cancellationToken = context.GetCancellationToken();
 
         var games = await gameRetriever.GetResources(name, cancellationToken);
 

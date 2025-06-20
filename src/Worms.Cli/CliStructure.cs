@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using Microsoft.Extensions.DependencyInjection;
 using Worms.Cli.Commands;
@@ -14,7 +13,7 @@ namespace Worms.Cli;
 
 internal static class CliStructure
 {
-    internal static CommandLineBuilder BuildCommandLine(IServiceProvider serviceProvider)
+    internal static CommandLineConfiguration BuildCommandLine(IServiceProvider serviceProvider)
     {
         var rootCommand = new Root();
         rootCommand.Add<Auth, AuthHandler>(serviceProvider);
@@ -24,42 +23,42 @@ internal static class CliStructure
 
         var viewCommand = new View();
         viewCommand.Add<ViewReplay, ViewReplayHandler>(serviceProvider);
-        rootCommand.AddCommand(viewCommand);
+        rootCommand.Subcommands.Add(viewCommand);
 
         var processCommand = new Process();
         processCommand.Add<ProcessReplay, ProcessReplayHandler>(serviceProvider);
-        rootCommand.AddCommand(processCommand);
+        rootCommand.Subcommands.Add(processCommand);
 
         var getCommand = new Get();
         getCommand.Add<GetScheme, GetSchemeHandler>(serviceProvider);
         getCommand.Add<GetReplay, GetReplayHandler>(serviceProvider);
         getCommand.Add<GetGame, GetGameHandler>(serviceProvider);
-        rootCommand.AddCommand(getCommand);
+        rootCommand.Subcommands.Add(getCommand);
 
         var deleteCommand = new Delete();
         deleteCommand.Add<DeleteScheme, DeleteSchemeHandler>(serviceProvider);
         deleteCommand.Add<DeleteReplay, DeleteReplayHandler>(serviceProvider);
-        rootCommand.AddCommand(deleteCommand);
+        rootCommand.Subcommands.Add(deleteCommand);
 
         var createCommand = new Create();
         createCommand.Add<CreateScheme, CreateSchemeHandler>(serviceProvider);
         createCommand.Add<CreateGif, CreateGifHandler>(serviceProvider);
-        rootCommand.AddCommand(createCommand);
+        rootCommand.Subcommands.Add(createCommand);
 
         var browseCommand = new Browse();
         browseCommand.Add<BrowseScheme, BrowseSchemeHandler>(serviceProvider);
         browseCommand.Add<BrowseReplay, BrowseReplayHandler>(serviceProvider);
         browseCommand.Add<BrowseGif, BrowseGifHandler>(serviceProvider);
-        rootCommand.AddCommand(browseCommand);
+        rootCommand.Subcommands.Add(browseCommand);
 
-        return new CommandLineBuilder(rootCommand);
+        return new CommandLineConfiguration(rootCommand);
     }
 
-    private static void Add<TC, TH>(this Command rootCommand, IServiceProvider serviceProvider)
-        where TC : Command, new() where TH : ICommandHandler
+    private static void Add<TC, TH>(this Command parentCommand, IServiceProvider serviceProvider)
+        where TC : Command, new() where TH : AsynchronousCommandLineAction
     {
-        var auth = new TC();
-        auth.SetHandler(context => serviceProvider.GetRequiredService<TH>().InvokeAsync(context));
-        rootCommand.AddCommand(auth);
+        var command = new TC();
+        command.SetAction((context, cancellationToken) => serviceProvider.GetRequiredService<TH>().InvokeAsync(context, cancellationToken));
+        parentCommand.Subcommands.Add(command);
     }
 }

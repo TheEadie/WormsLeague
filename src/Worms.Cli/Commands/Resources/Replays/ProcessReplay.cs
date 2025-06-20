@@ -10,34 +10,31 @@ namespace Worms.Cli.Commands.Resources.Replays;
 
 internal sealed class ProcessReplay : Command
 {
-    public static readonly Argument<string> ReplayName = new(
-        "name",
-        () => "",
-        "Optional: The name or search pattern for the Replay to be processed. Wildcards (*) are supported");
+    public static readonly Argument<string> ReplayName = new("name")
+    {
+        Description =
+            "Optional: The name or search pattern for the Replay to be processed. Wildcards (*) are supported",
+        DefaultValueFactory = _ => ""
+    };
 
     public ProcessReplay()
         : base("replay", "Extract more information from replays (.WAgame files)")
     {
-        AddAlias("replays");
-        AddAlias("WAgame");
-        AddArgument(ReplayName);
+        Aliases.Add("replays");
+        Aliases.Add("WAgame");
+        Arguments.Add(ReplayName);
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class ProcessReplayHandler(
     IWormsArmageddon wormsArmageddon,
     IResourceRetriever<LocalReplay> replayRetriever,
-    ILogger<ProcessReplayHandler> logger) : ICommandHandler
+    ILogger<ProcessReplayHandler> logger) : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Replay.SpanNameProcess);
-        var name = context.ParseResult.GetValueForArgument(ProcessReplay.ReplayName);
-        var cancellationToken = context.GetCancellationToken();
+        var name = parseResult.GetValue(ProcessReplay.ReplayName);
 
         var pattern = string.Empty;
 

@@ -12,21 +12,19 @@ internal sealed class BrowseScheme : Command
     public BrowseScheme()
         : base("scheme", "Open the folder containing the local schemes")
     {
-        AddAlias("schemes");
-        AddAlias("wsc");
+        Aliases.Add("schemes");
+        Aliases.Add("wsc");
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class BrowseSchemeHandler(
     IWormsArmageddon wormsArmageddon,
     IFolderOpener folderOpener,
-    ILogger<BrowseSchemeHandler> logger) : ICommandHandler
+    ILogger<BrowseSchemeHandler> logger) : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public Task<int> InvokeAsync(InvocationContext context)
+    public override Task<int> InvokeAsync(
+        ParseResult parseResult,
+        CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Scheme.SpanNameBrowse);
         var worms = wormsArmageddon.FindInstallation();
