@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+
 ReleaseName=$1
 Tag=$2
 GitHubToken=$3

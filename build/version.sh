@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 NEXT_VERSION="$1"
 TAG_PREFIX="$2"
