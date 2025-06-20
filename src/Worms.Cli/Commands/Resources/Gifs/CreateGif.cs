@@ -11,82 +11,62 @@ namespace Worms.Cli.Commands.Resources.Gifs;
 
 internal sealed class CreateGif : Command
 {
-    public static readonly Option<string> ReplayName = new(
-        [
-            "--replay",
-            "-r"
-        ],
-        "The replay name");
+    public static readonly Option<string> ReplayName = new("--replay", "-r") { Description = "The replay name" };
 
-    public static readonly Option<uint> Turn = new(
-        [
-            "--turn",
-            "-t"
-        ],
-        "The turn number");
+    public static readonly Option<uint> Turn = new("--turn", "-t") { Description = "The turn number" };
 
-    public static readonly Option<uint> FramesPerSecond = new(
-        [
-            "--frames-per-second",
-            "-fps"
-        ],
-        () => 5,
-        "The number of frames per second");
+    public static readonly Option<uint> FramesPerSecond = new("--frames-per-second", "-fps")
+    {
+        Description = "The number of frames per second",
+        DefaultValueFactory = _ => 5
+    };
 
-    public static readonly Option<uint> Speed = new(
-        [
-            "--speed",
-            "-s"
-        ],
-        () => 2,
-        "Speed multiplier for the gif");
+    public static readonly Option<uint> Speed = new("--speed", "-s")
+    {
+        Description = "Speed multiplier for the gif",
+        DefaultValueFactory = _ => 2,
+    };
 
-    public static readonly Option<uint> StartOffset = new(
-        [
-            "--start-offset",
-            "-so"
-        ],
-        () => 0,
-        "Offset for the start of the gif in seconds");
+    public static readonly Option<uint> StartOffset = new("--start-offset", "-so")
+    {
+        Description = "Offset for the start of the gif in seconds",
+        DefaultValueFactory = _ => 0
+    };
 
-    public static readonly Option<uint> EndOffset = new(
-        [
-            "--end-offset",
-            "-eo"
-        ],
-        () => 0,
-        "Offset for the end of the gif in seconds");
+    public static readonly Option<uint> EndOffset = new("--end-offset", "-eo")
+    {
+        Description = "Offset for the end of the gif in seconds",
+        DefaultValueFactory = _ => 0,
+    };
 
     public CreateGif()
         : base("gif", "Create animated gifs of replays (.gif files)")
     {
-        AddOption(ReplayName);
-        AddOption(Turn);
-        AddOption(FramesPerSecond);
-        AddOption(Speed);
-        AddOption(StartOffset);
-        AddOption(EndOffset);
+        Options.Add(ReplayName);
+        Options.Add(Turn);
+        Options.Add(FramesPerSecond);
+        Options.Add(Speed);
+        Options.Add(StartOffset);
+        Options.Add(EndOffset);
     }
 }
 
 internal sealed class CreateGifHandler(
     IResourceCreator<LocalGif, LocalGifCreateParameters> gifCreator,
     IResourceRetriever<LocalReplay> replayRetriever,
-    ILogger<CreateGifHandler> logger) : ICommandHandler
+    ILogger<CreateGifHandler> logger) : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(
+        ParseResult parseResult,
+        CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Gif.SpanNameCreate);
-        var replayName = context.ParseResult.GetValueForOption(CreateGif.ReplayName);
-        var turn = context.ParseResult.GetValueForOption(CreateGif.Turn);
-        var fps = context.ParseResult.GetValueForOption(CreateGif.FramesPerSecond);
-        var speed = context.ParseResult.GetValueForOption(CreateGif.Speed);
-        var startOffset = context.ParseResult.GetValueForOption(CreateGif.StartOffset);
-        var endOffset = context.ParseResult.GetValueForOption(CreateGif.EndOffset);
-        var cancellationToken = context.GetCancellationToken();
+        var replayName = parseResult.GetValue(CreateGif.ReplayName);
+        var turn = parseResult.GetValue(CreateGif.Turn);
+        var fps = parseResult.GetValue(CreateGif.FramesPerSecond);
+        var speed = parseResult.GetValue(CreateGif.Speed);
+        var startOffset = parseResult.GetValue(CreateGif.StartOffset);
+        var endOffset = parseResult.GetValue(CreateGif.EndOffset);
 
         var config = new Config(replayName, turn, fps, speed, startOffset, endOffset);
         var replay = await config.Validate(ValidConfig())

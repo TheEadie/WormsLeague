@@ -10,39 +10,32 @@ namespace Worms.Cli.Commands.Resources.Replays;
 
 internal sealed class ViewReplay : Command
 {
-    public static readonly Argument<string> ReplayName = new("name", "The name of the Replay to be viewed");
+    public static readonly Argument<string> ReplayName =
+        new("name") { Description = "The name of the Replay to be viewed" };
 
-    public static readonly Option<uint> Turn = new(
-        [
-            "--turn",
-            "-t"
-        ],
-        "The turn you wish to start the replay from");
-
-    public ViewReplay()
-        : base("replay", "View replays (.WAgame file)")
+    public static readonly Option<uint> Turn = new("--turn", "-t")
     {
-        AddAlias("replays");
-        AddAlias("WAgame");
-        AddArgument(ReplayName);
-        AddOption(Turn);
+        Description = "The turn you wish to start the replay from"
+    };
+
+    public ViewReplay() : base("replay", "View replays (.WAgame file)")
+    {
+        Aliases.Add("replays");
+        Aliases.Add("WAgame");
+        Arguments.Add(ReplayName);
+        Options.Add(Turn);
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class ViewReplayHandler(
     ResourceViewer<LocalReplay, LocalReplayViewParameters> resourceViewer,
-    ILogger<ViewReplay> logger) : ICommandHandler
+    ILogger<ViewReplay> logger) : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Replay.SpanNameView);
-        var name = context.ParseResult.GetValueForArgument(ViewReplay.ReplayName);
-        var turn = context.ParseResult.GetValueForOption(ViewReplay.Turn);
-        var cancellationToken = context.GetCancellationToken();
+        var name = parseResult.GetRequiredValue(ViewReplay.ReplayName);
+        var turn = parseResult.GetValue(ViewReplay.Turn);
 
         var replay = await resourceViewer.GetResource(name, cancellationToken);
 

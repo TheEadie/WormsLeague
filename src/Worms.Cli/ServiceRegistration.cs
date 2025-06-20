@@ -7,7 +7,6 @@ using Worms.Cli.Commands.Resources.Gifs;
 using Worms.Cli.Commands.Resources.Replays;
 using Worms.Cli.Commands.Resources.Schemes;
 using Worms.Cli.League;
-using Worms.Cli.Middleware;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Games;
 using Worms.Cli.Resources.Local.Replays;
@@ -47,5 +46,5 @@ internal static class ServiceRegistration
             .AddScoped(typeof(ResourceGetter<>), typeof(ResourceGetter<>))
             .AddScoped(typeof(ResourceDeleter<>), typeof(ResourceDeleter<>))
             .AddScoped(typeof(ResourceViewer<,>), typeof(ResourceViewer<,>))
-            .AddScoped<LogUserId>();
+            .AddScoped<Runner>();
 }

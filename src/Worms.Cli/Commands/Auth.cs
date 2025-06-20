@@ -9,15 +9,12 @@ internal sealed class Auth : Command
 {
     public Auth()
         : base("auth", "Authenticate with a Worms League Server") =>
-        AddAlias("login");
+        Aliases.Add("login");
 }
 
-internal sealed class AuthHandler(ILoginService loginService) : ICommandHandler
+internal sealed class AuthHandler(ILoginService loginService) : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Auth.SpanName);
         await loginService.RequestLogin(CancellationToken.None);

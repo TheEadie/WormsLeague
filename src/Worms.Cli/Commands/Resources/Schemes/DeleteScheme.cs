@@ -10,30 +10,28 @@ namespace Worms.Cli.Commands.Resources.Schemes;
 
 internal sealed class DeleteScheme : Command
 {
-    public static readonly Argument<string> SchemeName = new("name", "The name of the Scheme to be deleted");
+    public static readonly Argument<string> SchemeName = new("name")
+    {
+        Description = "The name of the Scheme to be deleted"
+    };
 
     public DeleteScheme()
         : base("scheme", "Delete Worms Schemes (.wsc files)")
     {
-        AddAlias("schemes");
-        AddAlias("wsc");
-        AddArgument(SchemeName);
+        Aliases.Add("schemes");
+        Aliases.Add("wsc");
+        Arguments.Add(SchemeName);
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class DeleteSchemeHandler(
     ResourceDeleter<LocalScheme> resourceDeleter,
-    ILogger<DeleteSchemeHandler> logger) : ICommandHandler
+    ILogger<DeleteSchemeHandler> logger) : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Scheme.SpanNameDelete);
-        var name = context.ParseResult.GetValueForArgument(DeleteScheme.SchemeName);
-        var cancellationToken = context.GetCancellationToken();
+        var name = parseResult.GetRequiredValue(DeleteScheme.SchemeName);
 
         var scheme = await resourceDeleter.GetResource(name, cancellationToken);
 

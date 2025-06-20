@@ -11,19 +11,17 @@ internal sealed class BrowseGif : Command
 {
     public BrowseGif()
         : base("gif", "Open the folder containing the local gifs") =>
-        AddAlias("gifs");
+        Aliases.Add("gifs");
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class BrowseGifHandler(
     IWormsArmageddon wormsArmageddon,
     IFolderOpener folderOpener,
-    ILogger<BrowseGifHandler> logger) : ICommandHandler
+    ILogger<BrowseGifHandler> logger) : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public Task<int> InvokeAsync(InvocationContext context)
+    public override Task<int> InvokeAsync(
+        ParseResult parseResult,
+        CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Gif.SpanNameBrowse);
         var worms = wormsArmageddon.FindInstallation();

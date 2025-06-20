@@ -10,32 +10,30 @@ namespace Worms.Cli.Commands.Resources.Replays;
 
 internal sealed class GetReplay : Command
 {
-    public static readonly Argument<string> ReplayName = new(
-        "name",
-        () => "",
-        "Optional: The name or search pattern for the Replay to be retrieved. Wildcards (*) are supported");
+    public static readonly Argument<string> ReplayName = new("name")
+    {
+        Description =
+            "Optional: The name or search pattern for the Replay to be retrieved. Wildcards (*) are supported",
+        DefaultValueFactory = _ => ""
+    };
 
     public GetReplay()
         : base("replay", "Retrieves information for Worms replays (.WAgame files)")
     {
-        AddAlias("replays");
-        AddAlias("WAgame");
-        AddArgument(ReplayName);
+        Aliases.Add("replays");
+        Aliases.Add("WAgame");
+        Arguments.Add(ReplayName);
     }
 }
 
 internal sealed class GetReplayHandler(ResourceGetter<LocalReplay> replayRetriever, ILogger<GetReplayHandler> logger)
-    : ICommandHandler
+    : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Replay.SpanNameGet);
-        var name = context.ParseResult.GetValueForArgument(GetReplay.ReplayName);
+        var name = parseResult.GetRequiredValue(GetReplay.ReplayName);
         var windowWidth = Console.WindowWidth == 0 ? 80 : Console.WindowWidth;
-        var cancellationToken = context.GetCancellationToken();
 
         var replays = await replayRetriever.GetResources(name, cancellationToken);
 

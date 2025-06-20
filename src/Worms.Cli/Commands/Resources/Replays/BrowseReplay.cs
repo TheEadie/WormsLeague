@@ -12,21 +12,19 @@ internal sealed class BrowseReplay : Command
     public BrowseReplay()
         : base("replay", "Open the folder containing the local replays")
     {
-        AddAlias("replays");
-        AddAlias("WAgame");
+        Aliases.Add("replays");
+        Aliases.Add("WAgame");
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class BrowseReplayHandler(
     IWormsArmageddon wormsArmageddon,
     IFolderOpener folderOpener,
-    ILogger<BrowseReplayHandler> logger) : ICommandHandler
+    ILogger<BrowseReplayHandler> logger) : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public Task<int> InvokeAsync(InvocationContext context)
+    public override Task<int> InvokeAsync(
+        ParseResult parseResult,
+        CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Replay.SpanNameBrowse);
         var worms = wormsArmageddon.FindInstallation();

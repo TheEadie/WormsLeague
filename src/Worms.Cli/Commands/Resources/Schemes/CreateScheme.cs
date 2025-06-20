@@ -13,57 +13,47 @@ namespace Worms.Cli.Commands.Resources.Schemes;
 
 internal sealed class CreateScheme : Command
 {
-    public static readonly Argument<string> SchemeName = new("name", "The name of the Scheme to be created");
+    public static readonly Argument<string> SchemeName =
+        new("name") { Description = "The name of the Scheme to be created" };
 
-    public static readonly Option<string> InputFile = new(
-        [
-            "--file",
-            "-f"
-        ],
-        "File to load the Scheme definition from");
+    public static readonly Option<string> InputFile =
+        new("--file", "-f") { Description = "File to load the Scheme definition from" };
 
-    public static readonly Option<string> ResourceFolder = new(
-        [
-            "--resource-folder",
-            "-r"
-        ],
-        "Override the folder that the Scheme will be created in");
+    public static readonly Option<string> ResourceFolder = new("--resource-folder", "-r")
+    {
+        Description = "Override the folder that the Scheme will be created in"
+    };
 
-    public static readonly Option<bool> Random = new(["--random"], "Generate a scheme randomnly");
+    public static readonly Option<bool> Random = new("--random") { Description = "Generate a scheme randomly" };
 
     public CreateScheme()
         : base("scheme", "Create Worms Schemes (.wsc files)")
     {
-        AddAlias("schemes");
-        AddAlias("wsc");
+        Aliases.Add("schemes");
+        Aliases.Add("wsc");
 
-        AddArgument(SchemeName);
-        AddOption(InputFile);
-        AddOption(ResourceFolder);
-        AddOption(Random);
+        Arguments.Add(SchemeName);
+        Options.Add(InputFile);
+        Options.Add(ResourceFolder);
+        Options.Add(Random);
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class CreateSchemeHandler(
     IResourceCreator<LocalScheme, LocalSchemeCreateParameters> schemeCreator,
     IFileSystem fileSystem,
     IWormsArmageddon wormsArmageddon,
-    ILogger<CreateSchemeHandler> logger) : ICommandHandler
+    ILogger<CreateSchemeHandler> logger) : AsynchronousCommandLineAction
 {
-    public int Invoke(InvocationContext context) =>
-        Task.Run(async () => await InvokeAsync(context)).GetAwaiter().GetResult();
-
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Scheme.SpanNameCreate);
-        var cancellationToken = context.GetCancellationToken();
 
         var config = new Config(
-            context.ParseResult.GetValueForArgument(CreateScheme.SchemeName),
-            context.ParseResult.GetValueForOption(CreateScheme.ResourceFolder),
-            context.ParseResult.GetValueForOption(CreateScheme.InputFile),
-            context.ParseResult.GetValueForOption(CreateScheme.Random),
+            parseResult.GetRequiredValue(CreateScheme.SchemeName),
+            parseResult.GetValue(CreateScheme.ResourceFolder),
+            parseResult.GetValue(CreateScheme.InputFile),
+            parseResult.GetValue(CreateScheme.Random),
             wormsArmageddon.FindInstallation());
 
         var createParams = config.Validate(ValidConfig())
