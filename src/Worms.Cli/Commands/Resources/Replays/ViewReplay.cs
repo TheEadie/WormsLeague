@@ -29,7 +29,7 @@ internal sealed class ViewReplay : Command
 
 internal sealed class ViewReplayHandler(
     ResourceViewer<LocalReplay, LocalReplayViewParameters> resourceViewer,
-    ILogger<ViewReplay> logger) : AsynchronousCommandLineAction
+    ILogger<ViewReplayHandler> logger) : AsynchronousCommandLineAction
 {
     public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
