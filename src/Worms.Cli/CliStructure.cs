@@ -13,7 +13,7 @@ namespace Worms.Cli;
 
 internal static class CliStructure
 {
-    internal static CommandLineConfiguration BuildCommandLine(IServiceProvider serviceProvider)
+    internal static Command BuildCommandLine(IServiceProvider serviceProvider)
     {
         var rootCommand = new Root();
         rootCommand.Add<Auth, AuthHandler>(serviceProvider);
@@ -51,7 +51,7 @@ internal static class CliStructure
         browseCommand.Add<BrowseGif, BrowseGifHandler>(serviceProvider);
         rootCommand.Subcommands.Add(browseCommand);
 
-        return new CommandLineConfiguration(rootCommand);
+        return rootCommand;
     }
 
     private static void Add<TC, TH>(this Command parentCommand, IServiceProvider serviceProvider)

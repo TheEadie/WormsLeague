@@ -9,7 +9,7 @@ namespace Worms.Cli;
 internal sealed class Runner(IUserDetailsService userDetailsService, ILogger<Runner> logger)
 {
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "This is the global exception handler for the CLI")]
-    public async Task<int> Run(CommandLineConfiguration commandLineConfiguration, string[] args)
+    public async Task<int> Run(Command rootCommand, string[] args, CancellationToken cancellationToken)
     {
         try
         {
@@ -26,8 +26,9 @@ internal sealed class Runner(IUserDetailsService userDetailsService, ILogger<Run
                 _ = Activity.Current?.SetTag(Telemetry.Spans.Root.LoggedIn, false);
             }
 
-            commandLineConfiguration.EnableDefaultExceptionHandler = false;
-            return await commandLineConfiguration.InvokeAsync(args);
+            var config = new InvocationConfiguration { EnableDefaultExceptionHandler = false };
+
+            return await rootCommand.Parse(args).InvokeAsync(config, cancellationToken);
         }
         catch (OperationCanceledException)
         {
