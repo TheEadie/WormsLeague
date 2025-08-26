@@ -35,12 +35,12 @@ internal static class Program
             .AddSingleton<IConfiguration>(configuration);
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
-        var commandLineConfiguration = CliStructure.BuildCommandLine(serviceProvider);
+        var rootCommand = CliStructure.BuildCommandLine(serviceProvider);
 
         _ = span?.AddEvent(Telemetry.Events.DiSetupComplete);
 
         var runner = serviceProvider.GetRequiredService<Runner>();
-        var result = await runner.Run(commandLineConfiguration, args);
+        var result = await runner.Run(rootCommand, args, CancellationToken.None);
 
         _ = span?.SetTag(Telemetry.Spans.Root.ProcessExitCode, result);
         return result;
