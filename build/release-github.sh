@@ -5,7 +5,6 @@ ReleaseName=$1
 Tag=$2
 GitHubToken=$3
 GitHubRepo=$4
-ReleaseDir=$5
 
 echo "Creating GitHub Release $ReleaseName..."
 echo "Calling - https://api.github.com/repos/$GitHubRepo/releases"
@@ -25,10 +24,11 @@ CreateReleaseResponse=$(curl --request POST \
 
 echo "$CreateReleaseResponse" # Print the message
 
-if [ -z "$ReleaseDir" ]; then
+if [ -z "$5" ]; then
     # Nothing to upload
     echo "No artifacts to upload"
 else
+    ReleaseDir=$5
     AssetUrl=$(echo $CreateReleaseResponse | jq -r '.upload_url' | sed 's/{?name,label}//g')
 
     for filename in $ReleaseDir/*; do
