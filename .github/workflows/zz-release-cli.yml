@@ -15,7 +15,7 @@ jobs:
       clis: ${{ steps.filter.outputs.clis == 'true' }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
     - name: Filter
@@ -39,7 +39,7 @@ jobs:
     if: ${{ needs.changes.outputs.clis == 'true' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Download build
@@ -57,7 +57,7 @@ jobs:
     if: ${{ needs.changes.outputs.clis == 'true' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Download build - win-x64
@@ -80,7 +80,7 @@ jobs:
     if: ${{ needs.changes.outputs.clis == 'true' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Download build
