@@ -64,6 +64,22 @@ services:
             azure-storage:
                 condition: service_healthy
 
+    worms-replay-updater:
+        build:
+            dockerfile: build/docker/replay-updater/Dockerfile
+            context: .
+        volumes:
+            - ./sample-data:/data
+        environment:
+            - WORMS_CONNECTIONSTRINGS__STORAGE=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azure-storage:10000/devstoreaccount1;QueueEndpoint=http://azure-storage:10001/devstoreaccount1;
+            - WORMS_CONNECTIONSTRINGS__DATABASE=Server=database;Port=5432;Database=worms;Username=worms;Password=worms
+            - WORMS_STORAGE__TEMPREPLAYFOLDER=/data/replays
+        depends_on:
+            flyway-init:
+                condition: service_completed_successfully
+            azure-storage:
+                condition: service_healthy
+
     worms-replay-processor:
         build:
             dockerfile: build/docker/replay-processor/Dockerfile
@@ -73,10 +89,7 @@ services:
             - /home/eadie/games/worms:/game
         environment:
             - WORMS_CONNECTIONSTRINGS__STORAGE=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azure-storage:10000/devstoreaccount1;QueueEndpoint=http://azure-storage:10001/devstoreaccount1;
-            - WORMS_CONNECTIONSTRINGS__DATABASE=Server=database;Port=5432;Database=worms;Username=worms;Password=worms
             - WORMS_STORAGE__TEMPREPLAYFOLDER=/data/replays
         depends_on:
-            flyway-init:
-                condition: service_completed_successfully
             azure-storage:
                 condition: service_healthy

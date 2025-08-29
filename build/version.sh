@@ -5,17 +5,15 @@ NEXT_VERSION="$1"
 TAG_PREFIX="$2"
 
 # Read Version parts
-IFS='.'  
+IFS='.'
 read -r -a VERSION_PARTS <<<"$NEXT_VERSION"
-  
+
 MAJOR="${VERSION_PARTS[0]}"
 MINOR="${VERSION_PARTS[1]}"
 PATCH=0
 
 # Get last tag
-LATEST_TAG=$(git describe --tags --match "$TAG_PREFIX*" --abbrev=0 2>/dev/null)
-HEAD_HASH=$(git rev-parse --verify HEAD)
-TAG_HASH=$(git log -1 --format=format:"%H" "$LATEST_TAG" 2>/dev/null | tail -n1)
+LATEST_TAG=$(git describe --tags --match "$TAG_PREFIX*" --abbrev=0 2>/dev/null || true)
 
 if [[ -z "$LATEST_TAG" ]]; then
     >&2 echo "No previous versions found"
@@ -23,6 +21,9 @@ if [[ -z "$LATEST_TAG" ]]; then
     echo "$NEXT_VERSION.0"
     exit
 fi
+
+HEAD_HASH=$(git rev-parse --verify HEAD)
+TAG_HASH=$(git log -1 --format=format:"%H" "$LATEST_TAG" 2>/dev/null | tail -n1)
 
 if [[ -n "$TAG_PREFIX" ]]; then
     LATEST_TAG=${LATEST_TAG#"$TAG_PREFIX"}
@@ -36,7 +37,7 @@ if [[ "$HEAD_HASH" == "$TAG_HASH" ]]; then
 fi
 
 # Read Version parts
-IFS='.'  
+IFS='.'
 read -r -a VERSION_PARTS <<<"$LATEST_TAG"
 
 LATEST_MAJOR="${VERSION_PARTS[0]}"

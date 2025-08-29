@@ -1,38 +1,35 @@
 using Worms.Armageddon.Game;
-using Worms.Hub.Storage.Database;
-using Worms.Hub.Storage.Domain;
-using Worms.Hub.Storage.Files;
-using Worms.Hub.Storage.Queues;
+using Worms.Hub.Queues;
+using Worms.Hub.ReplayProcessor.Queue;
 
 namespace Worms.Hub.ReplayProcessor;
 
 internal sealed class Processor(
-    IMessageQueue<ReplayToProcessMessage> messageQueue,
+    IMessageQueue<ReplayToProcessMessage> inputQueue,
+    IMessageQueue<ReplayToUpdateMessage> outputQueue,
     IWormsArmageddon wormsArmageddon,
-    IRepository<Replay> replayRepository,
-    ReplayFiles replayFiles,
+    IConfiguration configuration,
     ILogger<Processor> logger)
 {
     public async Task ProcessReplay()
     {
         logger.LogInformation("Starting replay processor...");
 
-        var (message, token) = await messageQueue.DequeueMessage();
+        var (message, token) = await inputQueue.DequeueMessage();
         if (message is null || token is null)
         {
             logger.LogInformation("No messages to process.");
             return;
         }
 
-        // Check replay is in database
-        var replay = replayRepository.GetAll().FirstOrDefault(x => x.Id == message.ReplayId);
-        if (replay is null)
+        var replayPath = GetReplayPath(message.ReplayFileName);
+
+        // Check replay is in the folder
+        if (!File.Exists(replayPath))
         {
-            logger.LogError("Replay not found in database: {Id}", message.ReplayId);
+            logger.LogError("Replay not found on disk: {ReplayPath}", replayPath);
             return;
         }
-
-        var replayPath = replayFiles.GetReplayPath(replay);
 
         // Check game is installed
         if (!GameIsInstalled())
@@ -63,7 +60,7 @@ internal sealed class Processor(
 
         // Generate replay log
         await wormsArmageddon.GenerateReplayLog(replayPath);
-        var logPath = replayFiles.GetLogPath(replay);
+        var logPath = GetLogPath(replayPath);
 
         if (logPath is null)
         {
@@ -71,18 +68,11 @@ internal sealed class Processor(
             return;
         }
 
-        var replayLog = await File.ReadAllTextAsync(logPath);
-
-        // Update the database with the log
-        var updatedReplay = replay with
-        {
-            Status = "Processed",
-            FullLog = replayLog
-        };
-        replayRepository.Update(updatedReplay);
+        // Send a message to the replay updater queue
+        await outputQueue.EnqueueMessage(new ReplayToUpdateMessage(message.ReplayFileName));
 
         // Delete the message from the queue
-        await messageQueue.DeleteMessage(token);
+        await inputQueue.DeleteMessage(token);
 
         logger.LogInformation("Replay processor finished.");
     }
@@ -139,5 +129,21 @@ internal sealed class Processor(
                 CopyDirectory(subDir.FullName, newDestinationDir, true);
             }
         }
+    }
+
+    private string GetReplayPath(string replayFileName) => Path.Combine(GetReplayFolderPath(), replayFileName);
+
+    private string GetReplayFolderPath() =>
+        configuration["Storage:TempReplayFolder"] ?? throw new ArgumentException("Temp replay folder not configured");
+
+    private static string? GetLogPath(string replayPath)
+    {
+        var folder = Path.GetDirectoryName(replayPath) ?? throw new ArgumentException("Replay path is invalid");
+        var fileName = replayPath.EndsWith(".WAGame", StringComparison.InvariantCultureIgnoreCase)
+            ? Path.GetFileNameWithoutExtension(replayPath)
+            : Path.GetFileName(replayPath);
+
+        var logPath = Path.Combine(folder, $"{fileName}.log");
+        return File.Exists(logPath) ? logPath : null;
     }
 }

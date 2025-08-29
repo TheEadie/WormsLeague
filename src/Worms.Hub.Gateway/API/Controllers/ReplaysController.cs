@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Worms.Hub.Gateway.API.DTOs;
 using Worms.Hub.Gateway.API.Validators;
+using Worms.Hub.Queues;
+using Worms.Hub.ReplayProcessor.Queue;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
 using Worms.Hub.Storage.Files;
-using Worms.Hub.Storage.Queues;
 
 namespace Worms.Hub.Gateway.API.Controllers;
 
@@ -35,7 +36,7 @@ internal sealed class ReplaysController(
         var replay = repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename, null));
 
         // Enqueue the replay for processing
-        var message = new ReplayToProcessMessage(replay.Id);
+        var message = new ReplayToProcessMessage(replay.Filename);
         await replayProcessor.EnqueueMessage(message);
 
         return ReplayDto.FromDomain(replay);

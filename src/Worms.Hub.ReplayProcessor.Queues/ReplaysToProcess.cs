@@ -1,7 +1,8 @@
 using Azure.Storage.Queues;
 using Microsoft.Extensions.Configuration;
+using Worms.Hub.Queues;
 
-namespace Worms.Hub.Storage.Queues;
+namespace Worms.Hub.ReplayProcessor.Queue;
 
 internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQueue<ReplayToProcessMessage>
 {
@@ -21,7 +22,7 @@ internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQ
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync();
-        _ = await queueClient.SendMessageAsync(message.ReplayId);
+        _ = await queueClient.SendMessageAsync(message.ReplayFileName);
     }
 
     public async Task<(ReplayToProcessMessage?, MessageDetails?)> DequeueMessage()
