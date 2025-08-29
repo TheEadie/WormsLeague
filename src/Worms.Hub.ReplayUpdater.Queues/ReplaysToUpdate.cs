@@ -1,5 +1,6 @@
 using Azure.Storage.Queues;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 using Worms.Hub.Queues;
 
 namespace Worms.Hub.ReplayProcessor.Queue;
@@ -22,7 +23,8 @@ internal sealed class ReplaysToUpdate(IConfiguration configuration) : IMessageQu
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync();
-        _ = await queueClient.SendMessageAsync(message.ReplayPath);
+        var messageJson = JsonSerializer.Serialize(message);
+        _ = await queueClient.SendMessageAsync(messageJson);
     }
 
     public async Task<(ReplayToUpdateMessage?, MessageDetails?)> DequeueMessage()
@@ -31,10 +33,14 @@ internal sealed class ReplaysToUpdate(IConfiguration configuration) : IMessageQu
         var queueClient = new QueueClient(connectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync();
         var message = await queueClient.ReceiveMessageAsync();
-        return message.Value is null
-            ? (null, null)
-            : (new ReplayToUpdateMessage(message.Value.MessageText),
-                new MessageDetails(message.Value.MessageId, message.Value.PopReceipt));
+
+        if (message.Value is null)
+        {
+            return (null, null);
+        }
+
+        var replayMessage = JsonSerializer.Deserialize<ReplayToUpdateMessage>(message.Value.MessageText);
+        return (replayMessage, new MessageDetails(message.Value.MessageId, message.Value.PopReceipt));
     }
 
     public async Task DeleteMessage(MessageDetails messageDetails)

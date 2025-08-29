@@ -66,7 +66,7 @@ internal sealed class Processor(
         }
 
         // Send a message to the replay updater queue
-        await outputQueue.EnqueueMessage(new ReplayToUpdateMessage(message.ReplayPath));
+        await outputQueue.EnqueueMessage(new ReplayToUpdateMessage(message.ReplayPath, logPath));
 
         // Delete the message from the queue
         await inputQueue.DeleteMessage(token);

@@ -32,10 +32,9 @@ internal sealed class Processor(
         }
 
         // Check replay has a log file generated
-        var logPath = replayFiles.GetLogPath(replayPath);
-        if (logPath is null)
+        if (!File.Exists(message.ReplayLogPath))
         {
-            logger.LogError("Log file not found from replay path: {ReplayPath}", replayPath);
+            logger.LogError("Log file not found: {LogPath}", message.ReplayLogPath);
             return;
         }
 
@@ -47,7 +46,7 @@ internal sealed class Processor(
             return;
         }
 
-        var replayLog = await File.ReadAllTextAsync(logPath);
+        var replayLog = await File.ReadAllTextAsync(message.ReplayLogPath);
 
         // Update the database with the log
         var updatedReplay = replay with
