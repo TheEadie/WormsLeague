@@ -6,24 +6,25 @@ using Pulumi.AzureNative.Resources;
 
 namespace Worms.Hub.Infrastructure.ContainerApps;
 
-public static class ReplayProcessor
+public static class ReplayUpdater
 {
     public static Job Config(
         ResourceGroup resourceGroup,
         Config config,
         ManagedEnvironment managedEnvironment,
         ManagedEnvironmentsStorage managedEnvironmentStorage,
+        Output<string> databaseConnectionString,
         Output<string> queueConnectionString)
     {
-        var image = config.Require("replay-processor-image");
+        var image = config.Require("replay-updater-image");
         var storageAccountName = Utils.GetResourceNameAlphaNumericOnly("wormstest");
-        var queueName = "replays-to-process";
+        var queueName = "replays-to-update";
 
         var containerApp = new Job(
-            "worms-hub-replay-processor",
+            "worms-hub-replay-updater",
             new()
             {
-                JobName = "worms-replay-processor",
+                JobName = "worms-replay-updater",
                 ResourceGroupName = resourceGroup.Name,
                 EnvironmentId = managedEnvironment.Id,
                 Configuration = new JobConfigurationArgs
@@ -68,6 +69,11 @@ public static class ReplayProcessor
                     [
                         new SecretArgs
                         {
+                            Name = "database-connection",
+                            Value = databaseConnectionString,
+                        },
+                        new SecretArgs
+                        {
                             Name = "queue-connection",
                             Value = queueConnectionString,
                         }
@@ -79,7 +85,7 @@ public static class ReplayProcessor
                     {
                         new ContainerArgs
                         {
-                            Name = "replay-processor",
+                            Name = "replay-updater",
                             Image = image,
                             Env =
                             [
@@ -95,6 +101,11 @@ public static class ReplayProcessor
                                 },
                                 new EnvironmentVarArgs
                                 {
+                                    Name = "WORMS_CONNECTIONSTRINGS__DATABASE",
+                                    SecretRef = "database-connection",
+                                },
+                                new EnvironmentVarArgs
+                                {
                                     Name = "WORMS_CONNECTIONSTRINGS__STORAGE",
                                     SecretRef = "queue-connection",
                                 }
@@ -105,12 +116,6 @@ public static class ReplayProcessor
                                 {
                                     VolumeName = "worms-hub-volume",
                                     MountPath = "/storage",
-                                },
-                                new VolumeMountArgs
-                                {
-                                    VolumeName = "worms-hub-volume",
-                                    SubPath = "game/WA/",
-                                    MountPath = "/game",
                                 }
                             }
                         }
