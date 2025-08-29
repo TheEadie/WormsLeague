@@ -34,10 +34,9 @@ internal sealed class ReplaysController(
 
         var tempFilename = await replayFiles.SaveFileContents(parameters.ReplayFile.OpenReadStream());
         var replay = repository.Create(new Replay("0", parameters.Name, "Pending", tempFilename, null));
-        var replayPath = replayFiles.GetReplayPath(replay.Filename);
 
         // Enqueue the replay for processing
-        var message = new ReplayToProcessMessage(replayPath);
+        var message = new ReplayToProcessMessage(replay.Filename);
         await replayProcessor.EnqueueMessage(message);
 
         return ReplayDto.FromDomain(replay);

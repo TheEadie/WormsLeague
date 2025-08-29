@@ -24,7 +24,7 @@ internal sealed class Processor(
         }
 
         // Check replay is in the folder
-        var replayPath = replayFiles.GetReplayPath(message.ReplayPath);
+        var replayPath = replayFiles.GetReplayPath(message.ReplayFileName);
         if (!File.Exists(replayPath))
         {
             logger.LogError("Replay not found on disk: {ReplayPath}", replayPath);
@@ -32,21 +32,22 @@ internal sealed class Processor(
         }
 
         // Check replay has a log file generated
-        if (!File.Exists(message.ReplayLogPath))
+        var logPath = replayFiles.GetLogPath(message.ReplayFileName);
+        if (!File.Exists(logPath))
         {
-            logger.LogError("Log file not found: {LogPath}", message.ReplayLogPath);
+            logger.LogError("Log file not found: {LogPath}", logPath);
             return;
         }
 
         // Check the replay exists in the database
-        var replay = replayRepository.GetAll().FirstOrDefault(r => r.Filename == message.ReplayPath);
+        var replay = replayRepository.GetAll().FirstOrDefault(r => r.Filename == message.ReplayFileName);
         if (replay is null)
         {
-            logger.LogError("Replay not found in database: {ReplayPath}", replayPath);
+            logger.LogError("Replay not found in database: {ReplayFileName}", message.ReplayFileName);
             return;
         }
 
-        var replayLog = await File.ReadAllTextAsync(message.ReplayLogPath);
+        var replayLog = await File.ReadAllTextAsync(logPath);
 
         // Update the database with the log
         var updatedReplay = replay with

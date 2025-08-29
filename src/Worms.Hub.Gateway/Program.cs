@@ -1,6 +1,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Worms.Hub.Gateway;
 using Worms.Hub.Gateway.API.Middleware;
+using Worms.Hub.ReplayProcessor.Queue;
 using Worms.Hub.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,19 +12,18 @@ builder.Services.AddControllers()
     .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new InternalControllerProvider()));
 builder.Services.AddApiVersioning();
 builder.Services.AddAuthentication()
-    .AddJwtBearer(
-        options =>
+    .AddJwtBearer(options =>
+        {
+            options.Authority = builder.Configuration.GetValue<string>("Auth:Authority");
+            options.Audience = builder.Configuration.GetValue<string>("Auth:Audience");
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                options.Authority = builder.Configuration.GetValue<string>("Auth:Authority");
-                options.Audience = builder.Configuration.GetValue<string>("Auth:Audience");
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    NameClaimType = builder.Configuration.GetValue<string>("Auth:NameClaim"),
-                    RoleClaimType = builder.Configuration.GetValue<string>("Auth:PermissionsClaim")
-                };
-            });
+                NameClaimType = builder.Configuration.GetValue<string>("Auth:NameClaim"),
+                RoleClaimType = builder.Configuration.GetValue<string>("Auth:PermissionsClaim")
+            };
+        });
 builder.Services.AddAuthorization();
-builder.Services.AddHubStorageServices().AddGatewayServices();
+builder.Services.AddHubStorageServices().AddGatewayServices().AddReplayToProcessQueueServices();
 builder.Services.AddOpenTelemetryWormsHub();
 
 var app = builder.Build();
