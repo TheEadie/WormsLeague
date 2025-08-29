@@ -42,7 +42,7 @@ public static class WormsHub
         var (server, database, databasePassword, databaseVersion) = Database.Config(resourceGroup, config);
 
         var databaseJdbc = Output.Format(
-            $"jdbc:postgresql://{server.FullyQualifiedDomainName}/{database.Name}?user={server.AdministratorLogin}&password={databasePassword}");
+            $"jdbc:postgresql://{server.FullyQualifiedDomainName}/{database.Name}");
         var databaseAdoNet = Output.Format(
             $"Server={server.FullyQualifiedDomainName};Port=5432;Database={database.Name};User Id={server.AdministratorLogin};Password={databasePassword}");
         var databaseUser = server.AdministratorLogin;
@@ -57,7 +57,10 @@ public static class WormsHub
         var gateway = await Gateway.Config(resourceGroup, config, containerApp, containerAppStorage, databaseAdoNet, queueConnStr);
 
         // Replay Processor
-        var replayProcessor = ReplayProcessor.Config(resourceGroup, config, containerApp, containerAppStorage, databaseAdoNet, queueConnStr);
+        var replayProcessor = ReplayProcessor.Config(resourceGroup, config, containerApp, containerAppStorage, queueConnStr);
+
+        // Replay Updater
+        var replayUpdater = ReplayUpdater.Config(resourceGroup, config, containerApp, containerAppStorage, databaseAdoNet, queueConnStr);
 
         var apiUrl = Output.Format($"https://{gateway.Configuration.Apply(c => c?.Ingress).Apply(i => i?.Fqdn)}");
 

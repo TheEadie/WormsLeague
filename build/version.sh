@@ -53,7 +53,7 @@ elif [[ "$MINOR" > "$LATEST_MINOR" ]]; then
     echo "${MAJOR}.${MINOR}.${PATCH}"
     exit
 else
-    ((LATEST_PATCH++))
+    ((LATEST_PATCH++)) || true
     >&2 echo "Calculated version: ${MAJOR}.${MINOR}.${LATEST_PATCH}"
     echo "${MAJOR}.${MINOR}.${LATEST_PATCH}"
     exit

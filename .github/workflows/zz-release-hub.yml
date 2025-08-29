@@ -114,7 +114,7 @@ jobs:
           make replay-updater.release.github GITHUB_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
 
   release-replay-updater-dockerhub:
-    name: Replay Processor - DockerHub
+    name: Replay Updater - DockerHub
     runs-on: ubuntu-latest
     needs: changes
     if: ${{ needs.changes.outputs.replay-updater == 'true' && github.ref == 'refs/heads/main' }}
