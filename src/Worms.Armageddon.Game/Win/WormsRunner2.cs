@@ -11,6 +11,8 @@ internal sealed class WormsRunner2(
 {
     public Task RunWorms(params string[] wormsArgs)
     {
+        const int timeoutInMinutes = 5;
+
         return Task.Run(async () =>
             {
                 using var span = Activity.Current?.Source.StartActivity(
@@ -33,7 +35,21 @@ internal sealed class WormsRunner2(
                 using (processRunner.Start(gameInfo.ExeLocation, wormsArgs))
                 {
                     logger.Log(LogLevel.Debug, "Looking for worms process: {ProcessName}...", gameInfo.ProcessName);
-                    var wormsProcess = processRunner.FindProcess(gameInfo.ProcessName);
+
+                    var wormsProcess = processRunner.FindProcess(
+                        gameInfo.ProcessName,
+                        TimeSpan.FromMinutes(timeoutInMinutes));
+
+                    if (wormsProcess is null)
+                    {
+                        logger.Log(
+                            LogLevel.Error,
+                            "Unable to find worms process after {Minutes} minutes",
+                            timeoutInMinutes);
+                        _ = span?.SetStatus(ActivityStatusCode.Error);
+                        throw new TimeoutException($"Unable to find worms process after {timeoutInMinutes} minutes");
+                    }
+
                     logger.Log(LogLevel.Debug, "Process found");
                     logger.Log(LogLevel.Debug, "Waiting for process to exit...");
                     await wormsProcess.WaitForExitAsync();

@@ -11,5 +11,10 @@ public static class Telemetry
             public const string Args = "worms.armageddon.args";
             public const string ExitCode = "worms.armageddon.exit_code";
         }
+
+        internal static class ProcessRunner
+        {
+            public const string TimeToFindProcess = "worms.process.runner.time_to_find_process_ms";
+        }
     }
 }

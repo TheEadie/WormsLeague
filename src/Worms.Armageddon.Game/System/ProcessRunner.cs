@@ -7,16 +7,33 @@ internal class ProcessRunner : IProcessRunner
     public IProcess Start(string fileName, params string[] args) =>
         new Process(global::System.Diagnostics.Process.Start(fileName, string.Join(" ", args.ToList())));
 
-    public IProcess FindProcess(string processName)
+    public IProcess? FindProcess(string processName)
     {
         IProcess? process = null;
-        while (process == null)
+        for (var retryCount = 0; process is null && retryCount <= 5; retryCount++)
         {
             Thread.Sleep(500);
             var foundProcess = global::System.Diagnostics.Process.GetProcessesByName(processName).FirstOrDefault();
             process = foundProcess is null ? null : new Process(foundProcess);
         }
 
+        return process;
+    }
+
+    public IProcess? FindProcess(string processName, TimeSpan timeout)
+    {
+        using var span = Activity.Current;
+
+        IProcess? process = null;
+        while (process is null && timeout.TotalMilliseconds > 0)
+        {
+            Thread.Sleep(500);
+            var foundProcess = global::System.Diagnostics.Process.GetProcessesByName(processName).FirstOrDefault();
+            process = foundProcess is null ? null : new Process(foundProcess);
+            timeout -= TimeSpan.FromMilliseconds(500);
+        }
+
+        _ = span?.SetTag(Telemetry.Spans.ProcessRunner.TimeToFindProcess, timeout.Milliseconds);
         return process;
     }
 
