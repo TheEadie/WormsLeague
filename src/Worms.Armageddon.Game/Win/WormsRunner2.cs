@@ -32,9 +32,13 @@ internal sealed class WormsRunner2(
 
                 using (processRunner.Start(gameInfo.ExeLocation, wormsArgs))
                 {
+                    logger.Log(LogLevel.Debug, "Looking for worms process: {ProcessName}...", gameInfo.ProcessName);
                     var wormsProcess = processRunner.FindProcess(gameInfo.ProcessName);
+                    logger.Log(LogLevel.Debug, "Process found");
+                    logger.Log(LogLevel.Debug, "Waiting for process to exit...");
                     await wormsProcess.WaitForExitAsync();
                     logger.Log(LogLevel.Debug, "Worms process exited with code: {ExitCode}", wormsProcess.ExitCode);
+                    _ = span?.SetTag(Telemetry.Spans.WormsArmageddon.ExitCode, wormsProcess.ExitCode);
                 }
             });
     }

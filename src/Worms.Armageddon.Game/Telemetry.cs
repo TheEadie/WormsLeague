@@ -9,6 +9,7 @@ public static class Telemetry
             public const string SpanName = "Worms Armageddon";
             public const string Version = "worms.armageddon.version";
             public const string Args = "worms.armageddon.args";
+            public const string ExitCode = "worms.armageddon.exit_code";
         }
     }
 }
