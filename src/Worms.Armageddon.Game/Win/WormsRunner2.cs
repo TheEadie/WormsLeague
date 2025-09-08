@@ -11,8 +11,6 @@ internal sealed class WormsRunner2(
 {
     public Task RunWorms(params string[] wormsArgs)
     {
-        const int timeoutInMinutes = 5;
-
         return Task.Run(async () =>
             {
                 using var span = Activity.Current?.Source.StartActivity(
@@ -34,28 +32,35 @@ internal sealed class WormsRunner2(
 
                 using (processRunner.Start(gameInfo.ExeLocation, wormsArgs))
                 {
-                    logger.Log(LogLevel.Debug, "Looking for worms process: {ProcessName}...", gameInfo.ProcessName);
-
-                    var wormsProcess = processRunner.FindProcess(
-                        gameInfo.ProcessName,
-                        TimeSpan.FromMinutes(timeoutInMinutes));
-
-                    if (wormsProcess is null)
-                    {
-                        logger.Log(
-                            LogLevel.Error,
-                            "Unable to find worms process after {Minutes} minutes",
-                            timeoutInMinutes);
-                        _ = span?.SetStatus(ActivityStatusCode.Error);
-                        throw new TimeoutException($"Unable to find worms process after {timeoutInMinutes} minutes");
-                    }
-
-                    logger.Log(LogLevel.Debug, "Process found");
-                    logger.Log(LogLevel.Debug, "Waiting for process to exit...");
-                    await wormsProcess.WaitForExitAsync();
-                    logger.Log(LogLevel.Debug, "Worms process exited with code: {ExitCode}", wormsProcess.ExitCode);
-                    _ = span?.SetTag(Telemetry.Spans.WormsArmageddon.ExitCode, wormsProcess.ExitCode);
+                    var wormsProcess = FindWormsProcess(gameInfo.ProcessName);
+                    await WaitForExit(wormsProcess);
                 }
             });
+    }
+
+    private IProcess FindWormsProcess(string processName)
+    {
+        const int timeoutInMinutes = 5;
+        logger.Log(LogLevel.Debug, "Looking for worms process: {ProcessName}...", processName);
+
+        var wormsProcess = processRunner.FindProcess(processName, TimeSpan.FromMinutes(timeoutInMinutes));
+
+        if (wormsProcess is null)
+        {
+            logger.Log(LogLevel.Error, "Unable to find worms process after {Minutes} minutes", timeoutInMinutes);
+            _ = Activity.Current?.SetStatus(ActivityStatusCode.Error);
+            throw new TimeoutException($"Unable to find worms process after {timeoutInMinutes} minutes");
+        }
+
+        logger.Log(LogLevel.Debug, "Process found");
+        return wormsProcess;
+    }
+
+    private async Task WaitForExit(IProcess wormsProcess)
+    {
+        logger.Log(LogLevel.Debug, "Waiting for process to exit...");
+        await wormsProcess.WaitForExitAsync();
+        logger.Log(LogLevel.Debug, "Worms process exited with code: {ExitCode}", wormsProcess.ExitCode);
+        _ = Activity.Current?.SetTag(Telemetry.Spans.WormsArmageddon.ExitCode, wormsProcess.ExitCode);
     }
 }

@@ -22,8 +22,6 @@ internal class ProcessRunner : IProcessRunner
 
     public IProcess? FindProcess(string processName, TimeSpan timeout)
     {
-        using var span = Activity.Current;
-
         IProcess? process = null;
         while (process is null && timeout.TotalMilliseconds > 0)
         {
@@ -33,7 +31,7 @@ internal class ProcessRunner : IProcessRunner
             timeout -= TimeSpan.FromMilliseconds(500);
         }
 
-        _ = span?.SetTag(Telemetry.Spans.ProcessRunner.TimeToFindProcess, timeout.Milliseconds);
+        _ = Activity.Current?.SetTag(Telemetry.Spans.ProcessRunner.TimeToFindProcess, timeout.Milliseconds);
         return process;
     }
 
