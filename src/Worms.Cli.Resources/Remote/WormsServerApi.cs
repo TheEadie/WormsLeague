@@ -139,11 +139,8 @@ internal sealed class WormsServerApi : IWormsServerApi
             : throw new JsonException("The API returned success but the JSON response was empty");
     }
 
-    private Task CallApiRefreshAccessTokenIfInvalid(HttpClient client, Func<Task<HttpResponseMessage>> apiCall)
-    {
-        _ = CallApiWithAuthRetry(client, apiCall);
-        return Task.CompletedTask;
-    }
+    private async Task CallApiRefreshAccessTokenIfInvalid(HttpClient client, Func<Task<HttpResponseMessage>> apiCall) =>
+        _ = await CallApiWithAuthRetry(client, apiCall);
 
     private async Task<byte[]> CallApiBinaryRefreshAccessTokenIfInvalid(
         HttpClient client,
