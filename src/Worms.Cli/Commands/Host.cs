@@ -58,9 +58,7 @@ internal sealed class HostHandler(
     private const string LeagueName = "redgate";
     private const string Domain = "red-gate.com";
 
-    public override async Task<int> InvokeAsync(
-        ParseResult parseResult,
-        CancellationToken cancellationToken = default)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Host.SpanName);
 
@@ -176,6 +174,14 @@ internal sealed class HostHandler(
         if (replay is null)
         {
             logger.LogWarning("No replay found to upload");
+            return;
+        }
+
+        // Check if the replay was created during this session
+        var timeSinceGameEnded = DateTime.UtcNow - replay.Details.Date.ToUniversalTime();
+        if (timeSinceGameEnded > TimeSpan.FromHours(1))
+        {
+            logger.LogWarning("No recent replay found to upload");
             return;
         }
 
