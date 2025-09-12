@@ -178,7 +178,7 @@ internal sealed class HostHandler(
         }
 
         // Check if the replay was created during this session
-        var timeSinceGameEnded = DateTime.UtcNow - replay.Details.Date.ToUniversalTime();
+        var timeSinceGameEnded = DateTime.UtcNow - replay.Details.Date;
         if (timeSinceGameEnded > TimeSpan.FromHours(1))
         {
             logger.LogWarning("No recent replay found to upload");
