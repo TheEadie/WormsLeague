@@ -174,18 +174,22 @@ internal sealed class HostHandler(
         if (replay is null)
         {
             logger.LogWarning("No replay found to upload");
+            _ = Activity.Current?.AddTag(Telemetry.Spans.Host.ReplayFound, false);
             return;
         }
 
         // Check if the replay was created during this session
-        var timeSinceGameEnded = DateTime.UtcNow - replay.Details.Date.ToUniversalTime();
+        var timeSinceGameEnded = DateTime.UtcNow - replay.Details.Date;
         if (timeSinceGameEnded > TimeSpan.FromHours(1))
         {
             logger.LogWarning("No recent replay found to upload");
+            _ = Activity.Current?.AddTag(Telemetry.Spans.Host.ReplayFound, false);
+            _ = Activity.Current?.SetTag(Telemetry.Spans.Host.LatestReplayDate, replay.Details.Date);
             return;
         }
 
         logger.LogInformation("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
+        _ = Activity.Current?.AddTag(Telemetry.Spans.Host.ReplayFound, true);
         if (!dryRun)
         {
             _ = await remoteReplayCreator.Create(
