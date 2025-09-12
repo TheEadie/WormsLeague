@@ -37,9 +37,9 @@ public static class ServiceRegistration
     [SupportedOSPlatform("windows")]
     private static IServiceCollection AddWindowsServices(this IServiceCollection builder)
     {
-        _ = Environment.GetEnvironmentVariable("WORMS_TOGGLE_NEW_WA_RUNNER") == "true"
-            ? builder.AddScoped<IWormsRunner, WormsRunner2>()
-            : builder.AddScoped<IWormsRunner, WormsRunner>();
+        _ = Environment.GetEnvironmentVariable("WORMS_TOGGLE_NEW_WA_RUNNER") == "false"
+            ? builder.AddScoped<IWormsRunner, WormsRunner>()
+            : builder.AddScoped<IWormsRunner, WormsRunner2>();
 
         return builder.AddScoped<ISteamService, SteamService>()
             .AddScoped<IWormsLocator, WormsLocator>()
