@@ -23,12 +23,11 @@ internal static class Telemetry
                             SourceName,
                             serviceVersion: Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3)))
                 .AddHttpClientInstrumentation()
-                .AddOtlpExporter(
-                    option =>
-                        {
-                            option.Endpoint = new Uri("https://api.honeycomb.io");
-                            option.Headers = $"x-honeycomb-team={HoneycombApiKey}";
-                        })
+                .AddOtlpExporter(option =>
+                    {
+                        option.Endpoint = new Uri("https://api.honeycomb.io");
+                        option.Headers = $"x-honeycomb-team={HoneycombApiKey}";
+                    })
                 .Build()
             : null;
 
@@ -75,6 +74,8 @@ internal static class Telemetry
             public const string IpAddressFound = "worms.host.ip_address_found";
             public const string WormsArmageddonIsInstalled = "worms.host.worms_armageddon_is_installed";
             public const string WormsArmageddonVersion = "worms.version.worms_armageddon_version";
+            public const string ReplayFound = "worms.host.replay_found";
+            public const string LatestReplayDate = "worms.host.latest_replay_date";
         }
 
         internal static class Game
