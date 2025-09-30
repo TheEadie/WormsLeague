@@ -7,7 +7,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1"/>
     <PackageReference Include="Shouldly" Version="4.3.0"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9"/>
-    <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" Version="22.0.15"/>
+    <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" Version="22.0.16"/>
   </ItemGroup>
 
   <ItemGroup>
