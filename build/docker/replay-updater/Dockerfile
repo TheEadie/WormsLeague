@@ -1,5 +1,5 @@
 #### Build ####
-FROM mcr.microsoft.com/dotnet/sdk:9.0.305@sha256:bb42ae2c058609d1746baf24fe6864ecab0686711dfca1f4b7a99e367ab17162 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0.305@sha256:123b43e4d9775451d8ed63af324a42132707b4edb14770bcdf5c85cf55bc45f1 AS build
 WORKDIR /app
 
 COPY src/Directory.Build.props .
@@ -30,7 +30,7 @@ FROM build AS test
 RUN dotnet test --no-restore --no-build --verbosity normal
 
 #### Runtime ####
-FROM mcr.microsoft.com/dotnet/runtime:9.0.9@sha256:5040af5025cf2e12b1c4eb04c033342c39fe654bbd9395d24cc2635ec196c7f4
+FROM mcr.microsoft.com/dotnet/runtime:9.0.9@sha256:6e6ccf450a40a99748e93bf18dd6739893881f5dd831ae23b586565749b1643d
 WORKDIR /app
 COPY --from=build /app/out .
 ENTRYPOINT ["./Worms.Hub.ReplayUpdater"]
