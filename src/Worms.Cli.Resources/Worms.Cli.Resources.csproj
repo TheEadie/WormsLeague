@@ -10,8 +10,8 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0"/>
     <PackageReference Include="System.IO.Abstractions" Version="22.0.16"/>
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.8.2"/>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.9"/>
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="9.0.9"/>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.10"/>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="9.0.10"/>
   </ItemGroup>
 
   <ItemGroup>
