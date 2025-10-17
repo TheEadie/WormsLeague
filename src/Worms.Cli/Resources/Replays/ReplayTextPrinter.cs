@@ -68,7 +68,7 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
 
     private static string GetDamageText(Damage damage)
     {
-        var killsText = damage.WormsKilled > 0 ? $" ({damage.WormsKilled} kill)" : "";
+        var killsText = damage.WormsKilled > 0 ? $" ({damage.WormsKilled} kill{(damage.WormsKilled > 1 ? "s" : "")})" : "";
         return $"{damage.Team.Name}: {damage.HealthLost}{killsText}";
     }
 

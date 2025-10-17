@@ -25,7 +25,7 @@ internal sealed class DamageParser : IReplayLineParser
             foreach (var damageDetail in damageDealt.Groups[3].Value.Split(','))
             {
                 var damageWithNoKills = new Regex($"{Number} to {TeamName}").Match(damageDetail);
-                var damageWithKills = new Regex(@$"{Number} \({Number} kill\) to {TeamName}").Match(damageDetail);
+                var damageWithKills = new Regex(@$"{Number} \({Number} kills?\) to {TeamName}").Match(damageDetail);
 
                 if (damageWithNoKills.Success)
                 {
