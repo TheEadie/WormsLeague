@@ -331,4 +331,28 @@ internal sealed class ReplayTextReaderShould
         replay.Turns.ElementAt(0).Damage.ElementAt(1).HealthLost.ShouldBe((uint) 100);
         replay.Turns.ElementAt(0).Damage.ElementAt(1).WormsKilled.ShouldBe((uint) 1);
     }
+
+    [Test]
+    public void ReadDamageToMultipleTeamsWithMultipleKills()
+    {
+        const string log = """
+                           Red: "a person" as "Some Team"
+                           Blue: "another person" as "Team 2"
+                           Green: "third person" as "Team 3"
+                           [00:06:59.08] ••• Some Team (a person) starts turn
+                           [00:07:08.26] ••• Some Team (a person) fires Banana Bomb (5 sec)
+                           [00:07:26.60] ••• Damage dealt: 93 (1 kill) to Team 2 (another person), 87 (2 kills) to Team 3 (third person)
+                           """;
+
+        var replay = _replayTextReader.GetModel(log);
+
+        replay.Turns.Count.ShouldBe(1);
+        replay.Turns.ElementAt(0).Damage.Count.ShouldBe(2);
+        replay.Turns.ElementAt(0).Damage.ElementAt(0).Team.Name.ShouldBe("Team 2");
+        replay.Turns.ElementAt(0).Damage.ElementAt(0).HealthLost.ShouldBe((uint) 93);
+        replay.Turns.ElementAt(0).Damage.ElementAt(0).WormsKilled.ShouldBe((uint) 1);
+        replay.Turns.ElementAt(0).Damage.ElementAt(1).Team.Name.ShouldBe("Team 3");
+        replay.Turns.ElementAt(0).Damage.ElementAt(1).HealthLost.ShouldBe((uint) 87);
+        replay.Turns.ElementAt(0).Damage.ElementAt(1).WormsKilled.ShouldBe((uint) 2);
+    }
 }
