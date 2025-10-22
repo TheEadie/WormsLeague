@@ -30,8 +30,8 @@ jobs:
         run: |
           make gateway.package
 
-  build-replay-updater:
-    name: Replay Updater
+  build-wa-runner:
+    name: WA Runner
     runs-on: ubuntu-latest
 
     steps:
@@ -51,30 +51,7 @@ jobs:
 
       - name: Package
         run: |
-          make replay-updater.package
-
-  build-replay-processor:
-    name: Replay Processor
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-
-      - name: Expose GitHub Runtime
-        uses: crazy-max/ghaction-github-runtime@v3
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Package
-        run: |
-          make replay-processor.package
+          make wa-runner.package
 
   build-database:
     name: Database
