@@ -27,8 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Queues", "src\Wor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.ReplayProcessor.Queues", "src\Worms.Hub.ReplayProcessor.Queues\Worms.Hub.ReplayProcessor.Queues.csproj", "{31670712-E626-4150-84CE-38DEFCE45276}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.ReplayUpdater", "src\Worms.Hub.ReplayUpdater\Worms.Hub.ReplayUpdater.csproj", "{4DE03937-B2F9-44C1-ACFA-18A948B99260}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.ReplayUpdater.Queues", "src\Worms.Hub.ReplayUpdater.Queues\Worms.Hub.ReplayUpdater.Queues.csproj", "{1DADED53-0822-437E-8866-372C3B66D80F}"
 EndProject
 Global
@@ -88,10 +86,6 @@ Global
 		{31670712-E626-4150-84CE-38DEFCE45276}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31670712-E626-4150-84CE-38DEFCE45276}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31670712-E626-4150-84CE-38DEFCE45276}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4DE03937-B2F9-44C1-ACFA-18A948B99260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4DE03937-B2F9-44C1-ACFA-18A948B99260}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4DE03937-B2F9-44C1-ACFA-18A948B99260}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4DE03937-B2F9-44C1-ACFA-18A948B99260}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1DADED53-0822-437E-8866-372C3B66D80F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1DADED53-0822-437E-8866-372C3B66D80F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DADED53-0822-437E-8866-372C3B66D80F}.Release|Any CPU.ActiveCfg = Release|Any CPU
