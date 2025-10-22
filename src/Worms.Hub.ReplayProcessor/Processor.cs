@@ -1,6 +1,5 @@
 using Worms.Armageddon.Game;
 using Worms.Hub.Queues;
-using Worms.Hub.ReplayProcessor.Queue;
 
 namespace Worms.Hub.ReplayProcessor;
 

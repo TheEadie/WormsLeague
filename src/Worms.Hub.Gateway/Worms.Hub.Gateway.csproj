@@ -11,8 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Worms.Hub.ReplayProcessor.Queues\Worms.Hub.ReplayProcessor.Queues.csproj"/>
-    <ProjectReference Include="..\Worms.Hub.ReplayUpdater.Queues\Worms.Hub.ReplayUpdater.Queues.csproj"/>
+    <ProjectReference Include="..\Worms.Hub.Queues\Worms.Hub.Queues.csproj"/>
     <ProjectReference Include="..\Worms.Hub.Storage\Worms.Hub.Storage.csproj"/>
   </ItemGroup>
 

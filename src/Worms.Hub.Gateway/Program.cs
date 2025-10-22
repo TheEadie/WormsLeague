@@ -2,7 +2,7 @@ using Microsoft.IdentityModel.Tokens;
 using Worms.Hub.Gateway;
 using Worms.Hub.Gateway.API.Middleware;
 using Worms.Hub.Gateway.Worker;
-using Worms.Hub.ReplayProcessor.Queue;
+using Worms.Hub.Queues;
 using Worms.Hub.Storage;
 
 var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
@@ -39,13 +39,13 @@ if (runGateway)
                 };
             });
     _ = builder.Services.AddAuthorization();
-    _ = builder.Services.AddHubStorageServices().AddGatewayServices().AddReplayToProcessQueueServices();
+    _ = builder.Services.AddHubStorageServices().AddGatewayServices().AddQueueServices();
     builder.Services.AddOpenTelemetryWormsHub();
 }
 
 if (runWorker)
 {
-    _ = builder.Services.AddReplayUpdaterServices();
+    _ = builder.Services.AddWorkerServices();
     _ = builder.Services.AddHostedService<CheckForMessagesService>();
 }
 

@@ -1,13 +1,11 @@
 using Azure.Storage.Queues;
 using Microsoft.Extensions.Configuration;
-using System.Text.Json;
-using Worms.Hub.Queues;
 
-namespace Worms.Hub.ReplayProcessor.Queue;
+namespace Worms.Hub.Queues;
 
-internal sealed class ReplaysToUpdate(IConfiguration configuration) : IMessageQueue<ReplayToUpdateMessage>
+internal sealed class ReplaysToProcess(IConfiguration configuration) : IMessageQueue<ReplayToProcessMessage>
 {
-    private const string QueueName = "replays-to-update";
+    private const string QueueName = "replays-to-process";
 
     public async Task<bool> HasPendingMessage()
     {
@@ -18,29 +16,24 @@ internal sealed class ReplaysToUpdate(IConfiguration configuration) : IMessageQu
         return peekedMessage.Value is not null;
     }
 
-    public async Task EnqueueMessage(ReplayToUpdateMessage message)
+    public async Task EnqueueMessage(ReplayToProcessMessage message)
     {
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync();
-        var messageJson = JsonSerializer.Serialize(message);
-        _ = await queueClient.SendMessageAsync(messageJson);
+        _ = await queueClient.SendMessageAsync(message.ReplayFileName);
     }
 
-    public async Task<(ReplayToUpdateMessage?, MessageDetails?)> DequeueMessage()
+    public async Task<(ReplayToProcessMessage?, MessageDetails?)> DequeueMessage()
     {
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, QueueName);
         _ = await queueClient.CreateIfNotExistsAsync();
         var message = await queueClient.ReceiveMessageAsync();
-
-        if (message.Value is null)
-        {
-            return (null, null);
-        }
-
-        var replayMessage = JsonSerializer.Deserialize<ReplayToUpdateMessage>(message.Value.MessageText);
-        return (replayMessage, new MessageDetails(message.Value.MessageId, message.Value.PopReceipt));
+        return message.Value is null
+            ? (null, null)
+            : (new ReplayToProcessMessage(message.Value.MessageText),
+                new MessageDetails(message.Value.MessageId, message.Value.PopReceipt));
     }
 
     public async Task DeleteMessage(MessageDetails messageDetails)
