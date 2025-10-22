@@ -5,15 +5,11 @@ WORKDIR /app
 COPY src/Directory.Build.props .
 COPY .editorconfig .
 COPY src/Worms.Hub.Queues/Worms.Hub.Queues.csproj ./src/Worms.Hub.Queues/Worms.Hub.Queues.csproj
-COPY src/Worms.Hub.ReplayProcessor.Queues/Worms.Hub.ReplayProcessor.Queues.csproj ./src/Worms.Hub.ReplayProcessor.Queues/Worms.Hub.ReplayProcessor.Queues.csproj
-COPY src/Worms.Hub.ReplayUpdater.Queues/Worms.Hub.ReplayUpdater.Queues.csproj ./src/Worms.Hub.ReplayUpdater.Queues/Worms.Hub.ReplayUpdater.Queues.csproj
 COPY src/Worms.Hub.Storage/Worms.Hub.Storage.csproj ./src/Worms.Hub.Storage/Worms.Hub.Storage.csproj
 COPY src/Worms.Hub.Gateway/Worms.Hub.Gateway.csproj ./src/Worms.Hub.Gateway/Worms.Hub.Gateway.csproj
 RUN dotnet restore src/Worms.Hub.Gateway/Worms.Hub.Gateway.csproj
 
 COPY src/Worms.Hub.Queues ./src/Worms.Hub.Queues
-COPY src/Worms.Hub.ReplayProcessor.Queues ./src/Worms.Hub.ReplayProcessor.Queues
-COPY src/Worms.Hub.ReplayUpdater.Queues ./src/Worms.Hub.ReplayUpdater.Queues
 COPY src/Worms.Hub.Storage ./src/Worms.Hub.Storage
 COPY src/Worms.Hub.Gateway ./src/Worms.Hub.Gateway
 ARG VERSION=0.0.1

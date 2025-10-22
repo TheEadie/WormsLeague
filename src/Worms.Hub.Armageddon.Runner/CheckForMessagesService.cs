@@ -1,6 +1,6 @@
 using Worms.Hub.Queues;
 
-namespace Worms.Hub.ReplayProcessor;
+namespace Worms.Hub.Armageddon.Runner;
 
 internal sealed class CheckForMessagesService(IServiceProvider serviceProvider) : BackgroundService
 {

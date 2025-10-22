@@ -1,4 +1,4 @@
-using Worms.Hub.ReplayProcessor;
+using Worms.Hub.Armageddon.Runner;
 
 var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", false, true)
