@@ -1,47 +1,80 @@
 using Microsoft.IdentityModel.Tokens;
 using Worms.Hub.Gateway;
 using Worms.Hub.Gateway.API.Middleware;
-using Worms.Hub.ReplayProcessor.Queue;
+using Worms.Hub.Gateway.Worker;
+using Worms.Hub.Queues;
 using Worms.Hub.Storage;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Logging.AddSimpleConsole(options => options.SingleLine = true);
-builder.Configuration.AddEnvironmentVariables("WORMS_");
+var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", false, true)
+    .AddEnvironmentVariables("WORMS_")
+    .Build();
 
-builder.Services.AddControllers()
-    .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new InternalControllerProvider()));
-builder.Services.AddApiVersioning();
-builder.Services.AddAuthentication()
-    .AddJwtBearer(options =>
-        {
-            options.Authority = builder.Configuration.GetValue<string>("Auth:Authority");
-            options.Audience = builder.Configuration.GetValue<string>("Auth:Audience");
-            options.TokenValidationParameters = new TokenValidationParameters
+var runGateway = configuration["HUB_DISTRIBUTED"] != "true" || configuration["HUB_GATEWAY"] == "true";
+var runWorker = configuration["HUB_DISTRIBUTED"] != "true" || configuration["HUB_WORKER"] == "true";
+var runAsBatchJob = configuration["BATCH"] == "true";
+
+Console.WriteLine("Running Gateway: " + runGateway);
+Console.WriteLine("Running Worker: " + runWorker);
+Console.WriteLine("Running As Batch Job: " + runAsBatchJob);
+
+var builder = WebApplication.CreateBuilder(args);
+_ = builder.Logging.AddSimpleConsole(options => options.SingleLine = true);
+builder.Configuration.AddConfiguration(configuration);
+
+if (runGateway)
+{
+    _ = builder.Services.AddControllers()
+        .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new InternalControllerProvider()));
+    _ = builder.Services.AddApiVersioning();
+    _ = builder.Services.AddAuthentication()
+        .AddJwtBearer(options =>
             {
-                NameClaimType = builder.Configuration.GetValue<string>("Auth:NameClaim"),
-                RoleClaimType = builder.Configuration.GetValue<string>("Auth:PermissionsClaim")
-            };
-        });
-builder.Services.AddAuthorization();
-builder.Services.AddHubStorageServices().AddGatewayServices().AddReplayToProcessQueueServices();
-builder.Services.AddOpenTelemetryWormsHub();
+                options.Authority = builder.Configuration.GetValue<string>("Auth:Authority");
+                options.Audience = builder.Configuration.GetValue<string>("Auth:Audience");
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = builder.Configuration.GetValue<string>("Auth:NameClaim"),
+                    RoleClaimType = builder.Configuration.GetValue<string>("Auth:PermissionsClaim")
+                };
+            });
+    _ = builder.Services.AddAuthorization();
+    _ = builder.Services.AddHubStorageServices().AddGatewayServices().AddQueueServices();
+    builder.Services.AddOpenTelemetryWormsHub();
+}
+
+if (runWorker)
+{
+    _ = builder.Services.AddWorkerServices();
+    _ = builder.Services.AddHostedService<CheckForMessagesService>();
+}
 
 var app = builder.Build();
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-
-if (app.Environment.IsDevelopment())
+if (runGateway)
 {
-    _ = app.UseDeveloperExceptionPage();
-    _ = app.MapControllers(); //.AllowAnonymous();
+    _ = app.UseHttpsRedirection();
+    _ = app.UseRouting();
+    _ = app.UseAuthentication();
+    _ = app.UseAuthorization();
+
+    if (app.Environment.IsDevelopment())
+    {
+        _ = app.UseDeveloperExceptionPage();
+        _ = app.MapControllers(); //.AllowAnonymous();
+    }
+    else
+    {
+        _ = app.MapControllers();
+    }
+
+    _ = app.UseRequestLogging();
 }
-else
+
+if (runAsBatchJob)
 {
-    _ = app.MapControllers();
+    var processor = app.Services.GetService<Processor>();
+    await processor!.UpdateReplay();
+    return;
 }
 
-app.UseRequestLogging();
-
-app.Run();
+await app.RunAsync();

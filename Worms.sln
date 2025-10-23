@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Cli", "src\Worms.Cli\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Files.Tests", "src\Worms.Armageddon.Files.Tests\Worms.Armageddon.Files.Tests.csproj", "{6233FC52-586A-40A0-B369-FA77ADE35E94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.ReplayProcessor", "src\Worms.Hub.ReplayProcessor\Worms.Hub.ReplayProcessor.csproj", "{F41B5B20-FDE9-4835-8282-7DB750F06992}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Armageddon.Runner", "src\Worms.Hub.Armageddon.Runner\Worms.Hub.Armageddon.Runner.csproj", "{F41B5B20-FDE9-4835-8282-7DB750F06992}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Storage", "src\Worms.Hub.Storage\Worms.Hub.Storage.csproj", "{EE088F3B-1FF5-4525-8829-4556CC59AE57}"
 EndProject
@@ -24,12 +24,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Game.Fake", "src\Worms.Armageddon.Game.Fake\Worms.Armageddon.Game.Fake.csproj", "{10CB1CDA-F901-4EBC-BEE8-2C8C41DA35A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Queues", "src\Worms.Hub.Queues\Worms.Hub.Queues.csproj", "{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.ReplayProcessor.Queues", "src\Worms.Hub.ReplayProcessor.Queues\Worms.Hub.ReplayProcessor.Queues.csproj", "{31670712-E626-4150-84CE-38DEFCE45276}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.ReplayUpdater", "src\Worms.Hub.ReplayUpdater\Worms.Hub.ReplayUpdater.csproj", "{4DE03937-B2F9-44C1-ACFA-18A948B99260}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.ReplayUpdater.Queues", "src\Worms.Hub.ReplayUpdater.Queues\Worms.Hub.ReplayUpdater.Queues.csproj", "{1DADED53-0822-437E-8866-372C3B66D80F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,18 +78,6 @@ Global
 		{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}.Release|Any CPU.Build.0 = Release|Any CPU
-		{31670712-E626-4150-84CE-38DEFCE45276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{31670712-E626-4150-84CE-38DEFCE45276}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{31670712-E626-4150-84CE-38DEFCE45276}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{31670712-E626-4150-84CE-38DEFCE45276}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4DE03937-B2F9-44C1-ACFA-18A948B99260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4DE03937-B2F9-44C1-ACFA-18A948B99260}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4DE03937-B2F9-44C1-ACFA-18A948B99260}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4DE03937-B2F9-44C1-ACFA-18A948B99260}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1DADED53-0822-437E-8866-372C3B66D80F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1DADED53-0822-437E-8866-372C3B66D80F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1DADED53-0822-437E-8866-372C3B66D80F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1DADED53-0822-437E-8866-372C3B66D80F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

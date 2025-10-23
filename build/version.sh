@@ -1,6 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
+>&2 echo "Calculating next version..."
+>&2 echo "Next version input: $1"
+>&2 echo "Tag prefix: $2"
+
 NEXT_VERSION="$1"
 TAG_PREFIX="$2"
 

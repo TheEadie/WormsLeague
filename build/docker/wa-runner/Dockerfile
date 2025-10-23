@@ -6,19 +6,15 @@ COPY src/Directory.Build.props .
 COPY .editorconfig .
 COPY src/Worms.Armageddon.Game/Worms.Armageddon.Game.csproj ./src/Worms.Armageddon.Game/Worms.Armageddon.Game.csproj
 COPY src/Worms.Hub.Queues/Worms.Hub.Queues.csproj ./src/Worms.Hub.Queues/Worms.Hub.Queues.csproj
-COPY src/Worms.Hub.ReplayProcessor.Queues/Worms.Hub.ReplayProcessor.Queues.csproj ./src/Worms.Hub.ReplayProcessor.Queues/Worms.Hub.ReplayProcessor.Queues.csproj
-COPY src/Worms.Hub.ReplayUpdater.Queues/Worms.Hub.ReplayUpdater.Queues.csproj ./src/Worms.Hub.ReplayUpdater.Queues/Worms.Hub.ReplayUpdater.Queues.csproj
-COPY src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj ./src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj
-RUN dotnet restore src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj -r linux-x64
+COPY src/Worms.Hub.Armageddon.Runner/Worms.Hub.Armageddon.Runner.csproj ./src/Worms.Hub.Armageddon.Runner/Worms.Hub.Armageddon.Runner.csproj
+RUN dotnet restore src/Worms.Hub.Armageddon.Runner/Worms.Hub.Armageddon.Runner.csproj -r linux-x64
 
 COPY src/Worms.Armageddon.Game ./src/Worms.Armageddon.Game
 COPY src/Worms.Hub.Queues ./src/Worms.Hub.Queues
-COPY src/Worms.Hub.ReplayProcessor.Queues ./src/Worms.Hub.ReplayProcessor.Queues
-COPY src/Worms.Hub.ReplayUpdater.Queues ./src/Worms.Hub.ReplayUpdater.Queues
-COPY src/Worms.Hub.ReplayProcessor ./src/Worms.Hub.ReplayProcessor
+COPY src/Worms.Hub.Armageddon.Runner ./src/Worms.Hub.Armageddon.Runner
 ARG VERSION=0.0.1
 RUN dotnet publish \
-    src/Worms.Hub.ReplayProcessor/Worms.Hub.ReplayProcessor.csproj \
+    src/Worms.Hub.Armageddon.Runner/Worms.Hub.Armageddon.Runner.csproj \
     -c Release \
     -o out \
     --no-restore \
@@ -81,4 +77,4 @@ RUN wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\O
 
 WORKDIR /app
 COPY --from=build /app/out .
-ENTRYPOINT ["./Worms.Hub.ReplayProcessor"]
+ENTRYPOINT ["./Worms.Hub.Armageddon.Runner"]

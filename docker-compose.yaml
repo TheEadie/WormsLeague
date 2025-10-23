@@ -43,7 +43,7 @@ services:
             database:
                 condition: service_healthy
 
-    worms-gateway:
+    hub-gateway:
         build:
             dockerfile: build/docker/gateway/Dockerfile
             context: .
@@ -58,15 +58,17 @@ services:
             - WORMS_STORAGE__TEMPREPLAYFOLDER=/data/replays
             - WORMS_STORAGE__CLIFOLDER=/data/cli
             - WORMS_STORAGE__SCHEMESFOLDER=/data/schemes
+            - WORMS_HUB_DISTRIBUTED=true
+            - WORMS_HUB_GATEWAY=true
         depends_on:
             flyway-init:
                 condition: service_completed_successfully
             azure-storage:
                 condition: service_healthy
 
-    worms-replay-updater:
+    hub-worker:
         build:
-            dockerfile: build/docker/replay-updater/Dockerfile
+            dockerfile: build/docker/gateway/Dockerfile
             context: .
         volumes:
             - ./sample-data:/data
@@ -74,15 +76,17 @@ services:
             - WORMS_CONNECTIONSTRINGS__STORAGE=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azure-storage:10000/devstoreaccount1;QueueEndpoint=http://azure-storage:10001/devstoreaccount1;
             - WORMS_CONNECTIONSTRINGS__DATABASE=Server=database;Port=5432;Database=worms;Username=worms;Password=worms
             - WORMS_STORAGE__TEMPREPLAYFOLDER=/data/replays
+            - WORMS_HUB_DISTRIBUTED=true
+            - WORMS_HUB_WORKER=true
         depends_on:
             flyway-init:
                 condition: service_completed_successfully
             azure-storage:
                 condition: service_healthy
 
-    worms-replay-processor:
+    hub-wa-runner:
         build:
-            dockerfile: build/docker/replay-processor/Dockerfile
+            dockerfile: build/docker/wa-runner/Dockerfile
             context: .
         volumes:
             - ./sample-data:/data
