@@ -15,7 +15,27 @@ internal sealed class Announcer(IConfiguration configuration, ILogger<Announcer>
     public async Task AnnounceGameComplete(string winner)
     {
         logger.LogInformation("Announcing game complete to Slack");
-        var slackMessage = new SlackMessage($"Game complete! The winner is: {winner}");
+        var slackMessage = new SlackMessage(
+            "Game Complete",
+            $$"""
+              [
+                  {
+                      "type": "header",
+                      "text": {
+                          "type": "plain_text",
+                          "text": "Mayhem complete",
+                          "emoji": true
+                      }
+                  },
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "*Winner:*\n{{winner}}"
+                      }
+                  }
+              ]
+              """);
         await PostToSlack(slackMessage);
     }
 
@@ -31,7 +51,8 @@ internal sealed class Announcer(IConfiguration configuration, ILogger<Announcer>
 
 #if DEBUG
         var finalMessage = new SlackMessage(
-            "Debug:" + message.Text.Replace("<!here>", "", StringComparison.InvariantCulture));
+            Text: "Debug: " + message.Text?.Replace("<!here>", "", StringComparison.InvariantCulture),
+            Blocks: message.Blocks?.Replace("<!here>", "", StringComparison.InvariantCulture));
 #else
         var finalMessage = message;
 #endif
