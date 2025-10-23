@@ -7,21 +7,15 @@ internal sealed class Announcer(IConfiguration configuration, ILogger<Announcer>
 {
     public async Task AnnounceGameStarting(string hostName)
     {
-#if DEBUG
-        var slackMessage = new SlackMessage($"Debug: This is a test run from local dev. Hosting at wa://{hostName}");
-#else
+        logger.LogInformation("Announcing game starting to Slack");
         var slackMessage = new SlackMessage($"<!here> Hosting at: wa://{hostName}");
-#endif
         await PostToSlack(slackMessage);
     }
 
-    public async Task AnnounceGameComplete()
+    public async Task AnnounceGameComplete(string winner)
     {
-#if DEBUG
-        var slackMessage = new SlackMessage("Debug: This is a test run from local dev. Game complete!");
-#else
-        var slackMessage = new SlackMessage($"Game complete!");
-#endif
+        logger.LogInformation("Announcing game complete to Slack");
+        var slackMessage = new SlackMessage($"Game complete! The winner is: {winner}");
         await PostToSlack(slackMessage);
     }
 
@@ -35,10 +29,16 @@ internal sealed class Announcer(IConfiguration configuration, ILogger<Announcer>
             return;
         }
 
-        logger.LogInformation("Announcing game starting to Slack");
+#if DEBUG
+        var finalMessage = new SlackMessage(
+            "Debug:" + message.Text.Replace("<!here>", "", StringComparison.InvariantCulture));
+#else
+        var finalMessage = message;
+#endif
+
         using var client = new HttpClient();
         var slackUrl = new Uri(webHookUrl);
-        var body = JsonSerializer.Serialize(message);
+        var body = JsonSerializer.Serialize(finalMessage);
         using var content = new StringContent(body, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync(slackUrl, content);

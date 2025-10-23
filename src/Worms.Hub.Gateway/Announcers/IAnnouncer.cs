@@ -4,5 +4,5 @@ internal interface IAnnouncer
 {
     Task AnnounceGameStarting(string hostName);
 
-    Task AnnounceGameComplete();
+    Task AnnounceGameComplete(string winner);
 }
