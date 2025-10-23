@@ -79,6 +79,11 @@ public static class Worker
                             {
                                 Name = "queue-connection",
                                 Value = queueConnectionString,
+                            },
+                            new SecretArgs
+                            {
+                                Name = "slack-hook-url",
+                                Value = config.RequireSecret("slack_hook_url"),
                             }
                         ]
                     },
@@ -111,6 +116,11 @@ public static class Worker
                                 {
                                     Name = "WORMS_CONNECTIONSTRINGS__STORAGE",
                                     SecretRef = "queue-connection",
+                                },
+                                new EnvironmentVarArgs
+                                {
+                                    Name = "WORMS_SlackWebHookURL",
+                                    SecretRef = "slack-hook-url",
                                 },
                                 new EnvironmentVarArgs
                                 {
