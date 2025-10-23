@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Game.Fake"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Queues", "src\Worms.Hub.Queues\Worms.Hub.Queues.csproj", "{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Infrastructure", "deployment\Worms.Hub.Infrastructure\Worms.Hub.Infrastructure.csproj", "{64DF3EEA-E333-472E-A6F3-A70C71424AA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB2B0E38-96D8-44D4-AE29-5C7A5E701E92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64DF3EEA-E333-472E-A6F3-A70C71424AA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64DF3EEA-E333-472E-A6F3-A70C71424AA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64DF3EEA-E333-472E-A6F3-A70C71424AA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64DF3EEA-E333-472E-A6F3-A70C71424AA9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

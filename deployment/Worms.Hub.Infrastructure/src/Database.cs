@@ -66,6 +66,21 @@ public static class Database
                 StartIpAddress = "0.0.0.0",
             });
 
+        if (Pulumi.Deployment.Instance.StackName != "prod")
+        {
+            var myIp = Output.Create(Utils.GetMyPublicIp());
+
+            var firewallRule = new DBForPostgreSQL.FirewallRule(
+                "allow-my-ip",
+                new()
+                {
+                    ResourceGroupName = resourceGroup.Name,
+                    ServerName = server.Name,
+                    StartIpAddress = myIp,
+                    EndIpAddress = myIp
+                });
+        }
+
         return (server, database, randomPassword.Result, version);
     }
 }
