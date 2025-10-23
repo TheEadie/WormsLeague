@@ -25,6 +25,7 @@ jobs:
       with:
         filters: |
           gateway:
+            - 'src/Worms.Armageddon.Files/**'
             - 'src/Worms.Hub.Gateway/**'
             - 'src/Worms.Hub.Queues/**'
             - 'src/Worms.Hub.Storage/**'
