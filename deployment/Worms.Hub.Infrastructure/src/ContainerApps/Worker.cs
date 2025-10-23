@@ -16,7 +16,7 @@ public static class Worker
         Output<string> databaseConnectionString,
         Output<string> queueConnectionString)
     {
-        var image = config.Require("gateway-imag");
+        var image = config.Require("gateway-image");
         var storageAccountName = Utils.GetResourceNameAlphaNumericOnly("wormstest");
         var queueName = "replays-to-update";
 
@@ -24,7 +24,7 @@ public static class Worker
             "worms-hub-worker",
             new()
             {
-                JobName = "worms-replay-updater",
+                JobName = "worms-worker",
                 ResourceGroupName = resourceGroup.Name,
                 EnvironmentId = managedEnvironment.Id,
                 Configuration =

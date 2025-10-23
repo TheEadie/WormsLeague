@@ -14,7 +14,8 @@ public static class WormsHub
         Output<string?> DatabaseUser,
         Output<string> DatabasePassword,
         Output<string> DatabaseVersion,
-        Output<string> ApiUrl);
+        Output<string> ApiUrl,
+        Output<string> StorageAccountName);
 
     public static async Task<Result> Create()
     {
@@ -61,11 +62,11 @@ public static class WormsHub
             databaseAdoNet,
             queueConnStr);
 
-        // Replay Processor
-        var replayProcessor = WaRunner.Config(resourceGroup, config, containerApp, containerAppStorage, queueConnStr);
+        // WA Runner
+        var waRunner = WaRunner.Config(resourceGroup, config, containerApp, containerAppStorage, queueConnStr);
 
-        // Replay Updater
-        var replayUpdater = Worker.Config(
+        // Worker
+        var worker = Worker.Config(
             resourceGroup,
             config,
             containerApp,
@@ -75,6 +76,13 @@ public static class WormsHub
 
         var apiUrl = Output.Format($"https://{gateway.Configuration.Apply(c => c?.Ingress).Apply(i => i?.Fqdn)}");
 
-        return new Result(databaseJdbc, databaseAdoNet, databaseUser, databasePassword, databaseVersion, apiUrl);
+        return new Result(
+            databaseJdbc,
+            databaseAdoNet,
+            databaseUser,
+            databasePassword,
+            databaseVersion,
+            apiUrl,
+            storage.Name);
     }
 }

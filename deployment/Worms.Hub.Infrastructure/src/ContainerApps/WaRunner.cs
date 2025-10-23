@@ -15,7 +15,7 @@ public static class WaRunner
         ManagedEnvironmentsStorage managedEnvironmentStorage,
         Output<string> queueConnectionString)
     {
-        var image = config.Require("replay-processor-image");
+        var image = config.Require("wa-runner-image");
         var storageAccountName = Utils.GetResourceNameAlphaNumericOnly("wormstest");
         var queueName = "replays-to-process";
 
