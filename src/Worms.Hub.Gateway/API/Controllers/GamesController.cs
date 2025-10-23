@@ -8,7 +8,7 @@ namespace Worms.Hub.Gateway.API.Controllers;
 
 internal sealed class GamesController(
     IRepository<Game> repository,
-    ISlackAnnouncer slackAnnouncer,
+    IAnnouncer announcer,
     ILogger<GamesController> logger) : V1ApiController
 {
     [HttpGet]
@@ -31,7 +31,7 @@ internal sealed class GamesController(
     [HttpPost]
     public async Task<ActionResult<GameDto>> Post(CreateGameDto parameters)
     {
-        await slackAnnouncer.AnnounceGameStarting(parameters.HostMachine);
+        await announcer.AnnounceGameStarting(parameters.HostMachine);
         var game = repository.Create(new Game("0", "Pending", parameters.HostMachine));
         return GameDto.FromDomain(game);
     }

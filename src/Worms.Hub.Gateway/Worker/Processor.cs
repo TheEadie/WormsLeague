@@ -1,3 +1,4 @@
+using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Queues;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
@@ -9,6 +10,7 @@ internal sealed class Processor(
     IMessageQueue<ReplayToUpdateMessage> messageQueue,
     IRepository<Replay> replayRepository,
     ReplayFiles replayFiles,
+    IAnnouncer announcer,
     ILogger<Processor> logger)
 {
     public async Task UpdateReplay()
@@ -55,6 +57,9 @@ internal sealed class Processor(
             FullLog = replayLog
         };
         replayRepository.Update(updatedReplay);
+
+        // Announce game complete
+        await announcer.AnnounceGameComplete();
 
         // Delete the message from the queue
         await messageQueue.DeleteMessage(token);
