@@ -1,3 +1,5 @@
+using Worms.Armageddon.Files.Replays.Text;
+using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Queues;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
@@ -9,6 +11,8 @@ internal sealed class Processor(
     IMessageQueue<ReplayToUpdateMessage> messageQueue,
     IRepository<Replay> replayRepository,
     ReplayFiles replayFiles,
+    IAnnouncer announcer,
+    IReplayTextReader replayTextReader,
     ILogger<Processor> logger)
 {
     public async Task UpdateReplay()
@@ -55,6 +59,12 @@ internal sealed class Processor(
             FullLog = replayLog
         };
         replayRepository.Update(updatedReplay);
+
+        // Parse the replay log
+        var replayModel = replayTextReader.GetModel(replayLog);
+
+        // Announce game complete
+        await announcer.AnnounceGameComplete(replayModel.Winner);
 
         // Delete the message from the queue
         await messageQueue.DeleteMessage(token);

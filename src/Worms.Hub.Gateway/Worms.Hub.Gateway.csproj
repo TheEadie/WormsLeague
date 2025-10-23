@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Worms.Armageddon.Files\Worms.Armageddon.Files.csproj"/>
     <ProjectReference Include="..\Worms.Hub.Queues\Worms.Hub.Queues.csproj"/>
     <ProjectReference Include="..\Worms.Hub.Storage\Worms.Hub.Storage.csproj"/>
   </ItemGroup>

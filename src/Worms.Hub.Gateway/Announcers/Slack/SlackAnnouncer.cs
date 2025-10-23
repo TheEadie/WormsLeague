@@ -3,9 +3,43 @@ using System.Text.Json;
 
 namespace Worms.Hub.Gateway.Announcers.Slack;
 
-internal sealed class SlackAnnouncer(IConfiguration configuration, ILogger<SlackAnnouncer> logger) : ISlackAnnouncer
+internal sealed class Announcer(IConfiguration configuration, ILogger<Announcer> logger) : IAnnouncer
 {
     public async Task AnnounceGameStarting(string hostName)
+    {
+        logger.LogInformation("Announcing game starting to Slack");
+        var slackMessage = new SlackMessage($"<!here> Hosting at: wa://{hostName}");
+        await PostToSlack(slackMessage);
+    }
+
+    public async Task AnnounceGameComplete(string winner)
+    {
+        logger.LogInformation("Announcing game complete to Slack");
+        var slackMessage = new SlackMessage(
+            "Game Complete",
+            $$"""
+              [
+                  {
+                      "type": "header",
+                      "text": {
+                          "type": "plain_text",
+                          "text": "Mayhem complete",
+                          "emoji": true
+                      }
+                  },
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "*Winner:*\n{{winner}}"
+                      }
+                  }
+              ]
+              """);
+        await PostToSlack(slackMessage);
+    }
+
+    private async Task PostToSlack(SlackMessage message)
     {
         var webHookUrl = configuration.GetValue<string>("SlackWebHookURL");
 
@@ -16,18 +50,19 @@ internal sealed class SlackAnnouncer(IConfiguration configuration, ILogger<Slack
         }
 
 #if DEBUG
-        var slackMessage = new SlackMessage($"Debug: This is a test run from local dev. Hosting at wa://{hostName}");
+        var finalMessage = new SlackMessage(
+            Text: "Debug: " + message.Text?.Replace("<!here>", "", StringComparison.InvariantCulture),
+            Blocks: message.Blocks?.Replace("<!here>", "", StringComparison.InvariantCulture));
 #else
-        var slackMessage = new SlackMessage($"<!here> Hosting at: wa://{hostName}");
+        var finalMessage = message;
 #endif
 
-        logger.LogInformation("Announcing game starting to Slack");
         using var client = new HttpClient();
         var slackUrl = new Uri(webHookUrl);
-        var body = JsonSerializer.Serialize(slackMessage);
+        var body = JsonSerializer.Serialize(finalMessage);
         using var content = new StringContent(body, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync(slackUrl, content);
-        await response.Content.ReadAsStringAsync();
+        _ = await response.Content.ReadAsStringAsync();
     }
 }
