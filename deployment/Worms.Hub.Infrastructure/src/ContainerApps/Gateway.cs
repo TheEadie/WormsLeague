@@ -38,22 +38,24 @@ public static class Gateway
                     {
                         External = true,
                         TargetPort = 8080,
-                        CustomDomains = certificateId is not null ?
-                        [
-                            new CustomDomainArgs
-                            {
-                                BindingType = "SniEnabled",
-                                CertificateId = certificateId,
-                                Name = url,
-                            }
-                        ] :
-                        [
-                            new CustomDomainArgs
-                            {
-                                Name = url,
-                                BindingType = "Disabled",
-                            }
-                        ]
+                        CustomDomains = certificateId is not null
+                            ?
+                            [
+                                new CustomDomainArgs
+                                {
+                                    BindingType = "SniEnabled",
+                                    CertificateId = certificateId,
+                                    Name = url,
+                                }
+                            ]
+                            :
+                            [
+                                new CustomDomainArgs
+                                {
+                                    Name = url,
+                                    BindingType = "Disabled",
+                                }
+                            ]
                     },
                     Secrets =
                     [
@@ -113,7 +115,17 @@ public static class Gateway
                                 {
                                     Name = "WORMS_SlackWebHookURL",
                                     SecretRef = "slack-hook-url",
-                                }
+                                },
+                                new EnvironmentVarArgs
+                                {
+                                    Name = "WORMS_HUB_DISTRIBUTED",
+                                    Value = "true",
+                                },
+                                new EnvironmentVarArgs
+                                {
+                                    Name = "WORMS_HUB_GATEWAY",
+                                    Value = "true",
+                                },
                             ],
                             VolumeMounts =
                             {
@@ -162,9 +174,12 @@ public static class Gateway
             "bind-certificate",
             new CommandArgs
             {
-                Create = Output.Format($"az containerapp hostname bind  --resource-group {resourceGroup.Name} --name {containerApp.Name} --hostname {url} --certificate {managedCert.Id}"),
-                Delete = Output.Format($"az containerapp hostname delete --resource-group {resourceGroup.Name} --name {containerApp.Name} --hostname {url} --yes")
-            },new CustomResourceOptions { DependsOn = { managedCert } });
+                Create = Output.Format(
+                    $"az containerapp hostname bind  --resource-group {resourceGroup.Name} --name {containerApp.Name} --hostname {url} --certificate {managedCert.Id}"),
+                Delete = Output.Format(
+                    $"az containerapp hostname delete --resource-group {resourceGroup.Name} --name {containerApp.Name} --hostname {url} --yes")
+            },
+            new CustomResourceOptions { DependsOn = { managedCert } });
 
         return containerApp;
     }

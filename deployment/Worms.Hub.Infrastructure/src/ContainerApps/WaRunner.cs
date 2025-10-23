@@ -6,7 +6,7 @@ using Pulumi.AzureNative.Resources;
 
 namespace Worms.Hub.Infrastructure.ContainerApps;
 
-public static class ReplayProcessor
+public static class WaRunner
 {
     public static Job Config(
         ResourceGroup resourceGroup,
@@ -20,66 +20,69 @@ public static class ReplayProcessor
         var queueName = "replays-to-process";
 
         var containerApp = new Job(
-            "worms-hub-replay-processor",
+            "worms-hub-wa-runner",
             new()
             {
-                JobName = "worms-replay-processor",
+                JobName = "worms-wa-runner",
                 ResourceGroupName = resourceGroup.Name,
                 EnvironmentId = managedEnvironment.Id,
-                Configuration = new JobConfigurationArgs
-                {
-                    EventTriggerConfig = new JobConfigurationEventTriggerConfigArgs
+                Configuration =
+                    new JobConfigurationArgs
                     {
-                        Parallelism = 1,
-                        ReplicaCompletionCount = 1,
-                        Scale = new JobScaleArgs
+                        EventTriggerConfig = new JobConfigurationEventTriggerConfigArgs
                         {
-                            MaxExecutions = 10,
-                            MinExecutions = 0,
-                            PollingInterval = 60,
-                            Rules = new[]
+                            Parallelism = 1,
+                            ReplicaCompletionCount = 1,
+                            Scale = new JobScaleArgs
                             {
-                                new JobScaleRuleArgs
-                                {
-                                    Auth = new[]
+                                MaxExecutions = 10,
+                                MinExecutions = 0,
+                                PollingInterval = 60,
+                                Rules =
+                                    new[]
                                     {
-                                        new ScaleRuleAuthArgs
+                                        new JobScaleRuleArgs
                                         {
-                                            SecretRef = "queue-connection",
-                                            TriggerParameter = "connection",
+                                            Auth = new[]
+                                            {
+                                                new ScaleRuleAuthArgs
+                                                {
+                                                    SecretRef = "queue-connection",
+                                                    TriggerParameter = "connection",
+                                                },
+                                            },
+                                            Metadata =
+                                                new Dictionary<string, string>
+                                                {
+                                                    { "accountName", storageAccountName },
+                                                    { "queueName", queueName },
+                                                    { "queueLength", "1" }
+                                                },
+                                            Name = "queue",
+                                            Type = "azure-queue",
                                         },
                                     },
-                                    Metadata = new Dictionary<string, string>
-                                    {
-                                        {"accountName",storageAccountName},
-                                        {"queueName",queueName},
-                                        {"queueLength","1"}
-                                    },
-                                    Name = "queue",
-                                    Type = "azure-queue",
-                                },
                             },
                         },
+                        ReplicaRetryLimit = 10,
+                        ReplicaTimeout = 3600,
+                        TriggerType = TriggerType.Event,
+                        Secrets =
+                        [
+                            new SecretArgs
+                            {
+                                Name = "queue-connection",
+                                Value = queueConnectionString,
+                            }
+                        ]
                     },
-                    ReplicaRetryLimit = 10,
-                    ReplicaTimeout = 3600,
-                    TriggerType = TriggerType.Event,
-                    Secrets =
-                    [
-                        new SecretArgs
-                        {
-                            Name = "queue-connection",
-                            Value = queueConnectionString,
-                        }
-                    ]
-                },
                 Template = new JobTemplateArgs
                 {
                     Containers =
                     {
                         new ContainerArgs
                         {
-                            Name = "replay-processor",
+                            Name = "wa-runner",
                             Image = image,
                             Env =
                             [

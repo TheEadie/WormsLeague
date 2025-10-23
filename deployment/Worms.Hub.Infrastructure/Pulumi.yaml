@@ -4,7 +4,6 @@ description: The Worms Hub Server
 config:
     azure-native:location: northeurope
     worms-hub:domain: davideadie.dev
-    worms-hub:gateway-image: theeadie/worms-server-gateway:0.6.48
-    worms-hub:replay-processor-image: theeadie/worms-hub-replay-processor:0.3.12
-    worms-hub:replay-updater-image: theeadie/worms-hub-replay-processor:0.3.12
+    worms-hub:gateway-image: theeadie/worms-hub-gateway:0.7.0
+    worms-hub:wa-runner-image: theeadie/worms-hub-wa-runner:0.4.0
     worms-hub:database-version: 0.2.2
