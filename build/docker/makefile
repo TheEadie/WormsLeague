@@ -36,7 +36,7 @@ $1.package: $1.version
 $1.release: | $1.release.github $1.release.dockerhub
 
 $1.release.github: $1.version
-	@build/release-github.sh "Hub v$$($1_VERSION)" "$$($1_TAG_PREFIX)$$($1_VERSION)" $(GITHUB_AUTH_TOKEN) $(GITHUB_REPO)
+	@build/release-github.sh "$$($1_RELEASE_NAME) v$$($1_VERSION)" "$$($1_TAG_PREFIX)$$($1_VERSION)" $(GITHUB_AUTH_TOKEN) $(GITHUB_REPO)
 	@echo ""
 
 $1.release.dockerhub: $1.version
