@@ -43,7 +43,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download build
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: win-x64
           path: .artifacts/win-x64/
@@ -61,12 +61,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download build - win-x64
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: win-x64
           path: .artifacts/win-x64/
       - name: Download build - linux-x64
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: linux-x64
           path: .artifacts/linux-x64/
@@ -84,7 +84,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download build
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: linux-musl-x64
           path: .artifacts/linux-musl-x64/
