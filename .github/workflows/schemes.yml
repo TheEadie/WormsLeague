@@ -23,7 +23,7 @@ jobs:
       - name: Build
         run: cd deployment/schemes; make schemes
       - name: Upload build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: RGSchemes
           path: deployment/schemes/.artifacts/
@@ -40,7 +40,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download build
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: RGSchemes
           path: deployment/schemes/.artifacts/
