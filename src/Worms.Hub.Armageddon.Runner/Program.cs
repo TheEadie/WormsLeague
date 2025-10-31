@@ -9,10 +9,11 @@ var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentD
 // These means we can scale to zero when there are no messages to process
 if (configuration["BATCH"] == "true")
 {
-    var serviceProvider = new ServiceCollection().AddReplayProcessorServices()
+    var services = new ServiceCollection().AddReplayProcessorServices()
         .AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug).AddSimpleConsole(c => c.SingleLine = true))
-        .AddSingleton<IConfiguration>(configuration)
-        .BuildServiceProvider();
+        .AddSingleton<IConfiguration>(configuration);
+    services.AddOpenTelemetryWaRunner();
+    var serviceProvider = services.BuildServiceProvider();
     var processor = serviceProvider.GetService<Processor>();
     await processor!.ProcessReplay();
     return;
@@ -24,6 +25,7 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging((_, builder) => builder.AddSimpleConsole(c => c.SingleLine = true))
     .ConfigureAppConfiguration(config => config.AddConfiguration(configuration))
     .ConfigureServices(s => s.AddReplayProcessorServices())
+    .ConfigureServices(s => s.AddOpenTelemetryWaRunner())
     .ConfigureServices(services => services.AddHostedService<CheckForMessagesService>())
     .Build();
 

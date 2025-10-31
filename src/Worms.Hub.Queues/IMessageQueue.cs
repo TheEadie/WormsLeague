@@ -10,7 +10,7 @@ public interface IMessageQueue<T>
 
     Task EnqueueMessage(T message);
 
-    Task<(T?, MessageDetails?, ActivityContext?)> DequeueMessage();
+    Task<(T?, MessageDetails?, ActivityContext)> DequeueMessage();
 
     Task DeleteMessage(MessageDetails messageDetails);
 }

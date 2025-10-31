@@ -38,7 +38,7 @@ internal abstract class MessageQueue<T>(string queueName, IConfiguration configu
         _ = await queueClient.SendMessageAsync(base64String);
     }
 
-    public async Task<(T?, MessageDetails?, ActivityContext?)> DequeueMessage()
+    public async Task<(T?, MessageDetails?, ActivityContext)> DequeueMessage()
     {
         var connectionString = configuration.GetConnectionString("Storage");
         var queueClient = new QueueClient(connectionString, queueName);
@@ -47,7 +47,7 @@ internal abstract class MessageQueue<T>(string queueName, IConfiguration configu
 
         if (message.Value is null)
         {
-            return (null, null, null);
+            return (null, null, default);
         }
 
         var json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(message.Value.MessageText));
