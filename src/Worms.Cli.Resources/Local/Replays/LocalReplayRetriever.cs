@@ -1,11 +1,13 @@
 using System.IO.Abstractions;
 using Worms.Armageddon.Files.Replays;
+using Worms.Armageddon.Files.Replays.Filename;
 using Worms.Armageddon.Files.Replays.Text;
 
 namespace Worms.Cli.Resources.Local.Replays;
 
 internal sealed class LocalReplayRetriever(
     ILocalReplayLocator localReplayLocator,
+    IReplayFilenameParser replayFilenameParser,
     IFileSystem fileSystem,
     IReplayTextReader replayTextReader) : IResourceRetriever<LocalReplay>
 {
@@ -25,12 +27,11 @@ internal sealed class LocalReplayRetriever(
             }
             else
             {
-                var fileName = fileSystem.Path.GetFileNameWithoutExtension(paths.WAgamePath);
-                var startIndex = fileName.IndexOf('[', StringComparison.InvariantCulture);
-                var dateString = fileName[..(startIndex - 1)];
-                var date = DateTime.ParseExact(dateString, "yyyy-MM-dd HH.mm.ss", null);
+                var replayDetailsFromFilename = replayFilenameParser.Parse(paths.WAgamePath);
                 resources.Add(
-                    new LocalReplay(paths, new ReplayResource(date, false, [], string.Empty, [], string.Empty)));
+                    new LocalReplay(
+                        paths,
+                        new ReplayResource(replayDetailsFromFilename.Date, false, [], string.Empty, [], string.Empty)));
             }
         }
 
