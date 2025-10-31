@@ -14,5 +14,9 @@ internal static class ServiceRegistration
         builder.AddScoped<IAnnouncer, Announcer>().AddScoped<ReplayFileValidator>().AddScoped<CliFileValidator>();
 
     public static IServiceCollection AddWorkerServices(this IServiceCollection builder) =>
-        builder.AddHubStorageServices().AddQueueServices().AddScoped<Processor>().AddWormsArmageddonFilesServices();
+        builder.AddHubStorageServices()
+            .AddQueueServices()
+            .AddScoped<Processor>()
+            .AddWormsArmageddonFilesServices()
+            .AddScoped<IAnnouncer, Announcer>();
 }
