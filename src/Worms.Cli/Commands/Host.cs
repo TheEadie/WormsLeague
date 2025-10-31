@@ -225,14 +225,16 @@ internal sealed class HostHandler(
             return false;
         }
 
-        var playerNamesSection = fileName.Substring(startIndex + 1, endIndex - startIndex - 1);
+        var playerNamesSection = fileName[(startIndex + 1)..endIndex];
 
-        // Split by comma to get individual player names
-        var playerNames = playerNamesSection.Split(',');
-        if (playerNames.Length == 0)
+        // Check if the section is empty
+        if (string.IsNullOrWhiteSpace(playerNamesSection))
         {
             return false;
         }
+
+        // Split by comma to get individual player names
+        var playerNames = playerNamesSection.Split(',');
 
         // The first player is the host. Check if their name starts with '@'
         var firstPlayerName = playerNames[0].Trim();
