@@ -188,6 +188,14 @@ internal sealed class HostHandler(
             return;
         }
 
+        // Check if we were the host of the replay
+        if (!IsUserTheHost(replay.Paths.WAgamePath))
+        {
+            logger.LogWarning("Replay found but user was not the host, skipping upload");
+            _ = Activity.Current?.AddTag(Telemetry.Spans.Host.ReplayFound, false);
+            return;
+        }
+
         logger.LogInformation("Uploading replay: {ReplayPath}", replay.Paths.WAgamePath);
         _ = Activity.Current?.AddTag(Telemetry.Spans.Host.ReplayFound, true);
         if (!dryRun)
@@ -196,6 +204,39 @@ internal sealed class HostHandler(
                 new RemoteReplayCreateParameters(replay.Details.Date.ToString("s"), replay.Paths.WAgamePath),
                 cancellationToken);
         }
+    }
+
+    private static bool IsUserTheHost(string replayPath)
+    {
+        // Extract the filename from the path
+        var fileName = Path.GetFileNameWithoutExtension(replayPath);
+
+        // Find the start of the player names section (marked by '[')
+        var startIndex = fileName.IndexOf('[', StringComparison.InvariantCulture);
+        if (startIndex == -1)
+        {
+            return false;
+        }
+
+        // Extract the player names section
+        var endIndex = fileName.IndexOf(']', startIndex);
+        if (endIndex == -1)
+        {
+            return false;
+        }
+
+        var playerNamesSection = fileName.Substring(startIndex + 1, endIndex - startIndex - 1);
+
+        // Split by comma to get individual player names
+        var playerNames = playerNamesSection.Split(',');
+        if (playerNames.Length == 0)
+        {
+            return false;
+        }
+
+        // The first player is the host. Check if their name starts with '@'
+        var firstPlayerName = playerNames[0].Trim();
+        return firstPlayerName.StartsWith('@');
     }
 
     private static Validated<string> GetIpAddress(string domain)
