@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Worms.Hub.Queues;
@@ -9,7 +10,7 @@ public interface IMessageQueue<T>
 
     Task EnqueueMessage(T message);
 
-    Task<(T?, MessageDetails?)> DequeueMessage();
+    Task<(T?, MessageDetails?, ActivityContext?)> DequeueMessage();
 
     Task DeleteMessage(MessageDetails messageDetails);
 }

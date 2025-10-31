@@ -19,7 +19,7 @@ internal sealed class Processor(
     {
         logger.LogInformation("Starting replay updater...");
 
-        var (message, token) = await messageQueue.DequeueMessage();
+        var (message, token, _) = await messageQueue.DequeueMessage();
         if (message is null || token is null)
         {
             logger.LogInformation("No messages to process.");
