@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Worms.Armageddon.Files.Replays.Filename;
 using Worms.Armageddon.Files.Replays.Text;
 using Worms.Armageddon.Files.Replays.Text.Parsers;
 using Worms.Armageddon.Files.Schemes.Binary;
@@ -14,6 +15,7 @@ public static class ServiceRegistration
             .AddScoped<IWscWriter, WscWriter>()
             .AddScoped<ISchemeTextReader, SchemeTextReader>()
             .AddScoped<ISchemeTextWriter, SchemeTextWriter>()
+            .AddScoped<IReplayFilenameParser, ReplayFilenameParser>()
             .AddScoped<IReplayTextReader, ReplayTextReader>()
             .AddScoped<IReplayLineParser, StartTimeParser>()
             .AddScoped<IReplayLineParser, TeamParser>()
