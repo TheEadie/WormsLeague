@@ -20,18 +20,23 @@ internal sealed class LocalReplayRetriever(
 
         foreach (var paths in localReplayLocator.GetReplayPaths(pattern))
         {
+            var replayDetailsFromFilename = replayFilenameParser.Parse(paths.WAgamePath);
             if (fileSystem.File.Exists(paths.LogPath))
             {
                 var content = await fileSystem.File.ReadAllTextAsync(paths.LogPath, cancellationToken);
-                resources.Add(new LocalReplay(paths, replayTextReader.GetModel(content)));
-            }
-            else
-            {
-                var replayDetailsFromFilename = replayFilenameParser.Parse(paths.WAgamePath);
                 resources.Add(
                     new LocalReplay(
                         paths,
-                        new ReplayResource(replayDetailsFromFilename.Date, false, [], string.Empty, [], string.Empty)));
+                        replayTextReader.GetModel(content),
+                        replayDetailsFromFilename.HostMachineName == replayDetailsFromFilename.LocalMachineName));
+            }
+            else
+            {
+                resources.Add(
+                    new LocalReplay(
+                        paths,
+                        new ReplayResource(replayDetailsFromFilename.Date, false, [], string.Empty, [], string.Empty),
+                        replayDetailsFromFilename.HostMachineName == replayDetailsFromFilename.LocalMachineName));
             }
         }
 
