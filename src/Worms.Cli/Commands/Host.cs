@@ -169,7 +169,7 @@ internal sealed class HostHandler(
 
         logger.LogInformation("Uploading replay to hub");
         var allReplays = await localReplayRetriever.Retrieve(cancellationToken);
-        var replay = allReplays.MaxBy(x => x.Details.Date);
+        var replay = allReplays.Where(x => x.HostedByLocalMachine).MaxBy(x => x.Details.Date);
 
         if (replay is null)
         {
