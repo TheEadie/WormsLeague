@@ -5,5 +5,5 @@ config:
     azure-native:location: northeurope
     worms-hub:domain: davideadie.dev
     worms-hub:gateway-image: theeadie/worms-hub-gateway:0.7.5
-    worms-hub:wa-runner-image: theeadie/worms-hub-wa-runner:0.4.2
+    worms-hub:wa-runner-image: theeadie/worms-hub-wa-runner:0.4.3
     worms-hub:database-version: 0.2.2
