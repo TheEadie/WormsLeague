@@ -23,7 +23,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 9.x
+          dotnet-version: 10.x
 
       - name: Azure login
         uses: azure/login@v2

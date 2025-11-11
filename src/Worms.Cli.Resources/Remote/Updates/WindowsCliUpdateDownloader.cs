@@ -15,9 +15,9 @@ internal sealed class WindowsCliUpdateDownloader(IWormsServerApi api, IFileSyste
         await File.WriteAllBytesAsync(archiveFilePath, bytes);
 
         // Unzip file
-        using var zip = ZipFile.OpenRead(archiveFilePath);
-        zip.ExtractToDirectory(updateFolder);
-        zip.Dispose();
+        await using var zip = await ZipFile.OpenReadAsync(archiveFilePath);
+        await zip.ExtractToDirectoryAsync(updateFolder);
+        await zip.DisposeAsync();
 
         // Delete zip file
         fileSystem.File.Delete(archiveFilePath);
