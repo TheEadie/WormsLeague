@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Pulumi;
 
-namespace Worms.Hub.Infrastructure;
+namespace Worms.Hub.Infrastructure.Azure;
 
 public static class Program
 {

@@ -2,7 +2,7 @@ using Pulumi;
 using Pulumi.AzureNative.App;
 using Cloudflare = Pulumi.Cloudflare;
 
-namespace Worms.Hub.Infrastructure.ContainerApps;
+namespace Worms.Hub.Infrastructure.Azure.ContainerApps;
 
 public static class Dns
 {

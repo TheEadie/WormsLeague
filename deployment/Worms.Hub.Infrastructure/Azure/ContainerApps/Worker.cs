@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.Resources;
 
-namespace Worms.Hub.Infrastructure.ContainerApps;
+namespace Worms.Hub.Infrastructure.Azure.ContainerApps;
 
 public static class Worker
 {

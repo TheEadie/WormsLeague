@@ -1,7 +1,4 @@
-using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace Worms.Hub.Infrastructure;
+namespace Worms.Hub.Infrastructure.Azure;
 
 public static class Utils
 {
