@@ -31,11 +31,17 @@ jobs:
           npm install -g @microsoft/sarif-multitool
           npx @microsoft/sarif-multitool merge sarif/*.sarif --recurse true --merge-runs --output-file=roslyn.sarif
 
-      - name: Upload SARIF
+      - name: Upload Rosyln SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: roslyn.sarif
+
+      - name: Upload JetBrains SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: jetbrains.sarif
 
       - name: Upload Artifacts
         if: always()
@@ -45,3 +51,4 @@ jobs:
           path: |
            sarif/*
            roslyn.sarif
+           jetbrains.sarif
