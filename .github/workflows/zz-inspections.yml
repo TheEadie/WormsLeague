@@ -8,7 +8,7 @@ on:
   workflow_call:
 
 jobs:
-  unit-tests:
+  inspections:
     name: Inspections
     runs-on: ubuntu-latest
     steps:
@@ -27,14 +27,21 @@ jobs:
 
       - name: Install SARIF Multitool
         if: always()
-        run: dotnet tool install --global Sarif.Multitool
-
-      - name: Upgrade SARIF to 2.1.0
-        if: always()
-        run: sarif rewrite '.output/roslyn.sarif' --output '.output/roslyn-2.1.0.sarif' --sarif-output-version Current
+        run: |
+          npm install -g @microsoft/sarif-multitool
+          npx @microsoft/sarif-multitool merge sarif/*.sarif --recurse true --merge-runs --output-file=roslyn.sarif
 
       - name: Upload SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: .output/roslyn-2.1.0.sarif
+          sarif_file: roslyn.sarif
+
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: code-inspections-roslyn
+          path: |
+           sarif/*
+           roslyn.sarif
