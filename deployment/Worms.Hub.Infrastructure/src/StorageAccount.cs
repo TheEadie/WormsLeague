@@ -24,7 +24,7 @@ public static class StorageAccount
         var accessKey = Output.Tuple(resourceGroup.Name, storage.Name)
             .Apply(
                 async x => (await Storage.ListStorageAccountKeys.InvokeAsync(
-                    new Storage.ListStorageAccountKeysArgs {AccountName = x.Item2, ResourceGroupName = x.Item1})).Keys[0].Value);
+                    new Storage.ListStorageAccountKeysArgs { AccountName = x.Item2, ResourceGroupName = x.Item1 })).Keys[0].Value);
         return (storage, accessKey);
     }
 

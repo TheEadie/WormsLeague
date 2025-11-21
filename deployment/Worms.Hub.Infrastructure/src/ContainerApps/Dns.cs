@@ -1,4 +1,4 @@
-﻿using Pulumi;
+using Pulumi;
 using Pulumi.AzureNative.App;
 using Cloudflare = Pulumi.Cloudflare;
 

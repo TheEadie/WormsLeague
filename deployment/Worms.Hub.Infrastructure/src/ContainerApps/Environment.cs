@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.OperationalInsights;
