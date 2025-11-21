@@ -202,3 +202,4 @@ sample-data/replays/
 sample-data/cli/
 
 *.sarif
+dotnet-tools.json
