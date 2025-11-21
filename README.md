@@ -14,7 +14,7 @@ Invoke-Expression $($script.content)
 ### Linux
 
 ```
-docker run theeadie/wormscli <args>
+docker run theeadie/worms-cli <args>
 ```
 
 ## First time setup
