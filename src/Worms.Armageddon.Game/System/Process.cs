@@ -1,4 +1,4 @@
-﻿namespace Worms.Armageddon.Game.System;
+namespace Worms.Armageddon.Game.System;
 
 internal sealed class Process(global::System.Diagnostics.Process process) : IProcess
 {

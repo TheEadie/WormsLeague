@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Armageddon.Game.Tests.Framework;

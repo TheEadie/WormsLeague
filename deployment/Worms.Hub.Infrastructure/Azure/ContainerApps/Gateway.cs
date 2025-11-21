@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
@@ -7,9 +5,9 @@ using Pulumi.AzureNative.Resources;
 using Pulumi.Command.Local;
 using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
 
-namespace Worms.Hub.Infrastructure.ContainerApps;
+namespace Worms.Hub.Infrastructure.Azure.ContainerApps;
 
-public static class Gateway
+internal static class Gateway
 {
     public static async Task<ContainerApp> Config(
         ResourceGroup resourceGroup,

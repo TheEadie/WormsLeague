@@ -1,4 +1,4 @@
-﻿namespace Worms.Armageddon.Game.Fake;
+namespace Worms.Armageddon.Game.Fake;
 
 internal sealed class NotInstalled : IWormsArmageddon
 {

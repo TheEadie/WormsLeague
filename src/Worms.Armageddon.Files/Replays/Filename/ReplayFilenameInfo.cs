@@ -1,4 +1,4 @@
-﻿namespace Worms.Armageddon.Files.Replays.Filename;
+namespace Worms.Armageddon.Files.Replays.Filename;
 
 public record ReplayFilenameInfo(
     DateTime Date,

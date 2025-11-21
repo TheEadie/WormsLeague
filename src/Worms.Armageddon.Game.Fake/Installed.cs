@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace Worms.Armageddon.Game.Fake;

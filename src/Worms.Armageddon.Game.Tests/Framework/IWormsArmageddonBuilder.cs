@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 
 namespace Worms.Armageddon.Game.Tests.Framework;
 
