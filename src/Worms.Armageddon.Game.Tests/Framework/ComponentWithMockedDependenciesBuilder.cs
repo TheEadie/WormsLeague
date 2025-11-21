@@ -68,10 +68,10 @@ internal sealed class ComponentWithMockedDependenciesBuilder : IWormsArmageddonB
         }
 
         return new ServiceCollection().AddWormsArmageddonGameServices()
-            .AddScoped<ISteamService>(_ => Substitute.For<ISteamService>()) // This has a thread.Sleep in it
-            .AddScoped<IRegistry>(_ => _registry)
-            .AddScoped<IFileVersionInfo>(_ => _fileVersionInfo)
-            .AddScoped<IProcessRunner>(_ => _processRunner)
+            .AddScoped(_ => Substitute.For<ISteamService>()) // This has a thread.Sleep in it
+            .AddScoped(_ => _registry)
+            .AddScoped(_ => _fileVersionInfo)
+            .AddScoped(_ => _processRunner)
             .AddScoped<IFileSystem>(_ => _fileSystem)
             .AddLogging()
             .BuildServiceProvider()
