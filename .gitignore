@@ -200,3 +200,5 @@ FakesAssemblies/
 
 sample-data/replays/
 sample-data/cli/
+
+*.sarif

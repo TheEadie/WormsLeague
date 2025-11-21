@@ -2,6 +2,7 @@ name: Code - Branches
 permissions:
   contents: write
   pull-requests: write
+  security-events: write
 
 on:
   push:
@@ -15,6 +16,11 @@ on:
       - ".github/workflows/zz-release-*.yml"
 
 jobs:
+  inspections:
+    name: Inspections
+    uses: ./.github/workflows/zz-inspections.yml
+    secrets: inherit
+
   build-hub:
     name: Build - Hub
     uses: ./.github/workflows/zz-build-hub.yml

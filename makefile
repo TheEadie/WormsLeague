@@ -10,6 +10,9 @@ start:
 stop:
 	@docker-compose down
 
+inspections:
+	@./build/run-inspections.sh
+
 include build/docker/makefile
 include build/cli/makefile
 
