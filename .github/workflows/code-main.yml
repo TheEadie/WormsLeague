@@ -14,6 +14,7 @@ on:
       - ".github/workflows/code-*.yml"
       - ".github/workflows/zz-build-*.yml"
       - ".github/workflows/zz-release-*.yml"
+      - ".github/workflows/zz-inspections.yml"
 
 jobs:
   inspections:
