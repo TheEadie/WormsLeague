@@ -17,8 +17,8 @@ all: | schemes
 schemes:
 	@rm -rf $(OUTPUT_DIR)
 	@mkdir $(OUTPUT_DIR)
-	@docker run --rm -i -v $(PWD):/input -v $(PWD)/$(OUTPUT_DIR):/.artifacts theeadie/worms-cli create scheme "Uber.Coolest.Options.$(VERSION)" -f "/input/Uber Coolest Options.txt" -r "/.artifacts"
-	@docker run --rm -i -v $(PWD):/input -v $(PWD)/$(OUTPUT_DIR):/.artifacts theeadie/worms-cli create scheme "Speed.Worms.$(VERSION)" -f "/input/Speed Worms.txt" -r "/.artifacts"
+	@docker run --rm -i -v $(PWD):/input -v $(PWD)/$(OUTPUT_DIR):/.artifacts $(IMAGE_NAME) create scheme "Uber.Coolest.Options.$(VERSION)" -f "/input/Uber Coolest Options.txt" -r "/.artifacts"
+	@docker run --rm -i -v $(PWD):/input -v $(PWD)/$(OUTPUT_DIR):/.artifacts $(IMAGE_NAME) create scheme "Speed.Worms.$(VERSION)" -f "/input/Speed Worms.txt" -r "/.artifacts"
 	@echo $(VERSION) > $(OUTPUT_DIR)/version.txt
 
 version:
