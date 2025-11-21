@@ -2,6 +2,7 @@ name: Code - Main
 permissions:
   contents: write
   pull-requests: write
+  security-events: write
 
 on:
   push:
@@ -15,6 +16,11 @@ on:
       - ".github/workflows/zz-release-*.yml"
 
 jobs:
+  inspections:
+    name: Inspections
+    uses: ./.github/workflows/zz-inspections.yml
+    secrets: inherit
+
   build-hub:
     name: Build - Hub
     uses: ./.github/workflows/zz-build-hub.yml
@@ -39,7 +45,7 @@ jobs:
 
   actions-timeline:
     name: Timeline
-    needs: [build-hub, build-cli, release-hub, release-cli]
+    needs: [inspections, build-hub, build-cli, release-hub, release-cli]
     runs-on: ubuntu-latest
     steps:
       - uses: Kesin11/actions-timeline@v2
