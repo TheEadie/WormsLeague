@@ -8,6 +8,7 @@ using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
 using Worms.Cli.Logging;
 using Worms.Cli.Resources;
+using System.Text.Json;
 
 namespace Worms.Cli;
 
