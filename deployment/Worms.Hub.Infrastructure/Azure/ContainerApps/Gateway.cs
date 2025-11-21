@@ -7,7 +7,7 @@ using CustomDomainArgs = Pulumi.AzureNative.App.Inputs.CustomDomainArgs;
 
 namespace Worms.Hub.Infrastructure.Azure.ContainerApps;
 
-public static class Gateway
+internal static class Gateway
 {
     public static async Task<ContainerApp> Config(
         ResourceGroup resourceGroup,

@@ -4,7 +4,7 @@ using Storage = Pulumi.AzureNative.Storage;
 
 namespace Worms.Hub.Infrastructure.Azure;
 
-public static class StorageAccount
+internal static class StorageAccount
 {
     public static (Storage.StorageAccount storageAccount, Output<string> accessToken) Config(ResourceGroup resourceGroup, Config config)
     {

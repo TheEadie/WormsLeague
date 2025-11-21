@@ -2,7 +2,7 @@ using Pulumi;
 
 namespace Worms.Hub.Infrastructure.Azure;
 
-public static class Program
+internal static class Program
 {
     public static Task<int> Main() =>
         Deployment.RunAsync(async () =>

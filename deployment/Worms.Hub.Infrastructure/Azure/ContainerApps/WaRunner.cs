@@ -5,7 +5,7 @@ using Pulumi.AzureNative.Resources;
 
 namespace Worms.Hub.Infrastructure.Azure.ContainerApps;
 
-public static class WaRunner
+internal static class WaRunner
 {
     public static Job Config(
         ResourceGroup resourceGroup,
@@ -16,9 +16,9 @@ public static class WaRunner
     {
         var image = config.Require("wa-runner-image");
         var storageAccountName = Utils.GetResourceNameAlphaNumericOnly("wormstest");
-        var queueName = "replays-to-process";
+        const string queueName = "replays-to-process";
 
-        var containerApp = new Job(
+        return new Job(
             "worms-hub-wa-runner",
             new()
             {
@@ -128,7 +128,5 @@ public static class WaRunner
                     }
                 }
             });
-
-        return containerApp;
     }
 }

@@ -6,9 +6,9 @@ using Environment = Worms.Hub.Infrastructure.Azure.ContainerApps.Environment;
 
 namespace Worms.Hub.Infrastructure.Azure;
 
-public static class WormsHub
+internal static class WormsHub
 {
-    public record Result(
+    internal record Result(
         Output<string> DatabaseJdbc,
         Output<string> DatabaseAdoNet,
         Output<string?> DatabaseUser,
