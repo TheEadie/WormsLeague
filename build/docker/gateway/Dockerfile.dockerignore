@@ -4,6 +4,7 @@
 # Except for these files
 !/src
 !.editorconfig
+!Directory.Build.props
 
 **/bin
 **/obj

@@ -3,5 +3,5 @@ set -euo pipefail
 
 >&2 echo "Running Rosyln inspections..."
 
-mkdir -p src/sarif
+mkdir -p sarif
 dotnet build Worms.sln /p:Sarif=true

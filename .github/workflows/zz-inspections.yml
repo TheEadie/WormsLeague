@@ -29,7 +29,7 @@ jobs:
         if: always()
         run: |
           npm install -g @microsoft/sarif-multitool
-          npx @microsoft/sarif-multitool merge src/sarif/*.sarif --recurse true --merge-runs --output-file=roslyn.sarif
+          npx @microsoft/sarif-multitool merge sarif/*.sarif --recurse true --merge-runs --output-file=roslyn.sarif
 
       - name: Upload SARIF
         if: always()
@@ -43,5 +43,5 @@ jobs:
         with:
           name: code-inspections-roslyn
           path: |
-           src/sarif/*
+           sarif/*
            roslyn.sarif

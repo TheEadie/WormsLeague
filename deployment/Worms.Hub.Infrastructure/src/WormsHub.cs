@@ -1,8 +1,8 @@
-using System.Threading.Tasks;
 using Pulumi;
 using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
 using Worms.Hub.Infrastructure.ContainerApps;
+using Environment = Worms.Hub.Infrastructure.ContainerApps.Environment;
 
 namespace Worms.Hub.Infrastructure;
 

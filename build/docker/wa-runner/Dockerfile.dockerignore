@@ -5,6 +5,7 @@
 !/src
 !/scripts
 !.editorconfig
+!Directory.Build.props
 
 **/bin
 **/obj
