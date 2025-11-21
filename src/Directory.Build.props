@@ -4,6 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AnalysisLevel>latest-All</AnalysisLevel>
+    <Errorlog Condition="$(Sarif) == true">$(MSBuildThisFileDirectory)/sarif/$(MSBuildProjectName).sarif,version=2.1</Errorlog>
   </PropertyGroup>
 
   <ItemGroup>
