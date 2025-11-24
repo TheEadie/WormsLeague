@@ -35,7 +35,7 @@ internal sealed class LocalReplayRetriever(
                 resources.Add(
                     new LocalReplay(
                         paths,
-                        new ReplayResource(replayDetailsFromFilename.Date, false, [], string.Empty, [], string.Empty),
+                        new ReplayResource(replayDetailsFromFilename.Date, false, [], string.Empty, []),
                         replayDetailsFromFilename.HostMachineName == replayDetailsFromFilename.LocalMachineName));
             }
         }

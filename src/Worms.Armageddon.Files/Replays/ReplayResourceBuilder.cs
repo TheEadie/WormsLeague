@@ -6,7 +6,6 @@ internal sealed class ReplayResourceBuilder
     private readonly List<Team> _teams = [];
     private readonly List<Turn> _turns = [];
     private string _winner = string.Empty;
-    private string _fullLog = string.Empty;
 
     public TurnBuilder CurrentTurn { get; private set; } = new();
 
@@ -39,13 +38,7 @@ internal sealed class ReplayResourceBuilder
         return this;
     }
 
-    public ReplayResourceBuilder WithFullLog(string fullLog)
-    {
-        _fullLog = fullLog;
-        return this;
-    }
-
     public Team GetTeamByName(string name) => _teams.Single(x => x.Name == name);
 
-    public ReplayResource Build() => new(_start, true, _teams, _winner, _turns, _fullLog);
+    public ReplayResource Build() => new(_start, true, _teams, _winner, _turns);
 }

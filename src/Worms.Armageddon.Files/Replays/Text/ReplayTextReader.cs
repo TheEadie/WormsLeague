@@ -12,6 +12,6 @@ internal sealed class ReplayTextReader(IEnumerable<IReplayLineParser> parsers) :
             matchingParsers.ToList().ForEach(x => x.Parse(line, builder));
         }
 
-        return builder.FinaliseCurrentTurn().WithFullLog(definition).Build();
+        return builder.FinaliseCurrentTurn().Build();
     }
 }

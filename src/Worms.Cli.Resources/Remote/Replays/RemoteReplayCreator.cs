@@ -10,8 +10,8 @@ internal sealed class RemoteReplayCreator(IWormsServerApi api, ILogger<RemoteRep
     {
         try
         {
-            var apiReplay = await api.CreateReplay(new CreateReplayDtoV1(parameters.Name, parameters.FilePath));
-            return new RemoteReplay(apiReplay.Id, apiReplay.Name, apiReplay.Status);
+            await api.CreateReplay(new CreateReplayDtoV1(parameters.Name, parameters.FilePath));
+            return new RemoteReplay();
         }
         catch (HttpRequestException e)
         {
@@ -24,7 +24,7 @@ internal sealed class RemoteReplayCreator(IWormsServerApi api, ILogger<RemoteRep
                 logger.LogError(e, "An error occured calling the Worms Hub API");
             }
 
-            return new RemoteReplay("", "", "");
+            return new RemoteReplay();
         }
     }
 }

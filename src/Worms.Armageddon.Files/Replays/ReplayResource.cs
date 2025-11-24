@@ -5,8 +5,7 @@ public record ReplayResource(
     bool Processed,
     IReadOnlyCollection<Team> Teams,
     string Winner,
-    IReadOnlyCollection<Turn> Turns,
-    string FullLog);
+    IReadOnlyCollection<Turn> Turns);
 
 public record Team(string Name, string Machine, TeamColour Colour)
 {

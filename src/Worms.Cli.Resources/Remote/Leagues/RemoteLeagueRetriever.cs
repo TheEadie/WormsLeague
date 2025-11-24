@@ -5,6 +5,6 @@ internal sealed class RemoteLeagueRetriever(IWormsServerApi api) : IRemoteLeague
     public async Task<RemoteLeague> Retrieve(string id)
     {
         var apiResult = await api.GetLeague(id);
-        return new RemoteLeague(apiResult.Name, apiResult.Version);
+        return new RemoteLeague(apiResult.Version);
     }
 }
