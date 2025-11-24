@@ -12,8 +12,33 @@ permissions:
   security-events: write
 
 jobs:
-  inspections:
-    name: Inspections
+  roslyn:
+    name: Roysln
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Run Inspections
+        run: |
+          mkdir -p sarif
+          dotnet build Worms.sln /p:Sarif=true
+          dotnet tool install --local Sarif.Multitool
+          dotnet sarif merge sarif/*.sarif --recurse true --merge-runs --output-file=roslyn.sarif
+
+      - name: Upload Rosyln SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: roslyn.sarif
+
+  jetbrains:
+    name: Jetbrains
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,13 +52,9 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Run Inspections
-        run: make inspections
-
-      - name: Upload Rosyln SARIF
-        if: always()
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: roslyn.sarif
+        run: |
+          dotnet tool install --local JetBrains.ReSharper.GlobalTools
+          dotnet jb inspectcode Worms.sln --output=jetbrains.sarif --format=sarif
 
       - name: Upload JetBrains SARIF
         if: always()
@@ -41,26 +62,34 @@ jobs:
         with:
           sarif_file: jetbrains.sarif
 
-
-  codeql-analysis:
-    name: CodeQL (${{ matrix.language }})
+  codeql-actions:
+    name: CodeQL (actions)
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-        - language: actions
-          build-mode: none
-        - language: csharp
-          build-mode: manual
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v4
+      with:
+        languages: actions
+        build-mode: none
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:actions"
+
+  codeql-csharp:
+    name: CodeQL (csharp)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
 
     - name: Install dotnet
-      if: matrix.build-mode == 'manual' && matrix.language == 'csharp'
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 10.0.x
@@ -68,14 +97,22 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
       with:
-        languages: ${{ matrix.language }}
-        build-mode: ${{ matrix.build-mode }}
+        languages: csharp
+        build-mode: manual
 
     - name: Build (csharp)
-      if: matrix.build-mode == 'manual' && matrix.language == 'csharp'
       run: dotnet build Worms.sln
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
       with:
-        category: "/language:${{matrix.language}}"
+        category: "/language:csharp"
+
+  actions-timeline:
+    name: Timeline
+    needs: [roslyn, jetbrains, codeql-actions, codeql-csharp]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Kesin11/actions-timeline@v2
+        with:
+          show-waiting-runner: true
