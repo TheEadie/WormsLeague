@@ -27,7 +27,7 @@ internal sealed class DeviceCodeLoginService(
         BrowserLauncher.OpenBrowser(deviceCodeResponse.VerificationUriComplete.OriginalString);
 
         logger.LogDebug("Requesting tokens...");
-        var tokenResponse = await RequestTokenAsync(deviceCodeResponse, logger, cancellationToken);
+        var tokenResponse = await RequestTokenAsync(deviceCodeResponse, cancellationToken);
 
         if (tokenResponse != null)
         {
@@ -86,7 +86,6 @@ internal sealed class DeviceCodeLoginService(
 
     private async Task<TokenResponse?> RequestTokenAsync(
         DeviceAuthorizationResponse deviceCodeResponse,
-        ILogger logger,
         CancellationToken cancellationToken)
     {
         using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.GetAuthTokens.SpanName);
