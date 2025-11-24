@@ -113,19 +113,19 @@ internal sealed class DeviceCodeLoginService(
                     { "client_id", ClientId }
                 });
 
-            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, cancellationToken);
+            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, cancellationTokenSource.Token);
 
             if (response.IsSuccessStatusCode)
             {
-                var streamAsync = await response.Content.ReadAsStreamAsync(cancellationToken);
+                var streamAsync = await response.Content.ReadAsStreamAsync(cancellationTokenSource.Token);
                 await using var stream = streamAsync;
                 return await JsonSerializer.DeserializeAsync(
                     streamAsync,
                     JsonContext.Default.TokenResponse,
-                    cancellationToken);
+                    cancellationTokenSource.Token);
             }
 
-            var stringContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            var stringContent = await response.Content.ReadAsStringAsync(cancellationTokenSource.Token);
 
             if (stringContent.Contains("authorization_pending", StringComparison.InvariantCulture)
                 || stringContent.Contains("slow_down", StringComparison.InvariantCulture))
@@ -133,7 +133,7 @@ internal sealed class DeviceCodeLoginService(
                 logger.LogDebug(
                     "Code not yet confirmed. Retrying in {IntervalSeconds} seconds",
                     deviceCodeResponse.Interval);
-                await Task.Delay(deviceCodeResponse.Interval * 1000, cancellationToken);
+                await Task.Delay(deviceCodeResponse.Interval * 1000, cancellationTokenSource.Token);
             }
             else
             {
