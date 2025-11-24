@@ -34,7 +34,7 @@ internal static class Environment
                     {
                         CustomerId = logAnalytics.CustomerId,
                         SharedKey = logAnalyticsSharedKeys.Apply(
-                            x => x.PrimarySharedKey ?? throw new Exception("No primary shared key found")),
+                            x => x.PrimarySharedKey ?? throw new KeyNotFoundException("No primary shared key found")),
                     }
                 }
             });

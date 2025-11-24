@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
@@ -182,6 +183,7 @@ internal static class Gateway
         return containerApp;
     }
 
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Certificate may not exist yet")]
     private static async Task<string?> GetManagedCertificateId()
     {
         // Managed Cert will only exist from second run
@@ -197,7 +199,7 @@ internal static class Gateway
                     ResourceGroupName = Utils.GetResourceName("Worms-Hub")
                 });
         }
-        catch (Exception)
+        catch
         {
             // Certificate not found
         }
