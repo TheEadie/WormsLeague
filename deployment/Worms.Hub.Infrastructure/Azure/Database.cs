@@ -54,7 +54,7 @@ internal static class Database
                 ServerName = server.Name,
             });
 
-        var sqlFwRuleAllowAll = new DBForPostgreSQL.FirewallRule(
+        _ = new DBForPostgreSQL.FirewallRule(
             "postgres-firewall-rule",
             new()
             {
@@ -69,7 +69,7 @@ internal static class Database
         {
             var myIp = Output.Create(Utils.GetMyPublicIp());
 
-            var firewallRule = new DBForPostgreSQL.FirewallRule(
+            _ = new DBForPostgreSQL.FirewallRule(
                 "allow-my-ip",
                 new()
                 {
