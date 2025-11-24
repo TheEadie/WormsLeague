@@ -17,11 +17,6 @@ on:
       - ".github/workflows/zz-inspections.yml"
 
 jobs:
-  inspections:
-    name: Inspections
-    uses: ./.github/workflows/zz-inspections.yml
-    secrets: inherit
-
   build-hub:
     name: Build - Hub
     uses: ./.github/workflows/zz-build-hub.yml
@@ -46,7 +41,7 @@ jobs:
 
   actions-timeline:
     name: Timeline
-    needs: [inspections, build-hub, build-cli, release-hub, release-cli]
+    needs: [build-hub, build-cli, release-hub, release-cli]
     runs-on: ubuntu-latest
     steps:
       - uses: Kesin11/actions-timeline@v2
