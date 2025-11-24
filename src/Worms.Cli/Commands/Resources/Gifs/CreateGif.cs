@@ -85,11 +85,11 @@ internal sealed class CreateGifHandler(
         var gif = await gifCreator.Create(
             new LocalGifCreateParameters(
                 replay.Value,
-                turn,
-                TimeSpan.FromSeconds(startOffset),
-                TimeSpan.FromSeconds(endOffset),
-                fps,
-                speed),
+                config.Turn,
+                TimeSpan.FromSeconds(config.StartOffset),
+                TimeSpan.FromSeconds(config.EndOffset),
+                config.FramesPerSecond,
+                config.Speed),
             cancellationToken);
         await Console.Out.WriteLineAsync(gif.Path);
         return 0;
