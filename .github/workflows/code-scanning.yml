@@ -107,3 +107,12 @@ jobs:
       uses: github/codeql-action/analyze@v4
       with:
         category: "/language:csharp"
+
+  actions-timeline:
+    name: Timeline
+    needs: [roslyn, jetbrains, codeql-actions, codeql-csharp]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Kesin11/actions-timeline@v2
+        with:
+          show-waiting-runner: true
