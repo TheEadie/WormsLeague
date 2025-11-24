@@ -8,7 +8,7 @@ namespace Worms.Hub.Infrastructure.Azure;
 
 internal static class WormsHub
 {
-    internal record Result(
+    internal sealed record Result(
         Output<string> DatabaseJdbc,
         Output<string> DatabaseAdoNet,
         Output<string?> DatabaseUser,
