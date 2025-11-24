@@ -1,9 +1,6 @@
-using System.Net.Http;
-using System.Threading.Tasks;
+namespace Worms.Hub.Infrastructure.Azure;
 
-namespace Worms.Hub.Infrastructure;
-
-public static class Utils
+internal static class Utils
 {
     public static string GetResourceName(string name)
     {
@@ -14,7 +11,7 @@ public static class Utils
     public static string GetResourceNameAlphaNumericOnly(string name)
     {
         var stack = Pulumi.Deployment.Instance.StackName;
-        return stack == "prod" ? name : $"{name}{stack}";
+        return stack == "prod" ? name : name + stack;
     }
 
     public static async Task<string> GetMyPublicIp()

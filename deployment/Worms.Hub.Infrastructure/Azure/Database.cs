@@ -1,11 +1,10 @@
-using System.Threading.Tasks;
 using Pulumi;
 using Pulumi.AzureNative.Resources;
 using DBForPostgreSQL = Pulumi.AzureNative.DBforPostgreSQL;
 
-namespace Worms.Hub.Infrastructure;
+namespace Worms.Hub.Infrastructure.Azure;
 
-public static class Database
+internal static class Database
 {
     public static (DBForPostgreSQL.Server, DBForPostgreSQL.Database, Output<string>, Output<string> Version) Config(
         ResourceGroup resourceGroup,

@@ -1,14 +1,14 @@
 using Pulumi;
 using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.Resources;
-using Worms.Hub.Infrastructure.ContainerApps;
-using Environment = Worms.Hub.Infrastructure.ContainerApps.Environment;
+using Worms.Hub.Infrastructure.Azure.ContainerApps;
+using Environment = Worms.Hub.Infrastructure.Azure.ContainerApps.Environment;
 
-namespace Worms.Hub.Infrastructure;
+namespace Worms.Hub.Infrastructure.Azure;
 
-public static class WormsHub
+internal static class WormsHub
 {
-    public record Result(
+    internal sealed record Result(
         Output<string> DatabaseJdbc,
         Output<string> DatabaseAdoNet,
         Output<string?> DatabaseUser,

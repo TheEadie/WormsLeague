@@ -1,12 +1,11 @@
-using System.Collections.Generic;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.Resources;
 
-namespace Worms.Hub.Infrastructure.ContainerApps;
+namespace Worms.Hub.Infrastructure.Azure.ContainerApps;
 
-public static class Worker
+internal static class Worker
 {
     public static Job Config(
         ResourceGroup resourceGroup,
@@ -18,9 +17,9 @@ public static class Worker
     {
         var image = config.Require("gateway-image");
         var storageAccountName = Utils.GetResourceNameAlphaNumericOnly("wormstest");
-        var queueName = "replays-to-update";
+        const string queueName = "replays-to-update";
 
-        var containerApp = new Job(
+        return new Job(
             "worms-hub-worker",
             new()
             {
@@ -154,7 +153,5 @@ public static class Worker
                     }
                 }
             });
-
-        return containerApp;
     }
 }

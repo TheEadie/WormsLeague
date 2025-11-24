@@ -2,9 +2,9 @@ using Pulumi;
 using Pulumi.AzureNative.Resources;
 using Storage = Pulumi.AzureNative.Storage;
 
-namespace Worms.Hub.Infrastructure;
+namespace Worms.Hub.Infrastructure.Azure;
 
-public static class FileShare
+internal static class FileShare
 {
     public static Storage.FileShare Config(
         ResourceGroup resourceGroup,

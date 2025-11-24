@@ -2,9 +2,9 @@ using Pulumi;
 using Pulumi.AzureNative.Resources;
 using Storage = Pulumi.AzureNative.Storage;
 
-namespace Worms.Hub.Infrastructure;
+namespace Worms.Hub.Infrastructure.Azure;
 
-public static class StorageAccount
+internal static class StorageAccount
 {
     public static (Storage.StorageAccount storageAccount, Output<string> accessToken) Config(ResourceGroup resourceGroup, Config config)
     {
@@ -24,7 +24,7 @@ public static class StorageAccount
         var accessKey = Output.Tuple(resourceGroup.Name, storage.Name)
             .Apply(
                 async x => (await Storage.ListStorageAccountKeys.InvokeAsync(
-                    new Storage.ListStorageAccountKeysArgs {AccountName = x.Item2, ResourceGroupName = x.Item1})).Keys[0].Value);
+                    new Storage.ListStorageAccountKeysArgs { AccountName = x.Item2, ResourceGroupName = x.Item1 })).Keys[0].Value);
         return (storage, accessKey);
     }
 
