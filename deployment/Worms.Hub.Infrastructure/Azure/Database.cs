@@ -26,7 +26,7 @@ internal static class Database
             {
                 ServerName = Utils.GetResourceName("worms"),
                 ResourceGroupName = resourceGroup.Name,
-                Version = "18",
+                Version = "17",
                 AdministratorLogin = "worms_user",
                 AdministratorLoginPassword = randomPassword.Result,
                 CreateMode = "Default",
