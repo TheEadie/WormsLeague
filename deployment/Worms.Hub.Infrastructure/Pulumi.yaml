@@ -4,6 +4,6 @@ description: The Worms Hub Server
 config:
     azure-native:location: northeurope
     worms-hub:domain: davideadie.dev
-    worms-hub:gateway-image: theeadie/worms-hub-gateway:0.8.11
+    worms-hub:gateway-image: theeadie/worms-hub-gateway:0.8.12
     worms-hub:wa-runner-image: theeadie/worms-hub-wa-runner:0.5.8
     worms-hub:database-version: 0.2.2
