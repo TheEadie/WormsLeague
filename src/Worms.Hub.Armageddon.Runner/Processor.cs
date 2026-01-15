@@ -17,7 +17,7 @@ internal sealed class Processor(
 
         var (message, token, activityContext) = await inputQueue.DequeueMessage();
 
-        using var span = Activity.Current?.Source.StartActivity(
+        using var span = Telemetry.Source.StartActivity(
             "WA Runner - Process Replay",
             ActivityKind.Consumer,
             activityContext);

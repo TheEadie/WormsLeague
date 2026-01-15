@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Worms.Armageddon.Files.Replays.Text;
 using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Queues;
@@ -19,7 +20,13 @@ internal sealed class Processor(
     {
         logger.LogInformation("Starting replay updater...");
 
-        var (message, token, _) = await messageQueue.DequeueMessage();
+        var (message, token, activityContext) = await messageQueue.DequeueMessage();
+
+        using var span = Telemetry.Source.StartActivity(
+            "Update Replay",
+            ActivityKind.Consumer,
+            activityContext);
+
         if (message is null || token is null)
         {
             logger.LogInformation("No messages to process.");
