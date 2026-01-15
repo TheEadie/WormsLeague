@@ -18,7 +18,9 @@ internal static class Telemetry
             .ConfigureResource(resource => resource.AddService(
                 SourceName,
                 serviceVersion: Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3)))
-            .WithTracing(tracing => tracing.AddOtlpExporter(option =>
+            .WithTracing(tracing => tracing
+                .AddSource(SourceName)
+                .AddOtlpExporter(option =>
                 {
                     option.Endpoint = new Uri("https://api.honeycomb.io");
                     option.Headers = $"x-honeycomb-team={HoneycombApiKey}";
