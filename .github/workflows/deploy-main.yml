@@ -52,7 +52,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Run Flyway Migrate
-        uses: docker://redgate/flyway:11
+        uses: docker://redgate/flyway:12
         with:
           args: >-
             info
