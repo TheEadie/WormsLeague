@@ -1,5 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Worms.Armageddon.Files.Replays;
 
+[PublicAPI]
 public record ReplayResource(
     DateTime Date,
     bool Processed,
@@ -8,6 +11,7 @@ public record ReplayResource(
     IReadOnlyCollection<Turn> Turns,
     string FullLog);
 
+[PublicAPI]
 public record Team(string Name, string Machine, TeamColour Colour)
 {
     public static Team Local(string name, TeamColour colour) => new(name, "local", colour);
@@ -25,6 +29,7 @@ public enum TeamColour
     Cyan = 5
 }
 
+[PublicAPI]
 public record Turn(
     TimeSpan Start,
     TimeSpan End,
@@ -32,6 +37,8 @@ public record Turn(
     IReadOnlyCollection<Weapon> Weapons,
     IReadOnlyCollection<Damage> Damage);
 
+[PublicAPI]
 public record Weapon(string Name, uint? Fuse, string? Modifier);
 
+[PublicAPI]
 public record Damage(Team Team, uint HealthLost, uint WormsKilled);
