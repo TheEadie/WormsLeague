@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
+using JetBrains.Annotations;
 using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Schemes;
 
+[PublicAPI]
 public static class WeaponUtils
 {
     private static readonly Weapon[] Utilities =

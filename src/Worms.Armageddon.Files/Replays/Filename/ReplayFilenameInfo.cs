@@ -1,5 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Worms.Armageddon.Files.Replays.Filename;
 
+[PublicAPI]
 public record ReplayFilenameInfo(
     DateTime Date,
     string GameMode,

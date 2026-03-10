@@ -1,5 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Worms.Armageddon.Game;
 
+[PublicAPI]
 public record GameInfo(
     bool IsInstalled,
     string ExeLocation,
