@@ -42,11 +42,6 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner pro
 
                     using var process = processRunner.Start(processStartInfo);
 
-                    if (process is null)
-                    {
-                        return Task.CompletedTask;
-                    }
-
                     var output = PrintStdOut(process.StandardOutput);
                     var errors = PrintStdErr(process.StandardError);
 
