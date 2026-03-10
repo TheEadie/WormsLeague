@@ -42,44 +42,44 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner pro
 
                     using var process = processRunner.Start(processStartInfo);
 
-                    if (process is not null)
+                    if (process is null)
                     {
-                        var processTask = Task.Run(() => process.WaitForExitAsync());
-                        var output = Task.Run(() => PrintStdOut(process));
-                        var errors = Task.Run(() => PrintStdErr(process));
-
-                        await Task.WhenAll(processTask, errors, output);
-                        logger.Log(LogLevel.Debug, "Process exited with code: {ExitCode}", process.ExitCode);
+                        return Task.CompletedTask;
                     }
+
+                    var output = PrintStdOut(process.StandardOutput);
+                    var errors = PrintStdErr(process.StandardError);
+
+                    await process.WaitForExitAsync();
+                    await Task.WhenAll(output, errors);
+                    logger.Log(LogLevel.Debug, "Process exited with code: {ExitCode}", process.ExitCode);
 
                     return Task.CompletedTask;
                 });
     }
 
-    private async Task PrintStdOut(IProcess process)
+    private async Task PrintStdOut(StreamReader? reader)
     {
-        if (process.StandardOutput is null)
+        if (reader is null)
         {
             return;
         }
 
-        while (!process.StandardOutput.EndOfStream)
+        while (await reader.ReadLineAsync() is { } line)
         {
-            var line = await process.StandardOutput.ReadLineAsync();
             logger.Log(LogLevel.Debug, "StdOut: {Message}", line);
         }
     }
 
-    private async Task PrintStdErr(IProcess process)
+    private async Task PrintStdErr(StreamReader? reader)
     {
-        if (process.StandardError is null)
+        if (reader is null)
         {
             return;
         }
 
-        while (!process.StandardError.EndOfStream)
+        while (await reader.ReadLineAsync() is { } line)
         {
-            var line = await process.StandardError.ReadLineAsync();
             logger.Log(LogLevel.Debug, "StdErr: {Message}", line);
         }
     }
