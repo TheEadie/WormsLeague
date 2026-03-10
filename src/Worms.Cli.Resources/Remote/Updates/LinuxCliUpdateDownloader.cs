@@ -15,9 +15,10 @@ internal sealed class LinuxCliUpdateDownloader(IWormsServerApi api, IFileSystem 
         await File.WriteAllBytesAsync(archiveFilePath, bytes);
 
         // Unzip tar.gz file
-        await using var zip = await ZipFile.OpenReadAsync(archiveFilePath);
-        await zip.ExtractToDirectoryAsync(updateFolder);
-        await zip.DisposeAsync();
+        {
+            await using var zip = await ZipFile.OpenReadAsync(archiveFilePath);
+            await zip.ExtractToDirectoryAsync(updateFolder);
+        }
 
         // Delete tar.gz file
         fileSystem.File.Delete(archiveFilePath);
