@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 
-internal sealed class WeaponUsedParser : IReplayLineParser
+internal sealed partial class WeaponUsedParser : IReplayLineParser
 {
     private const string Timestamp = @"\[(\d+:\d+:\d+.\d+)\]";
     private const string TeamName = "(.+)";
@@ -11,26 +11,27 @@ internal sealed class WeaponUsedParser : IReplayLineParser
     private const string Number = @"(\d+)";
     private const string Modifiers = "(.+)";
 
-    private static readonly Regex WeaponUsageWithFuseAndModifier = new(
-        $@"{Timestamp} (•••|���) {TeamName} fires {WeaponName} \({Number} sec, {Modifiers}\)");
+    [GeneratedRegex($@"{Timestamp} (•••|���) {TeamName} fires {WeaponName} \({Number} sec, {Modifiers}\)")]
+    private static partial Regex WeaponUsageWithFuseAndModifier();
 
-    private static readonly Regex WeaponUsageWithFuse =
-        new($@"{Timestamp} (•••|���) {TeamName} fires {WeaponName} \({Number} sec\)");
+    [GeneratedRegex($@"{Timestamp} (•••|���) {TeamName} fires {WeaponName} \({Number} sec\)")]
+    private static partial Regex WeaponUsageWithFuse();
 
-    private static readonly Regex WeaponUsageWithModifier =
-        new($@"{Timestamp} (•••|���) {TeamName} fires {WeaponName} \({Modifiers}\)");
+    [GeneratedRegex($@"{Timestamp} (•••|���) {TeamName} fires {WeaponName} \({Modifiers}\)")]
+    private static partial Regex WeaponUsageWithModifier();
 
-    private static readonly Regex WeaponUsage = new($"{Timestamp} (•••|���) {TeamName} fires {WeaponName}");
+    [GeneratedRegex($"{Timestamp} (•••|���) {TeamName} fires {WeaponName}")]
+    private static partial Regex WeaponUsage();
 
     public bool CanParse(string line) =>
-        WeaponUsageWithFuseAndModifier.IsMatch(line) || WeaponUsageWithFuse.IsMatch(line) || WeaponUsage.IsMatch(line);
+        WeaponUsageWithFuseAndModifier().IsMatch(line) || WeaponUsageWithFuse().IsMatch(line) || WeaponUsage().IsMatch(line);
 
     public void Parse(string line, ReplayResourceBuilder builder)
     {
-        var weaponUsedWithFuseAndModifier = WeaponUsageWithFuseAndModifier.Match(line);
-        var weaponUsedWithFuse = WeaponUsageWithFuse.Match(line);
-        var weaponUsedWithModifier = WeaponUsageWithModifier.Match(line);
-        var weaponUsed = WeaponUsage.Match(line);
+        var weaponUsedWithFuseAndModifier = WeaponUsageWithFuseAndModifier().Match(line);
+        var weaponUsedWithFuse = WeaponUsageWithFuse().Match(line);
+        var weaponUsedWithModifier = WeaponUsageWithModifier().Match(line);
+        var weaponUsed = WeaponUsage().Match(line);
 
         if (weaponUsedWithFuseAndModifier.Success)
         {
