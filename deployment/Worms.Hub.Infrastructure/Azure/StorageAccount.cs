@@ -6,7 +6,7 @@ namespace Worms.Hub.Infrastructure.Azure;
 
 internal static class StorageAccount
 {
-    public static (Storage.StorageAccount storageAccount, Output<string> accessToken) Config(ResourceGroup resourceGroup, Config config)
+    public static (Storage.StorageAccount storageAccount, Output<string> accessToken) Config(ResourceGroup resourceGroup, Config _)
     {
         var storage = new Storage.StorageAccount(
             "storage-account",
