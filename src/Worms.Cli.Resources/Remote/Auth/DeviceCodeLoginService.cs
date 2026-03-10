@@ -27,7 +27,7 @@ internal sealed class DeviceCodeLoginService(
         BrowserLauncher.OpenBrowser(deviceCodeResponse.VerificationUriComplete.OriginalString);
 
         logger.LogDebug("Requesting tokens...");
-        var tokenResponse = await RequestTokenAsync(deviceCodeResponse, logger, cancellationToken);
+        var tokenResponse = await RequestTokenAsync(deviceCodeResponse, cancellationToken);
 
         if (tokenResponse != null)
         {
@@ -86,13 +86,12 @@ internal sealed class DeviceCodeLoginService(
 
     private async Task<TokenResponse?> RequestTokenAsync(
         DeviceAuthorizationResponse deviceCodeResponse,
-        ILogger logger,
         CancellationToken cancellationToken)
     {
         using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.GetAuthTokens.SpanName);
-        using var cancellationTokenSource = new CancellationTokenSource();
         var timeout = TimeSpan.FromSeconds(deviceCodeResponse.ExpiresIn);
-        cancellationTokenSource.CancelAfter(timeout);
+        using var timeoutCts = new CancellationTokenSource(timeout);
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
 
         logger.LogDebug(
             "Checking if code has been confirmed... (Timeout: {TimeoutMinutes} mins)",
@@ -101,10 +100,8 @@ internal sealed class DeviceCodeLoginService(
         using var client = httpClientFactory.CreateClient();
         client.BaseAddress = new Uri(Authority);
 
-        while (!cancellationTokenSource.Token.IsCancellationRequested)
+        while (!linkedCts.Token.IsCancellationRequested)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             using var content = new FormUrlEncodedContent(
                 new Dictionary<string, string>()
                 {
@@ -113,19 +110,19 @@ internal sealed class DeviceCodeLoginService(
                     { "client_id", ClientId }
                 });
 
-            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, cancellationToken);
+            var response = await client.PostAsync(new Uri("oauth/token", UriKind.Relative), content, linkedCts.Token);
 
             if (response.IsSuccessStatusCode)
             {
-                var streamAsync = await response.Content.ReadAsStreamAsync(cancellationToken);
+                var streamAsync = await response.Content.ReadAsStreamAsync(linkedCts.Token);
                 await using var stream = streamAsync;
                 return await JsonSerializer.DeserializeAsync(
                     streamAsync,
                     JsonContext.Default.TokenResponse,
-                    cancellationToken);
+                    linkedCts.Token);
             }
 
-            var stringContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            var stringContent = await response.Content.ReadAsStringAsync(linkedCts.Token);
 
             if (stringContent.Contains("authorization_pending", StringComparison.InvariantCulture)
                 || stringContent.Contains("slow_down", StringComparison.InvariantCulture))
@@ -133,7 +130,7 @@ internal sealed class DeviceCodeLoginService(
                 logger.LogDebug(
                     "Code not yet confirmed. Retrying in {IntervalSeconds} seconds",
                     deviceCodeResponse.Interval);
-                await Task.Delay(deviceCodeResponse.Interval * 1000, cancellationToken);
+                await Task.Delay(deviceCodeResponse.Interval * 1000, linkedCts.Token);
             }
             else
             {
