@@ -2,21 +2,24 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 
-internal sealed class TeamParser : IReplayLineParser
+internal sealed partial class TeamParser : IReplayLineParser
 {
     private const string TeamColour = "(Red|Blue|Green|Yellow|Magenta|Cyan)";
     private const string TeamName = "(.+)";
     private const string PlayerName = "(.+)";
 
-    private static readonly Regex TeamSummaryOnline = new($"{TeamColour}:.+\"{PlayerName}\".+as.+\"{TeamName}\"");
-    private static readonly Regex TeamSummaryOffline = new($"{TeamColour}:.+\"{TeamName}\"");
+    [GeneratedRegex($"{TeamColour}:.+\"{PlayerName}\".+as.+\"{TeamName}\"")]
+    private static partial Regex TeamSummaryOnline();
 
-    public bool CanParse(string line) => TeamSummaryOnline.IsMatch(line) || TeamSummaryOffline.IsMatch(line);
+    [GeneratedRegex($"{TeamColour}:.+\"{TeamName}\"")]
+    private static partial Regex TeamSummaryOffline();
+
+    public bool CanParse(string line) => TeamSummaryOnline().IsMatch(line) || TeamSummaryOffline().IsMatch(line);
 
     public void Parse(string line, ReplayResourceBuilder builder)
     {
-        var teamSummaryOnlineMatch = TeamSummaryOnline.Match(line);
-        var teamSummaryOfflineMatch = TeamSummaryOffline.Match(line);
+        var teamSummaryOnlineMatch = TeamSummaryOnline().Match(line);
+        var teamSummaryOfflineMatch = TeamSummaryOffline().Match(line);
 
         if (teamSummaryOnlineMatch.Success)
         {
