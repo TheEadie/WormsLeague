@@ -2,18 +2,22 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 
-internal sealed class WinnerParser : IReplayLineParser
+internal sealed partial class WinnerParser : IReplayLineParser
 {
     private const string TeamName = "(.+)";
-    private static readonly Regex WinnerDraw = new("The round was drawn.");
-    private static readonly Regex Winner = new($"{TeamName} wins the (match!|round.)");
 
-    public bool CanParse(string line) => WinnerDraw.IsMatch(line) || Winner.IsMatch(line);
+    [GeneratedRegex("The round was drawn.")]
+    private static partial Regex WinnerDraw();
+
+    [GeneratedRegex($"{TeamName} wins the (match!|round.)")]
+    private static partial Regex Winner();
+
+    public bool CanParse(string line) => WinnerDraw().IsMatch(line) || Winner().IsMatch(line);
 
     public void Parse(string line, ReplayResourceBuilder builder)
     {
-        var winnerDrawMatch = WinnerDraw.Match(line);
-        var winnerMatch = Winner.Match(line);
+        var winnerDrawMatch = WinnerDraw().Match(line);
+        var winnerMatch = Winner().Match(line);
 
         if (winnerDrawMatch.Success)
         {

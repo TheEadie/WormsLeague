@@ -7,7 +7,7 @@ internal sealed class LocalReplayViewer(IWormsArmageddon wormsArmageddon)
 {
     public async Task View(LocalReplay resource, LocalReplayViewParameters parameters)
     {
-        if (parameters.Turn != default)
+        if (parameters.Turn != 0)
         {
             var startTime = resource.Details.Turns.ElementAt((int) parameters.Turn - 1).Start;
             await wormsArmageddon.PlayReplay(resource.Paths.WAgamePath, startTime);

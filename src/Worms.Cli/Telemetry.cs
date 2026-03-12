@@ -106,7 +106,7 @@ internal static class Telemetry
             public const string SpanNameBrowse = "worms browse schemes";
 
             public const string Id = "worms.scheme.id";
-            public const string Version = "worms.scheme.version";
+            public const string SchemeVersion = "worms.scheme.version";
         }
 
         internal static class League
