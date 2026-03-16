@@ -9,7 +9,7 @@
     <PackageReference Include="Azure.Storage.Queues" Version="12.25.0"/>
     <PackageReference Include="Dapper" Version="2.1.72"/>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.5"/>
-    <PackageReference Include="Npgsql" Version="10.0.1"/>
+    <PackageReference Include="Npgsql" Version="10.0.2"/>
   </ItemGroup>
 
 </Project>
