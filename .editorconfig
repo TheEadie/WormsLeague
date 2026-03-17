@@ -267,6 +267,7 @@ resharper_enforce_if_statement_braces_highlighting = warning
 resharper_enforce_lock_statement_braces_highlighting = warning
 resharper_enforce_using_statement_braces_highlighting = warning
 resharper_enforce_while_statement_braces_highlighting = warning
+resharper_explicit_caller_info_argument_highlighting = none
 resharper_heuristic_unreachable_code_highlighting = none
 resharper_member_can_be_protected_global_highlighting = none
 resharper_redundant_base_qualifier_highlighting = warning
@@ -290,6 +291,8 @@ dotnet_diagnostic.CA1308.severity = none
 dotnet_diagnostic.CA1303.severity = none
 # CA2007 only applies to libraries that may be consumed by UI frameworks
 dotnet_diagnostic.CA2007.severity = none
+# CA1873 flags logging calls as expensive - not a concern for this project
+dotnet_diagnostic.CA1873.severity = none
 # Workaround for https://github.com/dotnet/roslyn/issues/41640
 dotnet_diagnostic.IDE0005.severity = suggestion
 

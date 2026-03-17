@@ -1,5 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Worms.Armageddon.Game;
 
+[PublicAPI]
 public static class Telemetry
 {
     internal static class Spans

@@ -1,5 +1,6 @@
 using System.Globalization;
 using Dapper;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Worms.Hub.Storage.Domain;
@@ -53,4 +54,5 @@ internal sealed class GamesRepository(IConfiguration configuration) : IRepositor
     }
 }
 
+[PublicAPI]
 public record GamesDb(int Id, string Status, string HostMachine);

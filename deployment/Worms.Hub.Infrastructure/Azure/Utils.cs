@@ -17,6 +17,6 @@ internal static class Utils
     public static async Task<string> GetMyPublicIp()
     {
         using var http = new HttpClient();
-        return (await http.GetStringAsync("https://api.ipify.org")).Trim();
+        return (await http.GetStringAsync(new Uri("https://api.ipify.org"))).Trim();
     }
 }

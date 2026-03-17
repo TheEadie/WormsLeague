@@ -23,7 +23,7 @@ internal sealed class LeagueUpdater(
 
         logger.LogInformation("Downloading Scheme: {FileName}", downloadFileName);
         _ = Activity.Current?.SetTag(Telemetry.Spans.Scheme.Id, leagueName);
-        _ = Activity.Current?.SetTag(Telemetry.Spans.Scheme.Version, version);
+        _ = Activity.Current?.SetTag(Telemetry.Spans.Scheme.SchemeVersion, version);
 
         await remoteSchemeDownloader.Download(leagueName, downloadFileName, schemesFolder);
     }

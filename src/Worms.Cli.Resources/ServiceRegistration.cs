@@ -13,10 +13,12 @@ using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Remote.Leagues;
 using Worms.Cli.Resources.Remote.Replays;
 using Worms.Cli.Resources.Remote.Schemes;
+using JetBrains.Annotations;
 using Worms.Cli.Resources.Remote.Updates;
 
 namespace Worms.Cli.Resources;
 
+[PublicAPI]
 public static class ServiceRegistration
 {
     public static IServiceCollection AddWormsCliResourcesServices(this IServiceCollection builder) =>

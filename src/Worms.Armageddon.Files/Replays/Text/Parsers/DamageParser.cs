@@ -3,19 +3,27 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Files.Replays.Text.Parsers;
 
-internal sealed class DamageParser : IReplayLineParser
+internal sealed partial class DamageParser : IReplayLineParser
 {
     private const string Timestamp = @"\[(\d+:\d+:\d+.\d+)\]";
     private const string DamageDealtDetails = "(.+)";
     private const string Number = @"(\d+)";
     private const string TeamName = "(.+)";
-    private static readonly Regex DamageDealt = new($"{Timestamp} (•••|���) Damage dealt: {DamageDealtDetails}");
 
-    public bool CanParse(string line) => DamageDealt.IsMatch(line);
+    [GeneratedRegex($"{Timestamp} (•••|���) Damage dealt: {DamageDealtDetails}")]
+    private static partial Regex DamageDealt();
+
+    [GeneratedRegex($@"{Number} to {TeamName}")]
+    private static partial Regex DamageWithNoKills();
+
+    [GeneratedRegex($@"{Number} \({Number} kills?\) to {TeamName}")]
+    private static partial Regex DamageWithKills();
+
+    public bool CanParse(string line) => DamageDealt().IsMatch(line);
 
     public void Parse(string line, ReplayResourceBuilder builder)
     {
-        var damageDealt = DamageDealt.Match(line);
+        var damageDealt = DamageDealt().Match(line);
 
         if (damageDealt.Success)
         {
@@ -24,8 +32,8 @@ internal sealed class DamageParser : IReplayLineParser
 
             foreach (var damageDetail in damageDealt.Groups[3].Value.Split(','))
             {
-                var damageWithNoKills = new Regex($"{Number} to {TeamName}").Match(damageDetail);
-                var damageWithKills = new Regex(@$"{Number} \({Number} kills?\) to {TeamName}").Match(damageDetail);
+                var damageWithNoKills = DamageWithNoKills().Match(damageDetail);
+                var damageWithKills = DamageWithKills().Match(damageDetail);
 
                 if (damageWithNoKills.Success)
                 {

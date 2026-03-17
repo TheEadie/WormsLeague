@@ -1,5 +1,6 @@
 using System.Globalization;
 using Dapper;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Worms.Hub.Storage.Domain;
@@ -71,4 +72,5 @@ internal sealed class ReplaysRepository(IConfiguration configuration) : IReposit
     }
 }
 
+[PublicAPI]
 public record ReplayDb(int Id, string Name, string Status, string Filename, string FullLog);
