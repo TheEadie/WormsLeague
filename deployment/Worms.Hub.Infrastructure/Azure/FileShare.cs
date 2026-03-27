@@ -9,7 +9,7 @@ internal static class FileShare
     public static Storage.FileShare Config(
         ResourceGroup resourceGroup,
         Storage.StorageAccount storageAccount,
-        Config config) =>
+        Config _) =>
         new(
             "file-share",
             new()

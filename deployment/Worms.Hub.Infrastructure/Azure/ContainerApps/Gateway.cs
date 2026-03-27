@@ -197,7 +197,7 @@ internal static class Gateway
                     ResourceGroupName = Utils.GetResourceName("Worms-Hub")
                 });
         }
-        catch (Exception)
+        catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             // Certificate not found
         }

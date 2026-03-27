@@ -2,11 +2,12 @@ using System.Text.RegularExpressions;
 
 namespace Worms.Armageddon.Game.Win;
 
-internal sealed class SteamService : ISteamService
+internal sealed partial class SteamService : ISteamService
 {
     private const string ProcessName = "Steam";
 
-    private static readonly Regex LaunchGamePromptRegex = new("Allow game launch\\?", RegexOptions.IgnoreCase);
+    [GeneratedRegex("Allow game launch\\?", RegexOptions.IgnoreCase)]
+    private static partial Regex LaunchGamePromptRegex();
 
     public void WaitForSteamPrompt()
     {
@@ -23,7 +24,7 @@ internal sealed class SteamService : ISteamService
 
     private static IntPtr GetSteamPromptWindow()
     {
-        var windows = WindowTools.GetWindowsWithTitleMatching(LaunchGamePromptRegex);
+        var windows = WindowTools.GetWindowsWithTitleMatching(LaunchGamePromptRegex());
         return Array.Find(windows, w => WindowTools.GetProcessForWindow(w)?.ProcessName == ProcessName);
     }
 }

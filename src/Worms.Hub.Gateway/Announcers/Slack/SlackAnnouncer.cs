@@ -51,7 +51,7 @@ internal sealed class Announcer(IConfiguration configuration, ILogger<Announcer>
 
 #if DEBUG
         var finalMessage = new SlackMessage(
-            Text: "Debug: " + message.Text?.Replace("<!here>", "", StringComparison.InvariantCulture),
+            Text: "Debug: " + message.Text.Replace("<!here>", "", StringComparison.InvariantCulture),
             Blocks: message.Blocks?.Replace("<!here>", "", StringComparison.InvariantCulture));
 #else
         var finalMessage = message;

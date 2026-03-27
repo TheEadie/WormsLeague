@@ -5,10 +5,12 @@ using System.Runtime.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using Worms.Armageddon.Game.System;
 using Worms.Armageddon.Game.Win;
+using JetBrains.Annotations;
 using IFileVersionInfo = Worms.Armageddon.Game.System.IFileVersionInfo;
 
 namespace Worms.Armageddon.Game;
 
+[PublicAPI]
 public static class ServiceRegistration
 {
     public static IServiceCollection AddWormsArmageddonGameServices(this IServiceCollection builder) =>

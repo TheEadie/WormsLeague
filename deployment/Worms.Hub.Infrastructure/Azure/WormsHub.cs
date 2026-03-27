@@ -63,10 +63,10 @@ internal static class WormsHub
             queueConnStr);
 
         // WA Runner
-        var waRunner = WaRunner.Config(resourceGroup, config, containerApp, containerAppStorage, queueConnStr);
+        _ = WaRunner.Config(resourceGroup, config, containerApp, containerAppStorage, queueConnStr);
 
         // Worker
-        var worker = Worker.Config(
+        _ = Worker.Config(
             resourceGroup,
             config,
             containerApp,
