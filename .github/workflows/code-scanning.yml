@@ -36,6 +36,14 @@ jobs:
           jq '.runs[].results |= map(select(has("suppressions") == false or (.suppressions | length) == 0))' roslyn.sarif > roslyn.filtered.sarif
           mv roslyn.filtered.sarif roslyn.sarif
 
+      - name: Check for warnings
+        run: |
+          RESULTS=$(jq '[.runs[].results[]] | length' roslyn.sarif)
+          if [ "$RESULTS" -gt 0 ]; then
+            echo "::error::Roslyn found $RESULTS warning(s)"
+            exit 1
+          fi
+
       - name: Upload Rosyln SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@v4
@@ -60,6 +68,14 @@ jobs:
         run: |
           dotnet tool install --local JetBrains.ReSharper.GlobalTools
           dotnet jb inspectcode Worms.sln --output=jetbrains.sarif --format=sarif
+
+      - name: Check for warnings
+        run: |
+          RESULTS=$(jq '[.runs[].results[]] | length' jetbrains.sarif)
+          if [ "$RESULTS" -gt 0 ]; then
+            echo "::error::JetBrains InspectCode found $RESULTS warning(s)"
+            exit 1
+          fi
 
       - name: Upload JetBrains SARIF
         if: always()
