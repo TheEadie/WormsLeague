@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace Worms.Cli.Commands.Validation;
 
 internal sealed record ValidationRule<T>(Func<T, bool> Predicate, Func<T, string> Error);
@@ -24,6 +26,7 @@ internal sealed class RulesFor<T>
         return this;
     }
 
+    [UsedImplicitly]
     public RulesFor<T> MustNot(Func<T, bool> rule, Func<T, string> message)
     {
         _rules.Add(new ValidationRule<T>(x => !rule(x), message));
