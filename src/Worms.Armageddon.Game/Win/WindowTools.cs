@@ -42,7 +42,7 @@ public static partial class WindowTools
             return null;
         }
 
-        GetWindowThreadProcessId(hWnd, out var processId);
+        _ = GetWindowThreadProcessId(hWnd, out var processId);
         return Process.GetProcessById((int) processId);
     }
 
