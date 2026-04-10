@@ -9,7 +9,7 @@
     <PackageReference Include="Azure.Storage.Queues" Version="12.24.0"/>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.5"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.5"/>
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.13.1"/>
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.2"/>
   </ItemGroup>
 
 </Project>
