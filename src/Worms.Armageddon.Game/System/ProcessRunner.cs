@@ -7,12 +7,12 @@ internal class ProcessRunner : IProcessRunner
     public IProcess Start(string fileName, params string[] args) =>
         new Process(global::System.Diagnostics.Process.Start(fileName, string.Join(" ", args.ToList())));
 
-    public IProcess? FindProcess(string processName)
+    public async Task<IProcess?> FindProcess(string processName)
     {
         IProcess? process = null;
         for (var retryCount = 0; process is null && retryCount <= 5; retryCount++)
         {
-            Thread.Sleep(500);
+            await Task.Delay(500);
             var foundProcess = global::System.Diagnostics.Process.GetProcessesByName(processName).FirstOrDefault();
             process = foundProcess is null ? null : new Process(foundProcess);
         }
@@ -20,13 +20,18 @@ internal class ProcessRunner : IProcessRunner
         return process;
     }
 
-    public IProcess? FindProcess(string processName, TimeSpan timeout)
+    public async Task<IProcess?> FindProcess(string processName, TimeSpan timeout)
     {
+        // Initial wait before polling to allow short-lived processes to exit
+        await Task.Delay(500);
+        timeout -= TimeSpan.FromMilliseconds(500);
+
         IProcess? process = null;
         while (process is null && timeout.TotalMilliseconds > 0)
         {
-            Thread.Sleep(500);
-            var foundProcess = global::System.Diagnostics.Process.GetProcessesByName(processName).FirstOrDefault();
+            await Task.Delay(500);
+            var foundProcess = global::System.Diagnostics.Process.GetProcessesByName(processName)
+                .FirstOrDefault(p => !p.HasExited);
             process = foundProcess is null ? null : new Process(foundProcess);
             timeout -= TimeSpan.FromMilliseconds(500);
         }
