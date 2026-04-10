@@ -95,7 +95,7 @@ internal sealed class ProcessReplayShould
 
         var (outputMessage, _, _) = await _outputQueue.DequeueMessage();
         outputMessage.ShouldNotBeNull();
-        outputMessage!.ReplayFileName.ShouldBe(ReplayFileName);
+        outputMessage.ReplayFileName.ShouldBe(ReplayFileName);
     }
 
     private static string FindRepoRoot()
@@ -119,16 +119,17 @@ internal sealed class ProcessReplayShould
         await process.WaitForExitAsync();
     }
 
+    private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(2) };
+
     private static async Task WaitForAzurite()
     {
-        using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
         var azuriteUri = new Uri("http://127.0.0.1:10001/devstoreaccount1");
         var deadline = DateTime.UtcNow.Add(TimeSpan.FromSeconds(30));
         while (DateTime.UtcNow < deadline)
         {
             try
             {
-                _ = await httpClient.GetAsync(azuriteUri);
+                _ = await _httpClient.GetAsync(azuriteUri);
                 return;
             }
             catch (HttpRequestException)
