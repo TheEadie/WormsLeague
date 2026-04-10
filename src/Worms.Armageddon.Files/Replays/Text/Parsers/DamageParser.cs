@@ -13,10 +13,10 @@ internal sealed partial class DamageParser : IReplayLineParser
     [GeneratedRegex($"{Timestamp} (•••|���) Damage dealt: {DamageDealtDetails}")]
     private static partial Regex DamageDealt();
 
-    [GeneratedRegex($@"{Number} to {TeamName}")]
+    [GeneratedRegex($"{Number} to {TeamName}")]
     private static partial Regex DamageWithNoKills();
 
-    [GeneratedRegex($@"{Number} \({Number} kills?\) to {TeamName}")]
+    [GeneratedRegex($"{Number} \\({Number} kills?\\) to {TeamName}")]
     private static partial Regex DamageWithKills();
 
     public bool CanParse(string line) => DamageDealt().IsMatch(line);
