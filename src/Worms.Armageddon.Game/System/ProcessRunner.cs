@@ -22,11 +22,16 @@ internal class ProcessRunner : IProcessRunner
 
     public IProcess? FindProcess(string processName, TimeSpan timeout)
     {
+        // Initial wait to allow the launcher process to exit before polling
+        Thread.Sleep(500);
+        timeout -= TimeSpan.FromMilliseconds(500);
+
         IProcess? process = null;
         while (process is null && timeout.TotalMilliseconds > 0)
         {
             Thread.Sleep(500);
-            var foundProcess = global::System.Diagnostics.Process.GetProcessesByName(processName).FirstOrDefault();
+            var foundProcess = global::System.Diagnostics.Process.GetProcessesByName(processName)
+                .FirstOrDefault(p => !p.HasExited);
             process = foundProcess is null ? null : new Process(foundProcess);
             timeout -= TimeSpan.FromMilliseconds(500);
         }
