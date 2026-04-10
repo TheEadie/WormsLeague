@@ -199,6 +199,7 @@ FakesAssemblies/
 *.opt
 
 sample-data/replays/
+!sample-data/replays/sample.WAGame
 sample-data/cli/
 
 *.sarif
