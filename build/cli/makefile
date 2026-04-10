@@ -33,7 +33,7 @@ cli.build.docker: cli.version
 cli.test: cli.test.unit
 
 cli.test.unit: cli.build.exe
-	@dotnet test
+	@dotnet test src/Worms.Cli
 	@echo ""
 
 ## Package
