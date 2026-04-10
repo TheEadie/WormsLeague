@@ -22,7 +22,7 @@ internal class ProcessRunner : IProcessRunner
 
     public async Task<IProcess?> FindProcess(string processName, TimeSpan timeout)
     {
-        // Initial wait to allow the launcher process to exit before polling
+        // Initial wait before polling to allow short-lived processes to exit
         await Task.Delay(500);
         timeout -= TimeSpan.FromMilliseconds(500);
 
