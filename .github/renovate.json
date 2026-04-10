@@ -31,6 +31,13 @@
         "TestableIO.System.IO.Abstractions",
         "TestableIO.System.IO.Abstractions.TestingHelpers"
       ]
+    },
+    {
+      "groupName": "Worms Hub - Docker Images",
+      "matchPackageNames": [
+        "theeadie/worms-hub-gateway",
+        "theeadie/worms-hub-wa-runner"
+      ]
     }
   ],
   "dependencyDashboard": true
