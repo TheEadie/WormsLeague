@@ -119,7 +119,7 @@ internal sealed class ProcessReplayShould
         await process.WaitForExitAsync();
     }
 
-    private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(2) };
+    private static readonly HttpClient HttpClient = new() { Timeout = TimeSpan.FromSeconds(2) };
 
     private static async Task WaitForAzurite()
     {
@@ -129,7 +129,7 @@ internal sealed class ProcessReplayShould
         {
             try
             {
-                _ = await _httpClient.GetAsync(azuriteUri);
+                _ = await HttpClient.GetAsync(azuriteUri);
                 return;
             }
             catch (HttpRequestException)
