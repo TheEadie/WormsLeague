@@ -2,6 +2,8 @@ namespace Worms.Hub.Infrastructure.Azure;
 
 internal static class Utils
 {
+    private static readonly HttpClient HttpClient = new();
+
     public static string GetResourceName(string name)
     {
         var stack = Pulumi.Deployment.Instance.StackName;
@@ -14,9 +16,6 @@ internal static class Utils
         return stack == "prod" ? name : name + stack;
     }
 
-    public static async Task<string> GetMyPublicIp()
-    {
-        using var http = new HttpClient();
-        return (await http.GetStringAsync(new Uri("https://api.ipify.org"))).Trim();
-    }
+    public static async Task<string> GetMyPublicIp() =>
+        (await HttpClient.GetStringAsync(new Uri("https://api.ipify.org"))).Trim();
 }

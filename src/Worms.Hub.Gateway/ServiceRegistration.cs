@@ -11,11 +11,12 @@ namespace Worms.Hub.Gateway;
 internal static class ServiceRegistration
 {
     public static IServiceCollection AddGatewayServices(this IServiceCollection builder) =>
-        builder.AddScoped<IAnnouncer, Announcer>().AddScoped<ReplayFileValidator>().AddScoped<CliFileValidator>();
+        builder.AddHttpClient().AddScoped<IAnnouncer, Announcer>().AddScoped<ReplayFileValidator>().AddScoped<CliFileValidator>();
 
     public static IServiceCollection AddWorkerServices(this IServiceCollection builder) =>
         builder.AddHubStorageServices()
             .AddQueueServices()
+            .AddHttpClient()
             .AddScoped<Processor>()
             .AddWormsArmageddonFilesServices()
             .AddScoped<IAnnouncer, Announcer>();

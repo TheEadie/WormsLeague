@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Worms.Hub.Gateway.Announcers.Slack;
 
-internal sealed class Announcer(IConfiguration configuration, ILogger<Announcer> logger) : IAnnouncer
+internal sealed class Announcer(IConfiguration configuration, IHttpClientFactory httpClientFactory, ILogger<Announcer> logger) : IAnnouncer
 {
     public async Task AnnounceGameStarting(string hostName)
     {
@@ -57,7 +57,7 @@ internal sealed class Announcer(IConfiguration configuration, ILogger<Announcer>
         var finalMessage = message;
 #endif
 
-        using var client = new HttpClient();
+        using var client = httpClientFactory.CreateClient();
         var slackUrl = new Uri(webHookUrl);
         var body = JsonSerializer.Serialize(finalMessage);
         using var content = new StringContent(body, Encoding.UTF8, "application/json");
