@@ -3,7 +3,7 @@ using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Gateway.API.DTOs;
 
-[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+[PublicAPI]
 internal sealed record LeagueDto(string Id, string Name, Version Version, Uri SchemeUrl)
 {
     internal static LeagueDto FromDomain(League league, Uri schemeUrl) =>
