@@ -54,7 +54,7 @@ internal sealed class ProcessReplayShould
         _outputQueue = services.GetRequiredService<IMessageQueue<ReplayToUpdateMessage>>();
     }
 
-    [TearDown]
+    [SetUp]
     public void CleanUpLogFile()
     {
         var logFile = Path.Combine(_replayFolder, Path.GetFileNameWithoutExtension(ReplayFileName) + ".log");
@@ -63,6 +63,9 @@ internal sealed class ProcessReplayShould
             File.Delete(logFile);
         }
     }
+
+    [TearDown]
+    public void CleanUpLogFileAfter() => CleanUpLogFile();
 
     [OneTimeTearDown]
     public async Task StopServices()
@@ -150,5 +153,7 @@ internal sealed class ProcessReplayShould
 
             await Task.Delay(TimeSpan.FromSeconds(2));
         }
+
+        throw new TimeoutException($"Condition not met within {timeout.TotalSeconds}s timeout");
     }
 }
