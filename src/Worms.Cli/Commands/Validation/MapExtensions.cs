@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace Worms.Cli.Commands.Validation;
 
 internal static class MapExtensions
@@ -8,6 +10,7 @@ internal static class MapExtensions
     public static async Task<Validated<TOut>> Map<T, TOut>(this Validated<T> value, Func<T, Task<TOut>> asyncFunc) =>
         value.IsValid ? new Valid<TOut>(await asyncFunc(value.Value!)) : new Invalid<TOut>(value.Error);
 
+    [UsedImplicitly]
     public static async Task<Validated<TOut>> Map<T, TOut>(this Task<Validated<T>> value, Func<T, Task<TOut>> asyncFunc)
     {
         var result = await value;

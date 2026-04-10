@@ -33,12 +33,6 @@ internal sealed class WormsRunner(
 
                 using (var process = processRunner.Start(gameInfo.ExeLocation, wormsArgs))
                 {
-                    if (process == null)
-                    {
-                        _ = span?.SetStatus(ActivityStatusCode.Error);
-                        throw new InvalidOperationException("Unable to start worms process");
-                    }
-
                     await process.WaitForExitAsync();
                     logger.Log(LogLevel.Debug, "Launcher process exited with code: {ExitCode}", process.ExitCode);
                 }

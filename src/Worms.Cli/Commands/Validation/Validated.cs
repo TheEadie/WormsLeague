@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 
 namespace Worms.Cli.Commands.Validation;
 
@@ -17,6 +18,7 @@ internal sealed class Valid<T>(T value) : Validated<T>(true, value, []);
 
 internal sealed class Invalid<T> : Validated<T>
 {
+    [UsedImplicitly]
     public Invalid(string error)
         : base(false, default, [error]) { }
 

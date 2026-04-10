@@ -4,10 +4,12 @@ using Worms.Armageddon.Files.Replays.Text;
 using Worms.Armageddon.Files.Replays.Text.Parsers;
 using Worms.Armageddon.Files.Schemes.Binary;
 using Worms.Armageddon.Files.Schemes.Random;
+using JetBrains.Annotations;
 using Worms.Armageddon.Files.Schemes.Text;
 
 namespace Worms.Armageddon.Files;
 
+[PublicAPI]
 public static class ServiceRegistration
 {
     public static IServiceCollection AddWormsArmageddonFilesServices(this IServiceCollection builder) =>

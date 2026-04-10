@@ -68,7 +68,7 @@ internal sealed class CreateGifHandler(
         var startOffset = parseResult.GetValue(CreateGif.StartOffset);
         var endOffset = parseResult.GetValue(CreateGif.EndOffset);
 
-        var config = new Config(replayName, turn, fps, speed, startOffset, endOffset);
+        var config = new Config(replayName, turn);
         var replay = await config.Validate(ValidConfig())
             .Map(x => FindReplays(x.ReplayName!, cancellationToken))
             .Validate(Only1ReplayFound(replayName))
@@ -109,18 +109,12 @@ internal sealed class CreateGifHandler(
     private static List<ValidationRule<Config>> ValidConfig() =>
         Valid.Rules<Config>()
             .Must(x => !string.IsNullOrWhiteSpace(x.ReplayName), "No replay provided for the Gif being created")
-            .Must(x => x.Turn != default, "No turn provided for the Gif being created");
+            .Must(x => x.Turn != 0, "No turn provided for the Gif being created");
 
     private async Task<List<LocalReplay>> FindReplays(string pattern, CancellationToken cancellationToken) =>
     [
         .. await replayRetriever.Retrieve(pattern, cancellationToken)
     ];
 
-    private sealed record Config(
-        string? ReplayName,
-        uint Turn,
-        uint FramesPerSecond,
-        uint Speed,
-        uint StartOffset,
-        uint EndOffset);
+    private sealed record Config(string? ReplayName, uint Turn);
 }

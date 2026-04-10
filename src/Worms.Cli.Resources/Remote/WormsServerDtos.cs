@@ -1,13 +1,16 @@
 using System.Text.Json.Serialization;
+using JetBrains.Annotations;
 
 namespace Worms.Cli.Resources.Remote;
 
+[PublicAPI]
 public sealed record LatestCliDtoV1(
     [property: JsonPropertyName("latestVersion")]
     Version LatestVersion,
     [property: JsonPropertyName("fileLocations")]
     IReadOnlyDictionary<string, string> FileLocations);
 
+[PublicAPI]
 public sealed record LeagueDtoV1(
     [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("name")] string Name,
@@ -16,18 +19,22 @@ public sealed record LeagueDtoV1(
     [property: JsonPropertyName("schemeUrl")]
     Uri SchemeUrl);
 
+[PublicAPI]
 public sealed record CreateGameDtoV1(
     [property: JsonPropertyName("hostMachine")]
     string HostMachine);
 
+[PublicAPI]
 public sealed record GamesDtoV1(
     [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("status")] string Status,
     [property: JsonPropertyName("hostMachine")]
     string HostMachine);
 
+[PublicAPI]
 public sealed record CreateReplayDtoV1(string Name, string ReplayFilePath);
 
+[PublicAPI]
 public sealed record ReplayDtoV1(
     [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("name")] string Name,
