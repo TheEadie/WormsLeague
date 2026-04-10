@@ -40,7 +40,7 @@ internal sealed class WormsRunner(
                 logger.Log(LogLevel.Debug, "Waiting for Steam prompt...");
                 steamService.WaitForSteamPrompt();
 
-                var wormsProcess = processRunner.FindProcess(gameInfo.ProcessName);
+                var wormsProcess = await processRunner.FindProcess(gameInfo.ProcessName);
 
                 if (wormsProcess is not null)
                 {

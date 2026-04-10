@@ -32,18 +32,18 @@ internal sealed class WormsRunner2(
 
                 using (processRunner.Start(gameInfo.ExeLocation, wormsArgs))
                 {
-                    var wormsProcess = FindWormsProcess(gameInfo.ProcessName);
+                    var wormsProcess = await FindWormsProcess(gameInfo.ProcessName);
                     await WaitForExit(wormsProcess);
                 }
             });
     }
 
-    private IProcess FindWormsProcess(string processName)
+    private async Task<IProcess> FindWormsProcess(string processName)
     {
         const int timeoutInMinutes = 5;
         logger.Log(LogLevel.Debug, "Looking for worms process: {ProcessName}...", processName);
 
-        var wormsProcess = processRunner.FindProcess(processName, TimeSpan.FromMinutes(timeoutInMinutes));
+        var wormsProcess = await processRunner.FindProcess(processName, TimeSpan.FromMinutes(timeoutInMinutes));
 
         if (wormsProcess is null)
         {

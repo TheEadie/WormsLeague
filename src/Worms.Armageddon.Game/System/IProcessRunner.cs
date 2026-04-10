@@ -6,9 +6,9 @@ internal interface IProcessRunner
 {
     IProcess Start(string fileName, params string[] args);
 
-    IProcess? FindProcess(string processName);
+    Task<IProcess?> FindProcess(string processName);
 
-    IProcess? FindProcess(string processName, TimeSpan timeout);
+    Task<IProcess?> FindProcess(string processName, TimeSpan timeout);
 
     IProcess Start(ProcessStartInfo processStartInfo);
 }
