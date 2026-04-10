@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Worms.Armageddon.Game;
 using Worms.Hub.Queues;
 
@@ -14,7 +15,13 @@ internal sealed class Processor(
     {
         logger.LogInformation("Starting replay processor...");
 
-        var (message, token) = await inputQueue.DequeueMessage();
+        var (message, token, activityContext) = await inputQueue.DequeueMessage();
+
+        using var span = Telemetry.Source.StartActivity(
+            "WA Runner - Process Replay",
+            ActivityKind.Consumer,
+            activityContext);
+
         if (message is null || token is null)
         {
             logger.LogInformation("No messages to process.");
