@@ -101,6 +101,11 @@ internal static class Gateway
                                 },
                                 new EnvironmentVarArgs
                                 {
+                                    Name = "WORMS_STORAGE__GameFolder",
+                                    Value = "/storage/game/WA",
+                                },
+                                new EnvironmentVarArgs
+                                {
                                     Name = "WORMS_CONNECTIONSTRINGS__DATABASE",
                                     SecretRef = "database-connection",
                                 },
