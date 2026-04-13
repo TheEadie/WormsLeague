@@ -51,6 +51,7 @@ services:
             - "5005:8080"
         volumes:
             - ./sample-data:/data
+            - /home/eadie/games/worms:/game
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
             - WORMS_CONNECTIONSTRINGS__STORAGE=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azure-storage:10000/devstoreaccount1;QueueEndpoint=http://azure-storage:10001/devstoreaccount1;
@@ -58,6 +59,7 @@ services:
             - WORMS_STORAGE__TEMPREPLAYFOLDER=/data/replays
             - WORMS_STORAGE__CLIFOLDER=/data/cli
             - WORMS_STORAGE__SCHEMESFOLDER=/data/schemes
+            - WORMS_STORAGE__GAMEFOLDER=/game
             - WORMS_HUB_DISTRIBUTED=true
             - WORMS_HUB_GATEWAY=true
         depends_on:
