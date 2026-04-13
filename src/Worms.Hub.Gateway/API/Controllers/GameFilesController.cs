@@ -14,7 +14,7 @@ internal sealed class GameFilesController(
     [HttpGet]
     public async Task Get()
     {
-        var gameFolder = gameFiles.GetGameFolderPath();
+        var gameFolder = gameFiles.GameFolderPath;
 
         if (!Directory.Exists(gameFolder))
         {
