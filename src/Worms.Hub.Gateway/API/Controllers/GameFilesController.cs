@@ -22,12 +22,16 @@ internal sealed class GameFilesController(
             return NotFound();
         }
 
+        var files = Directory.GetFiles(gameFolder, "*", SearchOption.AllDirectories);
+        logger.LogInformation("Zipping {Count} files from {Path}", files.Length, gameFolder);
+
         var memoryStream = new MemoryStream();
         await using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
         {
-            foreach (var file in Directory.GetFiles(gameFolder, "*", SearchOption.AllDirectories))
+            foreach (var file in files)
             {
                 var relativePath = Path.GetRelativePath(gameFolder, file);
+                logger.LogDebug("Adding {File} to archive", relativePath);
                 var entry = archive.CreateEntry(relativePath);
                 await using var entryStream = await entry.OpenAsync();
                 await using var fileStream = System.IO.File.OpenRead(file);
@@ -35,6 +39,7 @@ internal sealed class GameFilesController(
             }
         }
 
+        logger.LogInformation("Archive created: {Size} bytes", memoryStream.Length);
         memoryStream.Position = 0;
         return File(memoryStream, "application/zip", "wa-game.zip");
     }
