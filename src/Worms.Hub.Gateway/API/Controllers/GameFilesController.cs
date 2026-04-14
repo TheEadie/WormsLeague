@@ -12,28 +12,35 @@ internal sealed class GameFilesController(
 {
     [Authorize(Roles = "download:game")]
     [HttpGet]
-    public async Task Get()
+    public async Task<IActionResult> Get()
     {
         var gameFolder = gameFiles.GameFolderPath;
 
         if (!Directory.Exists(gameFolder))
         {
             logger.Log(LogLevel.Warning, "Game folder not found at {Path}", gameFolder);
-            Response.StatusCode = StatusCodes.Status404NotFound;
-            return;
+            return NotFound();
         }
 
-        Response.ContentType = "application/zip";
-        Response.Headers.Append("Content-Disposition", "attachment; filename=\"wa-game.zip\"");
+        var files = Directory.GetFiles(gameFolder, "*", SearchOption.AllDirectories);
+        logger.LogInformation("Zipping {Count} files from {Path}", files.Length, gameFolder);
 
-        await using var archive = new ZipArchive(Response.Body, ZipArchiveMode.Create, leaveOpen: true);
-        foreach (var file in Directory.GetFiles(gameFolder, "*", SearchOption.AllDirectories))
+        var memoryStream = new MemoryStream();
+        await using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
         {
-            var relativePath = Path.GetRelativePath(gameFolder, file);
-            var entry = archive.CreateEntry(relativePath);
-            await using var entryStream = await entry.OpenAsync();
-            await using var fileStream = System.IO.File.OpenRead(file);
-            await fileStream.CopyToAsync(entryStream);
+            foreach (var file in files)
+            {
+                var relativePath = Path.GetRelativePath(gameFolder, file);
+                logger.LogDebug("Adding {File} to archive", relativePath);
+                var entry = archive.CreateEntry(relativePath);
+                await using var entryStream = await entry.OpenAsync();
+                await using var fileStream = System.IO.File.OpenRead(file);
+                await fileStream.CopyToAsync(entryStream);
+            }
         }
+
+        logger.LogInformation("Archive created: {Size} bytes", memoryStream.Length);
+        memoryStream.Position = 0;
+        return File(memoryStream, "application/zip", "wa-game.zip");
     }
 }
