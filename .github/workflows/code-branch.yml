@@ -32,6 +32,7 @@ jobs:
 
   build-cli:
     name: Build - CLI
+    needs: changes
     uses: ./.github/workflows/zz-build-cli.yml
     secrets: inherit
 
