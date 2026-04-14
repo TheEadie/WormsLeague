@@ -5,6 +5,10 @@ permissions:
 
 on:
   workflow_call:
+    inputs:
+      wa-runner-test:
+        type: string
+        required: true
 
 jobs:
   build-gateway:
@@ -52,6 +56,42 @@ jobs:
       - name: Package
         run: |
           make wa-runner.package
+
+  test-wa-runner:
+    name: WA Runner Integration Test
+    needs: build-wa-runner
+    if: ${{ inputs.wa-runner-test == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Expose GitHub Runtime
+        uses: crazy-max/ghaction-github-runtime@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Download WA game files
+        run: |
+          bash build/download-wa-game.sh "${{ secrets.WORMSHUB_CLIENTID }}" "${{ secrets.WORMSHUB_CLIENTSECRET }}" "${{ runner.temp }}/wa-game"
+
+      - name: Run integration test
+        env:
+          WA_GAME_PATH: ${{ runner.temp }}/wa-game
+        run: |
+          dotnet test src/Worms.Hub.Armageddon.Runner.Tests --filter Category=Integration
 
   build-database:
     name: Database

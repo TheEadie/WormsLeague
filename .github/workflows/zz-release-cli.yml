@@ -5,38 +5,17 @@ permissions:
 
 on:
   workflow_call:
+    inputs:
+      clis-release:
+        type: string
+        required: true
 
 jobs:
 
-  changes:
-    name: Detect Changes
-    runs-on: ubuntu-latest
-    outputs:
-      clis: ${{ steps.filter.outputs.clis == 'true' }}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
-    - name: Filter
-      uses: dorny/paths-filter@v4
-      id: filter
-      with:
-        filters: |
-          clis:
-            - 'src/Worms.Cli/**'
-            - 'src/Worms.Cli.*/**'
-            - 'src/Worms.Armageddon.Files/**'
-            - 'src/Worms.Armageddon.Game/**'
-            - 'src/Directory.Build.props'
-            - 'build/cli/**'
-            - '.github/workflows/hub-*.yml'
-
   release-cli-github:
     name: Release - GitHub
-    needs: changes
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.clis == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.clis-release == 'true' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -52,9 +31,8 @@ jobs:
 
   release-cli-wormshub:
     name: Release - Worms Hub
-    needs: changes
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.clis == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.clis-release == 'true' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -75,9 +53,8 @@ jobs:
 
   release-cli-dockerhub:
     name: Release - DockerHub
-    needs: changes
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.clis == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.clis-release == 'true' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6

@@ -51,7 +51,7 @@ services:
             - "5005:8080"
         volumes:
             - ./sample-data:/data
-            - /home/eadie/games/worms:/game
+            - ${WA_GAME_PATH:-/home/eadie/games/worms}:/game
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
             - WORMS_CONNECTIONSTRINGS__STORAGE=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azure-storage:10000/devstoreaccount1;QueueEndpoint=http://azure-storage:10001/devstoreaccount1;
@@ -92,7 +92,7 @@ services:
             context: .
         volumes:
             - ./sample-data:/data
-            - /home/eadie/games/worms:/game
+            - ${WA_GAME_PATH:-/home/eadie/games/worms}:/game
         environment:
             - WORMS_CONNECTIONSTRINGS__STORAGE=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azure-storage:10000/devstoreaccount1;QueueEndpoint=http://azure-storage:10001/devstoreaccount1;
             - WORMS_STORAGE__TEMPREPLAYFOLDER=/data/replays

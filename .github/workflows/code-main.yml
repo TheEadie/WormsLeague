@@ -14,34 +14,48 @@ on:
       - ".github/workflows/code-*.yml"
       - ".github/workflows/zz-build-*.yml"
       - ".github/workflows/zz-release-*.yml"
+      - ".github/workflows/zz-detect-changes.yml"
       - ".github/workflows/zz-inspections.yml"
 
 jobs:
+  changes:
+    name: Detect Changes
+    uses: ./.github/workflows/zz-detect-changes.yml
+
   build-hub:
     name: Build - Hub
+    needs: changes
     uses: ./.github/workflows/zz-build-hub.yml
+    with:
+      wa-runner-test: ${{ needs.changes.outputs.wa-runner-test }}
     secrets: inherit
 
   build-cli:
     name: Build - CLI
+    needs: changes
     uses: ./.github/workflows/zz-build-cli.yml
     secrets: inherit
 
   release-hub:
     name: Release - Hub
-    needs: build-hub
+    needs: [changes, build-hub]
     uses: ./.github/workflows/zz-release-hub.yml
+    with:
+      gateway-release: ${{ needs.changes.outputs.gateway-release }}
+      wa-runner-release: ${{ needs.changes.outputs.wa-runner-release }}
     secrets: inherit
 
   release-cli:
     name: Release - CLI
-    needs: build-cli
+    needs: [changes, build-cli]
     uses: ./.github/workflows/zz-release-cli.yml
+    with:
+      clis-release: ${{ needs.changes.outputs.clis-release }}
     secrets: inherit
 
   actions-timeline:
     name: Timeline
-    needs: [build-hub, build-cli, release-hub, release-cli]
+    needs: [changes, build-hub, build-cli, release-hub, release-cli]
     runs-on: ubuntu-latest
     steps:
       - uses: Kesin11/actions-timeline@v3

@@ -1,0 +1,63 @@
+name: ZZ - Detect Changes
+permissions:
+  contents: read
+  pull-requests: read
+
+on:
+  workflow_call:
+    outputs:
+      gateway-release:
+        value: ${{ jobs.changes.outputs.gateway-release }}
+      wa-runner-release:
+        value: ${{ jobs.changes.outputs.wa-runner-release }}
+      wa-runner-test:
+        value: ${{ jobs.changes.outputs.wa-runner-test }}
+      clis-release:
+        value: ${{ jobs.changes.outputs.clis-release }}
+
+jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      gateway-release: ${{ steps.filter.outputs.gateway == 'true' || steps.filter.outputs.hub-common == 'true' }}
+      wa-runner-release: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.hub-common == 'true' }}
+      wa-runner-test: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.wa-runner-test == 'true' || steps.filter.outputs.hub-common == 'true' }}
+      clis-release: ${{ steps.filter.outputs.clis == 'true' }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+    - name: Filter
+      uses: dorny/paths-filter@v4
+      id: filter
+      with:
+        filters: |
+          gateway:
+            - 'src/Worms.Armageddon.Files/**'
+            - 'src/Worms.Hub.Gateway/**'
+            - 'src/Worms.Hub.Queues/**'
+            - 'src/Worms.Hub.Storage/**'
+            - 'build/docker/gateway/**'
+          wa-runner:
+            - 'src/Worms.Hub.Armageddon.Runner/**'
+            - 'src/Worms.Armageddon.Game/**'
+            - 'src/Worms.Hub.Queues/**'
+            - 'build/docker/wa-runner/**'
+          wa-runner-test:
+            - 'src/Worms.Hub.Armageddon.Runner.Tests/**'
+            - 'build/download-wa-game.sh'
+          hub-common:
+            - 'src/Directory.Build.props'
+            - '.github/workflows/hub-*.yml'
+            - 'build/docker/makefile'
+            - 'build/*.sh'
+          clis:
+            - 'src/Worms.Cli/**'
+            - 'src/Worms.Cli.*/**'
+            - 'src/Worms.Armageddon.Files/**'
+            - 'src/Worms.Armageddon.Game/**'
+            - 'src/Directory.Build.props'
+            - 'build/cli/**'
+            - '.github/workflows/hub-*.yml'
