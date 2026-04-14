@@ -5,47 +5,20 @@ permissions:
 
 on:
   workflow_call:
+    inputs:
+      gateway-changed:
+        type: string
+        required: true
+      wa-runner-changed:
+        type: string
+        required: true
 
 jobs:
-
-  changes:
-    name: Detect Changes
-    runs-on: ubuntu-latest
-    outputs:
-      gateway: ${{ steps.filter.outputs.gateway == 'true' || steps.filter.outputs.common == 'true' }}
-      wa-runner: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.common == 'true' }}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
-    - name: Filter
-      uses: dorny/paths-filter@v4
-      id: filter
-      with:
-        filters: |
-          gateway:
-            - 'src/Worms.Armageddon.Files/**'
-            - 'src/Worms.Hub.Gateway/**'
-            - 'src/Worms.Hub.Queues/**'
-            - 'src/Worms.Hub.Storage/**'
-            - 'build/docker/gateway/**'
-          wa-runner:
-            - 'src/Worms.Hub.Armageddon.Runner/**'
-            - 'src/Worms.Armageddon.Game/**'
-            - 'src/Worms.Hub.Queues/**'
-            - 'build/docker/wa-runner/**'
-          common:
-            - 'src/Directory.Build.props'
-            - '.github/workflows/hub-*.yml'
-            - 'build/docker/makefile'
-            - 'build/*.sh'
 
   release-gateway-github:
     name: Gateway - GitHub
     runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ needs.changes.outputs.gateway == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.gateway-changed == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout
@@ -60,8 +33,7 @@ jobs:
   release-gateway-dockerhub:
     name: Gateway - DockerHub
     runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ needs.changes.outputs.gateway == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.gateway-changed == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout
@@ -91,8 +63,7 @@ jobs:
   release-wa-runner-github:
     name: WA Runner - GitHub
     runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ needs.changes.outputs.wa-runner == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.wa-runner-changed == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout
@@ -107,8 +78,7 @@ jobs:
   release-wa-runner-dockerhub:
     name: WA Runner - DockerHub
     runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ needs.changes.outputs.wa-runner == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.wa-runner-changed == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout
