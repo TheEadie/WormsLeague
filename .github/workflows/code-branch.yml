@@ -27,7 +27,7 @@ jobs:
     needs: changes
     uses: ./.github/workflows/zz-build-hub.yml
     with:
-      wa-runner-changed: ${{ needs.changes.outputs.wa-runner }}
+      wa-runner-test: ${{ needs.changes.outputs.wa-runner-test }}
     secrets: inherit
 
   build-cli:

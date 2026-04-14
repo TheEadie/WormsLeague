@@ -6,10 +6,10 @@ permissions:
 on:
   workflow_call:
     inputs:
-      gateway-changed:
+      gateway-release:
         type: string
         required: true
-      wa-runner-changed:
+      wa-runner-release:
         type: string
         required: true
 
@@ -18,7 +18,7 @@ jobs:
   release-gateway-github:
     name: Gateway - GitHub
     runs-on: ubuntu-latest
-    if: ${{ inputs.gateway-changed == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.gateway-release == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout
@@ -33,7 +33,7 @@ jobs:
   release-gateway-dockerhub:
     name: Gateway - DockerHub
     runs-on: ubuntu-latest
-    if: ${{ inputs.gateway-changed == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.gateway-release == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout
@@ -63,7 +63,7 @@ jobs:
   release-wa-runner-github:
     name: WA Runner - GitHub
     runs-on: ubuntu-latest
-    if: ${{ inputs.wa-runner-changed == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.wa-runner-release == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout
@@ -78,7 +78,7 @@ jobs:
   release-wa-runner-dockerhub:
     name: WA Runner - DockerHub
     runs-on: ubuntu-latest
-    if: ${{ inputs.wa-runner-changed == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.wa-runner-release == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout

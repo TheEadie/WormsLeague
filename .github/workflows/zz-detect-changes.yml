@@ -6,21 +6,24 @@ permissions:
 on:
   workflow_call:
     outputs:
-      gateway:
-        value: ${{ jobs.changes.outputs.gateway }}
-      wa-runner:
-        value: ${{ jobs.changes.outputs.wa-runner }}
-      clis:
-        value: ${{ jobs.changes.outputs.clis }}
+      gateway-release:
+        value: ${{ jobs.changes.outputs.gateway-release }}
+      wa-runner-release:
+        value: ${{ jobs.changes.outputs.wa-runner-release }}
+      wa-runner-test:
+        value: ${{ jobs.changes.outputs.wa-runner-test }}
+      clis-release:
+        value: ${{ jobs.changes.outputs.clis-release }}
 
 jobs:
   changes:
     name: Detect Changes
     runs-on: ubuntu-latest
     outputs:
-      gateway: ${{ steps.filter.outputs.gateway == 'true' || steps.filter.outputs.hub-common == 'true' }}
-      wa-runner: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.hub-common == 'true' }}
-      clis: ${{ steps.filter.outputs.clis == 'true' }}
+      gateway-release: ${{ steps.filter.outputs.gateway == 'true' || steps.filter.outputs.hub-common == 'true' }}
+      wa-runner-release: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.hub-common == 'true' }}
+      wa-runner-test: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.wa-runner-test == 'true' || steps.filter.outputs.hub-common == 'true' }}
+      clis-release: ${{ steps.filter.outputs.clis == 'true' }}
     steps:
     - name: Checkout
       uses: actions/checkout@v6
@@ -39,10 +42,11 @@ jobs:
             - 'build/docker/gateway/**'
           wa-runner:
             - 'src/Worms.Hub.Armageddon.Runner/**'
-            - 'src/Worms.Hub.Armageddon.Runner.Tests/**'
             - 'src/Worms.Armageddon.Game/**'
             - 'src/Worms.Hub.Queues/**'
             - 'build/docker/wa-runner/**'
+          wa-runner-test:
+            - 'src/Worms.Hub.Armageddon.Runner.Tests/**'
             - 'build/download-wa-game.sh'
           hub-common:
             - 'src/Directory.Build.props'

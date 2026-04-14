@@ -27,7 +27,7 @@ jobs:
     needs: changes
     uses: ./.github/workflows/zz-build-hub.yml
     with:
-      wa-runner-changed: ${{ needs.changes.outputs.wa-runner }}
+      wa-runner-test: ${{ needs.changes.outputs.wa-runner-test }}
     secrets: inherit
 
   build-cli:
@@ -40,8 +40,8 @@ jobs:
     needs: [changes, build-hub]
     uses: ./.github/workflows/zz-release-hub.yml
     with:
-      gateway-changed: ${{ needs.changes.outputs.gateway }}
-      wa-runner-changed: ${{ needs.changes.outputs.wa-runner }}
+      gateway-release: ${{ needs.changes.outputs.gateway-release }}
+      wa-runner-release: ${{ needs.changes.outputs.wa-runner-release }}
     secrets: inherit
 
   release-cli:
@@ -49,7 +49,7 @@ jobs:
     needs: [changes, build-cli]
     uses: ./.github/workflows/zz-release-cli.yml
     with:
-      clis-changed: ${{ needs.changes.outputs.clis }}
+      clis-release: ${{ needs.changes.outputs.clis-release }}
     secrets: inherit
 
   actions-timeline:

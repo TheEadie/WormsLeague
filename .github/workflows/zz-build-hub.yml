@@ -6,7 +6,7 @@ permissions:
 on:
   workflow_call:
     inputs:
-      wa-runner-changed:
+      wa-runner-test:
         type: string
         required: true
 
@@ -60,7 +60,7 @@ jobs:
   test-wa-runner:
     name: WA Runner Integration Test
     needs: build-wa-runner
-    if: ${{ inputs.wa-runner-changed == 'true' }}
+    if: ${{ inputs.wa-runner-test == 'true' }}
     runs-on: ubuntu-latest
 
     steps:

@@ -6,7 +6,7 @@ permissions:
 on:
   workflow_call:
     inputs:
-      clis-changed:
+      clis-release:
         type: string
         required: true
 
@@ -15,7 +15,7 @@ jobs:
   release-cli-github:
     name: Release - GitHub
     runs-on: ubuntu-latest
-    if: ${{ inputs.clis-changed == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.clis-release == 'true' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -32,7 +32,7 @@ jobs:
   release-cli-wormshub:
     name: Release - Worms Hub
     runs-on: ubuntu-latest
-    if: ${{ inputs.clis-changed == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.clis-release == 'true' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -54,7 +54,7 @@ jobs:
   release-cli-dockerhub:
     name: Release - DockerHub
     runs-on: ubuntu-latest
-    if: ${{ inputs.clis-changed == 'true' && github.ref == 'refs/heads/main' }}
+    if: ${{ inputs.clis-release == 'true' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
