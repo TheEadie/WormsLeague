@@ -34,7 +34,7 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner pro
                     {
                         FileName = "/bin/bash",
                         Arguments = $"""
-                                     -c "xvfb-run wine "{gameInfo.ExeLocation}" {args}"
+                                     -c "xvfb-run wine "{gameInfo.ExeLocation}" {args}; wineserver -k"
                                      """,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true

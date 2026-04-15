@@ -44,7 +44,7 @@ RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key -O /tmp/winehq.key
 RUN apt-get update \
   && apt-get install -y software-properties-common \
   && apt-key add /tmp/winehq.key \
-  && add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ jammy main' \
+  && add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ noble main' \
   && rm /tmp/winehq.key \
   && rm -rf /var/lib/apt/lists/*
 
@@ -56,24 +56,27 @@ RUN dpkg --add-architecture i386 \
 
 # Create WINEPREFIX
 RUN WINEDLLOVERRIDES="mscoree,mshtml=" xvfb-run wineboot -i \
-  && wineserver -k
+  && wineserver -k \
+  && rm -f /tmp/.X*-lock
 
 # Copy game installation directory
 
 # Some settings for WA
-RUN wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v WineCompatibilitySuggested /d 0x7FFFFFFF /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v WindowedMode /d 0x00000001 /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v DetailLevel /d 0x00000005 /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v WindowedMode /d 0x00000001 /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v PinnedChatLines /d 0x00000007 /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v InfoTransparency /d 0x00000001 /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v InfoSpy /d 0x00000001 /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v DisableSmoothBackgroundGradient /d 0x00000000 /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v HardwareRendering /d 0x00000001 /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v LargerFonts /d 0x00000000 /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v AssistedVsync /d 0x00000000 /f \
-  && wine reg add 'HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options' /t REG_DWORD /v Vsync /d 0x00000000 /f \
-  && wineserver -k
+RUN xvfb-run sh -c '\
+  wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v WineCompatibilitySuggested /d 0x7FFFFFFF /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v WindowedMode /d 0x00000001 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v DetailLevel /d 0x00000005 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v WindowedMode /d 0x00000001 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v PinnedChatLines /d 0x00000007 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v InfoTransparency /d 0x00000001 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v InfoSpy /d 0x00000001 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v DisableSmoothBackgroundGradient /d 0x00000000 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v HardwareRendering /d 0x00000001 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v LargerFonts /d 0x00000000 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v AssistedVsync /d 0x00000000 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v Vsync /d 0x00000000 /f \
+  && wineserver -k' \
+  && rm -f /tmp/.X*-lock
 
 WORKDIR /app
 COPY --from=build /app/out .
