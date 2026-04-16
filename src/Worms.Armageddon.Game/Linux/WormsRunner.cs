@@ -46,8 +46,16 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner pro
                     var errors = PrintStdErr(process.StandardError);
 
                     await process.WaitForExitAsync();
-                    await Task.WhenAll(output, errors);
                     logger.Log(LogLevel.Debug, "Process exited with code: {ExitCode}", process.ExitCode);
+
+                    // On Ubuntu 24, child processes (e.g. wineserver) can hold stdout/stderr
+                    // pipes open after the main process exits. Wait briefly for output to
+                    // drain, then move on rather than hanging indefinitely.
+                    var readComplete = Task.WhenAll(output, errors);
+                    if (await Task.WhenAny(readComplete, Task.Delay(TimeSpan.FromSeconds(10))) != readComplete)
+                    {
+                        logger.Log(LogLevel.Warning, "Timed out waiting for process output streams to close");
+                    }
 
                     return Task.CompletedTask;
                 });
