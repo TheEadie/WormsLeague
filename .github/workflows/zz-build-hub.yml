@@ -62,6 +62,7 @@ jobs:
     needs: build-wa-runner
     if: ${{ inputs.wa-runner-test == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -91,7 +92,7 @@ jobs:
         env:
           WA_GAME_PATH: ${{ runner.temp }}/wa-game
         run: |
-          dotnet test src/Worms.Hub.Armageddon.Runner.Tests --filter Category=Integration
+          dotnet test src/Worms.Hub.Armageddon.Runner.Tests --filter Category=Integration --verbosity normal
 
   build-database:
     name: Database
