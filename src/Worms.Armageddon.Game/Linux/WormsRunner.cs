@@ -45,12 +45,21 @@ internal sealed class WormsRunner(IWormsLocator wormsLocator, IProcessRunner pro
                     var output = PrintStdOut(process.StandardOutput);
                     var errors = PrintStdErr(process.StandardError);
 
-                    await process.WaitForExitAsync();
-                    logger.Log(LogLevel.Debug, "Process exited with code: {ExitCode}", process.ExitCode);
+                    // On Ubuntu 24, xvfb-run/wineserver can hang or hold pipes open.
+                    // Apply timeouts to both process exit and output stream reading
+                    // to prevent the runner from blocking indefinitely.
+                    using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+                    try
+                    {
+                        await process.WaitForExitAsync(cts.Token);
+                        logger.Log(LogLevel.Debug, "Process exited with code: {ExitCode}", process.ExitCode);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        logger.Log(LogLevel.Warning, "Process timed out after 5 minutes, killing process tree");
+                        process.Kill(entireProcessTree: true);
+                    }
 
-                    // On Ubuntu 24, child processes (e.g. wineserver) can hold stdout/stderr
-                    // pipes open after the main process exits. Wait briefly for output to
-                    // drain, then move on rather than hanging indefinitely.
                     var readComplete = Task.WhenAll(output, errors);
                     if (await Task.WhenAny(readComplete, Task.Delay(TimeSpan.FromSeconds(10))) != readComplete)
                     {
