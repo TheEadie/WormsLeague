@@ -90,6 +90,9 @@ services:
         build:
             dockerfile: build/docker/wa-runner/Dockerfile
             context: .
+            cache_from:
+                - type=gha,scope=package-theeadie/worms-hub-wa-runner
+                - type=gha,scope=build-theeadie/worms-hub-wa-runner
         volumes:
             - ./sample-data:/data
             - ${WA_GAME_PATH:-/home/eadie/games/worms}:/game
