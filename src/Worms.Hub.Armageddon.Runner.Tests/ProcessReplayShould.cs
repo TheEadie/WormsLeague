@@ -114,9 +114,31 @@ internal sealed class ProcessReplayShould
         using var process = Process.Start(
             new ProcessStartInfo("docker", $"compose {arguments}")
             {
-                WorkingDirectory = workingDirectory
+                WorkingDirectory = workingDirectory,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
             })!;
+
+        var stdoutReader = process.StandardOutput;
+        var stderrReader = process.StandardError;
+
+        var stdout = Task.Run(async () =>
+        {
+            while (await stdoutReader.ReadLineAsync() is { } line)
+            {
+                await TestContext.Progress.WriteLineAsync(line);
+            }
+        });
+        var stderr = Task.Run(async () =>
+        {
+            while (await stderrReader.ReadLineAsync() is { } line)
+            {
+                await TestContext.Progress.WriteLineAsync(line);
+            }
+        });
+
         await process.WaitForExitAsync();
+        await Task.WhenAll(stdout, stderr);
     }
 
     private static readonly HttpClient HttpClient = new() { Timeout = TimeSpan.FromSeconds(2) };
