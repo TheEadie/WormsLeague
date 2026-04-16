@@ -28,7 +28,7 @@ FROM build AS test
 RUN dotnet test --no-restore --no-build --verbosity normal
 
 #### Runtime ####
-FROM ubuntu:22.04@sha256:eb29ed27b0821dca09c2e28b39135e185fc1302036427d5f4d70a41ce8fd7659 AS runtime
+FROM ubuntu:22.04 AS runtime
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
