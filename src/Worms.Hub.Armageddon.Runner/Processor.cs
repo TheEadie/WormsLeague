@@ -1,5 +1,8 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Worms.Armageddon.Files.Replays.Text;
 using Worms.Armageddon.Game;
+using Worms.Armageddon.Gifs;
 using Worms.Hub.Queues;
 
 namespace Worms.Hub.Armageddon.Runner;
@@ -8,9 +11,12 @@ internal sealed class Processor(
     IMessageQueue<ReplayToProcessMessage> inputQueue,
     IMessageQueue<ReplayToUpdateMessage> outputQueue,
     IWormsArmageddon wormsArmageddon,
+    IReplayTextReader replayTextReader,
+    GifCreator gifCreator,
     IConfiguration configuration,
     ILogger<Processor> logger)
 {
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
     public async Task ProcessReplay()
     {
         logger.LogInformation("Starting replay processor...");
@@ -74,13 +80,42 @@ internal sealed class Processor(
             return;
         }
 
+        // Parse the log to get turn timings
+        var logText = await File.ReadAllTextAsync(logPath);
+        var replayResource = replayTextReader.GetModel(logText);
+
+        // Generate GIFs for each turn
+        var turnGifs = new List<TurnGif>();
+        var replayFolder = GetReplayFolderPath();
+        var turnNumber = 0;
+        foreach (var turn in replayResource.Turns)
+        {
+            turnNumber++;
+            try
+            {
+                var gifFileName = await gifCreator.CreateGif(
+                    replayPath,
+                    turn.Start,
+                    turn.End,
+                    turnNumber,
+                    replayFolder);
+
+                turnGifs.Add(new TurnGif(turnNumber, gifFileName));
+                logger.LogInformation("Generated GIF for turn {TurnNumber}: {GifFileName}", turnNumber, gifFileName);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to generate GIF for turn {TurnNumber}", turnNumber);
+            }
+        }
+
         // Send a message to the replay updater queue
-        await outputQueue.EnqueueMessage(new ReplayToUpdateMessage(message.ReplayFileName));
+        await outputQueue.EnqueueMessage(new ReplayToUpdateMessage(message.ReplayFileName, turnGifs));
 
         // Delete the message from the queue
         await inputQueue.DeleteMessage(token);
 
-        logger.LogInformation("Replay processor finished.");
+        logger.LogInformation("Replay processor finished. Generated {GifCount} GIFs.", turnGifs.Count);
     }
 
     private bool GameIsInstalled()

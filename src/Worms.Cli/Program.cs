@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
+using Worms.Armageddon.Gifs;
 using Worms.Cli.Logging;
 using Worms.Cli.Resources;
 
@@ -30,6 +31,7 @@ internal static class Program
             .AddWormsCliLogging(GetLogLevel(args))
             .AddWormsArmageddonFilesServices()
             .AddWormsArmageddonGameServices()
+            .AddWormsArmageddonGifsServices()
             .AddWormsCliResourcesServices()
             .AddWormsCliServices()
             .AddSingleton<IConfiguration>(configuration);

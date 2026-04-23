@@ -42,7 +42,9 @@ jobs:
             - 'build/docker/gateway/**'
           wa-runner:
             - 'src/Worms.Hub.Armageddon.Runner/**'
+            - 'src/Worms.Armageddon.Files/**'
             - 'src/Worms.Armageddon.Game/**'
+            - 'src/Worms.Armageddon.Gifs/**'
             - 'src/Worms.Hub.Queues/**'
             - 'build/docker/wa-runner/**'
           wa-runner-test:
@@ -58,6 +60,7 @@ jobs:
             - 'src/Worms.Cli.*/**'
             - 'src/Worms.Armageddon.Files/**'
             - 'src/Worms.Armageddon.Game/**'
+            - 'src/Worms.Armageddon.Gifs/**'
             - 'src/Directory.Build.props'
             - 'build/cli/**'
             - '.github/workflows/hub-*.yml'
