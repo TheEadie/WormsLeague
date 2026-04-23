@@ -102,18 +102,18 @@ internal sealed class ProcessReplayShould
         logContent.ShouldContain("Exported with Version:");
         logContent.ShouldContain("Game Started at");
 
-        await TestContext.Progress.WriteLineAsync("Waiting for output queue message (GIF generation takes ~1 min per turn via Wine)...");
-        await PollUntil(async () => await _outputQueue.HasPendingMessage(), TimeSpan.FromMinutes(20));
+        await TestContext.Progress.WriteLineAsync("Waiting for output queue message (GIF generation for best turn via Wine)...");
+        await PollUntil(async () => await _outputQueue.HasPendingMessage(), TimeSpan.FromMinutes(5));
 
         var (outputMessage, _, _) = await _outputQueue.DequeueMessage();
         outputMessage.ShouldNotBeNull();
         outputMessage.ReplayFileName.ShouldBe(ReplayFileName);
 
-        // Verify GIFs were generated
+        // Verify GIF was generated for the best turn (most damage)
         outputMessage.TurnGifs.ShouldNotBeNull();
-        outputMessage.TurnGifs.ShouldNotBeEmpty();
+        outputMessage.TurnGifs.Count.ShouldBe(1);
 
-        await TestContext.Progress.WriteLineAsync($"Generated {outputMessage.TurnGifs.Count} turn GIFs.");
+        await TestContext.Progress.WriteLineAsync($"Generated GIF for turn {outputMessage.TurnGifs[0].TurnNumber}.");
 
         foreach (var turnGif in outputMessage.TurnGifs)
         {

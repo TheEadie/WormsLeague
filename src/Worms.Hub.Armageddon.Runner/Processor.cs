@@ -84,19 +84,38 @@ internal sealed class Processor(
         var logText = await File.ReadAllTextAsync(logPath);
         var replayResource = replayTextReader.GetModel(logText);
 
-        // Generate GIFs for each turn
+        // Find the turn with the most total damage
         var turnGifs = new List<TurnGif>();
         var replayFolder = GetReplayFolderPath();
-        var turnNumber = 0;
-        foreach (var turn in replayResource.Turns)
+        var turns = replayResource.Turns.ToList();
+
+        if (turns.Count > 0)
         {
-            turnNumber++;
+            var bestTurnIndex = 0;
+            var bestDamage = 0u;
+            for (var i = 0; i < turns.Count; i++)
+            {
+                var totalDamage = turns[i].Damage.Aggregate(0u, (sum, d) => sum + d.HealthLost);
+                if (totalDamage > bestDamage)
+                {
+                    bestDamage = totalDamage;
+                    bestTurnIndex = i;
+                }
+            }
+
+            var turnNumber = bestTurnIndex + 1;
+            var bestTurn = turns[bestTurnIndex];
+            logger.LogInformation(
+                "Selected turn {TurnNumber} for GIF generation ({Damage} total damage)",
+                turnNumber,
+                bestDamage);
+
             try
             {
                 var gifFileName = await gifCreator.CreateGif(
                     replayPath,
-                    turn.Start,
-                    turn.End,
+                    bestTurn.Start,
+                    bestTurn.End,
                     turnNumber,
                     replayFolder);
 
