@@ -96,16 +96,28 @@ internal sealed class Processor(
         {
             var turnNumber = bestTurn.Index + 1;
             var totalDamage = bestTurn.Turn.Damage.Sum(d => d.HealthLost);
+
+            // Start the GIF 3 seconds before the first weapon was fired
+            var firstWeapon = bestTurn.Turn.Weapons.MinBy(w => w.Timestamp);
+            var gifStart = firstWeapon is not null
+                ? firstWeapon.Timestamp - TimeSpan.FromSeconds(3)
+                : bestTurn.Turn.Start;
+            if (gifStart < bestTurn.Turn.Start)
+            {
+                gifStart = bestTurn.Turn.Start;
+            }
+
             logger.LogInformation(
-                "Selected turn {TurnNumber} for GIF generation ({Damage} total damage)",
+                "Selected turn {TurnNumber} for GIF generation ({Damage} total damage, starting at {Start})",
                 turnNumber,
-                totalDamage);
+                totalDamage,
+                gifStart);
 
             try
             {
                 var gifFileName = await gifCreator.CreateGif(
                     replayPath,
-                    bestTurn.Turn.Start,
+                    gifStart,
                     bestTurn.Turn.End,
                     turnNumber,
                     replayFolder);

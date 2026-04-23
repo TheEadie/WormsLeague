@@ -75,7 +75,7 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
     private static string GetWeaponText(Weapon weapon)
     {
         var details = "";
-        var (name, fuse, modifier) = weapon;
+        var (name, _, fuse, modifier) = weapon;
         if (fuse != null && modifier != null)
         {
             details = $" ({fuse} sec, {modifier})";
