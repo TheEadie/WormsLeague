@@ -38,7 +38,7 @@ public record Turn(
     IReadOnlyCollection<Damage> Damage);
 
 [PublicAPI]
-public record Weapon(string Name, uint? Fuse, string? Modifier);
+public record Weapon(string Name, TimeSpan Timestamp, uint? Fuse, string? Modifier);
 
 [PublicAPI]
 public record Damage(Team Team, uint HealthLost, uint WormsKilled);

@@ -4,12 +4,16 @@ WORKDIR /app
 
 COPY Directory.Build.props .
 COPY .editorconfig .
+COPY src/Worms.Armageddon.Files/Worms.Armageddon.Files.csproj ./src/Worms.Armageddon.Files/Worms.Armageddon.Files.csproj
 COPY src/Worms.Armageddon.Game/Worms.Armageddon.Game.csproj ./src/Worms.Armageddon.Game/Worms.Armageddon.Game.csproj
+COPY src/Worms.Armageddon.Gifs/Worms.Armageddon.Gifs.csproj ./src/Worms.Armageddon.Gifs/Worms.Armageddon.Gifs.csproj
 COPY src/Worms.Hub.Queues/Worms.Hub.Queues.csproj ./src/Worms.Hub.Queues/Worms.Hub.Queues.csproj
 COPY src/Worms.Hub.Armageddon.Runner/Worms.Hub.Armageddon.Runner.csproj ./src/Worms.Hub.Armageddon.Runner/Worms.Hub.Armageddon.Runner.csproj
 RUN dotnet restore src/Worms.Hub.Armageddon.Runner/Worms.Hub.Armageddon.Runner.csproj -r linux-x64
 
+COPY src/Worms.Armageddon.Files ./src/Worms.Armageddon.Files
 COPY src/Worms.Armageddon.Game ./src/Worms.Armageddon.Game
+COPY src/Worms.Armageddon.Gifs ./src/Worms.Armageddon.Gifs
 COPY src/Worms.Hub.Queues ./src/Worms.Hub.Queues
 COPY src/Worms.Hub.Armageddon.Runner ./src/Worms.Hub.Armageddon.Runner
 ARG VERSION=0.0.1

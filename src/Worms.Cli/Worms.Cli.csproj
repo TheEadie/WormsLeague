@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Worms.Armageddon.Game\Worms.Armageddon.Game.csproj"/>
     <ProjectReference Include="..\Worms.Armageddon.Files\Worms.Armageddon.Files.csproj"/>
+    <ProjectReference Include="..\Worms.Armageddon.Gifs\Worms.Armageddon.Gifs.csproj"/>
     <ProjectReference Include="..\Worms.Cli.Resources\Worms.Cli.Resources.csproj"/>
   </ItemGroup>
 

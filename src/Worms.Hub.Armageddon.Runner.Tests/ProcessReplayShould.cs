@@ -55,17 +55,25 @@ internal sealed class ProcessReplayShould
     }
 
     [SetUp]
-    public void CleanUpLogFile()
+    public void CleanUpGeneratedFiles()
     {
-        var logFile = Path.Combine(_replayFolder, Path.GetFileNameWithoutExtension(ReplayFileName) + ".log");
+        var replayName = Path.GetFileNameWithoutExtension(ReplayFileName);
+
+        var logFile = Path.Combine(_replayFolder, replayName + ".log");
         if (File.Exists(logFile))
         {
             File.Delete(logFile);
         }
+
+        // Clean up any generated GIF files
+        foreach (var gif in Directory.GetFiles(_replayFolder, "*.gif"))
+        {
+            File.Delete(gif);
+        }
     }
 
     [TearDown]
-    public void CleanUpLogFileAfter() => CleanUpLogFile();
+    public void CleanUpGeneratedFilesAfter() => CleanUpGeneratedFiles();
 
     [OneTimeTearDown]
     public async Task StopServices()
@@ -94,12 +102,33 @@ internal sealed class ProcessReplayShould
         logContent.ShouldContain("Exported with Version:");
         logContent.ShouldContain("Game Started at");
 
-        await TestContext.Progress.WriteLineAsync("Waiting for output queue message...");
-        await PollUntil(async () => await _outputQueue.HasPendingMessage(), TimeSpan.FromSeconds(10));
+        await TestContext.Progress.WriteLineAsync("Waiting for output queue message (GIF generation for best turn via Wine)...");
+        await PollUntil(async () => await _outputQueue.HasPendingMessage(), TimeSpan.FromMinutes(5));
 
         var (outputMessage, _, _) = await _outputQueue.DequeueMessage();
         outputMessage.ShouldNotBeNull();
         outputMessage.ReplayFileName.ShouldBe(ReplayFileName);
+
+        // Verify GIF was generated for the best turn (most damage)
+        outputMessage.TurnGifs.ShouldNotBeNull();
+        outputMessage.TurnGifs.Count.ShouldBe(1);
+
+        await TestContext.Progress.WriteLineAsync($"Generated GIF for turn {outputMessage.TurnGifs[0].TurnNumber}.");
+
+        foreach (var turnGif in outputMessage.TurnGifs)
+        {
+            turnGif.TurnNumber.ShouldBeGreaterThan(0);
+            turnGif.GifFileName.ShouldNotBeNullOrWhiteSpace();
+
+            var gifPath = Path.Combine(_replayFolder, turnGif.GifFileName);
+            File.Exists(gifPath).ShouldBeTrue($"GIF file should exist: {gifPath}");
+
+            var gifSize = new FileInfo(gifPath).Length;
+            gifSize.ShouldBeGreaterThan(1024, $"GIF for turn {turnGif.TurnNumber} should be larger than 1KB (was {gifSize} bytes)");
+
+            await TestContext.Progress.WriteLineAsync(
+                $"Turn {turnGif.TurnNumber}: {turnGif.GifFileName} ({gifSize / 1024}KB)");
+        }
     }
 
     private static string FindRepoRoot()

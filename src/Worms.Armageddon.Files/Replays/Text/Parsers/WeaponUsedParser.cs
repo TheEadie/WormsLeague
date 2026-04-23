@@ -35,31 +35,38 @@ internal sealed partial class WeaponUsedParser : IReplayLineParser
 
         if (weaponUsedWithFuseAndModifier.Success)
         {
+            var timestamp = TimeSpan.Parse(weaponUsedWithFuseAndModifier.Groups[1].Value, CultureInfo.CurrentCulture);
             _ = builder.CurrentTurn.WithWeapon(
                 new Weapon(
                     weaponUsedWithFuseAndModifier.Groups[4].Value.Trim(),
+                    timestamp,
                     uint.Parse(weaponUsedWithFuseAndModifier.Groups[5].Value, CultureInfo.CurrentCulture),
                     weaponUsedWithFuseAndModifier.Groups[6].Value));
         }
         else if (weaponUsedWithFuse.Success)
         {
+            var timestamp = TimeSpan.Parse(weaponUsedWithFuse.Groups[1].Value, CultureInfo.CurrentCulture);
             _ = builder.CurrentTurn.WithWeapon(
                 new Weapon(
                     weaponUsedWithFuse.Groups[4].Value.Trim(),
+                    timestamp,
                     uint.Parse(weaponUsedWithFuse.Groups[5].Value, CultureInfo.CurrentCulture),
                     null));
         }
         else if (weaponUsedWithModifier.Success)
         {
+            var timestamp = TimeSpan.Parse(weaponUsedWithModifier.Groups[1].Value, CultureInfo.CurrentCulture);
             _ = builder.CurrentTurn.WithWeapon(
                 new Weapon(
                     weaponUsedWithModifier.Groups[4].Value.Trim(),
+                    timestamp,
                     null,
                     weaponUsedWithModifier.Groups[5].Value));
         }
         else if (weaponUsed.Success)
         {
-            _ = builder.CurrentTurn.WithWeapon(new Weapon(weaponUsed.Groups[4].Value.Trim(), null, null));
+            var timestamp = TimeSpan.Parse(weaponUsed.Groups[1].Value, CultureInfo.CurrentCulture);
+            _ = builder.CurrentTurn.WithWeapon(new Weapon(weaponUsed.Groups[4].Value.Trim(), timestamp, null, null));
         }
     }
 }
