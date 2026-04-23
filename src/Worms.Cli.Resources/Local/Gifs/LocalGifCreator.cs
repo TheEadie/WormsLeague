@@ -23,6 +23,6 @@ internal sealed class LocalGifCreator(GifCreator gifCreator, IWormsArmageddon wo
             parameters.StartOffset,
             parameters.EndOffset);
 
-        return new LocalGif(System.IO.Path.Combine(outputFolder, gifFileName));
+        return new LocalGif(Path.Combine(outputFolder, gifFileName));
     }
 }
