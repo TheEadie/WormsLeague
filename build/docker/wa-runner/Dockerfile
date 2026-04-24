@@ -32,30 +32,26 @@ FROM build AS test
 RUN dotnet test --no-restore --no-build --verbosity normal
 
 #### Runtime ####
-FROM ubuntu:24.04@sha256:c4a8d5503dfb2a3eb8ab5f807da5bc69a85730fb49b5cfca2330194ebcc41c7b AS runtime
+FROM ubuntu:26.04@sha256:5e275723f82c67e387ba9e3c24baa0abdcb268917f276a0561c97bef9450d0b4 AS runtime
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
   ca-certificates \
   wget \
   gnupg \
+  libicu-dev \
   && rm -rf /var/lib/apt/lists/*
 
-# Get key to Wine repo
-RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key -O /tmp/winehq.key
-
-# Add Wine repo
-RUN apt-get update \
-  && apt-get install -y software-properties-common \
-  && apt-key add /tmp/winehq.key \
-  && add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ noble main' \
-  && rm /tmp/winehq.key \
-  && rm -rf /var/lib/apt/lists/*
+# Add Wine repo key and source
+RUN mkdir -p /etc/apt/keyrings \
+  && wget -nc https://dl.winehq.org/wine-builds/winehq.key -O /etc/apt/keyrings/winehq.asc \
+  && echo "deb [signed-by=/etc/apt/keyrings/winehq.asc] https://dl.winehq.org/wine-builds/ubuntu/ resolute main" \
+    > /etc/apt/sources.list.d/winehq.list
 
 # AMD 32-bit deps for Wine
 RUN dpkg --add-architecture i386 \
   && apt-get update \
-  && apt-get install -y --install-recommends winehq-stable wine32 xvfb \
+  && apt-get install -y --install-recommends winehq-stable xvfb \
   && rm -rf /var/lib/apt/lists/*
 
 # Create WINEPREFIX
