@@ -41,16 +41,11 @@ RUN apt-get update \
   gnupg \
   && rm -rf /var/lib/apt/lists/*
 
-# Get key to Wine repo
-RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key -O /tmp/winehq.key
-
-# Add Wine repo
-RUN apt-get update \
-  && apt-get install -y software-properties-common \
-  && apt-key add /tmp/winehq.key \
-  && add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ noble main' \
-  && rm /tmp/winehq.key \
-  && rm -rf /var/lib/apt/lists/*
+# Add Wine repo key and source
+RUN mkdir -p /etc/apt/keyrings \
+  && wget -nc https://dl.winehq.org/wine-builds/winehq.key -O /etc/apt/keyrings/winehq.asc \
+  && echo "deb [signed-by=/etc/apt/keyrings/winehq.asc] https://dl.winehq.org/wine-builds/ubuntu/ resolute main" \
+    > /etc/apt/sources.list.d/winehq.list
 
 # AMD 32-bit deps for Wine
 RUN dpkg --add-architecture i386 \
