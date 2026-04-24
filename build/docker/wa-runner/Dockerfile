@@ -39,6 +39,7 @@ RUN apt-get update \
   ca-certificates \
   wget \
   gnupg \
+  libicu-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Add Wine repo key and source
@@ -50,7 +51,7 @@ RUN mkdir -p /etc/apt/keyrings \
 # AMD 32-bit deps for Wine
 RUN dpkg --add-architecture i386 \
   && apt-get update \
-  && apt-get install -y --install-recommends winehq-stable wine32 xvfb \
+  && apt-get install -y --install-recommends winehq-stable xvfb \
   && rm -rf /var/lib/apt/lists/*
 
 # Create WINEPREFIX
