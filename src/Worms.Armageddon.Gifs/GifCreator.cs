@@ -31,7 +31,9 @@ public sealed class GifCreator(IWormsArmageddon wormsArmageddon, IFileSystem fil
 
         DeleteFrames(framesFolder);
         await wormsArmageddon.ExtractReplayFrames(replayPath, framesPerSecond, start, end);
-        CreateGifFromFiles(framesFolder, outputFilePath, animationDelay, 640, 480);
+
+        var frames = GetExtractedFrames(replayPath, framesFolder);
+        CreateGifFromFiles(frames, outputFilePath, animationDelay, 640, 480);
         DeleteFrames(framesFolder);
 
         return gifFileName;
@@ -45,15 +47,29 @@ public sealed class GifCreator(IWormsArmageddon wormsArmageddon, IFileSystem fil
         }
     }
 
-    private void CreateGifFromFiles(
-        string framesFolder,
+    private string[] GetExtractedFrames(string replayPath, string framesFolder)
+    {
+        if (!fileSystem.Directory.Exists(framesFolder))
+        {
+            throw new GifFrameExtractionFailedException(replayPath, framesFolder);
+        }
+
+        var frames = fileSystem.Directory.GetFiles(framesFolder, "*.png");
+        if (frames.Length == 0)
+        {
+            throw new GifFrameExtractionFailedException(replayPath, framesFolder);
+        }
+
+        return frames;
+    }
+
+    private static void CreateGifFromFiles(
+        string[] frames,
         string outputFile,
         uint animationDelay,
         uint width,
         uint height)
     {
-        var frames = fileSystem.Directory.GetFiles(framesFolder, "*.png");
-
         using var collection = new MagickImageCollection();
         foreach (var file in frames)
         {

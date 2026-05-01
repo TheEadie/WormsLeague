@@ -71,7 +71,7 @@ RUN xvfb-run sh -c '\
   && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v InfoTransparency /d 0x00000001 /f \
   && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v InfoSpy /d 0x00000001 /f \
   && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v DisableSmoothBackgroundGradient /d 0x00000000 /f \
-  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v HardwareRendering /d 0x00000001 /f \
+  && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v HardwareRendering /d 0x00000000 /f \
   && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v LargerFonts /d 0x00000000 /f \
   && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v AssistedVsync /d 0x00000000 /f \
   && wine reg add "HKEY_CURRENT_USER\Software\Team17SoftwareLTD\WormsArmageddon\Options" /t REG_DWORD /v Vsync /d 0x00000000 /f \
