@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Armageddon.Runner
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Gifs", "src\Worms.Armageddon.Gifs\Worms.Armageddon.Gifs.csproj", "{C93E055E-2254-4CB4-AFDB-90315ED7960A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Armageddon.Gifs.Tests", "src\Worms.Armageddon.Gifs.Tests\Worms.Armageddon.Gifs.Tests.csproj", "{49C6C918-F9CE-4E18-9A07-426448C00F57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -211,6 +213,18 @@ Global
 		{C93E055E-2254-4CB4-AFDB-90315ED7960A}.Release|x64.Build.0 = Release|Any CPU
 		{C93E055E-2254-4CB4-AFDB-90315ED7960A}.Release|x86.ActiveCfg = Release|Any CPU
 		{C93E055E-2254-4CB4-AFDB-90315ED7960A}.Release|x86.Build.0 = Release|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Debug|x64.Build.0 = Debug|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Debug|x86.Build.0 = Debug|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Release|x64.ActiveCfg = Release|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Release|x64.Build.0 = Release|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Release|x86.ActiveCfg = Release|Any CPU
+		{49C6C918-F9CE-4E18-9A07-426448C00F57}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -218,5 +232,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{03DA1FFD-7F36-4F68-B630-23DF642C7C6F} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{C93E055E-2254-4CB4-AFDB-90315ED7960A} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{49C6C918-F9CE-4E18-9A07-426448C00F57} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal
