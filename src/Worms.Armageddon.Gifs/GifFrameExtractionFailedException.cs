@@ -1,5 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Worms.Armageddon.Gifs;
 
+[PublicAPI]
 public sealed class GifFrameExtractionFailedException : Exception
 {
     public GifFrameExtractionFailedException()
