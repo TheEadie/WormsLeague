@@ -38,7 +38,7 @@ jobs:
 
       - name: Pulumi Up
         id: pulumi-up
-        uses: pulumi/actions@v6
+        uses: pulumi/actions@v7
         with:
           command: up
           stack-name: prod
