@@ -20,7 +20,9 @@ Task DeleteMessage(MessageDetails messageDetails);
 | Type | Queue name | Direction |
 |---|---|---|
 | `ReplayToProcessMessage(string ReplayFileName)` | `replays-to-process` | Gateway → WA Runner |
-| `ReplayToUpdateMessage(string ReplayFileName, List<TurnGif> TurnGifs)` | `replays-to-update` | WA Runner → Gateway Worker |
+| `ReplayToUpdateMessage(string ReplayFileName, IReadOnlyList<TurnGif>? TurnGifs = null)` | `replays-to-update` | WA Runner → Gateway Worker |
+
+`TurnGif(int TurnNumber, string GifFileName)` is defined alongside the message and identifies the GIF the runner produced for a given turn.
 
 ## Adding a new message type
 

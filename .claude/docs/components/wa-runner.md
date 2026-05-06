@@ -39,7 +39,7 @@ make wa-runner.package  # push to registry
 ## Integration test
 
 `Worms.Hub.Armageddon.Runner.Tests` contains a single `[Category("Integration")]` test (`ProcessReplayShould`) that:
-- Requires WA game files at `$WA_GAME_PATH` (or `/home/eadie/games/worms` by default)
+- Requires a real WA installation mounted into the wa-runner container at `/game` (the `docker-compose.yaml` `hub-wa-runner` service mounts `${WA_GAME_PATH}` there — set `WA_GAME_PATH` to a local WA install)
 - Requires `sample-data/replays/sample.WAGame` to exist
 - Builds the Docker image and starts `hub-wa-runner` + `azure-storage` via `docker compose`
 - Enqueues a `ReplayToProcessMessage` and polls for a log file + output queue message (up to 5 minutes)

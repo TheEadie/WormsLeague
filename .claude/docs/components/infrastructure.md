@@ -3,7 +3,7 @@
 Project: `deployment/Worms.Hub.Infrastructure`
 Solution: `deployment/Infrastructure.sln`
 
-Infrastructure-as-code using **Pulumi** (C#, net10.0) targeting Azure.
+Infrastructure-as-code using **Pulumi** (C#) targeting Azure.
 
 ## Stack configuration
 
@@ -20,7 +20,7 @@ Key config values:
 
 ## Pulumi providers in use
 
-- `Pulumi.AzureNative` v2 — Azure resources
+- `Pulumi.AzureNative` — Azure resources
 - `Pulumi.Cloudflare` — DNS / CDN
 - `Pulumi.Command` — run commands as part of stack (e.g. database migrations)
 - `Pulumi.Random` — generate passwords/secrets

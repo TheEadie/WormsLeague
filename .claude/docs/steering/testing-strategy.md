@@ -8,13 +8,15 @@ We have two test tiers, separated by NUnit category:
 
 ### Unit tests (default)
 
-Fast, in-process tests with no external dependencies. They cover:
+Fast, in-process tests with no external dependencies. The test projects that exist today cover:
 
 - File-format parsing and serialisation in the Armageddon Files library
-- Pure logic in the CLI, gateway, and queue/storage abstractions
+- Game-discovery and runner logic in the Armageddon Game library (with `NSubstitute` for OS-specific seams like the registry)
 - The Armageddon Gifs assembly logic, exercised against fixtures
 
 Unit tests use **NUnit** with **Shouldly** for assertions. They are the default `dotnet test` run and gate every PR via `make cli.test.unit` / equivalent.
+
+The CLI, hub gateway, queues, and storage projects do not currently have dedicated unit-test projects — behaviour at those layers is exercised indirectly via the integration tier and the libraries above. When adding meaningful logic at those layers, prefer adding a new `<Project>.Tests` rather than retrofitting the integration test.
 
 External dependencies are abstracted at the seam, not mocked at the call site:
 - File-system access goes through `System.IO.Abstractions` so unit tests use `MockFileSystem` instead of touching disk.

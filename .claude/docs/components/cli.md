@@ -41,8 +41,9 @@ Output goes through `IResourcePrinter<T>` implementations (e.g. `SchemeTextPrint
 Provides all HTTP-facing services used by the CLI:
 
 - `IWormsServerApi` — typed HTTP client for the hub gateway (games, replays, schemes, CLI files, league)
-- Auth via device flow: `ILoginService`, `IAccessTokenRefreshService` — tokens stored with DPAPI via `TokenStore` at `%LOCALAPPDATA%/Programs/Worms/tokens.json`
-- `IRemoteLeagueRetriever`, `IRemoteSchemeDownloader`, `ICliUpdateDownloader` for specific hub operations
+- Auth via device flow: `ILoginService` (`DeviceCodeLoginService`), `IAccessTokenRefreshService`, `IUserDetailsService` — tokens are encrypted via ASP.NET Core Data Protection and persisted by `TokenStore` under `Environment.SpecialFolder.LocalApplicationData` at `Programs/Worms/tokens.json`
+- `IRemoteLeagueRetriever`, `IRemoteSchemeDownloader`, `IRemoteGameUpdater`, `ICliUpdateRetriever`, `ICliUpdateDownloader` for specific hub operations
+- A platform-specific `IFolderOpener` and `ICliUpdateDownloader` are registered at startup based on `RuntimeInformation.IsOSPlatform`
 
 This project targets `EnableTrimAnalyzer`, `EnableSingleFileAnalyzer`, `EnableAotAnalyzer` because it ships inside the self-contained CLI binary. Avoid reflection-based serialisation — use `JsonContext` (source-generated `JsonSerializerContext`) for any new JSON types.
 
