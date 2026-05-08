@@ -19,9 +19,15 @@ public sealed class GifCreator(IWormsArmageddon wormsArmageddon, IFileSystem fil
         TimeSpan? startOffset = null,
         TimeSpan? endOffset = null)
     {
-        var replayName = fileSystem.Path.GetFileNameWithoutExtension(replayPath);
+        var fileName = fileSystem.Path.GetFileName(replayPath);
+        // WA strips the .WAGame extension when naming the capture folder, but keeps any other extension.
+        // The same rule lives in ReplayFiles.GetLogPath.
+        var captureFolderName = fileName.EndsWith(".WAGame", StringComparison.InvariantCultureIgnoreCase)
+            ? fileSystem.Path.GetFileNameWithoutExtension(fileName)
+            : fileName;
+        var replayName = fileSystem.Path.GetFileNameWithoutExtension(fileName);
         var worms = wormsArmageddon.FindInstallation();
-        var framesFolder = fileSystem.Path.Combine(worms.CaptureFolder, replayName);
+        var framesFolder = fileSystem.Path.Combine(worms.CaptureFolder, captureFolderName);
         var gifFileName = $"{replayName} - {turnNumber}.gif";
         var outputFilePath = fileSystem.Path.Combine(outputFolder, gifFileName);
 
