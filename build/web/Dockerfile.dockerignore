@@ -1,0 +1,8 @@
+# Ignore everything
+**
+
+# Except for these files
+!/src/Worms.Hub.Web
+
+# Exclude node_modules (large, and must not be used inside the container build)
+src/Worms.Hub.Web/node_modules
