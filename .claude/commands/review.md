@@ -69,27 +69,13 @@ Changes not in the plan are not automatically wrong — but they need a reason. 
 
 ### 5c — Coding guidelines
 
-Check the diff for violations of `.claude/docs/steering/coding-guidelines.md`:
-
-- **Build defaults:** nullable enabled, no suppressed warnings, no `#pragma warning disable` without justification
-- **Visibility:** new types default to `internal sealed`; only `public` when consumed cross-assembly
-- **Immutability:** DTOs and value types use `record`; public signatures prefer `IReadOnlyList<T>` / `IReadOnlyDictionary<,>`
-- **DI:** new projects expose a `ServiceRegistration` class; services registered `Scoped` by default
-- **File system:** no `File`/`Directory` static calls — use `IFileSystem`
-- **Telemetry:** meaningful units of work in hub code start an `Activity` from `Telemetry.Source`
-- **Formatting:** 4-space indent, 120-char line length, Allman braces, sorted usings
+Check the diff for violations of `.claude/docs/steering/coding-guidelines.md`
 
 For web code, check against the ESLint config and Prettier settings in `src/Worms.Hub.Web/`.
 
 ### 5d — Tests
 
 Check the diff against `.claude/docs/steering/testing-strategy.md`:
-
-- Is new logic covered at the right tier (unit vs. integration)?
-- Are there **padding tests** — tests that exist only to look thorough? Examples: assertions like "didn't throw", trivial round-trips, mock-heavy tests that just re-state the implementation. Raise these as findings.
-- Are new integration tests gated with `[Category("Integration")]`?
-- Do test classes follow the `<TypeUnderTest>Should` / `<BehaviourDescription>` naming convention?
-- Are file-system seams exercised via `MockFileSystem` rather than touching disk?
 
 ## Step 6 — Write review.md
 
