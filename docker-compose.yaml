@@ -102,3 +102,10 @@ services:
         depends_on:
             azure-storage:
                 condition: service_healthy
+
+    web:
+        build:
+            dockerfile: build/web/Dockerfile
+            context: .
+        ports:
+            - "3000:80"
