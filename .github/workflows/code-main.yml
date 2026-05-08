@@ -39,7 +39,6 @@ jobs:
   build-web:
     name: Build - Web
     needs: changes
-    if: ${{ needs.changes.outputs.web-build == 'true' }}
     uses: ./.github/workflows/zz-build-web.yml
     secrets: inherit
 
