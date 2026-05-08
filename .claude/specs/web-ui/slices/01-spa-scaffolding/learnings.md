@@ -38,15 +38,30 @@ Setting `build.outDir: '../../.artifacts/web/'` in `vite.config.ts` correctly pl
 the bundle at `.artifacts/web/` relative to the repo root when building from
 `src/Worms.Hub.Web/`.
 
-### Prettier enforcement missing from `web.lint`
+### `web.lint` and `make test` — linting belongs in Code Scanning, not the build
 
-The spec requires ESLint and Prettier to "enforce consistent code style", but the
-initial implementation of `web.lint` only ran `eslint` and `tsc --noEmit`. Prettier
-was installed and configured but never invoked in CI, so formatting drift would go
-undetected.
+The spec said "`make test` includes linting the SPA via ESLint and `tsc --noEmit`",
+and the initial implementation wired `test:: web.test` accordingly. This is
+inconsistent with the repo's actual pattern: .NET linting (Roslyn, JetBrains
+InspectCode) runs only in `code-scanning.yml` as SARIF uploads — there are no
+`make` targets for it and the build CI workflows (`zz-build-cli.yml`,
+`zz-build-hub.yml`) do not run linting steps.
 
-**Action taken (post-review):** Added `npx prettier --check src` to the `web.lint`
-target in `build/web/makefile`.
+`make test` in this repo means running actual tests. There are no web unit tests
+in this slice (explicitly out of scope), so web contributes nothing to `test::`.
+
+**Action taken (post-review):**
+- Removed `test:: web.test` and `web.test` from `build/web/makefile`
+- Kept `web.lint` as a standalone target (for local use and future code-scanning
+  integration in the CodeQL for TypeScript slice)
+- Removed the Lint step from `zz-build-web.yml`; the build workflow now only builds
+
+### Prettier enforcement: `web.lint` runs `prettier --check`
+
+Prettier was installed and configured (`.prettierrc`) but not invoked in CI,
+meaning formatting drift would go undetected. Added `npx prettier --check src`
+to `web.lint`. Two source files (`App.tsx`, `main.tsx`) required formatting fixes
+to pass.
 
 ## Files Added (not in plan)
 

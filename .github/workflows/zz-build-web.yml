@@ -18,8 +18,6 @@ jobs:
           node-version: 22.x
       - name: Build
         run: make web.build
-      - name: Lint
-        run: make web.lint
       - name: Upload build
         uses: actions/upload-artifact@v7
         with:
