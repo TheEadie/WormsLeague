@@ -1,6 +1,5 @@
 ---
 description: Implement a slice from its plan.md, recording anything surprising or missing in learnings.md
-model: opus
 ---
 
 Your task is to implement a slice by following its `plan.md` precisely, tracking progress with tasks, and recording anything the plan missed or got wrong in `learnings.md`.

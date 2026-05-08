@@ -1,6 +1,5 @@
 ---
 description: Generate a detailed implementation plan for the next spec slice, written to plan.md alongside spec.md
-model: opus
 ---
 
 Your task is to produce a detailed implementation plan for a slice and write it to `plan.md` next to the slice's `spec.md`. This plan is the direct input to `/implement`, so it must be precise enough for an agent to execute without further clarification.
