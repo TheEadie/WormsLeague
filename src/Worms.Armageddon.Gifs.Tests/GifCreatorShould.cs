@@ -9,8 +9,9 @@ namespace Worms.Armageddon.Gifs.Tests;
 internal sealed class GifCreatorShould
 {
     [Test]
-    public async Task ThrowFrameExtractionFailedWhenFramesFolderMissing()
+    public async Task LookForFramesInExtensionFolderForNonWaGameReplays()
     {
+        // WA keeps non-.WAGame extensions when naming the capture folder.
         var fileSystem = new MockFileSystem();
         const string captureFolder = "/wa/Capture";
         fileSystem.AddDirectory(captureFolder);
@@ -22,21 +23,44 @@ internal sealed class GifCreatorShould
 
         var exception = await Should.ThrowAsync<GifFrameExtractionFailedException>(
             gifCreator.CreateGif(
-                "/storage/replay.gjb",
+                "/storage/mo3z4qju.2s4",
                 TimeSpan.FromSeconds(0),
                 TimeSpan.FromSeconds(10),
                 1,
                 "/storage/output"));
 
-        exception.ReplayPath.ShouldBe("/storage/replay.gjb");
-        exception.FramesFolder.ShouldBe("/wa/Capture/replay");
+        exception.FramesFolder.ShouldBe("/wa/Capture/mo3z4qju.2s4");
+    }
+
+    [Test]
+    public async Task StripWaGameExtensionWhenLookingForFrames()
+    {
+        // WA strips the .WAGame extension when naming the capture folder.
+        var fileSystem = new MockFileSystem();
+        const string captureFolder = "/wa/Capture";
+        fileSystem.AddDirectory(captureFolder);
+
+        var wormsArmageddon = Substitute.For<IWormsArmageddon>();
+        wormsArmageddon.FindInstallation().Returns(GameInfoFor(captureFolder));
+
+        var gifCreator = new GifCreator(wormsArmageddon, fileSystem);
+
+        var exception = await Should.ThrowAsync<GifFrameExtractionFailedException>(
+            gifCreator.CreateGif(
+                "/storage/sample.WAGame",
+                TimeSpan.FromSeconds(0),
+                TimeSpan.FromSeconds(10),
+                1,
+                "/storage/output"));
+
+        exception.FramesFolder.ShouldBe("/wa/Capture/sample");
     }
 
     [Test]
     public async Task ThrowFrameExtractionFailedWhenFramesFolderEmpty()
     {
         var fileSystem = new MockFileSystem();
-        const string framesFolder = "/wa/Capture/replay";
+        const string framesFolder = "/wa/Capture/replay.gjb";
         fileSystem.AddDirectory(framesFolder);
 
         var wormsArmageddon = Substitute.For<IWormsArmageddon>();
