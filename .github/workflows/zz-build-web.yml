@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-web:
-    name: Build and lint
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
