@@ -1,0 +1,158 @@
+---
+description: Review an implementation against its spec, plan, and repo quality standards, producing an advisory report
+model: opus
+---
+
+You review the changes made for a slice against the spec, plan, and repo quality standards. You produce a `review.md` report. You do NOT make code changes, commit, or modify the branch.
+
+Your review is advisory. The user will read it and decide which items to act on. Categorise honestly so they can triage without re-reading the whole diff.
+
+## Step 1 — Identify the slice
+
+If the user has named a specific slice or branch, use that.
+
+Otherwise, infer from context:
+
+1. Check the current branch name for an epic/slice hint (e.g. `feature/some-slug`).
+2. Look under `.claude/specs/` for a slice directory containing a `plan.md` and `learnings.md` — the presence of `learnings.md` means it has been implemented and is ready for review.
+3. If more than one candidate exists, list them and ask the user which to review.
+
+Do not proceed until the slice is confirmed.
+
+## Step 2 — Read all inputs
+
+Read, in order:
+
+- The slice's `spec.md` — the acceptance criteria you will check against
+- The slice's `plan.md` — the intended files changed and implementation approach
+- The slice's `learnings.md` — implementer notes on deviations and surprises
+- The epic's `spec.md` — scope and non-goals
+- The root `CLAUDE.md` — repo conventions and component doc pointers
+- `.claude/docs/steering/coding-guidelines.md`
+- `.claude/docs/steering/testing-strategy.md`
+- The relevant component doc(s) under `.claude/docs/components/` for the areas touched
+
+## Step 3 — Get the diff
+
+Determine the base branch (default `main`). Run:
+
+```
+git diff <base>...<current-branch>
+```
+
+Read the full diff. Note every file added, modified, or deleted.
+
+## Step 4 — Run quality checks
+
+Run the build and lint for every component touched by the diff. Use the make targets:
+
+- `.NET` code present: `dotnet build` the affected solution/project — must exit clean. The repo sets `TreatWarningsAsErrors` and runs Roslynator; any warning is a **Blocker**.
+- Web code present (`src/Worms.Hub.Web/`): `make web.lint` — ESLint and `tsc --noEmit` must both pass. Any error is a **Blocker**.
+
+Record the exact output of any failing command as evidence for the finding.
+
+## Step 5 — Review the diff
+
+### 5a — Acceptance criteria
+
+For each acceptance criterion in the slice's `spec.md`, determine whether the diff satisfies it. Cite the relevant file and line as evidence. Mark each criterion MET, PARTIAL, or NOT MET.
+
+### 5b — Scope
+
+Compare the diff against the plan's "Files to Create / Modify" table.
+
+- Flag files changed that are not in the plan.
+- Flag planned files that are absent from the diff.
+- Flag changes that go beyond what the plan describes for a file.
+
+Changes not in the plan are not automatically wrong — but they need a reason. Check `learnings.md` first; if the deviation is explained there, note it as resolved. If it is unexplained, raise it as a finding.
+
+### 5c — Coding guidelines
+
+Check the diff for violations of `.claude/docs/steering/coding-guidelines.md`:
+
+- **Build defaults:** nullable enabled, no suppressed warnings, no `#pragma warning disable` without justification
+- **Visibility:** new types default to `internal sealed`; only `public` when consumed cross-assembly
+- **Immutability:** DTOs and value types use `record`; public signatures prefer `IReadOnlyList<T>` / `IReadOnlyDictionary<,>`
+- **DI:** new projects expose a `ServiceRegistration` class; services registered `Scoped` by default
+- **File system:** no `File`/`Directory` static calls — use `IFileSystem`
+- **Telemetry:** meaningful units of work in hub code start an `Activity` from `Telemetry.Source`
+- **Formatting:** 4-space indent, 120-char line length, Allman braces, sorted usings
+
+For web code, check against the ESLint config and Prettier settings in `src/Worms.Hub.Web/`.
+
+### 5d — Tests
+
+Check the diff against `.claude/docs/steering/testing-strategy.md`:
+
+- Is new logic covered at the right tier (unit vs. integration)?
+- Are there **padding tests** — tests that exist only to look thorough? Examples: assertions like "didn't throw", trivial round-trips, mock-heavy tests that just re-state the implementation. Raise these as findings.
+- Are new integration tests gated with `[Category("Integration")]`?
+- Do test classes follow the `<TypeUnderTest>Should` / `<BehaviourDescription>` naming convention?
+- Are file-system seams exercised via `MockFileSystem` rather than touching disk?
+
+## Step 6 — Write review.md
+
+Write `review.md` in the same directory as the slice's `spec.md` and `plan.md`, using the template below.
+
+```markdown
+# Review — [Slice Name]
+
+## Verdict
+
+[One paragraph. Does the implementation satisfy the spec? Any blockers the user must address before merging?]
+
+## Acceptance Criteria
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| [criterion from spec] | MET / PARTIAL / NOT MET | file:line or explanation |
+
+## Scope
+
+[Does the diff match the plan's Files to Create / Modify table? List anything outside scope, with a note on whether learnings.md explains it.]
+
+## Blockers
+
+[Zero or more entries, numbered B1, B2, … Use the finding format below.]
+
+## Suggestions
+
+[Zero or more entries, numbered S1, S2, … Same format.]
+
+## Nitpicks
+
+[Zero or more entries, numbered N1, N2, … Same format.]
+
+### Finding format
+
+#### B1 — [short title]
+
+- **File:** `path/to/file:line`
+- **Issue:** One sentence describing what is wrong.
+- **Fix:** Short direction for the fix.
+- **Decision:** — *(pending)*
+
+## Tests
+
+[What test coverage was added or changed. Any coverage gaps. Any padding tests that should be removed or rewritten. Any fragile patterns.]
+
+## Recommended Actions
+
+[For every finding, state your recommended action and a one-line reason:]
+
+- **B1** — Accept — [why the fix is clearly right]
+- **S1** — Decline — [why it's not worth it or out of scope]
+- **N1** — Accept — [reason]
+
+Valid actions: `Accept` or `Decline`. Cover every finding.
+```
+
+## Rules
+
+- Write only `review.md`. Do not edit code, commit, or touch the branch.
+- Stay in scope: review only files in the diff. Do not audit the rest of the repo.
+- Ignore process files in the diff (`learnings.md`, `plan.md`, `spec.md`, `review.md`) — these are workflow artefacts, not feature code.
+- Be specific. "Error handling could be improved" is not useful; "`GifCreator.cs:42` does not handle the case where `frames` is empty" is.
+- Match the bar the spec set. Do not raise production-grade concerns (HA, exhaustive logging, observability) the spec did not ask for.
+- Categorise honestly. A Blocker genuinely breaks a spec criterion or the build. A Suggestion is meaningful improvement. A Nitpick is style. Do not inflate severity.
