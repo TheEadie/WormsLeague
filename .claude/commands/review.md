@@ -27,8 +27,7 @@ Read, in order:
 - The slice's `learnings.md` — implementer notes on deviations and surprises
 - The epic's `spec.md` — scope and non-goals
 - The root `CLAUDE.md` — repo conventions and component doc pointers
-- `.claude/docs/steering/coding-guidelines.md`
-- `.claude/docs/steering/testing-strategy.md`
+- All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present
 - The relevant component doc(s) under `.claude/docs/components/` for the areas touched
 
 ## Step 3 — Get the diff
@@ -68,7 +67,7 @@ Changes not in the plan are not automatically wrong — but they need a reason. 
 
 ### 5c — Coding guidelines
 
-Check the diff for violations of `.claude/docs/steering/coding-guidelines.md`
+Check the diff for violations of the coding guidelines and CI patterns in `.claude/docs/steering/`
 
 For web code, check against the ESLint config and Prettier settings in `src/Worms.Hub.Web/`.
 

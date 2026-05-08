@@ -24,6 +24,7 @@ Read everything before touching any files:
 - The slice's `plan.md` — the authoritative implementation guide
 - The slice's `spec.md` — acceptance criteria you will verify against at the end
 - The root `CLAUDE.md` — repo-wide conventions
+- All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present
 - Relevant component docs under `.claude/docs/components/` for the areas touched
 - Any `learnings.md` files from earlier slices in the same epic — they capture caveats that may apply here too
 

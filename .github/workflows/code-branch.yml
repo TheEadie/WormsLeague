@@ -36,9 +36,15 @@ jobs:
     uses: ./.github/workflows/zz-build-cli.yml
     secrets: inherit
 
+  build-web:
+    name: Build - Web
+    needs: changes
+    uses: ./.github/workflows/zz-build-web.yml
+    secrets: inherit
+
   actions-timeline:
     name: Timeline
-    needs: [changes, build-hub, build-cli]
+    needs: [changes, build-hub, build-cli, build-web]
     runs-on: ubuntu-latest
     steps:
       - uses: Kesin11/actions-timeline@v3

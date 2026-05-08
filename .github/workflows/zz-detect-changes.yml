@@ -14,6 +14,8 @@ on:
         value: ${{ jobs.changes.outputs.wa-runner-test }}
       clis-release:
         value: ${{ jobs.changes.outputs.clis-release }}
+      web-build:
+        value: ${{ jobs.changes.outputs.web-build }}
 
 jobs:
   changes:
@@ -24,6 +26,7 @@ jobs:
       wa-runner-release: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.hub-common == 'true' }}
       wa-runner-test: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.wa-runner-test == 'true' || steps.filter.outputs.hub-common == 'true' }}
       clis-release: ${{ steps.filter.outputs.clis == 'true' }}
+      web-build: ${{ steps.filter.outputs.web == 'true' }}
     steps:
     - name: Checkout
       uses: actions/checkout@v6
@@ -64,3 +67,6 @@ jobs:
             - 'src/Directory.Build.props'
             - 'build/cli/**'
             - '.github/workflows/hub-*.yml'
+          web:
+            - 'src/Worms.Hub.Web/**'
+            - 'build/web/**'

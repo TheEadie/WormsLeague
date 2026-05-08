@@ -25,6 +25,7 @@ Read everything needed to produce an accurate, codebase-consistent plan:
 - The slice's `spec.md` — requirements, out of scope, acceptance criteria
 - The epic's `spec.md` and `plan.md` — scope boundaries, what earlier slices have already delivered
 - The root `CLAUDE.md` — repo-wide conventions and pointers to component docs
+- All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present
 - The relevant component docs under `.claude/docs/components/` for the areas this slice touches
 - The source files the slice will most likely create or modify
 - Any `learnings.md` files from earlier slices in the same epic — they capture known caveats from prior implementation

@@ -28,6 +28,7 @@ Before writing anything, read the following to understand how the slice fits the
 - `.claude/specs/<epic-slug>/spec.md` — the epic's purpose, goals, non-goals, major capabilities, system shape, constraints, and definition of done. The slice must sit consistently within this scope.
 - `.claude/specs/<epic-slug>/plan.md` — the ordered slice list. Locate this slice in the plan, note which earlier slices it depends on (and may assume are complete), and which later slices it must NOT pre-empt.
 - The root `CLAUDE.md` — repo-wide conventions and pointers.
+- All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present.
 - The relevant component doc(s) under `.claude/docs/components/` — load whichever match the area this slice touches (e.g. `cli.md`, `hub-gateway.md`, `armageddon-files.md`). The mapping is in the root `CLAUDE.md`.
 - Any source files directly relevant to the slice area.
 
