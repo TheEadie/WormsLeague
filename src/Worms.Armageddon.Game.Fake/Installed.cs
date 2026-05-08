@@ -1,28 +1,28 @@
 using System.Globalization;
 using System.IO.Abstractions;
+using ImageMagick;
 
 namespace Worms.Armageddon.Game.Fake;
 
 internal sealed class Installed : IWormsArmageddon
 {
+    private static readonly byte[] FrameContent = BuildPngBytes();
+
     private readonly string _path;
     private readonly Version _version;
     private readonly IFileSystem _fileSystem;
     private readonly bool _hostCreatesReplay;
-    private readonly Func<int, byte[]> _frameContent;
 
     public Installed(
         IFileSystem fileSystem,
         string? path = null,
         Version? version = null,
-        bool hostCreatesReplay = true,
-        Func<int, byte[]>? frameContent = null)
+        bool hostCreatesReplay = true)
     {
         _fileSystem = fileSystem;
         _hostCreatesReplay = hostCreatesReplay;
         _path = path ?? @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon";
         _version = version ?? new Version(1, 0, 0, 0);
-        _frameContent = frameContent ?? (_ => []);
 
         _ = _fileSystem.Directory.CreateDirectory(_path);
         _ = _fileSystem.Directory.CreateDirectory(_fileSystem.Path.Combine(_path, "User"));
@@ -97,7 +97,13 @@ internal sealed class Installed : IWormsArmageddon
         for (var i = 0; i < frames; i++)
         {
             var framePath = _fileSystem.Path.Combine(framesFolder, $"video_{i:D6}.png");
-            await _fileSystem.File.WriteAllBytesAsync(framePath, _frameContent(i));
+            await _fileSystem.File.WriteAllBytesAsync(framePath, FrameContent);
         }
+    }
+
+    private static byte[] BuildPngBytes()
+    {
+        using var image = new MagickImage(MagickColors.Black, 16, 16);
+        return image.ToByteArray(MagickFormat.Png);
     }
 }

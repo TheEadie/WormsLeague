@@ -1,6 +1,5 @@
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using ImageMagick;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;
@@ -118,28 +117,16 @@ internal sealed class GifCreatorShould
     {
         var fileSystem = new FileSystem();
         var gamePath = Path.Combine(_tempRoot, "wa");
-        var gifCreator = BuildGifCreatorWithFakeWa(fileSystem, gamePath, frameContent: _ => TinyPng);
-        return (gifCreator, fileSystem, gamePath);
+        return (BuildGifCreatorWithFakeWa(fileSystem, gamePath), fileSystem, gamePath);
     }
 
-    private static GifCreator BuildGifCreatorWithFakeWa(
-        IFileSystem fileSystem,
-        string gamePath,
-        Func<int, byte[]>? frameContent = null)
+    private static GifCreator BuildGifCreatorWithFakeWa(IFileSystem fileSystem, string gamePath)
     {
         var services = new ServiceCollection()
-            .AddFakeInstalledWormsArmageddonServices(fileSystem, gamePath, frameContent: frameContent)
+            .AddFakeInstalledWormsArmageddonServices(fileSystem, gamePath)
             .BuildServiceProvider();
 
         var wormsArmageddon = services.GetRequiredService<IWormsArmageddon>();
         return new GifCreator(wormsArmageddon, fileSystem);
-    }
-
-    private static readonly byte[] TinyPng = BuildTinyPng();
-
-    private static byte[] BuildTinyPng()
-    {
-        using var image = new MagickImage(MagickColors.Black, 16, 16);
-        return image.ToByteArray(MagickFormat.Png);
     }
 }

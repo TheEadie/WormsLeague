@@ -10,10 +10,9 @@ public static class ServiceRegistration
         IFileSystem fileSystem,
         string? gamePath = null,
         Version? version = null,
-        bool hostCreatesReplay = true,
-        Func<int, byte[]>? frameContent = null)
+        bool hostCreatesReplay = true)
     {
-        var installed = new Installed(fileSystem, gamePath, version, hostCreatesReplay, frameContent);
+        var installed = new Installed(fileSystem, gamePath, version, hostCreatesReplay);
         return builder.AddScoped<IFileSystem>(_ => fileSystem).AddScoped<IWormsArmageddon>(_ => installed);
     }
 
