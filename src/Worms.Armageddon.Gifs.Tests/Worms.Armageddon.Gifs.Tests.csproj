@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Worms.Armageddon.Gifs\Worms.Armageddon.Gifs.csproj"/>
+    <ProjectReference Include="..\Worms.Armageddon.Game.Fake\Worms.Armageddon.Game.Fake.csproj"/>
   </ItemGroup>
 
 </Project>

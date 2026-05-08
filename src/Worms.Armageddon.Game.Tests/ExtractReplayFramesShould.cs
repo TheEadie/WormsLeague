@@ -38,9 +38,9 @@ internal sealed class ExtractReplayFramesShould(ApiType apiType)
             TimeSpan.FromSeconds(10));
 
         var captureFolder = wormsArmageddon.FindInstallation().CaptureFolder;
-        var captureFiles = fileSystem.Directory.GetFiles(captureFolder, "*.png");
+        var captureFiles = fileSystem.Directory.GetFiles(captureFolder, "*.png", SearchOption.AllDirectories);
         // Expect 10 frames per second for 10 seconds
-        captureFiles.Count(x => x.Contains("replay", StringComparison.InvariantCulture)).ShouldBe(100);
+        captureFiles.Length.ShouldBe(100);
     }
 
     [TestCase((uint) 30, 0, 10, 300)]
@@ -62,8 +62,8 @@ internal sealed class ExtractReplayFramesShould(ApiType apiType)
             TimeSpan.FromSeconds(end));
 
         var captureFolder = wormsArmageddon.FindInstallation().CaptureFolder;
-        var captureFiles = fileSystem.Directory.GetFiles(captureFolder, "*.png");
-        captureFiles.Count(x => x.Contains("replay", StringComparison.InvariantCulture)).ShouldBe(expected);
+        var captureFiles = fileSystem.Directory.GetFiles(captureFolder, "*.png", SearchOption.AllDirectories);
+        captureFiles.Length.ShouldBe(expected);
     }
 
     [Test]
@@ -82,8 +82,7 @@ internal sealed class ExtractReplayFramesShould(ApiType apiType)
             TimeSpan.FromSeconds(10));
 
         var captureFolder = wormsArmageddon.FindInstallation().CaptureFolder;
-        var captureFiles = fileSystem.Directory.GetFiles(captureFolder, "*.png");
-        // Expect 10 frames per second for 10 seconds
-        captureFiles.Count(x => x.Contains("replay", StringComparison.InvariantCulture)).ShouldBe(0);
+        var captureFiles = fileSystem.Directory.GetFiles(captureFolder, "*.png", SearchOption.AllDirectories);
+        captureFiles.Length.ShouldBe(0);
     }
 }

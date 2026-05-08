@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Worms.Armageddon.Game.Fake;
@@ -8,13 +7,14 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddFakeInstalledWormsArmageddonServices(
         this IServiceCollection builder,
-        MockFileSystem mockFileSystem,
+        IFileSystem fileSystem,
         string? gamePath = null,
         Version? version = null,
-        bool hostCreatesReplay = true)
+        bool hostCreatesReplay = true,
+        Func<int, byte[]>? frameContent = null)
     {
-        var installed = new Installed(mockFileSystem, gamePath, version, hostCreatesReplay);
-        return builder.AddScoped<IFileSystem>(_ => mockFileSystem).AddScoped<IWormsArmageddon>(_ => installed);
+        var installed = new Installed(fileSystem, gamePath, version, hostCreatesReplay, frameContent);
+        return builder.AddScoped<IFileSystem>(_ => fileSystem).AddScoped<IWormsArmageddon>(_ => installed);
     }
 
     public static IServiceCollection AddFakeNotInstalledWormsArmageddonServices(this IServiceCollection builder) =>
