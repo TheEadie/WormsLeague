@@ -165,9 +165,24 @@ jobs:
         with:
           sarif_file: src/Worms.Hub.Web/eslint.sarif
 
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Install Dependencies
+        run: cd src/Worms.Hub.Web && npm ci
+      - name: Run Prettier
+        run: cd src/Worms.Hub.Web && npx prettier --check src
+
   actions-timeline:
     name: Timeline
-    needs: [roslyn, jetbrains, codeql-actions, codeql-csharp]
+    needs: [roslyn, jetbrains, codeql-actions, codeql-csharp, codeql-javascript-typescript, eslint, prettier]
     runs-on: ubuntu-latest
     steps:
       - uses: Kesin11/actions-timeline@v3
