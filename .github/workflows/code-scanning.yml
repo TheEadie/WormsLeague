@@ -145,6 +145,26 @@ jobs:
         with:
           category: "/language:javascript-typescript"
 
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Install Dependencies
+        run: cd src/Worms.Hub.Web && npm ci
+      - name: Run ESLint
+        run: cd src/Worms.Hub.Web && npx eslint src --format @microsoft/eslint-formatter-sarif --output-file eslint.sarif
+      - name: Upload ESLint SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: src/Worms.Hub.Web/eslint.sarif
+
   actions-timeline:
     name: Timeline
     needs: [roslyn, jetbrains, codeql-actions, codeql-csharp]
