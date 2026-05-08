@@ -58,9 +58,13 @@ Keep a running mental note of anything that warrants recording. Capture a learni
 
 Do not record learnings for steps that went exactly as planned.
 
-## Step 5 — Write learnings.md
+## Step 5 — Tick the slice in the epic plan
 
-After all implementation tasks are complete, write `learnings.md` in the same directory as the slice's `plan.md`.
+After all implementation tasks are complete, mark the slice as done in the epic's top-level `plan.md` by changing its checkbox from `- [ ]` to `- [x]`.
+
+## Step 6 — Write learnings.md
+
+After ticking the epic plan, write `learnings.md` in the same directory as the slice's `plan.md`.
 
 Write it even if there are no learnings — its presence signals the slice has been implemented. If there is nothing to record, say so briefly.
 
@@ -85,7 +89,7 @@ component docs in a future /update-docs pass.]
 Omit this section if there are none.]
 ```
 
-## Step 6 — Hand off
+## Step 7 — Hand off
 
 Tell the user:
 - The implementation is complete
