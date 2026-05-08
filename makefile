@@ -15,4 +15,5 @@ inspections:
 
 include build/docker/makefile
 include build/cli/makefile
+include build/web/makefile
 
