@@ -46,6 +46,12 @@ When adding a feature, default to **unit tests** for everything that can be exer
 
 Don't duplicate: if a behaviour is meaningfully covered by a unit test, you don't owe it an integration test as well.
 
+## `make test` means tests, not linting
+
+`make test` runs actual tests — unit or integration. Do not wire linting, static analysis, or format checks into `make test` or the `test::` phony target.
+
+Linting (ESLint, Prettier, `tsc --noEmit`, Roslyn analysers) belongs in `code-scanning.yml` as SARIF uploads, consistent with how .NET static analysis is handled in this repo. See [ci-patterns.md](ci-patterns.md).
+
 ## CI vs local
 
 - **CI** runs unit tests on every PR. Integration tests that need Docker/WA run on machines provisioned for it — don't add an integration test that only the author can run.

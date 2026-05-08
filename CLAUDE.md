@@ -79,4 +79,5 @@ Detailed practices for each component are in `.claude/docs/components/`. Load th
 | Armageddon Game | [.claude/docs/components/armageddon-game.md](.claude/docs/components/armageddon-game.md) | `Worms.Armageddon.Game`, `*.Fake` |
 | Armageddon Gifs | [.claude/docs/components/armageddon-gifs.md](.claude/docs/components/armageddon-gifs.md) | `Worms.Armageddon.Gifs` |
 | Infrastructure | [.claude/docs/components/infrastructure.md](.claude/docs/components/infrastructure.md) | `deployment/Worms.Hub.Infrastructure` |
+| Web UI | [.claude/docs/components/web.md](.claude/docs/components/web.md) | `Worms.Hub.Web` |
 
