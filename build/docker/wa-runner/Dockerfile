@@ -40,6 +40,8 @@ RUN apt-get update \
   wget \
   gnupg \
   libicu-dev \
+  libegl1 \
+  libgl1-mesa-dri \
   && rm -rf /var/lib/apt/lists/*
 
 # Add Wine repo key and source
