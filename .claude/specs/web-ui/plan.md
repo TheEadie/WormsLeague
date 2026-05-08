@@ -5,7 +5,7 @@ Companion to [`spec.md`](./spec.md). Each slice below is sized to ship as a sing
 ## Slices
 
 - [x] **SPA scaffolding** — a new React/TypeScript project lives in the repo, builds, lints, has a placeholder home page, and is wired into the makefile and CI alongside the existing .NET projects.
-- [ ] **Web linting in CI** — `code-scanning.yml` gains jobs for CodeQL (JavaScript/TypeScript), ESLint, and Prettier, each uploading results as SARIF where supported, consistent with the existing Roslyn and JetBrains jobs, and included in the `actions-timeline` needs.
+- [x] **Web linting in CI** — `code-scanning.yml` gains jobs for CodeQL (JavaScript/TypeScript), ESLint, and Prettier, each uploading results as SARIF where supported, consistent with the existing Roslyn and JetBrains jobs, and included in the `actions-timeline` needs.
 - [ ] **Local-dev integration** — `docker compose up` brings the SPA up alongside the existing Hub services so the full stack runs locally end-to-end.
 - [ ] **Gateway CORS** — the Gateway accepts browser requests from the UI's origin(s) without changing its auth contract.
 - [ ] **Public landing page** — the SPA serves a real anonymous landing page as the v1 entry surface for unauthenticated visitors.
