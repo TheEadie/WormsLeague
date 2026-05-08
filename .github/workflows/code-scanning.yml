@@ -129,6 +129,22 @@ jobs:
       with:
         category: "/language:csharp"
 
+  codeql-javascript-typescript:
+    name: CodeQL (javascript-typescript)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+          build-mode: none
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:javascript-typescript"
+
   actions-timeline:
     name: Timeline
     needs: [roslyn, jetbrains, codeql-actions, codeql-csharp]
