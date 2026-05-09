@@ -31,6 +31,20 @@ Spawn an agent with this prompt, substituting `<slice-path>`:
 
 After the agent completes, verify that `<slice-path>/plan.md` exists. If it does not, stop and report the failure to the user.
 
+## Step 2b — Review the plan with the user
+
+Read `<slice-path>/plan.md` and display its full contents to the user.
+
+Then ask: **"Does this plan look good, or would you like to change anything before implementation starts?"**
+
+If the user requests changes:
+1. Delete `<slice-path>/plan.md`.
+2. Note the user's feedback.
+3. Re-run Step 2, appending this to the agent prompt: `The user reviewed the previous plan and asked for these changes: <feedback>. Incorporate this feedback when writing the new plan.`
+4. Repeat Step 2b.
+
+Do not proceed to Step 3 until the user explicitly confirms the plan.
+
 ## Step 3 — Implement phase
 
 Skip this step if `<slice-path>/learnings.md` already exists.
