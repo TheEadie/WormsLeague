@@ -1,99 +1,66 @@
 ---
-description: Implement a slice from its plan.md, recording anything surprising or missing in learnings.md
+description: Orchestrate plan-spec, implement, and review phases for a slice, each in a fresh agent context
 ---
 
-Your task is to implement a slice by following its `plan.md` precisely, tracking progress with tasks, and recording anything the plan missed or got wrong in `learnings.md`.
+You coordinate the full slice workflow: plan → implement → review. Each phase runs in a separate agent with a clean context window. Your role is to identify the slice, confirm it with the user, then hand off to each agent in turn.
 
 ## Step 1 — Identify the slice
 
 If the user has named a specific slice or path, use that.
 
-Otherwise, find the next slice that is ready to implement:
+Otherwise, find the next slice to work on:
 
 1. List the epics under `.claude/specs/`. If more than one exists, ask which epic to work on.
-2. Read the epic's `plan.md`. Find the first unchecked (`- [ ]`) slice.
-3. Check whether `.claude/specs/<epic-slug>/slices/<slice-dir>/plan.md` exists. If it does not, stop and tell the user to run `/plan-spec` first to generate the implementation plan.
-4. Present the slice to the user and ask them to confirm or pick a different one.
+2. Read the epic's `plan.md`. Scan slices in order and pick the first incomplete one using this logic:
+   - Slice has `spec.md` but no `plan.md` → needs planning + implementing + reviewing
+   - Slice has `plan.md` but no `learnings.md` → needs implementing + reviewing
+   - Slice has `learnings.md` but no `review.md` → needs reviewing only
+3. Present the slice to the user — its name and which phases will run — and ask them to confirm or pick a different one.
 
-Do not proceed until the user has confirmed the target slice.
+Do not proceed until the user has confirmed the target slice. Record the slice's full directory path (e.g. `.claude/specs/<epic-slug>/slices/<slice-dir>`).
 
-## Step 2 — Read the plan and context
+## Step 2 — Plan phase
 
-Read everything before touching any files:
+Skip this step if `<slice-path>/plan.md` already exists.
 
-- The slice's `plan.md` — the authoritative implementation guide
-- The slice's `spec.md` — acceptance criteria you will verify against at the end
-- The root `CLAUDE.md` — repo-wide conventions
-- All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present
-- Relevant component docs under `.claude/docs/components/` for the areas touched
-- Any `learnings.md` files from earlier slices in the same epic — they capture caveats that may apply here too
+Spawn an agent with this prompt, substituting `<slice-path>`:
 
-## Step 3 — Create tasks
+> Read the file `.claude/commands/plan-spec.md` and follow those instructions.
+> The target slice has already been confirmed by the user. Its directory is `<slice-path>`.
+> Skip Step 1 (slice identification) and proceed directly from Step 2 onward.
 
-Use TaskCreate to break the plan into discrete tasks before starting any work — one task per major section of the plan's implementation details. This gives the user a live view of progress. Mark each task `in_progress` immediately before starting it and `completed` immediately after finishing it. Do not batch completions.
+After the agent completes, verify that `<slice-path>/plan.md` exists. If it does not, stop and report the failure to the user.
 
-## Step 4 — Implement
+## Step 3 — Implement phase
 
-Follow the plan exactly. For each task:
+Skip this step if `<slice-path>/learnings.md` already exists.
 
-1. Mark the task `in_progress`.
-2. Make the changes the plan describes.
-3. Run any verification steps the plan specifies for this section.
-4. Mark the task `completed`.
+Spawn an agent with this prompt, substituting `<slice-path>`:
 
-If the plan is silent on something you need to decide, make the simplest reasonable choice and record it as a learning (see below).
+> Read the file `.claude/commands/implement-slice.md` and follow those instructions.
+> The target slice has already been confirmed by the user. Its directory is `<slice-path>`.
+> Skip Step 1 (slice identification) and proceed directly from Step 2 onward.
 
-If a verification step fails, diagnose the root cause rather than retrying the same action. If the fix requires a significant deviation from the plan, note it as a learning.
+After the agent completes, verify that `<slice-path>/learnings.md` exists. If it does not, stop and report the failure to the user.
 
-### What to record as a learning
+## Step 4 — Review phase
 
-Keep a running mental note of anything that warrants recording. Capture a learning when:
+Skip this step if `<slice-path>/review.md` already exists.
 
-- The plan omits something you had to discover yourself (a missing dependency, a required lockfile, a package not listed, a config key the plan didn't mention)
-- A tool call fails in a non-obvious way and needs a workaround
-- You loop on a problem more than once before resolving it
-- You make a decision the plan did not cover
-- An assumption in the plan turns out to be wrong
-- Something in the codebase behaves differently from what the plan implied
+Spawn an agent with this prompt, substituting `<slice-path>`:
 
-Do not record learnings for steps that went exactly as planned.
+> Read the file `.claude/commands/review.md` and follow those instructions.
+> The target slice has already been confirmed by the user. Its directory is `<slice-path>`.
+> Skip Step 1 (slice identification) and proceed directly from Step 2 onward.
 
-## Step 5 — Tick the slice in the epic plan
+After the agent completes, verify that `<slice-path>/review.md` exists. If it does not, stop and report the failure to the user.
 
-After all implementation tasks are complete, mark the slice as done in the epic's top-level `plan.md` by changing its checkbox from `- [ ]` to `- [x]`.
-
-## Step 6 — Write learnings.md
-
-After ticking the epic plan, write `learnings.md` in the same directory as the slice's `plan.md`.
-
-Write it even if there are no learnings — its presence signals the slice has been implemented. If there is nothing to record, say so briefly.
-
-### Learnings file template
-
-```markdown
-# Learnings: [Slice Name]
-
-## Implementation Notes
-
-[One heading per learning. Each entry should describe:
-- What the plan said or assumed (or what it omitted)
-- What actually happened
-- What had to be done differently or added
-
-Keep entries factual and specific — the goal is to improve the plan template and
-component docs in a future /update-docs pass.]
-
-## Files Added (not in plan)
-
-[List any files created that the plan did not mention, with a brief reason.
-Omit this section if there are none.]
-```
-
-## Step 7 — Hand off
+## Step 5 — Hand off
 
 Tell the user:
-- The implementation is complete
-- Where `learnings.md` was written and a one-line summary of the most significant learning (if any)
-- That the slice is ready for review and PR creation with `/pr`
+- The slice is fully processed
+- The path to `review.md` and a one-line summary of the verdict
+- Any blockers (B-numbered findings) that must be resolved before merging
+- Next step: run `/pr` to create the pull request
 
 Do not commit, push, or open a PR — the user triggers that.
