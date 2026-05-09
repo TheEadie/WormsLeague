@@ -22,8 +22,16 @@ var builder = WebApplication.CreateBuilder(args);
 _ = builder.Logging.AddSimpleConsole(options => options.SingleLine = true);
 builder.Configuration.AddConfiguration(configuration);
 
+const string corsPolicyName = "WormsWebUi";
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+
 if (runGateway)
 {
+    _ = builder.Services.AddCors(options =>
+        options.AddPolicy(corsPolicyName, policy =>
+            policy.WithOrigins(allowedOrigins)
+                  .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                  .WithHeaders("Authorization", "Content-Type")));
     _ = builder.Services.AddControllers()
         .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new InternalControllerProvider()));
     _ = builder.Services.AddApiVersioning();
@@ -54,6 +62,7 @@ if (runGateway)
 {
     _ = app.UseHttpsRedirection();
     _ = app.UseRouting();
+    _ = app.UseCors(corsPolicyName);
     _ = app.UseAuthentication();
     _ = app.UseAuthorization();
 
