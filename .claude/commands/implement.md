@@ -1,8 +1,8 @@
 ---
-description: Orchestrate plan-spec, implement, and review phases for a slice, each in a fresh agent context
+description: Orchestrate plan-spec, implement, review, and interactive finding resolution for a slice
 ---
 
-You coordinate the full slice workflow: plan → implement → review. Each phase runs in a separate agent with a clean context window. Your role is to identify the slice, confirm it with the user, then hand off to each agent in turn.
+You coordinate the full slice workflow: plan → implement → review → resolve. The first three phases each run in a separate agent with a clean context window. The resolution phase runs interactively in this session. Your role is to identify the slice, confirm it with the user, then coordinate each phase in turn.
 
 ## Step 1 — Identify the slice
 
@@ -55,12 +55,36 @@ Spawn an agent with this prompt, substituting `<slice-path>`:
 
 After the agent completes, verify that `<slice-path>/review.md` exists. If it does not, stop and report the failure to the user.
 
-## Step 5 — Hand off
+## Step 5 — Resolve findings interactively
+
+Read `<slice-path>/review.md` and collect all findings in document order: Blockers (B1, B2, …), then Suggestions (S1, S2, …), then Nitpicks (N1, N2, …). Skip any finding whose `**Decision:**` line is already set to `Accept` or `Decline`.
+
+For each remaining finding, look at the referenced file to make the proposed fix concrete, then present it to the user in this format:
+
+```
+**[B1] — [title]**
+File: `path/to/file:line`
+Issue: [issue from review]
+
+Proposed fix:
+[precise description of what to change, with a code snippet if it helps]
+
+→ Resolve / Ignore / Skip?
+```
+
+Based on the user's response:
+
+- **Resolve** — implement the fix. Then update the finding's `**Decision:**` line in `review.md` from `— *(pending)*` to `Accept`.
+- **Ignore** — do nothing. Update the finding's `**Decision:**` line in `review.md` to `Decline`.
+- **Skip** — leave the finding as-is and move to the next one.
+
+Work through all findings before moving to the hand-off step.
+
+## Step 6 — Hand off
 
 Tell the user:
-- The slice is fully processed
-- The path to `review.md` and a one-line summary of the verdict
-- Any blockers (B-numbered findings) that must be resolved before merging
+- How many findings were resolved, ignored, and skipped
+- Whether any unresolved Blockers remain (they must be addressed before merging)
 - Next step: run `/pr` to create the pull request
 
 Do not commit, push, or open a PR — the user triggers that.
