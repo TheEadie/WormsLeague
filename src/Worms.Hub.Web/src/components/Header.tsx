@@ -2,6 +2,7 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
+import ColourSchemePicker from './ColourSchemePicker'
 
 function Header() {
     return (
@@ -11,7 +12,7 @@ function Header() {
                     Worms Hub
                 </Typography>
                 <Box sx={{ flexGrow: 1 }} />
-                {/* Future: auth-state content (sign out button, user name, etc.) */}
+                <ColourSchemePicker />
             </Toolbar>
         </AppBar>
     )
