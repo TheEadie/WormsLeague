@@ -6,7 +6,7 @@ Conventions for working in `src/Worms.Hub.Web/` — the React SPA that will serv
 
 - **React 19** with **TypeScript** (strict mode)
 - **Vite** as the build tool and dev server
-- **Material UI (MUI v7)** for the component library and theming
+- **Material UI (MUI v9)** for the component library and theming
 - **Node 22.x** (matches `actions/setup-node` in CI)
 
 ## Project structure

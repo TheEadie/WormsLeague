@@ -9,7 +9,7 @@ Companion to [`spec.md`](./spec.md). Each slice below is sized to ship as a sing
 - [x] **Local-dev integration** — `docker compose up` brings the SPA up alongside the existing Hub services so the full stack runs locally end-to-end.
 - [x] **Gateway CORS** — the Gateway accepts browser requests from the UI's origin(s) without changing its auth contract.
 - [x] **Public landing page** — the SPA serves a real anonymous landing page as the v1 entry surface for unauthenticated visitors.
-- [ ] **Dark mode** — the UI respects the user's OS colour scheme preference, applying MUI's dark or light palette automatically; all existing and future pages benefit.
+- [x] **Dark mode** — the UI respects the user's OS colour scheme preference, applying MUI's dark or light palette automatically; all existing and future pages benefit.
 - [ ] **Browser sign-in** — a new SPA OIDC client is registered in the authority, the UI implements the interactive sign-in flow, and authenticated calls to the Gateway succeed with a bearer token.
 - [ ] **Authenticated route gate** — every page other than the landing page requires a signed-in league member; signed-out visitors are redirected to sign in.
 - [ ] **League list** — a signed-in member sees a list of leagues to navigate into, including any Gateway API extension needed to serve that list.
