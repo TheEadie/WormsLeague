@@ -1,7 +1,22 @@
-import Typography from '@mui/material/Typography'
+import { createBrowserRouter, RouterProvider } from 'react-router'
+import Layout from './components/Layout'
+import LandingPage from './pages/LandingPage'
+
+const router = createBrowserRouter([
+    {
+        path: '/',
+        element: <Layout />,
+        children: [
+            {
+                index: true,
+                element: <LandingPage />,
+            },
+        ],
+    },
+])
 
 function App() {
-    return <Typography variant="h1">Worms League</Typography>
+    return <RouterProvider router={router} />
 }
 
 export default App
