@@ -42,13 +42,11 @@ function LandingPage() {
                 >
                     Every shot.
                     <br />
-                    Every{' '}
-                    <Box component="span" sx={{ color: 'primary.main' }}>
-                        kill
-                    </Box>
-                    .
+                    Every kill.
                     <br />
-                    Archived.
+                    <Box component="span" sx={{ color: 'primary.main' }}>
+                        Archived.
+                    </Box>
                 </Typography>
             </Box>
 
