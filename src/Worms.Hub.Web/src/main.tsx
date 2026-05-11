@@ -5,14 +5,18 @@ import '@fontsource/jetbrains-mono/500.css'
 import '@fontsource/jetbrains-mono/700.css'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
+import { AuthProvider } from 'react-oidc-context'
 import App from './App.tsx'
 import theme from './theme.ts'
+import { oidcConfig } from './auth'
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <ThemeProvider theme={theme} defaultMode="system" noSsr>
             <CssBaseline />
-            <App />
+            <AuthProvider {...oidcConfig}>
+                <App />
+            </AuthProvider>
         </ThemeProvider>
     </StrictMode>,
 )
