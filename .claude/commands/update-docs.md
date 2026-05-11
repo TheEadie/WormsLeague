@@ -1,5 +1,6 @@
 ---
 description: Refresh CLAUDE.md and the docs under .claude/docs/ to match the current codebase
+effort: high
 ---
 
 You are auditing and updating the project's Claude-facing documentation so it reflects the current state of the code. The docs in scope:

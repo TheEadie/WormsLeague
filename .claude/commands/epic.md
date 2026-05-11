@@ -1,5 +1,6 @@
 ---
 description: Turn a large feature description into a high-level epic spec with a sliced PR breakdown
+effort: high
 ---
 
 Your task is to collaborate with the user to produce two high-level epic documents in the current project:

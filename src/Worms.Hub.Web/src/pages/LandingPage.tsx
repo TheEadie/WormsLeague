@@ -5,8 +5,10 @@ import Divider from '@mui/material/Divider'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import { useAuth } from 'react-oidc-context'
 
 function LandingPage() {
+    const auth = useAuth()
     return (
         <Box
             sx={{
@@ -67,7 +69,13 @@ function LandingPage() {
                         League members only.
                     </Typography>
 
-                    <Button variant="contained" fullWidth size="large" sx={{ py: 1.5 }}>
+                    <Button
+                        variant="contained"
+                        fullWidth
+                        size="large"
+                        sx={{ py: 1.5 }}
+                        onClick={() => void auth.signinRedirect()}
+                    >
                         Sign in
                     </Button>
 

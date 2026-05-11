@@ -1,5 +1,6 @@
 ---
 description: Orchestrate plan-spec, implement, review, and interactive finding resolution for a slice
+effort: medium
 ---
 
 You coordinate the full slice workflow: plan → implement → review → resolve. The first three phases each run in a separate agent with a clean context window. The resolution phase runs interactively in this session. Your role is to identify the slice, confirm it with the user, then coordinate each phase in turn.

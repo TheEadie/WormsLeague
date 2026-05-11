@@ -1,5 +1,6 @@
 ---
 description: Review an implementation against its spec, plan, and repo quality standards, producing an advisory report
+effort: high
 ---
 
 You review the changes made for a slice against the spec, plan, and repo quality standards. You produce a `review.md` report. You do NOT make code changes, commit, or modify the branch.
