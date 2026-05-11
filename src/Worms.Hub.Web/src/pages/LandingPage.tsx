@@ -52,9 +52,7 @@ const WEAPONS = [
 function LandingPage() {
     const auth = useAuth()
 
-    const [weaponIndex, setWeaponIndex] = useState(() =>
-        Math.floor(Math.random() * WEAPONS.length),
-    )
+    const [weaponIndex, setWeaponIndex] = useState(() => Math.floor(Math.random() * WEAPONS.length))
     const [displayText, setDisplayText] = useState('')
     const [isDeleting, setIsDeleting] = useState(false)
 
@@ -68,7 +66,7 @@ function LandingPage() {
 
         if (isDeleting && displayText === '') {
             const t = setTimeout(() => {
-                setWeaponIndex(prev => {
+                setWeaponIndex((prev) => {
                     let next = Math.floor(Math.random() * (WEAPONS.length - 1))
                     if (next >= prev) next++
                     return next
