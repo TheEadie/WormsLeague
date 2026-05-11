@@ -204,3 +204,6 @@ sample-data/cli/
 
 *.sarif
 dotnet-tools.json
+
+# Vite local environment overrides
+src/Worms.Hub.Web/.env.local
