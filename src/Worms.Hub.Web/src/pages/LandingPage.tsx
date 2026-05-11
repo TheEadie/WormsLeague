@@ -42,7 +42,7 @@ function LandingPage() {
                 >
                     Every shot.
                     <br />
-                    Every kill.
+                    All the chaos.
                     <br />
                     <Box component="span" sx={{ color: 'primary.main' }}>
                         Archived.
