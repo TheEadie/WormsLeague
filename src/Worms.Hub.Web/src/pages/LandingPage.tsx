@@ -12,7 +12,7 @@ function LandingPage() {
             sx={{
                 display: 'grid',
                 gridTemplateColumns: { xs: '1fr', md: '1.15fr 0.85fr' },
-                minHeight: { md: 'calc(100vh - 52px)' },
+                height: { md: '100%' },
             }}
         >
             {/* Hero column */}
