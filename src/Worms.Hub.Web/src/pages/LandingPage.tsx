@@ -22,6 +22,8 @@ function LandingPage() {
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center',
                     gap: 4,
                     borderRight: { md: 1 },
                     borderColor: { md: 'divider' },
