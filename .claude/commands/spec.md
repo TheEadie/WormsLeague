@@ -1,5 +1,6 @@
 ---
 description: Turn one slice from an epic plan into a focused, implementable spec
+effort: high
 ---
 
 Your task is to create a slice specification file from a user's request. This spec will be reviewed by a colleague (human or AI) before implementation, so it must be unambiguous and complete.
