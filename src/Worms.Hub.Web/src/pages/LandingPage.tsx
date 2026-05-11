@@ -59,7 +59,7 @@ function LandingPage() {
                     bgcolor: 'background.default',
                 }}
             >
-                <Paper elevation={4} sx={{ width: '100%', maxWidth: 400, p: 4, borderRadius: 3 }}>
+                <Paper elevation={4} sx={{ width: '100%', maxWidth: 480, p: 4, borderRadius: 3 }}>
                     <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
                         Sign in to continue
                     </Typography>
