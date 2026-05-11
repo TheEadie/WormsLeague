@@ -4,7 +4,8 @@ import Tooltip from '@mui/material/Tooltip'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
-import type { Mode } from '@mui/system/cssVars/useCurrentColorScheme'
+
+type Mode = 'light' | 'dark' | 'system'
 
 const cycle: Mode[] = ['light', 'dark', 'system']
 

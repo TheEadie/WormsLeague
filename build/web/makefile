@@ -7,6 +7,6 @@ web.build:
 
 web.lint:
 	@cd src/Worms.Hub.Web && npx eslint src
-	@cd src/Worms.Hub.Web && npx tsc --noEmit
+	@cd src/Worms.Hub.Web && npx tsc -b
 	@cd src/Worms.Hub.Web && npx prettier --check src
 	@echo ""
