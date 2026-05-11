@@ -27,6 +27,7 @@ Read everything before touching any files:
 - All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present
 - Relevant component docs under `.claude/docs/components/` for the areas touched
 - Any `learnings.md` files from earlier slices in the same epic — they capture caveats that may apply here too
+- If the epic folder contains a `design/` directory (e.g. `.claude/specs/<epic-slug>/design/`) and this slice touches anything it covers, read the relevant files — treat them as a reference for layout, structure, and ideas, not as the authoritative definition.
 
 ## Step 3 — Create tasks
 

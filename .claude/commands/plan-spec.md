@@ -29,6 +29,7 @@ Read everything needed to produce an accurate, codebase-consistent plan:
 - The relevant component docs under `.claude/docs/components/` for the areas this slice touches
 - The source files the slice will most likely create or modify
 - Any `learnings.md` files from earlier slices in the same epic — they capture known caveats from prior implementation
+- If the epic folder contains a `design/` directory (e.g. `.claude/specs/<epic-slug>/design/`) and this slice touches anything it covers, read the relevant files — treat them as a reference for layout, structure, and ideas, not as the authoritative definition.
 
 ## Step 3 — Plan in plan mode
 

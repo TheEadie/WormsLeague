@@ -31,6 +31,7 @@ Before writing anything, read the following to understand how the slice fits the
 - All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present.
 - The relevant component doc(s) under `.claude/docs/components/` — load whichever match the area this slice touches (e.g. `cli.md`, `hub-gateway.md`, `armageddon-files.md`). The mapping is in the root `CLAUDE.md`.
 - Any source files directly relevant to the slice area.
+- If the epic folder contains a `design/` directory (e.g. `.claude/specs/<epic-slug>/design/`) and this slice touches anything it covers, read the relevant files — treat them as a reference for layout, structure, and ideas, not as the authoritative definition.
 
 This ensures the spec accurately reflects the epic's intent, the system's boundaries, and existing behaviour. If the user's request appears to contradict the epic spec or to skip ahead in the plan, raise that with them before writing the slice spec.
 
