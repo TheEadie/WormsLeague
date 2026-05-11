@@ -12,7 +12,7 @@ function LandingPage() {
             sx={{
                 display: 'grid',
                 gridTemplateColumns: { xs: '1fr', md: '1.15fr 0.85fr' },
-                height: { md: '100%' },
+                flex: { md: 1 },
             }}
         >
             {/* Hero column */}
