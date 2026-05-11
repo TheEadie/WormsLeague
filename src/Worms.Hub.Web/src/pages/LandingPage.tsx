@@ -1,4 +1,5 @@
 // Image source: https://static.wikia.nocookie.net/oneyplays/images/5/52/Worm.png — Worms Armageddon asset (Team17)
+import { useMemo } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
@@ -7,8 +8,36 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { useAuth } from 'react-oidc-context'
 
+const WEAPONS = [
+    'Banana Bomb',
+    'Sheep',
+    'Holy Hand Grenade',
+    'Ninja Rope',
+    'Fire Punch',
+    'Dragon Ball',
+    'Concrete Donkey',
+    'Super Sheep',
+    'Old Woman',
+    'Pigeon',
+    'Skunk',
+    'Mad Cow',
+    'Baseball Bat',
+    'Prod',
+    'Kamikaze',
+    'Earthquake',
+    'Blowtorch',
+    'Ming Vase',
+]
+
 function LandingPage() {
     const auth = useAuth()
+
+    const [x, y] = useMemo(() => {
+        const i = Math.floor(Math.random() * WEAPONS.length)
+        let j = Math.floor(Math.random() * (WEAPONS.length - 1))
+        if (j >= i) j++
+        return [WEAPONS[i], WEAPONS[j]]
+    }, [])
     return (
         <Box
             sx={{
@@ -42,13 +71,14 @@ function LandingPage() {
                     component="h1"
                     sx={{ fontWeight: 800, lineHeight: 1.0, letterSpacing: '-0.02em' }}
                 >
-                    Every shot.
+                    Every {x}.
                     <br />
-                    All the chaos.
-                    <br />
+                    Every{' '}
                     <Box component="span" sx={{ color: 'primary.main' }}>
-                        Archived.
+                        {y}.
                     </Box>
+                    <br />
+                    Archived.
                 </Typography>
             </Box>
 
