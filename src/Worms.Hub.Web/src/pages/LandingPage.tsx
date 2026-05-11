@@ -38,7 +38,15 @@ function LandingPage() {
                     component="h1"
                     sx={{ fontWeight: 800, lineHeight: 1.0, letterSpacing: '-0.02em' }}
                 >
-                    Every shot. Every kill. Archived.
+                    Every shot.
+                    <br />
+                    Every{' '}
+                    <Box component="span" sx={{ color: 'primary.main' }}>
+                        kill
+                    </Box>
+                    .
+                    <br />
+                    Archived.
                 </Typography>
             </Box>
 
