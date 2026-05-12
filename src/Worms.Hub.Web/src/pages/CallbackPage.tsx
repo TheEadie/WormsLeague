@@ -11,7 +11,7 @@ function CallbackPage() {
 
     useEffect(() => {
         if (auth.isAuthenticated) {
-            void navigate('/authenticated', { replace: true })
+            void navigate('/leagues', { replace: true })
         }
     }, [auth.isAuthenticated, navigate])
 

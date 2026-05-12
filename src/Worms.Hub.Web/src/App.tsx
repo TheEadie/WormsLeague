@@ -3,7 +3,7 @@ import Layout from './components/Layout'
 import RequireAuth from './components/RequireAuth'
 import LandingPage from './pages/LandingPage'
 import CallbackPage from './pages/CallbackPage'
-import AuthenticatedPage from './pages/AuthenticatedPage'
+import LeagueListPage from './pages/LeagueListPage'
 
 const router = createBrowserRouter([
     {
@@ -13,10 +13,18 @@ const router = createBrowserRouter([
             { index: true, element: <LandingPage /> },
             { path: 'callback', element: <CallbackPage /> },
             {
-                path: 'authenticated',
+                path: 'leagues',
                 element: (
                     <RequireAuth>
-                        <AuthenticatedPage />
+                        <LeagueListPage />
+                    </RequireAuth>
+                ),
+            },
+            {
+                path: 'leagues/:id',
+                element: (
+                    <RequireAuth>
+                        <div>League detail — coming soon</div>
                     </RequireAuth>
                 ),
             },
