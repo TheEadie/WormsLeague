@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import Layout from './components/Layout'
+import RequireAuth from './components/RequireAuth'
 import LandingPage from './pages/LandingPage'
 import CallbackPage from './pages/CallbackPage'
 import AuthenticatedPage from './pages/AuthenticatedPage'
@@ -11,7 +12,14 @@ const router = createBrowserRouter([
         children: [
             { index: true, element: <LandingPage /> },
             { path: 'callback', element: <CallbackPage /> },
-            { path: 'authenticated', element: <AuthenticatedPage /> },
+            {
+                path: 'authenticated',
+                element: (
+                    <RequireAuth>
+                        <AuthenticatedPage />
+                    </RequireAuth>
+                ),
+            },
         ],
     },
 ])

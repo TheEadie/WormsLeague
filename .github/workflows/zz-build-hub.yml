@@ -58,7 +58,7 @@ jobs:
           make wa-runner.package
 
   test-wa-runner:
-    name: WA Runner Integration Test
+    name: WA Runner - Integration Tests
     needs: build-wa-runner
     if: ${{ inputs.wa-runner-test == 'true' }}
     runs-on: ubuntu-latest
