@@ -9,6 +9,7 @@ namespace Worms.Hub.Gateway.API.Controllers;
 internal sealed class LeaguesController(
     SchemeFiles schemeFiles,
     LeaguesRepository leaguesRepository,
+    ReplaysRepository replaysRepository,
     IFeatureFlags featureFlags) : V1ApiController
 {
     [HttpGet]
@@ -64,4 +65,21 @@ internal sealed class LeaguesController(
             new Uri(Url.Action(action: "Get", controller: "SchemeFiles", values: new { id })!, UriKind.Relative));
     }
 
+    [HttpGet("{id}/replays")]
+    public async Task<ActionResult<IReadOnlyList<ReplayInLeagueDto>>> GetReplays(string id)
+    {
+        if (!await featureFlags.IsLeaguesEnabledAsync())
+        {
+            return NotFound();
+        }
+
+        var league = leaguesRepository.GetById(id);
+        if (league is null)
+        {
+            return NotFound();
+        }
+
+        var replays = replaysRepository.GetByLeagueId(id);
+        return Ok(replays.Select(ReplayInLeagueDto.FromDomain).ToList());
+    }
 }
