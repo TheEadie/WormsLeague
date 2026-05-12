@@ -59,16 +59,21 @@ internal sealed class Processor(
 
         var replayLog = await File.ReadAllTextAsync(logPath);
 
-        // Update the database with the log
+        // Parse the replay log
+        var replayModel = replayTextReader.GetModel(replayLog);
+
+        // Update the database with the log and parsed fields
         var updatedReplay = replay with
         {
             Status = "Processed",
-            FullLog = replayLog
+            FullLog = replayLog,
+            Date = replayModel.Date == default ? null : replayModel.Date,
+            Winner = string.IsNullOrEmpty(replayModel.Winner) ? null : replayModel.Winner,
+            Teams = replayModel.Teams.Count > 0
+                ? replayModel.Teams.Select(t => t.Name).ToList()
+                : null
         };
         replayRepository.Update(updatedReplay);
-
-        // Parse the replay log
-        var replayModel = replayTextReader.GetModel(replayLog);
 
         // Announce game complete
         await announcer.AnnounceGameComplete(replayModel.Winner);
