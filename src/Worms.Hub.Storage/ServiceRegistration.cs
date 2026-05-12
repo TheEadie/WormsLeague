@@ -13,6 +13,7 @@ public static class ServiceRegistration
         builder.AddSingleton<DatabaseSchemaVersion>()
             .AddScoped<IRepository<Game>, GamesRepository>()
             .AddScoped<IRepository<Replay>, ReplaysRepository>()
+            .AddScoped<ReplaysRepository>()
             .AddScoped<LeaguesRepository>()
             .AddScoped<CliFiles>()
             .AddScoped<ReplayFiles>()
