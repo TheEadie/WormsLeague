@@ -14,7 +14,7 @@ Companion to [`spec.md`](./spec.md). Each slice below is sized to ship as a sing
 - [x] **Browser sign-in** — a new SPA OIDC client is registered in the authority, the UI implements the interactive sign-in flow, and authenticated calls to the Gateway succeed with a bearer token.
 - [x] **Authenticated route gate** — every page other than the landing page requires a signed-in league member; signed-out visitors are redirected to sign in.
 - [x] **League list** — a signed-in member sees a list of leagues to navigate into, including any Gateway API extension needed to serve that list.
-- [ ] **Per-league page** — a signed-in member can open a league and see its historic games list and the scheme it uses, including any Gateway API extension needed.
+- [x] **Per-league page** — a signed-in member can open a league and see its historic games list and the scheme it uses, including any Gateway API extension needed.
 - [ ] **Game detail page** — a signed-in member can drill into a single game and see its participants, winner, scheme, and date.
 - [ ] **Replay viewer** — the game detail page renders the replay's GIF(s) and log in the browser, including any Gateway API extension needed to retrieve those artifacts.
 - [ ] **Production deployment** — the SPA is built and deployed to production alongside the rest of the Hub, with CORS and authority configuration applied to the production environment.
