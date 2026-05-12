@@ -119,12 +119,23 @@ function LeagueDetailPage() {
                             <Table size="small">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ fontWeight: 700, width: 72 }}>Match</TableCell>
-                                        <TableCell sx={{ fontWeight: 700, width: 120 }}>Date</TableCell>
+                                        <TableCell sx={{ fontWeight: 700, width: 72 }}>
+                                            Match
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 700, width: 120 }}>
+                                            Date
+                                        </TableCell>
                                         <TableCell sx={{ fontWeight: 700 }}>Players</TableCell>
-                                        <TableCell sx={{ fontWeight: 700, width: 160 }}>Top weapons</TableCell>
-                                        <TableCell sx={{ fontWeight: 700, width: 80 }}>Length</TableCell>
-                                        <TableCell sx={{ fontWeight: 700, width: 160 }} align="right">
+                                        <TableCell sx={{ fontWeight: 700, width: 160 }}>
+                                            Top weapons
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 700, width: 80 }}>
+                                            Length
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ fontWeight: 700, width: 160 }}
+                                            align="right"
+                                        >
                                             Most Damage
                                         </TableCell>
                                     </TableRow>
@@ -138,174 +149,174 @@ function LeagueDetailPage() {
                                                 new Date(a.date ?? a.name).getTime(),
                                         )
                                         .map((replay) =>
-                                        replay.processed ? (
-                                            <TableRow
-                                                key={replay.id}
-                                                hover
-                                                onClick={() =>
-                                                    void navigate(
-                                                        `/leagues/${id}/replays/${replay.id}`,
-                                                    )
-                                                }
-                                                sx={{ cursor: 'pointer' }}
-                                            >
-                                                <TableCell>
-                                                    <Typography
-                                                        sx={{
-                                                            fontFamily: monoFontFamily,
-                                                            fontSize: 12,
-                                                            color: 'text.secondary',
-                                                        }}
-                                                    >
-                                                        #{replay.id.padStart(3, '0')}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Typography variant="body2">
-                                                        {new Date(
-                                                            replay.date!,
-                                                        ).toLocaleDateString('en-GB', {
-                                                            year: 'numeric',
-                                                            month: 'short',
-                                                            day: 'numeric',
-                                                        })}
-                                                    </Typography>
-                                                    <Typography
-                                                        sx={{
-                                                            fontFamily: monoFontFamily,
-                                                            fontSize: 11,
-                                                            color: 'text.secondary',
-                                                        }}
-                                                    >
-                                                        {new Date(
-                                                            replay.date!,
-                                                        ).toLocaleTimeString('en-GB', {
-                                                            hour: '2-digit',
-                                                            minute: '2-digit',
-                                                        })}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Stack
-                                                        direction="row"
-                                                        spacing={0.5}
-                                                        sx={{ flexWrap: 'wrap' }}
-                                                        useFlexGap
-                                                    >
-                                                        {replay.teams
-                                                            ?.slice()
-                                                            .sort((a) =>
-                                                                a === replay.winner ? -1 : 1,
-                                                            )
-                                                            .map((team) => (
-                                                                <Box
-                                                                    key={team}
-                                                                    sx={{
-                                                                        display: 'flex',
-                                                                        alignItems: 'center',
-                                                                        gap: 0.5,
-                                                                    }}
-                                                                >
-                                                                    {team === replay.winner && (
-                                                                        <WorkspacePremiumIcon
+                                            replay.processed ? (
+                                                <TableRow
+                                                    key={replay.id}
+                                                    hover
+                                                    onClick={() =>
+                                                        void navigate(
+                                                            `/leagues/${id}/replays/${replay.id}`,
+                                                        )
+                                                    }
+                                                    sx={{ cursor: 'pointer' }}
+                                                >
+                                                    <TableCell>
+                                                        <Typography
+                                                            sx={{
+                                                                fontFamily: monoFontFamily,
+                                                                fontSize: 12,
+                                                                color: 'text.secondary',
+                                                            }}
+                                                        >
+                                                            #{replay.id.padStart(3, '0')}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography variant="body2">
+                                                            {new Date(
+                                                                replay.date!,
+                                                            ).toLocaleDateString('en-GB', {
+                                                                year: 'numeric',
+                                                                month: 'short',
+                                                                day: 'numeric',
+                                                            })}
+                                                        </Typography>
+                                                        <Typography
+                                                            sx={{
+                                                                fontFamily: monoFontFamily,
+                                                                fontSize: 11,
+                                                                color: 'text.secondary',
+                                                            }}
+                                                        >
+                                                            {new Date(
+                                                                replay.date!,
+                                                            ).toLocaleTimeString('en-GB', {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                            })}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Stack
+                                                            direction="row"
+                                                            spacing={0.5}
+                                                            sx={{ flexWrap: 'wrap' }}
+                                                            useFlexGap
+                                                        >
+                                                            {replay.teams
+                                                                ?.slice()
+                                                                .sort((a) =>
+                                                                    a === replay.winner ? -1 : 1,
+                                                                )
+                                                                .map((team) => (
+                                                                    <Box
+                                                                        key={team}
+                                                                        sx={{
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            gap: 0.5,
+                                                                        }}
+                                                                    >
+                                                                        {team === replay.winner && (
+                                                                            <WorkspacePremiumIcon
+                                                                                sx={{
+                                                                                    fontSize: 14,
+                                                                                    color: 'warning.main',
+                                                                                }}
+                                                                            />
+                                                                        )}
+                                                                        <Chip
+                                                                            label={team}
+                                                                            size="small"
+                                                                            variant="outlined"
                                                                             sx={{
-                                                                                fontSize: 14,
-                                                                                color: 'warning.main',
+                                                                                fontFamily:
+                                                                                    monoFontFamily,
+                                                                                fontSize: 11,
                                                                             }}
                                                                         />
-                                                                    )}
-                                                                    <Chip
-                                                                        label={team}
-                                                                        size="small"
-                                                                        variant="outlined"
-                                                                        sx={{
-                                                                            fontFamily:
-                                                                                monoFontFamily,
-                                                                            fontSize: 11,
-                                                                        }}
-                                                                    />
-                                                                </Box>
-                                                            ))}
-                                                    </Stack>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Typography
-                                                        variant="caption"
-                                                        color="text.disabled"
-                                                    >
-                                                        —
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Typography
-                                                        variant="caption"
-                                                        color="text.disabled"
-                                                    >
-                                                        —
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    <Typography
-                                                        variant="caption"
-                                                        color="text.disabled"
-                                                    >
-                                                        —
-                                                    </Typography>
-                                                </TableCell>
-                                            </TableRow>
-                                        ) : (
-                                            <TableRow key={replay.id}>
-                                                <TableCell>
-                                                    <Typography
-                                                        sx={{
-                                                            fontFamily: monoFontFamily,
-                                                            fontSize: 12,
-                                                            color: 'text.secondary',
-                                                        }}
-                                                    >
-                                                        #{replay.id.padStart(3, '0')}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Typography variant="body2">
-                                                        {new Date(
-                                                            replay.name,
-                                                        ).toLocaleDateString('en-GB', {
-                                                            year: 'numeric',
-                                                            month: 'short',
-                                                            day: 'numeric',
-                                                        })}
-                                                    </Typography>
-                                                    <Typography
-                                                        sx={{
-                                                            fontFamily: monoFontFamily,
-                                                            fontSize: 11,
-                                                            color: 'text.secondary',
-                                                        }}
-                                                    >
-                                                        &nbsp;
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell colSpan={4}>
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            gap: 1,
-                                                        }}
-                                                    >
-                                                        <CircularProgress size={12} />
+                                                                    </Box>
+                                                                ))}
+                                                        </Stack>
+                                                    </TableCell>
+                                                    <TableCell>
                                                         <Typography
-                                                            variant="body2"
-                                                            color="text.secondary"
+                                                            variant="caption"
+                                                            color="text.disabled"
                                                         >
-                                                            Processing...
+                                                            —
                                                         </Typography>
-                                                    </Box>
-                                                </TableCell>
-                                            </TableRow>
-                                        ),
-                                    )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography
+                                                            variant="caption"
+                                                            color="text.disabled"
+                                                        >
+                                                            —
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Typography
+                                                            variant="caption"
+                                                            color="text.disabled"
+                                                        >
+                                                            —
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ) : (
+                                                <TableRow key={replay.id}>
+                                                    <TableCell>
+                                                        <Typography
+                                                            sx={{
+                                                                fontFamily: monoFontFamily,
+                                                                fontSize: 12,
+                                                                color: 'text.secondary',
+                                                            }}
+                                                        >
+                                                            #{replay.id.padStart(3, '0')}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography variant="body2">
+                                                            {new Date(
+                                                                replay.name,
+                                                            ).toLocaleDateString('en-GB', {
+                                                                year: 'numeric',
+                                                                month: 'short',
+                                                                day: 'numeric',
+                                                            })}
+                                                        </Typography>
+                                                        <Typography
+                                                            sx={{
+                                                                fontFamily: monoFontFamily,
+                                                                fontSize: 11,
+                                                                color: 'text.secondary',
+                                                            }}
+                                                        >
+                                                            &nbsp;
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell colSpan={4}>
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 1,
+                                                            }}
+                                                        >
+                                                            <CircularProgress size={12} />
+                                                            <Typography
+                                                                variant="body2"
+                                                                color="text.secondary"
+                                                            >
+                                                                Processing...
+                                                            </Typography>
+                                                        </Box>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ),
+                                        )}
                                 </TableBody>
                             </Table>
                         </TableContainer>
