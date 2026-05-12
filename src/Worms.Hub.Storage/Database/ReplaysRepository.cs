@@ -19,7 +19,7 @@ public sealed class ReplaysRepository(IConfiguration configuration) : IRepositor
             parameter.Value = value ?? (object)DBNull.Value;
 
         public override string[] Parse(object value) =>
-            value is string[] arr ? arr : [];
+            value as string[] ?? [];
     }
 
     public IReadOnlyCollection<Replay> GetAll()
