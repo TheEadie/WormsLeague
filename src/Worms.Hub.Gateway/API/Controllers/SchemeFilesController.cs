@@ -29,7 +29,7 @@ internal sealed class SchemeFilesController(SchemeFiles schemeFiles, ILogger<Sch
         }
 
         var latestDetails = await schemeFiles.GetLatestDetails(id);
-        if (!System.IO.File.Exists(latestDetails.SchemePath))
+        if (latestDetails is null || !System.IO.File.Exists(latestDetails.SchemePath))
         {
             logger.Log(LogLevel.Information, "Scheme file {Name} not found", id);
             return NotFound("Scheme file not found");
