@@ -66,7 +66,7 @@ internal sealed class LeaguesController(
     }
 
     [HttpGet("{id}/replays")]
-    public async Task<ActionResult<IReadOnlyList<ReplayInLeagueDto>>> GetReplays(string id)
+    public async Task<ActionResult<IReadOnlyList<ReplayDto>>> GetReplays(string id)
     {
         if (!await featureFlags.IsLeaguesEnabledAsync())
         {
@@ -80,6 +80,6 @@ internal sealed class LeaguesController(
         }
 
         var replays = replaysRepository.GetByLeagueId(id);
-        return Ok(replays.Select(ReplayInLeagueDto.FromDomain).ToList());
+        return Ok(replays.Select(ReplayDto.FromDomain).ToList());
     }
 }
