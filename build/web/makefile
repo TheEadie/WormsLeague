@@ -10,3 +10,7 @@ web.lint:
 	@cd src/Worms.Hub.Web && npx tsc -b
 	@cd src/Worms.Hub.Web && npx prettier --check src
 	@echo ""
+
+web.test:
+	@cd src/Worms.Hub.Web && npx vitest run
+	@echo ""

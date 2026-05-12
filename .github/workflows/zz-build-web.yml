@@ -6,8 +6,8 @@ on:
   workflow_call:
 
 jobs:
-  build-web:
-    name: Build
+  test-web:
+    name: Web UI - Unit tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,7 +16,22 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.x
-      - name: Build
+      - name: Install dependencies
+        run: cd src/Worms.Hub.Web && npm ci
+      - name: Test
+        run: make web.test
+
+  package-web:
+    name: Web UI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+      - name: Package
         run: make web.build
       - name: Upload build
         uses: actions/upload-artifact@v7
