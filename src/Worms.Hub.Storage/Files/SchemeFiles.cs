@@ -7,9 +7,14 @@ public sealed class SchemeFiles(IConfiguration configuration)
 {
     private const string VersionFilename = "version.txt";
 
-    public async Task<League> GetLatestDetails(string id)
+    public async Task<League?> GetLatestDetails(string id)
     {
         var (versionPath, schemePath) = GetFilesPaths(id);
+        if (!File.Exists(versionPath))
+        {
+            return null;
+        }
+
         var versionContent = await File.ReadAllTextAsync(versionPath);
 
         var version = Version.TryParse(versionContent, out var parsedVersion)
