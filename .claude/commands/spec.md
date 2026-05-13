@@ -44,17 +44,60 @@ Before probing for detail, identify the simplest version of the slice and presen
 
 If the user's initial request already contains complexity that isn't strictly necessary to deliver the slice, surface that and ask whether it can be simplified or deferred to a later slice.
 
-## Step 4 — Resolve ambiguities
+Wait for the user's answers before continuing.
 
-Probe for the kinds of ambiguity that most commonly cause misunderstanding between author and reviewer. Ask the user about anything that is unclear, including:
+## Step 4 — Grill the user until the spec is watertight
+
+This step is iterative. You must complete multiple rounds of questioning. Do not move to Step 5 until every question has been answered.
+
+### Round A — Core behaviour
+
+Ask about anything unclear in the happy path:
 
 - Which components or projects are affected
-- Error cases and how they should be handled
-- Any configuration or inputs required
-- How this interacts with existing features
-- Edge cases the user has considered
+- What data flows in and out, and in what format
+- How the user discovers or triggers the feature
+- What "success" looks like from the user's perspective
 
-Do not proceed to write the spec until you have enough detail to fill every section completely. Keep asking until there are no open questions remaining, or until the user explicitly decides to leave something unresolved.
+Wait for answers. Do not proceed until each question has a response.
+
+### Round B — Error cases and failure modes
+
+For every operation the slice performs, ask what should happen when it goes wrong:
+
+- What if the required data is missing or malformed?
+- What if a network call, database query, or external service fails?
+- What if the user triggers the action in the wrong state or without permission?
+- What if two actions happen concurrently?
+
+Wait for answers. Do not proceed until each question has a response.
+
+### Round C — Edge cases and boundaries
+
+Systematically probe the edges. Work through each category and ask any that apply:
+
+- **Empty / zero states** — what does the UI or response look like with no data?
+- **Single vs. many** — does behaviour change with exactly one item vs. a list?
+- **Large data** — are there limits on input size, list length, or payload?
+- **Ordering and timing** — does sequence matter? Can events arrive out of order?
+- **Transitions** — what happens mid-flow if the user navigates away, refreshes, or cancels?
+- **Repeated actions** — what if the user submits twice, or the same event is processed twice?
+- **Stale data** — can the user act on data that has since changed?
+
+For each edge case identified, confirm the expected behaviour — do not leave it as "TBD".
+
+Wait for answers. Do not proceed until each question has a response.
+
+### Round D — Scope and deferral check
+
+After rounds A–C, review every answer and ask yourself: are there any remaining ambiguities, implicit assumptions, or "it depends" answers that have not been pinned down? If yes, ask those questions now. Repeat this check until the answer is no.
+
+Do not proceed to Step 5 until you can answer "yes" to all of the following:
+
+- Every requirement has a clear, unambiguous description.
+- Every error case has a specified outcome.
+- Every edge case identified in Round C either has a defined behaviour or has been explicitly deferred by the user.
+- The "Open Questions" section of the spec will either be empty or contain only items the user has deliberately chosen to leave unresolved.
 
 ## Step 5 — Create the spec file
 
@@ -85,7 +128,7 @@ Do not proceed to write the spec until you have enough detail to fill every sect
 
 ## Open Questions
 
-[Any unresolved ambiguities the user has chosen to defer. Leave this section empty (or omit it) if all questions were resolved.]
+[Any unresolved ambiguities the user has explicitly chosen to defer — not items that were never asked. If you have reached Step 5, this section should be empty or contain only deliberate deferrals. Do not write the spec if you still have unanswered questions; go back to Step 4.]
 ```
 
 ### Rules for the spec content
