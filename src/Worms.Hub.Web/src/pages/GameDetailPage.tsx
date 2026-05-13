@@ -6,6 +6,7 @@ import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Chip from '@mui/material/Chip'
 import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
+import Divider from '@mui/material/Divider'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -95,8 +96,13 @@ function TurnByTurnPanel({ turns }: TurnByTurnPanelProps) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {turns.map((turn) => (
-                        <TableRow key={turn.turnNumber}>
+                    {turns.map((turn) => {
+                        const hasKill = turn.damage.some((d) => d.wormsKilled > 0)
+                        return (
+                        <TableRow
+                            key={turn.turnNumber}
+                            sx={{ bgcolor: hasKill ? 'rgba(211,47,47,0.08)' : 'transparent' }}
+                        >
                             <TableCell
                                 sx={{
                                     fontFamily: monoFontFamily,
@@ -140,27 +146,27 @@ function TurnByTurnPanel({ turns }: TurnByTurnPanelProps) {
                             <TableCell>
                                 {turn.damage.length === 0 ? (
                                     <Typography variant="caption" color="text.disabled">
-                                        —
+                                        — no damage —
                                     </Typography>
                                 ) : (
-                                    <Stack direction="column" spacing={0.5}>
+                                    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }} useFlexGap>
                                         {turn.damage.map((d) => (
                                             <Box
                                                 key={d.teamName}
-                                                sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 0.5,
-                                                }}
+                                                sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
                                             >
-                                                <Typography variant="body2">
-                                                    {d.teamName}: {d.healthLost}
+                                                <Typography sx={{ fontFamily: monoFontFamily, fontSize: 12, color: 'text.secondary' }}>
+                                                    {d.teamName}:
+                                                </Typography>
+                                                <Typography sx={{ fontFamily: monoFontFamily, fontSize: 12, fontWeight: 700, color: 'primary.light' }}>
+                                                    {d.healthLost}
                                                 </Typography>
                                                 {d.wormsKilled > 0 && (
                                                     <Chip
                                                         label={`+${d.wormsKilled} kill${d.wormsKilled > 1 ? 's' : ''}`}
                                                         size="small"
                                                         color="error"
+                                                        sx={{ height: 16, fontSize: 9, fontWeight: 700 }}
                                                     />
                                                 )}
                                             </Box>
@@ -169,15 +175,16 @@ function TurnByTurnPanel({ turns }: TurnByTurnPanelProps) {
                                 )}
                             </TableCell>
                         </TableRow>
-                    ))}
+                        )
+                    })}
                 </TableBody>
             </Table>
         </TableContainer>
     )
 }
 
-type WeaponStats = { name: string; usageCount: number; attributedDamage: number }
-type TeamWeaponMap = Map<string, WeaponStats[]>
+type TeamBreakdown = { teamName: string; usageCount: number; attributedDamage: number; attributedKills: number }
+type WeaponCard = { name: string; totalUses: number; totalDamage: number; totalKills: number; byTeam: TeamBreakdown[] }
 
 interface WeaponsPanelProps {
     turns: TurnDto[] | null
@@ -194,80 +201,96 @@ function WeaponsPanel({ turns }: WeaponsPanelProps) {
         )
     }
 
-    const teamWeaponMap: TeamWeaponMap = new Map()
+    const weaponMap = new Map<string, WeaponCard>()
 
     for (const turn of turns) {
-        if (!teamWeaponMap.has(turn.teamName)) {
-            teamWeaponMap.set(turn.teamName, [])
-        }
-        const stats = teamWeaponMap.get(turn.teamName)!
-
         for (const weapon of turn.weapons) {
-            let entry = stats.find((s) => s.name === weapon.name)
-            if (!entry) {
-                entry = { name: weapon.name, usageCount: 0, attributedDamage: 0 }
-                stats.push(entry)
+            if (!weaponMap.has(weapon.name)) {
+                weaponMap.set(weapon.name, { name: weapon.name, totalUses: 0, totalDamage: 0, totalKills: 0, byTeam: [] })
             }
-            entry.usageCount++
+            const card = weaponMap.get(weapon.name)!
+            card.totalUses++
+            let teamEntry = card.byTeam.find((t) => t.teamName === turn.teamName)
+            if (!teamEntry) {
+                teamEntry = { teamName: turn.teamName, usageCount: 0, attributedDamage: 0, attributedKills: 0 }
+                card.byTeam.push(teamEntry)
+            }
+            teamEntry.usageCount++
         }
 
         if (turn.weapons.length > 0) {
             const lastWeapon = turn.weapons[turn.weapons.length - 1]
-            const totalDamage = turn.damage.reduce((sum, d) => sum + d.healthLost, 0)
-            const entry = stats.find((s) => s.name === lastWeapon.name)
-            if (entry) {
-                entry.attributedDamage += totalDamage
+            const turnDamage = turn.damage.reduce((sum, d) => sum + d.healthLost, 0)
+            const turnKills = turn.damage.reduce((sum, d) => sum + d.wormsKilled, 0)
+            const card = weaponMap.get(lastWeapon.name)!
+            card.totalDamage += turnDamage
+            card.totalKills += turnKills
+            const teamEntry = card.byTeam.find((t) => t.teamName === turn.teamName)
+            if (teamEntry) {
+                teamEntry.attributedDamage += turnDamage
+                teamEntry.attributedKills += turnKills
             }
         }
     }
 
-    const sortedTeams = Array.from(teamWeaponMap.entries()).map(([teamName, weaponStats]) => ({
-        teamName,
-        weapons: weaponStats
-            .slice()
-            .sort((a, b) => b.attributedDamage - a.attributedDamage || b.usageCount - a.usageCount),
-    }))
+    const weapons = Array.from(weaponMap.values()).sort(
+        (a, b) => b.totalDamage - a.totalDamage || b.totalUses - a.totalUses,
+    )
 
     return (
-        <Stack spacing={2}>
-            {sortedTeams.map(({ teamName, weapons }) => (
-                <Box key={teamName}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
-                        {teamName}
+        <Box
+            sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: 2,
+            }}
+        >
+            {weapons.map((weapon) => (
+                <Paper key={weapon.name} variant="outlined" sx={{ p: 2 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5 }}>
+                        {weapon.name}
                     </Typography>
-                    <TableContainer component={Paper} variant="outlined">
-                        <Table size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{ fontWeight: 700 }}>Weapon</TableCell>
-                                    <TableCell sx={{ fontWeight: 700, width: 60 }}>Uses</TableCell>
-                                    <TableCell sx={{ fontWeight: 700, width: 120 }}>
-                                        Attributed Damage
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {weapons.map((w) => (
-                                    <TableRow key={w.name}>
-                                        <TableCell>{w.name}</TableCell>
-                                        <TableCell
-                                            sx={{ fontFamily: monoFontFamily, fontSize: 12 }}
-                                        >
-                                            {w.usageCount}
-                                        </TableCell>
-                                        <TableCell
-                                            sx={{ fontFamily: monoFontFamily, fontSize: 12 }}
-                                        >
-                                            {w.attributedDamage}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Box>
+                    <Box sx={{ display: 'flex', mb: 1.5 }}>
+                        {([
+                            ['Uses', weapon.totalUses, undefined],
+                            ['Damage', weapon.totalDamage, 'primary.main'],
+                            ['Kills', weapon.totalKills, undefined],
+                        ] as const).map(([label, value, color]) => (
+                            <Box key={label} sx={{ flex: 1 }}>
+                                <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                    sx={{ display: 'block', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                                >
+                                    {label}
+                                </Typography>
+                                <Typography
+                                    sx={{ fontFamily: monoFontFamily, fontWeight: 700, fontSize: 20, color: color ?? 'text.primary' }}
+                                >
+                                    {value}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                    <Divider sx={{ mb: 1 }} />
+                    <Stack spacing={0.5}>
+                        {weapon.byTeam.map((team) => (
+                            <Box
+                                key={team.teamName}
+                                sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                            >
+                                <Typography variant="caption" color="text.secondary">
+                                    {team.teamName}
+                                </Typography>
+                                <Typography variant="caption" sx={{ fontFamily: monoFontFamily }}>
+                                    {team.usageCount}× · {team.attributedDamage}dmg · {team.attributedKills}k
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Stack>
+                </Paper>
             ))}
-        </Stack>
+        </Box>
     )
 }
 
