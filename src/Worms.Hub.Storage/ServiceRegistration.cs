@@ -10,7 +10,8 @@ namespace Worms.Hub.Storage;
 public static class ServiceRegistration
 {
     public static IServiceCollection AddHubStorageServices(this IServiceCollection builder) =>
-        builder.AddScoped<IRepository<Game>, GamesRepository>()
+        builder.AddSingleton<DatabaseSchemaVersion>()
+            .AddScoped<IRepository<Game>, GamesRepository>()
             .AddScoped<IRepository<Replay>, ReplaysRepository>()
             .AddScoped<LeaguesRepository>()
             .AddScoped<CliFiles>()
