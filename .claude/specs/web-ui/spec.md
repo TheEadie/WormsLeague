@@ -8,7 +8,6 @@ A new web-based interface for the Worms Hub, giving league members a browser-acc
 
 - Give league members a browser-accessible list of leagues.
 - Give league members a per-league page that shows the league's historic games/replays and the scheme used for that league.
-- Give league members a way to browse past games and watch their replay GIFs / inspect their logs.
 - Establish a web UI surface that future, more interactive features (active games, join, league standings, per-player pages and stats, etc.) can be built on.
 
 ## Non-Goals
@@ -32,8 +31,7 @@ A new web-based interface for the Worms Hub, giving league members a browser-acc
 - Once signed in: see a list of leagues to navigate into.
 - Once signed in: open a per-league page that lists the league's historic games / replays and shows the scheme used for that league.
 - Once signed in: drill into an individual game's details (participants, winner, scheme, date, etc.).
-- Once signed in: view the artifacts produced for a game — its replay GIFs and log — through the browser.
-- Extend the Hub Gateway JSON API where the data the UI needs is not already exposed in the right shape (e.g. league listing, per-league game lists, per-game GIF/log retrieval as needed).
+- Extend the Hub Gateway JSON API where the data the UI needs is not already exposed in the right shape (e.g. league listing, per-league game lists).
 
 ## System Shape
 
@@ -47,7 +45,7 @@ Authentication uses the same authority the CLI and Gateway already trust, via an
 
 - **League** — a competitive grouping with a set of historic games and a scheme it uses.
 - **Game** — a single completed match within a league, with participants, a winner, a scheme, and a date.
-- **Replay** — the `.WAgame` artifact uploaded for a game, plus its derived log and GIFs.
+- **Replay** — the `.WAgame` artifact uploaded for a game.
 - **Scheme** — the rule-set / configuration used for a league's games.
 - **Player / League member** — the authenticated user viewing the UI.
 
@@ -63,7 +61,7 @@ Authentication uses the same authority the CLI and Gateway already trust, via an
 
 ## Definition of Done
 
-The smallest viable version is: a league member can open the web UI in a browser, land on the public landing page, sign in, see a list of leagues, open a league's page to see its historic games and scheme, and click into a past game to see its details and replay GIFs/log. It is deployed alongside the existing Hub in production and runnable under `docker compose` for local development.
+The smallest viable version is: a league member can open the web UI in a browser, land on the public landing page, sign in, see a list of leagues, open a league's page to see its historic games and scheme, and click into a past game to see its details. It is deployed alongside the existing Hub in production and runnable under `docker compose` for local development.
 
 ## Open Questions
 
