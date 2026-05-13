@@ -68,7 +68,7 @@ internal sealed class LeaguesController(
     [HttpGet("{id}/replays")]
     public async Task<ActionResult<IReadOnlyList<ReplayDto>>> GetReplays(string id)
     {
-        if (!await featureFlags.IsLeaguesEnabledAsync())
+        if (!await featureFlags.IsReplayLeagueFieldsEnabledAsync())
         {
             return NotFound();
         }
