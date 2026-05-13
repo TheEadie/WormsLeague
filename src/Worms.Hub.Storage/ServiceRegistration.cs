@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Worms.Hub.Storage.Database;
-using Worms.Hub.Storage.Domain;
 using JetBrains.Annotations;
 using Worms.Hub.Storage.Files;
 
@@ -15,14 +14,12 @@ public static class ServiceRegistration
     public static IServiceCollection AddHubStorageServices(this IServiceCollection builder) =>
         builder.AddSingleton<DatabaseSchemaVersion>()
             .AddScoped<IRepository<Game>, GamesRepository>()
-            .AddScoped<ReplaysRepositoryV04>()
-            .AddScoped<IReplaysRepositoryV04>(sp => sp.GetRequiredService<ReplaysRepositoryV04>())
-            .AddScoped<IRepository<Replay>>(sp =>
+            .AddScoped<IReplaysRepository>(sp =>
             {
                 var version = sp.GetRequiredService<DatabaseSchemaVersion>()
                     .GetCurrentVersionAsync().GetAwaiter().GetResult();
                 return version is not null && version >= ReplayLeagueFieldsMinVersion
-                    ? sp.GetRequiredService<ReplaysRepositoryV04>()
+                    ? (IReplaysRepository) new ReplaysRepositoryV04(sp.GetRequiredService<IConfiguration>())
                     : new ReplaysRepository(sp.GetRequiredService<IConfiguration>());
             })
             .AddScoped<LeaguesRepository>()

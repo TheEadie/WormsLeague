@@ -3,13 +3,12 @@ using Worms.Hub.Gateway.API.DTOs;
 using Worms.Hub.Gateway.API.Validators;
 using Worms.Hub.Queues;
 using Worms.Hub.Storage.Database;
-using Worms.Hub.Storage.Domain;
 using Worms.Hub.Storage.Files;
 
 namespace Worms.Hub.Gateway.API.Controllers;
 
 internal sealed class ReplaysController(
-    IRepository<Replay> repository,
+    IReplaysRepository repository,
     IMessageQueue<ReplayToProcessMessage> replayProcessor,
     ReplayFileValidator replayFileValidator,
     ReplayFiles replayFiles,

@@ -3,14 +3,13 @@ using Worms.Armageddon.Files.Replays.Text;
 using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Queues;
 using Worms.Hub.Storage.Database;
-using Worms.Hub.Storage.Domain;
 using Worms.Hub.Storage.Files;
 
 namespace Worms.Hub.Gateway.Worker;
 
 internal sealed class Processor(
     IMessageQueue<ReplayToUpdateMessage> messageQueue,
-    IRepository<Replay> replayRepository,
+    IReplaysRepository replayRepository,
     ReplayFiles replayFiles,
     IAnnouncer announcer,
     IReplayTextReader replayTextReader,
