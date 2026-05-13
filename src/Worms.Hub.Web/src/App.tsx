@@ -4,6 +4,7 @@ import RequireAuth from './components/RequireAuth'
 import LandingPage from './pages/LandingPage'
 import CallbackPage from './pages/CallbackPage'
 import LeagueListPage from './pages/LeagueListPage'
+import LeagueDetailPage from './pages/LeagueDetailPage'
 
 const router = createBrowserRouter([
     {
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
                 path: 'leagues/:id',
                 element: (
                     <RequireAuth>
-                        <div>League detail — coming soon</div>
+                        <LeagueDetailPage />
                     </RequireAuth>
                 ),
             },

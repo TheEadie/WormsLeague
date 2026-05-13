@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from 'react-oidc-context'
 import { Link } from 'react-router'
 import Box from '@mui/material/Box'
+import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Chip from '@mui/material/Chip'
@@ -98,6 +99,11 @@ function LeagueListPage() {
 
     return (
         <Container maxWidth="xl" sx={{ py: { xs: 2, md: 4 } }}>
+            <Breadcrumbs sx={{ mb: 2 }}>
+                <Typography variant="body2" color="text.primary" component="span">
+                    Leagues
+                </Typography>
+            </Breadcrumbs>
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                     Leagues
