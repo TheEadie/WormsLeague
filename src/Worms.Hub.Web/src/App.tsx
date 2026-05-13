@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage'
 import CallbackPage from './pages/CallbackPage'
 import LeagueListPage from './pages/LeagueListPage'
 import LeagueDetailPage from './pages/LeagueDetailPage'
+import GameDetailPage from './pages/GameDetailPage'
 
 const router = createBrowserRouter([
     {
@@ -26,6 +27,14 @@ const router = createBrowserRouter([
                 element: (
                     <RequireAuth>
                         <LeagueDetailPage />
+                    </RequireAuth>
+                ),
+            },
+            {
+                path: 'leagues/:id/replays/:replayId',
+                element: (
+                    <RequireAuth>
+                        <GameDetailPage />
                     </RequireAuth>
                 ),
             },
