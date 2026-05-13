@@ -6,9 +6,12 @@ using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Storage.Database;
 
-public sealed class ReplaysRepositoryV04(IConfiguration configuration) : ReplaysRepository(configuration)
+public sealed class ReplaysRepositoryV04(IConfiguration configuration) : IRepository<Replay>
 {
-    public override IReadOnlyCollection<Replay> GetAll()
+    static ReplaysRepositoryV04() =>
+        SqlMapper.AddTypeHandler(StringArrayHandler.Instance);
+
+    public IReadOnlyCollection<Replay> GetAll()
     {
         var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
@@ -16,7 +19,7 @@ public sealed class ReplaysRepositoryV04(IConfiguration configuration) : Replays
             "SELECT id, name, status, filename, fullLog, "
             + "league_id AS LeagueId, date AS Date, winner AS Winner, teams AS Teams "
             + "FROM replays");
-        return [.. dbObjects.Select(MapToDomain)];
+        return [.. dbObjects.Select(x => x.ToDomain())];
     }
 
     public IReadOnlyList<Replay> GetByLeagueId(string leagueId)
@@ -27,10 +30,10 @@ public sealed class ReplaysRepositoryV04(IConfiguration configuration) : Replays
             + "league_id AS LeagueId, date AS Date, winner AS Winner, teams AS Teams "
             + "FROM replays WHERE league_id = @leagueId ORDER BY date DESC NULLS LAST";
         var dbObjects = connection.Query<ReplayDb>(sql, new { leagueId });
-        return [.. dbObjects.Select(MapToDomain)];
+        return [.. dbObjects.Select(x => x.ToDomain())];
     }
 
-    public override Replay Create(Replay item)
+    public Replay Create(Replay item)
     {
         ArgumentNullException.ThrowIfNull(item);
         var connectionString = configuration.GetConnectionString("Database");
@@ -54,7 +57,7 @@ public sealed class ReplaysRepositoryV04(IConfiguration configuration) : Replays
         return item with { Id = created };
     }
 
-    public override void Update(Replay item)
+    public void Update(Replay item)
     {
         ArgumentNullException.ThrowIfNull(item);
         var connectionString = configuration.GetConnectionString("Database");
