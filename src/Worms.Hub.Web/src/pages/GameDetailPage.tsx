@@ -99,82 +99,108 @@ function TurnByTurnPanel({ turns }: TurnByTurnPanelProps) {
                     {turns.map((turn) => {
                         const hasKill = turn.damage.some((d) => d.wormsKilled > 0)
                         return (
-                        <TableRow
-                            key={turn.turnNumber}
-                            sx={{ bgcolor: hasKill ? 'rgba(211,47,47,0.08)' : 'transparent' }}
-                        >
-                            <TableCell
-                                sx={{
-                                    fontFamily: monoFontFamily,
-                                    fontSize: 12,
-                                    color: 'text.secondary',
-                                }}
+                            <TableRow
+                                key={turn.turnNumber}
+                                sx={{ bgcolor: hasKill ? 'rgba(211,47,47,0.08)' : 'transparent' }}
                             >
-                                {String(turn.turnNumber).padStart(2, '0')}
-                            </TableCell>
-                            <TableCell>
-                                <Chip size="small" label={turn.teamName} />
-                            </TableCell>
-                            <TableCell>
-                                {turn.weapons.length === 0 ? (
-                                    <Typography variant="caption" color="text.disabled">
-                                        —
-                                    </Typography>
-                                ) : (
-                                    <Stack
-                                        direction="row"
-                                        spacing={0.5}
-                                        sx={{ flexWrap: 'wrap' }}
-                                        useFlexGap
-                                    >
-                                        {turn.weapons.map((w, i) => (
-                                            <Chip
-                                                key={i}
-                                                size="small"
-                                                label={w.name}
-                                                variant="outlined"
-                                                sx={
-                                                    i === turn.weapons.length - 1
-                                                        ? { fontWeight: 700 }
-                                                        : undefined
-                                                }
-                                            />
-                                        ))}
-                                    </Stack>
-                                )}
-                            </TableCell>
-                            <TableCell>
-                                {turn.damage.length === 0 ? (
-                                    <Typography variant="caption" color="text.disabled">
-                                        — no damage —
-                                    </Typography>
-                                ) : (
-                                    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }} useFlexGap>
-                                        {turn.damage.map((d) => (
-                                            <Box
-                                                key={d.teamName}
-                                                sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
-                                            >
-                                                <Typography sx={{ fontFamily: monoFontFamily, fontSize: 12, color: 'text.secondary' }}>
-                                                    {d.teamName}:
-                                                </Typography>
-                                                <Typography sx={{ fontFamily: monoFontFamily, fontSize: 12, fontWeight: 700, color: 'primary.light' }}>
-                                                    {d.healthLost}
-                                                </Typography>
-                                                {d.wormsKilled > 0 && (
-                                                    <Chip
-                                                        label={`+${d.wormsKilled} kill${d.wormsKilled > 1 ? 's' : ''}`}
-                                                        size="small"
-                                                        color="error"
-                                                        sx={{ height: 16, fontSize: 9, fontWeight: 700 }}
-                                                    />
-                                                )}
-                                            </Box>
-                                        ))}
-                                    </Stack>
-                                )}
-                            </TableCell>
-                        </TableRow>
+                                <TableCell
+                                    sx={{
+                                        fontFamily: monoFontFamily,
+                                        fontSize: 12,
+                                        color: 'text.secondary',
+                                    }}
+                                >
+                                    {String(turn.turnNumber).padStart(2, '0')}
+                                </TableCell>
+                                <TableCell>
+                                    <Chip size="small" label={turn.teamName} />
+                                </TableCell>
+                                <TableCell>
+                                    {turn.weapons.length === 0 ? (
+                                        <Typography variant="caption" color="text.disabled">
+                                            —
+                                        </Typography>
+                                    ) : (
+                                        <Stack
+                                            direction="row"
+                                            spacing={0.5}
+                                            sx={{ flexWrap: 'wrap' }}
+                                            useFlexGap
+                                        >
+                                            {turn.weapons.map((w, i) => (
+                                                <Chip
+                                                    key={i}
+                                                    size="small"
+                                                    label={w.name}
+                                                    variant="outlined"
+                                                    sx={
+                                                        i === turn.weapons.length - 1
+                                                            ? { fontWeight: 700 }
+                                                            : undefined
+                                                    }
+                                                />
+                                            ))}
+                                        </Stack>
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    {turn.damage.length === 0 ? (
+                                        <Typography variant="caption" color="text.disabled">
+                                            — no damage —
+                                        </Typography>
+                                    ) : (
+                                        <Stack
+                                            direction="row"
+                                            spacing={1}
+                                            sx={{ flexWrap: 'wrap' }}
+                                            useFlexGap
+                                        >
+                                            {turn.damage.map((d) => (
+                                                <Box
+                                                    key={d.teamName}
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: 0.5,
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        sx={{
+                                                            fontFamily: monoFontFamily,
+                                                            fontSize: 12,
+                                                            color: 'text.secondary',
+                                                        }}
+                                                    >
+                                                        {d.teamName}:
+                                                    </Typography>
+                                                    <Typography
+                                                        sx={{
+                                                            fontFamily: monoFontFamily,
+                                                            fontSize: 12,
+                                                            fontWeight: 700,
+                                                            color: 'primary.light',
+                                                        }}
+                                                    >
+                                                        {d.healthLost}
+                                                    </Typography>
+                                                    {d.wormsKilled > 0 && (
+                                                        <Chip
+                                                            label={`+${d.wormsKilled} kill${d.wormsKilled > 1 ? 's' : ''}`}
+                                                            size="small"
+                                                            color="error"
+                                                            sx={{
+                                                                height: 16,
+                                                                fontSize: 9,
+                                                                fontWeight: 700,
+                                                            }}
+                                                        />
+                                                    )}
+                                                </Box>
+                                            ))}
+                                        </Stack>
+                                    )}
+                                </TableCell>
+                            </TableRow>
                         )
                     })}
                 </TableBody>
@@ -183,8 +209,19 @@ function TurnByTurnPanel({ turns }: TurnByTurnPanelProps) {
     )
 }
 
-type TeamBreakdown = { teamName: string; usageCount: number; attributedDamage: number; attributedKills: number }
-type WeaponCard = { name: string; totalUses: number; totalDamage: number; totalKills: number; byTeam: TeamBreakdown[] }
+type TeamBreakdown = {
+    teamName: string
+    usageCount: number
+    attributedDamage: number
+    attributedKills: number
+}
+type WeaponCard = {
+    name: string
+    totalUses: number
+    totalDamage: number
+    totalKills: number
+    byTeam: TeamBreakdown[]
+}
 
 interface WeaponsPanelProps {
     turns: TurnDto[] | null
@@ -206,13 +243,24 @@ function WeaponsPanel({ turns }: WeaponsPanelProps) {
     for (const turn of turns) {
         for (const weapon of turn.weapons) {
             if (!weaponMap.has(weapon.name)) {
-                weaponMap.set(weapon.name, { name: weapon.name, totalUses: 0, totalDamage: 0, totalKills: 0, byTeam: [] })
+                weaponMap.set(weapon.name, {
+                    name: weapon.name,
+                    totalUses: 0,
+                    totalDamage: 0,
+                    totalKills: 0,
+                    byTeam: [],
+                })
             }
             const card = weaponMap.get(weapon.name)!
             card.totalUses++
             let teamEntry = card.byTeam.find((t) => t.teamName === turn.teamName)
             if (!teamEntry) {
-                teamEntry = { teamName: turn.teamName, usageCount: 0, attributedDamage: 0, attributedKills: 0 }
+                teamEntry = {
+                    teamName: turn.teamName,
+                    usageCount: 0,
+                    attributedDamage: 0,
+                    attributedKills: 0,
+                }
                 card.byTeam.push(teamEntry)
             }
             teamEntry.usageCount++
@@ -251,21 +299,32 @@ function WeaponsPanel({ turns }: WeaponsPanelProps) {
                         {weapon.name}
                     </Typography>
                     <Box sx={{ display: 'flex', mb: 1.5 }}>
-                        {([
-                            ['Uses', weapon.totalUses, undefined],
-                            ['Damage', weapon.totalDamage, 'primary.main'],
-                            ['Kills', weapon.totalKills, undefined],
-                        ] as const).map(([label, value, color]) => (
+                        {(
+                            [
+                                ['Uses', weapon.totalUses, undefined],
+                                ['Damage', weapon.totalDamage, 'primary.main'],
+                                ['Kills', weapon.totalKills, undefined],
+                            ] as const
+                        ).map(([label, value, color]) => (
                             <Box key={label} sx={{ flex: 1 }}>
                                 <Typography
                                     variant="caption"
                                     color="text.secondary"
-                                    sx={{ display: 'block', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                                    sx={{
+                                        display: 'block',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.1em',
+                                    }}
                                 >
                                     {label}
                                 </Typography>
                                 <Typography
-                                    sx={{ fontFamily: monoFontFamily, fontWeight: 700, fontSize: 20, color: color ?? 'text.primary' }}
+                                    sx={{
+                                        fontFamily: monoFontFamily,
+                                        fontWeight: 700,
+                                        fontSize: 20,
+                                        color: color ?? 'text.primary',
+                                    }}
                                 >
                                     {value}
                                 </Typography>
@@ -277,13 +336,18 @@ function WeaponsPanel({ turns }: WeaponsPanelProps) {
                         {weapon.byTeam.map((team) => (
                             <Box
                                 key={team.teamName}
-                                sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                }}
                             >
                                 <Typography variant="caption" color="text.secondary">
                                     {team.teamName}
                                 </Typography>
                                 <Typography variant="caption" sx={{ fontFamily: monoFontFamily }}>
-                                    {team.usageCount}× · {team.attributedDamage}dmg · {team.attributedKills}k
+                                    {team.usageCount}× · {team.attributedDamage}dmg ·{' '}
+                                    {team.attributedKills}k
                                 </Typography>
                             </Box>
                         ))}

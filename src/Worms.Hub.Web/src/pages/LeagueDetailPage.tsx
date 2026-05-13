@@ -288,21 +288,30 @@ function LeagueDetailPage() {
                                                                 sx={{ flexWrap: 'wrap' }}
                                                                 useFlexGap
                                                             >
-                                                                {topWeaponsByDamage(replay.turns, 3).map((w) => (
+                                                                {topWeaponsByDamage(
+                                                                    replay.turns,
+                                                                    3,
+                                                                ).map((w) => (
                                                                     <Chip
                                                                         key={w}
                                                                         label={w}
                                                                         size="small"
                                                                         variant="outlined"
                                                                         sx={{
-                                                                            fontFamily: monoFontFamily,
+                                                                            fontFamily:
+                                                                                monoFontFamily,
                                                                             fontSize: 11,
                                                                         }}
                                                                     />
                                                                 ))}
                                                             </Stack>
                                                         ) : (
-                                                            <Typography variant="caption" color="text.disabled">—</Typography>
+                                                            <Typography
+                                                                variant="caption"
+                                                                color="text.disabled"
+                                                            >
+                                                                —
+                                                            </Typography>
                                                         )}
                                                     </TableCell>
                                                     <TableCell>
@@ -314,12 +323,19 @@ function LeagueDetailPage() {
                                                                 }}
                                                             >
                                                                 {formatDuration(
-                                                                    replay.turns[replay.turns.length - 1].endMs -
-                                                                    replay.turns[0].startMs,
+                                                                    replay.turns[
+                                                                        replay.turns.length - 1
+                                                                    ].endMs -
+                                                                        replay.turns[0].startMs,
                                                                 )}
                                                             </Typography>
                                                         ) : (
-                                                            <Typography variant="caption" color="text.disabled">—</Typography>
+                                                            <Typography
+                                                                variant="caption"
+                                                                color="text.disabled"
+                                                            >
+                                                                —
+                                                            </Typography>
                                                         )}
                                                     </TableCell>
                                                     <TableCell align="right">
@@ -334,12 +350,21 @@ function LeagueDetailPage() {
                                                             >
                                                                 {Math.max(
                                                                     ...replay.turns.map((t) =>
-                                                                        t.damage.reduce((sum, d) => sum + d.healthLost, 0),
+                                                                        t.damage.reduce(
+                                                                            (sum, d) =>
+                                                                                sum + d.healthLost,
+                                                                            0,
+                                                                        ),
                                                                     ),
                                                                 )}
                                                             </Typography>
                                                         ) : (
-                                                            <Typography variant="caption" color="text.disabled">—</Typography>
+                                                            <Typography
+                                                                variant="caption"
+                                                                color="text.disabled"
+                                                            >
+                                                                —
+                                                            </Typography>
                                                         )}
                                                     </TableCell>
                                                 </TableRow>
