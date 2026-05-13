@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Worms.Armageddon.Files.Replays.Filename;
 using Worms.Armageddon.Files.Replays.Text;
 using Worms.Armageddon.Files.Replays.Text.Parsers;
@@ -12,19 +13,22 @@ namespace Worms.Armageddon.Files;
 [PublicAPI]
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddWormsArmageddonFilesServices(this IServiceCollection builder) =>
-        builder.AddScoped<IWscReader, WscReader>()
-            .AddScoped<IWscWriter, WscWriter>()
-            .AddScoped<ISchemeTextReader, SchemeTextReader>()
-            .AddScoped<ISchemeTextWriter, SchemeTextWriter>()
-            .AddScoped<IReplayFilenameParser, ReplayFilenameParser>()
-            .AddScoped<IReplayTextReader, ReplayTextReader>()
-            .AddScoped<IReplayLineParser, StartTimeParser>()
-            .AddScoped<IReplayLineParser, TeamParser>()
-            .AddScoped<IReplayLineParser, WinnerParser>()
-            .AddScoped<IReplayLineParser, StartOfTurnParser>()
-            .AddScoped<IReplayLineParser, WeaponUsedParser>()
-            .AddScoped<IReplayLineParser, DamageParser>()
-            .AddScoped<IReplayLineParser, EndOfTurnParser>()
-            .AddScoped<IRandomSchemeGenerator, RandomSchemeGenerator>();
+    public static IServiceCollection AddWormsArmageddonFilesServices(this IServiceCollection services)
+    {
+        services.TryAddScoped<IWscReader, WscReader>();
+        services.TryAddScoped<IWscWriter, WscWriter>();
+        services.TryAddScoped<ISchemeTextReader, SchemeTextReader>();
+        services.TryAddScoped<ISchemeTextWriter, SchemeTextWriter>();
+        services.TryAddScoped<IReplayFilenameParser, ReplayFilenameParser>();
+        services.TryAddScoped<IReplayTextReader, ReplayTextReader>();
+        services.TryAddEnumerable(ServiceDescriptor.Scoped<IReplayLineParser, StartTimeParser>());
+        services.TryAddEnumerable(ServiceDescriptor.Scoped<IReplayLineParser, TeamParser>());
+        services.TryAddEnumerable(ServiceDescriptor.Scoped<IReplayLineParser, WinnerParser>());
+        services.TryAddEnumerable(ServiceDescriptor.Scoped<IReplayLineParser, StartOfTurnParser>());
+        services.TryAddEnumerable(ServiceDescriptor.Scoped<IReplayLineParser, WeaponUsedParser>());
+        services.TryAddEnumerable(ServiceDescriptor.Scoped<IReplayLineParser, DamageParser>());
+        services.TryAddEnumerable(ServiceDescriptor.Scoped<IReplayLineParser, EndOfTurnParser>());
+        services.TryAddScoped<IRandomSchemeGenerator, RandomSchemeGenerator>();
+        return services;
+    }
 }
