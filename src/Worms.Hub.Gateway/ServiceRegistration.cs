@@ -1,4 +1,3 @@
-using Worms.Armageddon.Files;
 using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Gateway.Announcers.Slack;
 using Worms.Hub.Gateway.API.Validators;
@@ -19,6 +18,5 @@ internal static class ServiceRegistration
             .AddQueueServices()
             .AddHttpClient()
             .AddScoped<Processor>()
-            .AddWormsArmageddonFilesServices()
             .AddScoped<IAnnouncer, Announcer>();
 }
