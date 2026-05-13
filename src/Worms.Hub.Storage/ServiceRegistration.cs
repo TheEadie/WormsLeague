@@ -20,7 +20,7 @@ public static class ServiceRegistration
                 var version = sp.GetRequiredService<DatabaseSchemaVersion>()
                     .GetCurrentVersionAsync().GetAwaiter().GetResult();
                 return version is not null && version >= ReplayLeagueFieldsMinVersion
-                    ? (IReplaysRepository) new ReplaysRepositoryV04(sp.GetRequiredService<IConfiguration>())
+                    ? new ReplaysRepositoryV04(sp.GetRequiredService<IConfiguration>())
                     : new ReplaysRepository(sp.GetRequiredService<IConfiguration>());
             })
             .AddScoped<LeaguesRepository>()
