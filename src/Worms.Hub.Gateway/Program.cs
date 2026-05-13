@@ -1,5 +1,4 @@
 using Microsoft.IdentityModel.Tokens;
-using Worms.Armageddon.Files;
 using Worms.Hub.Gateway;
 using Worms.Hub.Gateway.API.Middleware;
 using Worms.Hub.Gateway.Worker;
@@ -51,8 +50,6 @@ if (runGateway)
     _ = builder.Services.AddHubStorageServices().AddGatewayServices().AddQueueServices();
     builder.Services.AddOpenTelemetryWormsHub();
 }
-
-_ = builder.Services.AddWormsArmageddonFilesServices();
 
 if (runWorker)
 {
