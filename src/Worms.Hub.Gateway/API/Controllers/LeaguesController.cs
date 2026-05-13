@@ -16,7 +16,9 @@ internal sealed class LeaguesController(
     public async Task<ActionResult<IReadOnlyList<LeagueDto>>> GetAll()
     {
         if (!await SchemaSupportsLeagues())
+        {
             return NotFound();
+        }
 
         var dbLeagues = leaguesRepository.GetAll();
         var tasks = dbLeagues.Select(async dbLeague =>
@@ -39,7 +41,9 @@ internal sealed class LeaguesController(
         {
             var filesystemDetails = await schemeFiles.GetLatestDetails(id);
             if (filesystemDetails is null)
+            {
                 return NotFound();
+            }
             return LeagueDto.FromDomain(
                 filesystemDetails.Id,
                 filesystemDetails.Name,

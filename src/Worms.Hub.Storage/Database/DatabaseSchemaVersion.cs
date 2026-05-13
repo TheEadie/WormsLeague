@@ -18,7 +18,9 @@ public sealed class DatabaseSchemaVersion(IConfiguration configuration)
         lock (_lock)
         {
             if (_cached is not null && DateTime.UtcNow - _cachedAt < CacheTtl)
+            {
                 return _cached;
+            }
         }
 
         var version = await FetchFromDatabase();
