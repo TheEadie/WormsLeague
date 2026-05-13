@@ -32,20 +32,6 @@ Spawn an agent with this prompt, substituting `<slice-path>`:
 
 After the agent completes, verify that `<slice-path>/plan.md` exists. If it does not, stop and report the failure to the user.
 
-## Step 2b — Review the plan with the user
-
-Read `<slice-path>/plan.md` and display its full contents to the user.
-
-Then ask: **"Does this plan look good, or would you like to change anything before implementation starts?"**
-
-If the user requests changes:
-1. Delete `<slice-path>/plan.md`.
-2. Note the user's feedback.
-3. Re-run Step 2, appending this to the agent prompt: `The user reviewed the previous plan and asked for these changes: <feedback>. Incorporate this feedback when writing the new plan.`
-4. Repeat Step 2b.
-
-Do not proceed to Step 3 until the user explicitly confirms the plan.
-
 ## Step 3 — Implement phase
 
 Skip this step if `<slice-path>/learnings.md` already exists.
@@ -74,26 +60,23 @@ After the agent completes, verify that `<slice-path>/review.md` exists. If it do
 
 Read `<slice-path>/review.md` and collect all findings in document order: Blockers (B1, B2, …), then Suggestions (S1, S2, …), then Nitpicks (N1, N2, …). Skip any finding whose `**Decision:**` line is already set to `Accept` or `Decline`.
 
-For each remaining finding, look at the referenced file to make the proposed fix concrete, then present it to the user in this format:
+For each remaining finding, look at the referenced file to make the proposed fix concrete.
 
-```
-**[B1] — [title]**
-File: `path/to/file:line`
-Issue: [issue from review]
+Present all findings at once as a single table:
 
-Proposed fix:
-[precise description of what to change, with a code snippet if it helps]
+| ID | Severity | Title | File | Issue | Proposed Fix |
+|----|----------|-------|------|-------|--------------|
+| B1 | Blocker | … | `path/to/file:line` | … | … |
+| S1 | Suggestion | … | `path/to/file:line` | … | … |
+| N1 | Nitpick | … | `path/to/file:line` | … | … |
 
-→ Resolve / Ignore / Skip?
-```
+Then ask: **"Reply with the IDs you want resolved (e.g. `B1 S2`), the IDs you want ignored, or `all` to resolve everything. Any ID not mentioned will be skipped."**
 
-Based on the user's response:
+Wait for a single reply, then apply all accepted fixes in one batch. After all changes are made:
 
-- **Resolve** — implement the fix. Then update the finding's `**Decision:**` line in `review.md` from `— *(pending)*` to `Accept`.
-- **Ignore** — do nothing. Update the finding's `**Decision:**` line in `review.md` to `Decline`.
-- **Skip** — leave the finding as-is and move to the next one.
-
-Work through all findings before moving to the hand-off step.
+- Update each accepted finding's `**Decision:**` line in `review.md` to `Accept`.
+- Update each declined finding's `**Decision:**` line in `review.md` to `Decline`.
+- Leave skipped findings as `*(pending)*`.
 
 ## Step 6 — Hand off
 
