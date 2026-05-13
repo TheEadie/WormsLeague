@@ -30,7 +30,7 @@ interface LeagueDto {
 interface ReplayInLeagueDto {
     id: string
     name: string
-    processed: boolean
+    status: string
     date: string | null
     winner: string | null
     teams: string[] | null
@@ -149,7 +149,7 @@ function LeagueDetailPage() {
                                                 new Date(a.date ?? a.name).getTime(),
                                         )
                                         .map((replay) =>
-                                            replay.processed ? (
+                                            replay.status === 'Processed' ? (
                                                 <TableRow
                                                     key={replay.id}
                                                     hover
