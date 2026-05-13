@@ -60,9 +60,11 @@ if (runWorker)
 var app = builder.Build();
 if (runGateway)
 {
+    _ = app.UseRequestLogging();
     _ = app.UseHttpsRedirection();
     _ = app.UseRouting();
     _ = app.UseCors(corsPolicyName);
+    _ = app.UseStaticFiles();
     _ = app.UseAuthentication();
     _ = app.UseAuthorization();
 
@@ -76,7 +78,7 @@ if (runGateway)
         _ = app.MapControllers();
     }
 
-    _ = app.UseRequestLogging();
+    _ = app.MapFallbackToFile("index.html");
 }
 
 if (runAsBatchJob)
