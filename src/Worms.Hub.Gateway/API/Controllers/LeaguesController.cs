@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Worms.Armageddon.Files.Replays;
+using Worms.Armageddon.Files.Replays.Text;
 using Worms.Hub.Gateway.API.DTOs;
 using Worms.Hub.Gateway.FeatureFlags;
 using Worms.Hub.Storage.Database;
@@ -10,6 +12,7 @@ internal sealed class LeaguesController(
     SchemeFiles schemeFiles,
     LeaguesRepository leaguesRepository,
     IReplaysRepository replaysRepository,
+    IReplayTextReader replayTextReader,
     IFeatureFlags featureFlags) : V1ApiController
 {
     [HttpGet]
@@ -66,7 +69,7 @@ internal sealed class LeaguesController(
     }
 
     [HttpGet("{id}/replays")]
-    public ActionResult<IReadOnlyList<ReplayDto>> GetReplays(string id)
+    public ActionResult<IReadOnlyList<ReplayDetailDto>> GetReplays(string id)
     {
         var league = leaguesRepository.GetById(id);
         if (league is null)
@@ -74,6 +77,38 @@ internal sealed class LeaguesController(
             return NotFound();
         }
 
-        return Ok(replaysRepository.GetByLeagueId(id).Select(ReplayDto.FromDomain).ToList());
+        return Ok(replaysRepository.GetByLeagueId(id).Select(replay =>
+        {
+            ReplayResource? parsed = null;
+            if (!string.IsNullOrEmpty(replay.FullLog))
+            {
+                parsed = replayTextReader.GetModel(replay.FullLog);
+            }
+            return ReplayDetailDto.FromDomain(replay, parsed);
+        }).ToList());
+    }
+
+    [HttpGet("{id}/replays/{replayId}")]
+    public ActionResult<ReplayDetailDto> GetReplay(string id, string replayId)
+    {
+        var league = leaguesRepository.GetById(id);
+        if (league is null)
+        {
+            return NotFound();
+        }
+
+        var replay = replaysRepository.GetByLeagueId(id).FirstOrDefault(r => r.Id == replayId);
+        if (replay is null)
+        {
+            return NotFound();
+        }
+
+        ReplayResource? parsed = null;
+        if (!string.IsNullOrEmpty(replay.FullLog))
+        {
+            parsed = replayTextReader.GetModel(replay.FullLog);
+        }
+
+        return ReplayDetailDto.FromDomain(replay, parsed);
     }
 }

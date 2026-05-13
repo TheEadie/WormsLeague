@@ -27,6 +27,25 @@ interface LeagueDto {
     schemeUrl: string | null
 }
 
+interface WeaponDto {
+    name: string
+}
+
+interface DamageSummaryDto {
+    teamName: string
+    healthLost: number
+    wormsKilled: number
+}
+
+interface TurnDto {
+    turnNumber: number
+    teamName: string
+    startMs: number
+    endMs: number
+    weapons: WeaponDto[]
+    damage: DamageSummaryDto[]
+}
+
 interface ReplayInLeagueDto {
     id: string
     name: string
@@ -34,6 +53,28 @@ interface ReplayInLeagueDto {
     date: string | null
     winner: string | null
     teams: string[] | null
+    turns: TurnDto[] | null
+}
+
+function formatDuration(ms: number): string {
+    const totalSeconds = Math.floor(ms / 1000)
+    const minutes = Math.floor(totalSeconds / 60)
+    const seconds = totalSeconds % 60
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
+function topWeaponsByDamage(turns: TurnDto[], n: number): string[] {
+    const damage = new Map<string, number>()
+    for (const turn of turns) {
+        if (turn.weapons.length === 0) continue
+        const lastWeapon = turn.weapons[turn.weapons.length - 1]
+        const total = turn.damage.reduce((sum, d) => sum + d.healthLost, 0)
+        damage.set(lastWeapon.name, (damage.get(lastWeapon.name) ?? 0) + total)
+    }
+    return Array.from(damage.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, n)
+        .map(([name]) => name)
 }
 
 function LeagueDetailPage() {
@@ -126,7 +167,7 @@ function LeagueDetailPage() {
                                             Date
                                         </TableCell>
                                         <TableCell sx={{ fontWeight: 700 }}>Players</TableCell>
-                                        <TableCell sx={{ fontWeight: 700, width: 160 }}>
+                                        <TableCell sx={{ fontWeight: 700, width: 300 }}>
                                             Top weapons
                                         </TableCell>
                                         <TableCell sx={{ fontWeight: 700, width: 80 }}>
@@ -240,28 +281,91 @@ function LeagueDetailPage() {
                                                         </Stack>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography
-                                                            variant="caption"
-                                                            color="text.disabled"
-                                                        >
-                                                            —
-                                                        </Typography>
+                                                        {replay.turns && replay.turns.length > 0 ? (
+                                                            <Stack
+                                                                direction="row"
+                                                                spacing={0.5}
+                                                                sx={{ flexWrap: 'wrap' }}
+                                                                useFlexGap
+                                                            >
+                                                                {topWeaponsByDamage(
+                                                                    replay.turns,
+                                                                    3,
+                                                                ).map((w) => (
+                                                                    <Chip
+                                                                        key={w}
+                                                                        label={w}
+                                                                        size="small"
+                                                                        variant="outlined"
+                                                                        sx={{
+                                                                            fontFamily:
+                                                                                monoFontFamily,
+                                                                            fontSize: 11,
+                                                                        }}
+                                                                    />
+                                                                ))}
+                                                            </Stack>
+                                                        ) : (
+                                                            <Typography
+                                                                variant="caption"
+                                                                color="text.disabled"
+                                                            >
+                                                                —
+                                                            </Typography>
+                                                        )}
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography
-                                                            variant="caption"
-                                                            color="text.disabled"
-                                                        >
-                                                            —
-                                                        </Typography>
+                                                        {replay.turns && replay.turns.length > 0 ? (
+                                                            <Typography
+                                                                sx={{
+                                                                    fontFamily: monoFontFamily,
+                                                                    fontSize: 12,
+                                                                }}
+                                                            >
+                                                                {formatDuration(
+                                                                    replay.turns[
+                                                                        replay.turns.length - 1
+                                                                    ].endMs -
+                                                                        replay.turns[0].startMs,
+                                                                )}
+                                                            </Typography>
+                                                        ) : (
+                                                            <Typography
+                                                                variant="caption"
+                                                                color="text.disabled"
+                                                            >
+                                                                —
+                                                            </Typography>
+                                                        )}
                                                     </TableCell>
                                                     <TableCell align="right">
-                                                        <Typography
-                                                            variant="caption"
-                                                            color="text.disabled"
-                                                        >
-                                                            —
-                                                        </Typography>
+                                                        {replay.turns && replay.turns.length > 0 ? (
+                                                            <Typography
+                                                                sx={{
+                                                                    fontFamily: monoFontFamily,
+                                                                    fontSize: 16,
+                                                                    fontWeight: 700,
+                                                                    color: 'primary.main',
+                                                                }}
+                                                            >
+                                                                {Math.max(
+                                                                    ...replay.turns.map((t) =>
+                                                                        t.damage.reduce(
+                                                                            (sum, d) =>
+                                                                                sum + d.healthLost,
+                                                                            0,
+                                                                        ),
+                                                                    ),
+                                                                )}
+                                                            </Typography>
+                                                        ) : (
+                                                            <Typography
+                                                                variant="caption"
+                                                                color="text.disabled"
+                                                            >
+                                                                —
+                                                            </Typography>
+                                                        )}
                                                     </TableCell>
                                                 </TableRow>
                                             ) : (
