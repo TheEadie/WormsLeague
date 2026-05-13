@@ -6,7 +6,7 @@ using Worms.Hub.Storage.Domain;
 namespace Worms.Hub.Storage.Database;
 
 #pragma warning disable CA1819 // Dapper requires the concrete array type for constructor-based mapping
-internal record ReplayDb(
+internal sealed record ReplayDb(
     int Id,
     string Name,
     string Status,
