@@ -8,10 +8,8 @@ using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Storage.Database;
 
-public sealed class ReplaysRepository(IConfiguration configuration, DatabaseSchemaVersion schemaVersion) : IRepository<Replay>
+public class ReplaysRepository(IConfiguration configuration) : IRepository<Replay>
 {
-    private static readonly Version ReplayLeagueFieldsMinVersion = new(0, 4);
-
     static ReplaysRepository() =>
         SqlMapper.AddTypeHandler(new StringArrayHandler());
 
@@ -24,138 +22,55 @@ public sealed class ReplaysRepository(IConfiguration configuration, DatabaseSche
             value as string[] ?? [];
     }
 
-    public IReadOnlyCollection<Replay> GetAll()
+    public virtual IReadOnlyCollection<Replay> GetAll()
     {
         var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
-
-        var sql = IsReplayLeagueFieldsEnabled()
-            ? "SELECT id, name, status, filename, fullLog, "
-              + "league_id AS LeagueId, date AS Date, winner AS Winner, teams AS Teams "
-              + "FROM replays"
-            : "SELECT id, name, status, filename, fullLog FROM replays";
-
-        var dbObjects = connection.Query<ReplayDb>(sql);
+        var dbObjects = connection.Query<ReplayDb>("SELECT id, name, status, filename, fullLog FROM replays");
         return [.. dbObjects.Select(MapToDomain)];
     }
 
-    public IReadOnlyList<Replay> GetByLeagueId(string leagueId)
-    {
-        var connectionString = configuration.GetConnectionString("Database");
-        using var connection = new NpgsqlConnection(connectionString);
-        const string sql = "SELECT id, name, status, filename, fullLog, "
-            + "league_id AS LeagueId, date AS Date, winner AS Winner, teams AS Teams "
-            + "FROM replays WHERE league_id = @leagueId ORDER BY date DESC NULLS LAST";
-        var dbObjects = connection.Query<ReplayDb>(sql, new { leagueId });
-        return [.. dbObjects.Select(MapToDomain)];
-    }
-
-    public Replay Create(Replay item)
+    public virtual Replay Create(Replay item)
     {
         ArgumentNullException.ThrowIfNull(item);
         var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
-
-        string sql;
-        object parameters;
-
-        if (IsReplayLeagueFieldsEnabled())
+        const string sql = "INSERT INTO replays (name, status, filename, fullLog) "
+            + "VALUES (@name, @status, @filename, @fullLog) RETURNING id";
+        var parameters = new
         {
-            sql = "INSERT INTO replays "
-                + "(name, status, filename, fullLog, league_id, date, winner, teams) "
-                + "VALUES (@name, @status, @filename, @fullLog, @leagueId, @date, @winner, @teams) "
-                + "RETURNING id";
-            parameters = new
-            {
-                name = item.Name,
-                status = item.Status,
-                filename = item.Filename,
-                fullLog = item.FullLog,
-                leagueId = item.LeagueId,
-                date = item.Date,
-                winner = item.Winner,
-                teams = item.Teams?.ToArray()
-            };
-        }
-        else
-        {
-            sql = "INSERT INTO replays (name, status, filename, fullLog) "
-                + "VALUES (@name, @status, @filename, @fullLog) RETURNING id";
-            parameters = new
-            {
-                name = item.Name,
-                status = item.Status,
-                filename = item.Filename,
-                fullLog = item.FullLog
-            };
-        }
-
+            name = item.Name,
+            status = item.Status,
+            filename = item.Filename,
+            fullLog = item.FullLog
+        };
         var created = connection.QuerySingle<string>(sql, parameters);
         return item with { Id = created };
     }
 
-    public void Update(Replay item)
+    public virtual void Update(Replay item)
     {
         ArgumentNullException.ThrowIfNull(item);
         var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
-
-        string sql;
-        object parameters;
-
-        if (IsReplayLeagueFieldsEnabled())
+        const string sql = "UPDATE replays SET "
+            + "name = @name, "
+            + "status = @status, "
+            + "filename = @filename, "
+            + "fullLog = @fullLog "
+            + "WHERE id = @id";
+        var parameters = new
         {
-            sql = "UPDATE replays SET "
-                + "name = @name, "
-                + "status = @status, "
-                + "filename = @filename, "
-                + "fullLog = @fullLog, "
-                + "league_id = @leagueId, "
-                + "date = @date, "
-                + "winner = @winner, "
-                + "teams = @teams "
-                + "WHERE id = @id";
-            parameters = new
-            {
-                id = int.Parse(item.Id, CultureInfo.InvariantCulture),
-                name = item.Name,
-                status = item.Status,
-                filename = item.Filename,
-                fullLog = item.FullLog,
-                leagueId = item.LeagueId,
-                date = item.Date,
-                winner = item.Winner,
-                teams = item.Teams?.ToArray()
-            };
-        }
-        else
-        {
-            sql = "UPDATE replays SET "
-                + "name = @name, "
-                + "status = @status, "
-                + "filename = @filename, "
-                + "fullLog = @fullLog "
-                + "WHERE id = @id";
-            parameters = new
-            {
-                id = int.Parse(item.Id, CultureInfo.InvariantCulture),
-                name = item.Name,
-                status = item.Status,
-                filename = item.Filename,
-                fullLog = item.FullLog
-            };
-        }
-
+            id = int.Parse(item.Id, CultureInfo.InvariantCulture),
+            name = item.Name,
+            status = item.Status,
+            filename = item.Filename,
+            fullLog = item.FullLog
+        };
         _ = connection.Execute(sql, parameters);
     }
 
-    private bool IsReplayLeagueFieldsEnabled()
-    {
-        var version = schemaVersion.GetCurrentVersionAsync().GetAwaiter().GetResult();
-        return version is not null && version >= ReplayLeagueFieldsMinVersion;
-    }
-
-    private static Replay MapToDomain(ReplayDb x) =>
+    protected static Replay MapToDomain(ReplayDb x) =>
         new(
             x.Id.ToString(CultureInfo.InvariantCulture),
             x.Name,
