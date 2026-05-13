@@ -122,7 +122,7 @@ function LeagueDetailPage() {
                                         <TableCell sx={{ fontWeight: 700, width: 72 }}>
                                             Match
                                         </TableCell>
-                                        <TableCell sx={{ fontWeight: 700, width: 120 }}>
+                                        <TableCell sx={{ fontWeight: 700, width: 150 }}>
                                             Date
                                         </TableCell>
                                         <TableCell sx={{ fontWeight: 700 }}>Players</TableCell>
