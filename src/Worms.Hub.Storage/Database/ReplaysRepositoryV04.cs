@@ -6,7 +6,7 @@ using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Storage.Database;
 
-public sealed class ReplaysRepositoryV04(IConfiguration configuration) : IRepository<Replay>
+internal sealed class ReplaysRepositoryV04(IConfiguration configuration) : IReplaysRepositoryV04
 {
     static ReplaysRepositoryV04() =>
         SqlMapper.AddTypeHandler(StringArrayHandler.Instance);

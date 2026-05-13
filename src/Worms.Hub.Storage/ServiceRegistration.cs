@@ -16,6 +16,7 @@ public static class ServiceRegistration
         builder.AddSingleton<DatabaseSchemaVersion>()
             .AddScoped<IRepository<Game>, GamesRepository>()
             .AddScoped<ReplaysRepositoryV04>()
+            .AddScoped<IReplaysRepositoryV04>(sp => sp.GetRequiredService<ReplaysRepositoryV04>())
             .AddScoped<IRepository<Replay>>(sp =>
             {
                 var version = sp.GetRequiredService<DatabaseSchemaVersion>()

@@ -1,14 +1,12 @@
 using System.Data;
 using System.Globalization;
 using Dapper;
-using JetBrains.Annotations;
 using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Storage.Database;
 
 #pragma warning disable CA1819 // Dapper requires the concrete array type for constructor-based mapping
-[PublicAPI]
-public record ReplayDb(
+internal record ReplayDb(
     int Id,
     string Name,
     string Status,

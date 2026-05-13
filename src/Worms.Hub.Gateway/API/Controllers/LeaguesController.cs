@@ -9,7 +9,7 @@ namespace Worms.Hub.Gateway.API.Controllers;
 internal sealed class LeaguesController(
     SchemeFiles schemeFiles,
     LeaguesRepository leaguesRepository,
-    ReplaysRepositoryV04 replaysRepository,
+    IReplaysRepositoryV04 replaysRepository,
     IFeatureFlags featureFlags) : V1ApiController
 {
     [HttpGet]
