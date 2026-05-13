@@ -69,7 +69,7 @@ internal sealed class LeaguesController(
     }
 
     [HttpGet("{id}/replays")]
-    public ActionResult<IReadOnlyList<ReplayDto>> GetReplays(string id)
+    public ActionResult<IReadOnlyList<ReplayDetailDto>> GetReplays(string id)
     {
         var league = leaguesRepository.GetById(id);
         if (league is null)
@@ -77,7 +77,15 @@ internal sealed class LeaguesController(
             return NotFound();
         }
 
-        return Ok(replaysRepository.GetByLeagueId(id).Select(ReplayDto.FromDomain).ToList());
+        return Ok(replaysRepository.GetByLeagueId(id).Select(replay =>
+        {
+            ReplayResource? parsed = null;
+            if (!string.IsNullOrEmpty(replay.FullLog))
+            {
+                parsed = replayTextReader.GetModel(replay.FullLog);
+            }
+            return ReplayDetailDto.FromDomain(replay, parsed);
+        }).ToList());
     }
 
     [HttpGet("{id}/replays/{replayId}")]
