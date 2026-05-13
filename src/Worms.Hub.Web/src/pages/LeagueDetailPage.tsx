@@ -167,7 +167,7 @@ function LeagueDetailPage() {
                                             Date
                                         </TableCell>
                                         <TableCell sx={{ fontWeight: 700 }}>Players</TableCell>
-                                        <TableCell sx={{ fontWeight: 700, width: 160 }}>
+                                        <TableCell sx={{ fontWeight: 700, width: 300 }}>
                                             Top weapons
                                         </TableCell>
                                         <TableCell sx={{ fontWeight: 700, width: 80 }}>
@@ -327,7 +327,9 @@ function LeagueDetailPage() {
                                                             <Typography
                                                                 sx={{
                                                                     fontFamily: monoFontFamily,
-                                                                    fontSize: 12,
+                                                                    fontSize: 16,
+                                                                    fontWeight: 700,
+                                                                    color: 'primary.main',
                                                                 }}
                                                             >
                                                                 {Math.max(
