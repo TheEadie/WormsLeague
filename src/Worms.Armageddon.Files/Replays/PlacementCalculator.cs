@@ -52,9 +52,9 @@ internal static class PlacementCalculator
                 kills += damage.WormsKilled;
                 cumulativeKills[damage.Team] = kills;
 
-                if (kills >= wormsPerTeam && !eliminationTurn.ContainsKey(damage.Team))
+                if (kills >= wormsPerTeam)
                 {
-                    eliminationTurn[damage.Team] = i;
+                    eliminationTurn.TryAdd(damage.Team, i);
                 }
             }
         }
@@ -63,12 +63,8 @@ internal static class PlacementCalculator
         var placements = new List<Placement>(teams.Count);
         foreach (var team in teams)
         {
-            var rankKey = eliminationTurn.TryGetValue(team, out var elim) ? elim : int.MaxValue;
-            var position = teams.Count(t =>
-            {
-                var otherRankKey = eliminationTurn.TryGetValue(t, out var otherElim) ? otherElim : int.MaxValue;
-                return otherRankKey > rankKey;
-            }) + 1;
+            var rankKey = eliminationTurn.GetValueOrDefault(team, int.MaxValue);
+            var position = teams.Count(t => eliminationTurn.GetValueOrDefault(t, int.MaxValue) > rankKey) + 1;
 
             placements.Add(new Placement(team, position));
         }

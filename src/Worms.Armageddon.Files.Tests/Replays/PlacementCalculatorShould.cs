@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;
-using Worms.Armageddon.Files.Replays;
 using Worms.Armageddon.Files.Replays.Text;
 
 namespace Worms.Armageddon.Files.Tests.Replays;
