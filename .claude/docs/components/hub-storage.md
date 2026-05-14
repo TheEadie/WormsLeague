@@ -48,6 +48,15 @@ File abstractions in `Files/` wrap filesystem operations and derive their paths 
 ## Adding a new domain object
 
 1. Add a `record` in `Domain/`.
-2. Create a `XxxRepository : IRepository<Xxx>` in `Database/`, including an internal `XxxDb` record for Dapper mapping.
+2. Create a `XxxRepository : IRepository<Xxx>` in `Database/`. Include a `[PublicAPI] record XxxDb(...)` for Dapper column mapping — the type **must** be named `XxxDb` (matching `GamesDb`, `ReplayDb`). The `[PublicAPI]` annotation marks it as resolved reflectively by Dapper/DI and suppresses false-positive unused-code warnings. Use `internal sealed` for both the repository and the DB record unless the repository will be injected by concrete type from another assembly (e.g. the Gateway), in which case the repository class must be `public sealed`.
 3. Register in `ServiceRegistration.AddHubStorageServices()`.
 4. Add a migration in `src/database/migrations/` (Flyway versioned migration, e.g. `V0.3__AddXxx.sql`).
+
+## Schema compatibility
+
+When a slice adds columns to an **existing** table and the gateway reads those columns, the plan must include an explicit compatibility decision before implementation:
+
+- **Require DB upgrade first:** the gateway may crash if deployed against the old schema. Only acceptable if gateway and DB are always upgraded together.
+- **Degrade gracefully:** gate the new endpoint or query behind a `DatabaseSchemaVersion` check. The DI-factory pattern selects between a base repository implementation and a versioned subtype at startup based on the detected schema version, so controllers never reference `DatabaseSchemaVersion` directly.
+
+Any plan that extends a repository to read new columns must document which approach is chosen and enumerate all write paths (controllers, workers, tests) that construct or persist the affected record type, confirming each sets the new field correctly.

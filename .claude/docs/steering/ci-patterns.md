@@ -35,6 +35,14 @@ Correct order in a web CI job:
 3. `make web.build` (runs `npm ci` + Vite build)
 4. `make web.lint` (runs ESLint, tsc, Prettier — all require node_modules)
 
+## Code-scanning jobs: `npm ci` only, not `make web.build`
+
+Jobs in `code-scanning.yml` that run ESLint or Prettier need `node_modules` to be present, but they do not need a compiled bundle. These jobs must call `npm ci` directly rather than `make web.build` (which also runs a full Vite compilation that is immediately discarded).
+
+- ESLint SARIF and Prettier jobs: inline `npm ci`, then the tool invocation
+- CodeQL with `build-mode: none`: needs neither Node setup nor `npm ci`
+- Only the dedicated `zz-build-web.yml` job (which uploads the bundle artefact) needs `make web.build`
+
 ## `fetch-depth: 0` only when git history is needed
 
 The default `actions/checkout` does a shallow clone, which is sufficient for build and lint jobs. Only add `fetch-depth: 0` to a job that actually inspects git history — change detection (`zz-detect-changes.yml`), version tagging, or changelog generation. Build and test jobs do not need the full history.
