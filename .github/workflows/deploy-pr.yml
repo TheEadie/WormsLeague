@@ -56,6 +56,12 @@ jobs:
       - name: Create Reports Folder
         run: mkdir src/database/reports
 
+      - name: Get Database Version
+        id: db-version
+        run: |
+          version=$(python3 -c "import yaml; c=yaml.safe_load(open('deployment/Worms.Hub.Infrastructure/Pulumi.yaml')); print(c['config']['worms-hub:database-version'])")
+          echo "version=$version" >> $GITHUB_OUTPUT
+
       - name: Run Flyway Report
         uses: docker://redgate/flyway:12
         with:
@@ -67,7 +73,7 @@ jobs:
             -url="${{ steps.preview.outputs.database-jdbc }}"
             -user="${{ steps.preview.outputs.database-user }}"
             -password="${{ steps.preview.outputs.database-password }}"
-            -target=${{ steps.preview.outputs.database-version }}
+            -target=${{ steps.db-version.outputs.version }}
             -reportFilename="/github/workspace/src/database/reports/report.htm"
         env:
           FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
