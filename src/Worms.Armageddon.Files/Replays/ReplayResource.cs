@@ -9,6 +9,7 @@ public record ReplayResource(
     IReadOnlyCollection<Team> Teams,
     string Winner,
     IReadOnlyCollection<Turn> Turns,
+    IReadOnlyCollection<Placement> Placements,
     string FullLog);
 
 [PublicAPI]
