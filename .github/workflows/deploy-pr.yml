@@ -89,11 +89,13 @@ jobs:
           } >> $GITHUB_OUTPUT
 
       - name: Comment on PR
-        uses: thollander/actions-comment-pull-request@v3
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
+          hide_and_recreate: true
+          hide_classify: "OUTDATED"
           message: |
             ${{ steps.summary.outputs.summary }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Report
         uses: actions/upload-artifact@v7
