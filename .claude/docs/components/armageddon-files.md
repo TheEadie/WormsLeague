@@ -44,6 +44,10 @@ ReplayResource
 ├── bool Processed
 ├── IReadOnlyCollection<Team> Teams
 ├── string Winner
+├── IReadOnlyCollection<Placement> Placements
+│   └── Placement
+│       ├── Team Team
+│       └── int Position
 ├── string FullLog
 └── IReadOnlyCollection<Turn> Turns
     └── Turn
