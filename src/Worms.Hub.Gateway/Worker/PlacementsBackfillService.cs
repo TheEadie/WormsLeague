@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Dapper;
-using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Worms.Armageddon.Files.Replays.Text;
 using Worms.Hub.Gateway.FeatureFlags;
@@ -18,7 +17,7 @@ internal sealed class PlacementsBackfillService(
         Justification = "Backfill continues with remaining replays even if one fails")]
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var activity = Telemetry.Source.StartActivity("Placement Backfill", ActivityKind.Internal);
+        using var activity = Telemetry.Source.StartActivity("Placement Backfill");
 
         using var scope = serviceProvider.CreateScope();
         var featureFlags = scope.ServiceProvider.GetRequiredService<IFeatureFlags>();

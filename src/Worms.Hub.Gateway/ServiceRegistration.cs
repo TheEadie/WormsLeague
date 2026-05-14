@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Worms.Armageddon.Files;
 using Worms.Hub.Gateway.Announcers;
