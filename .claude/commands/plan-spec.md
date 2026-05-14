@@ -32,6 +32,8 @@ Read everything needed to produce an accurate, codebase-consistent plan:
 - Any `learnings.md` files from earlier slices in the same epic — they capture known caveats from prior implementation
 - If the epic folder contains a `design/` directory (e.g. `.claude/specs/<epic-slug>/design/`) and this slice touches anything it covers, read the relevant files — treat them as a reference for layout, structure, and ideas, not as the authoritative definition.
 
+When reading source files, record exactly what you find. Any factual claim the plan makes about existing file state — "this function is not yet registered", "the middleware block currently contains X", "this method does not exist" — must be directly verified from the file you read, not inferred or assumed from prior knowledge.
+
 ## Step 3 — Plan in plan mode
 
 Use the EnterPlanMode tool to enter plan mode. Think through the full implementation before committing to any file content:
@@ -41,6 +43,7 @@ Use the EnterPlanMode tool to enter plan mode. Think through the full implementa
 - Non-obvious decisions left open by the spec: library versions, build system wiring, CI job names, config keys, DI registration — resolve them here
 - How to verify each piece of work is correct once done
 - Any risks or caveats the plan should call out explicitly
+- If the slice adds a new endpoint that returns a richer response type for a single item while a corresponding list endpoint already exists for the same domain resource, include an explicit scope decision: does the list endpoint need updating to match? Do not leave the asymmetry implicit — decide in or out of scope and note it in the plan.
 
 Use the ExitPlanMode tool to exit plan mode before writing any files.
 

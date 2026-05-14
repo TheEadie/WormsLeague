@@ -54,13 +54,13 @@ Record the exact output of any failing command as evidence for the finding.
 
 ### 5a — Acceptance criteria
 
-For each acceptance criterion in the slice's `spec.md`, determine whether the diff satisfies it. Cite the relevant file and line as evidence. Mark each criterion MET, PARTIAL, or NOT MET.
+For each acceptance criterion in the slice's `spec.md`, determine whether the diff satisfies it. Verify against the actual diff — read the specific file and line in the diff to confirm. Do not infer satisfaction from the plan's intended structure or from what you expect the implementation to have done. Mark each criterion MET, PARTIAL, or NOT MET with a file:line citation.
 
 ### 5b — Scope
 
-Compare the diff against the plan's "Files to Create / Modify" table.
+Start by listing every file that appears in the diff. Then compare that list against the plan's "Files to Create / Modify" table.
 
-- Flag files changed that are not in the plan.
+- Flag files in the diff that are not in the plan.
 - Flag planned files that are absent from the diff.
 - Flag changes that go beyond what the plan describes for a file.
 
@@ -69,6 +69,8 @@ Changes not in the plan are not automatically wrong — but they need a reason. 
 ### 5c — Coding guidelines
 
 Check the diff for violations of the coding guidelines and CI patterns in `.claude/docs/steering/`
+
+For any CI-related changes (new jobs, job conditions, change-detection gates, triggers), cross-reference the change against `.claude/docs/steering/ci-patterns.md` — do not evaluate correctness from spec wording alone. A criterion like "job skips on unrelated changes" may conflict with repo-wide CI conventions even if the spec asked for it.
 
 For web code, check against the ESLint config and Prettier settings in `src/Worms.Hub.Web/`.
 
@@ -141,3 +143,4 @@ Valid actions: `Accept` or `Decline`. Cover every finding.
 - Be specific. "Error handling could be improved" is not useful; "`GifCreator.cs:42` does not handle the case where `frames` is empty" is.
 - Match the bar the spec set. Do not raise production-grade concerns (HA, exhaustive logging, observability) the spec did not ask for.
 - Categorise honestly. A Blocker genuinely breaks a spec criterion or the build. A Suggestion is meaningful improvement. A Nitpick is style. Do not inflate severity.
+- Every finding must cite a line read from the actual current file. Do not raise a finding based on plan code examples, prior knowledge, or inference. A suggestion stating "X is missing" or "Y deviates from convention" must quote the actual file at the relevant location — if you have not read that file, read it before raising the finding. If the implementation already matches the desired state, do not raise the finding at all.

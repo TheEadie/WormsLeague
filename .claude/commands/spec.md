@@ -98,6 +98,9 @@ Do not proceed to Step 5 until you can answer "yes" to all of the following:
 - Every error case has a specified outcome.
 - Every edge case identified in Round C either has a defined behaviour or has been explicitly deferred by the user.
 - The "Open Questions" section of the spec will either be empty or contain only items the user has deliberately chosen to leave unresolved.
+- If the slice includes any UI page or visual component: the design mockup has been reviewed and approved. If the design is still in flux, the spec must flag which visual details are pending and explicitly defer them rather than describing a placeholder that will need wholesale replacement later.
+- If the slice introduces a capability for the first time (a new test framework, a new CI job category, a new make target category): the setup of that infrastructure is explicitly included in scope and its files are listed. Do not assume it can be added invisibly.
+- If the slice adds or extends an endpoint that returns a richer response type for a single item while a corresponding list endpoint exists: a scope decision has been made and recorded — either the list endpoint is updated in this slice or the asymmetry is explicitly deferred.
 
 ## Step 5 — Create the spec file
 
