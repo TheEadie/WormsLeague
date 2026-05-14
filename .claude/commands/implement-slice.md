@@ -60,6 +60,8 @@ Keep a running mental note of anything that warrants recording. Capture a learni
 
 Do not record learnings for steps that went exactly as planned.
 
+Every file you create or modify that is not in the plan's "Files to Create / Modify" table must be recorded in the "Files Added (not in plan)" section of `learnings.md`. This includes migration files, configuration files, CI workflow changes, and infrastructure files — not only application code.
+
 ## Step 5 — Tick the slice in the epic plan
 
 After all implementation tasks are complete, mark the slice as done in the epic's top-level `plan.md` by changing its checkbox from `- [ ]` to `- [x]`.

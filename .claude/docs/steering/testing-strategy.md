@@ -13,8 +13,9 @@ Fast, in-process tests with no external dependencies. The test projects that exi
 - File-format parsing and serialisation in the Armageddon Files library
 - Game-discovery and runner logic in the Armageddon Game library (with `NSubstitute` for OS-specific seams like the registry)
 - The Armageddon Gifs assembly logic, exercised against fixtures
+- React components in the Web UI (Vitest + React Testing Library; run via `make web.test`)
 
-Unit tests use **NUnit** with **Shouldly** for assertions. They are the default `dotnet test` run and gate every PR via `make cli.test.unit` / equivalent.
+Unit tests for .NET use **NUnit** with **Shouldly** for assertions. They are the default `dotnet test` run and gate every PR via `make cli.test.unit` / equivalent. Web unit tests run independently via `make web.test`.
 
 The CLI, hub gateway, queues, and storage projects do not currently have dedicated unit-test projects — behaviour at those layers is exercised indirectly via the integration tier and the libraries above. When adding meaningful logic at those layers, prefer adding a new `<Project>.Tests` rather than retrofitting the integration test.
 

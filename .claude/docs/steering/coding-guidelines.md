@@ -45,3 +45,4 @@ Enforced by `.editorconfig`:
 - 120-character line length
 - `using` directives sorted, `System.*` first, no blank line between groups
 - Allman braces (new line before `{`, `catch`, `else`, `finally`)
+- Always use braces on `if`, `else`, `for`, `foreach`, and `while` blocks, even for single-statement bodies. InspectCode enforces this rule and `dotnet build --warnaserror` will surface violations before pushing.
