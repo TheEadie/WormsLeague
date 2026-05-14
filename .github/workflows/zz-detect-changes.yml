@@ -42,7 +42,9 @@ jobs:
             - 'src/Worms.Hub.Gateway/**'
             - 'src/Worms.Hub.Queues/**'
             - 'src/Worms.Hub.Storage/**'
+            - 'src/Worms.Hub.Web/**'
             - 'build/docker/gateway/**'
+            - 'build/web/**'
           wa-runner:
             - 'src/Worms.Hub.Armageddon.Runner/**'
             - 'src/Worms.Armageddon.Files/**'
