@@ -55,6 +55,7 @@ if (runWorker)
 {
     _ = builder.Services.AddWorkerServices();
     _ = builder.Services.AddHostedService<CheckForMessagesService>();
+    _ = builder.Services.AddHostedService<PlacementsBackfillService>();
 }
 
 var app = builder.Build();

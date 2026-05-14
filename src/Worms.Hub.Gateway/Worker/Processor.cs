@@ -3,6 +3,7 @@ using Worms.Armageddon.Files.Replays.Text;
 using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Queues;
 using Worms.Hub.Storage.Database;
+using Worms.Hub.Storage.Domain;
 using Worms.Hub.Storage.Files;
 
 namespace Worms.Hub.Gateway.Worker;
@@ -70,7 +71,10 @@ internal sealed class Processor(
             Winner = string.IsNullOrEmpty(replayModel.Winner) ? null : replayModel.Winner,
             Teams = replayModel.Teams.Count > 0
                 ? replayModel.Teams.Select(t => t.Name).ToList()
-                : null
+                : null,
+            Placements = replayModel.Placements
+                .Select(p => new ReplayPlacement(p.Team.Machine, p.Team.Name, p.Position))
+                .ToList()
         };
         replayRepository.Update(updatedReplay);
 

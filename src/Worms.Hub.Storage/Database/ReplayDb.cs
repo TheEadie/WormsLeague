@@ -27,7 +27,8 @@ internal sealed record ReplayDb(
             LeagueId,
             Date,
             Winner,
-            Teams);
+            Teams,
+            null);
 }
 #pragma warning restore CA1819
 
