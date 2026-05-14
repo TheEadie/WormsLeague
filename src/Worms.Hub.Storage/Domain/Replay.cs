@@ -12,4 +12,5 @@ public sealed record Replay(
     string? LeagueId,
     DateTime? Date,
     string? Winner,
-    IReadOnlyList<string>? Teams);
+    IReadOnlyList<string>? Teams,
+    IReadOnlyList<ReplayPlacement>? Placements);
