@@ -65,6 +65,9 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
         ArgumentNullException.ThrowIfNull(item);
         var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
+        connection.Open();
+        using var transaction = connection.BeginTransaction();
+
         const string sql = "INSERT INTO replays "
             + "(name, status, filename, fullLog, league_id, date, winner, teams) "
             + "VALUES (@name, @status, @filename, @fullLog, @leagueId, @date, @winner, @teams) "
@@ -80,8 +83,22 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
             winner = item.Winner,
             teams = item.Teams?.ToArray()
         };
-        var created = connection.QuerySingle<string>(sql, parameters);
-        return item with { Id = created };
+        var replayId = connection.QuerySingle<int>(sql, parameters, transaction);
+
+        if (item.Placements is { Count: > 0 })
+        {
+            foreach (var p in item.Placements)
+            {
+                _ = connection.Execute(
+                    "INSERT INTO replay_placements (replay_id, machine, team_name, position) "
+                    + "VALUES (@replayId, @machine, @teamName, @position)",
+                    new { replayId, machine = p.Machine, teamName = p.TeamName, position = p.Position },
+                    transaction);
+            }
+        }
+
+        transaction.Commit();
+        return item with { Id = replayId.ToString(CultureInfo.InvariantCulture) };
     }
 
     public void Update(Replay item)
