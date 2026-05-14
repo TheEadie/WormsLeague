@@ -3,36 +3,25 @@ set -euo pipefail
 
 PATHTOJSON=$1
 
-function join_by {
-  local d=${1-} f=${2-}
-  if shift 1; then
-    printf %s "${@/#/$d}"
-  fi
-}
+NUMOFADDITIONS=$(jq '.individualResults[] | select(.operation=="changes") | .onlyInTarget | length' "$PATHTOJSON" -r)
+NUMOFDELETIONS=$(jq '.individualResults[] | select(.operation=="changes") | .onlyInSource | length' "$PATHTOJSON" -r)
+NUMOFCHANGES=$(jq '.individualResults[] | select(.operation=="changes") | .differences | length' "$PATHTOJSON" -r)
 
-NUMOFADDITIONS=$(jq '.individualResults[] | select(.operation=="changes") | .onlyInTarget | length' $PATHTOJSON -r)
-NUMOFDELETIONS=$(jq '.individualResults[] | select(.operation=="changes") | .onlyInSource | length' $PATHTOJSON -r)
-NUMOFCHANGES=$(jq '.individualResults[] | select(.operation=="changes") | .differences | length' $PATHTOJSON -r)
-
-
-printf "<h3>Database Changes</h3>"
-printf "✅ Objects to be created: <b>"$NUMOFADDITIONS"</b>"
-
+printf "### Database Changes\n"
+printf "✅ Objects to be created: **%s**\n" "$NUMOFADDITIONS"
 if [ "$NUMOFADDITIONS" -gt 0 ]; then
-    ADDITIONS=$(jq '.individualResults[] | select(.operation=="changes").onlyInTarget[] | (.objectType + "&nbsp;-&nbsp;" + .schema + "." + .name) ' $PATHTOJSON -r)
-    join_by "<br/>&nbsp;| ✅ " $ADDITIONS
+    mapfile -t ADDITIONS < <(jq '.individualResults[] | select(.operation=="changes").onlyInTarget[] | ("  - ✅ " + .objectType + " - " + .schema + "." + .name)' "$PATHTOJSON" -r)
+    printf "%s\n" "${ADDITIONS[@]}"
 fi
 
-printf "<br/>📝 Objects to be updated: <b>"$NUMOFCHANGES"</b>"
+printf "\n📝 Objects to be updated: **%s**\n" "$NUMOFCHANGES"
 if [ "$NUMOFCHANGES" -gt 0 ]; then
-    CHANGES=$(jq '.individualResults[] | select(.operation=="changes").differences[] | (.objectType + "&nbsp;-&nbsp;" + .schema + "." + .name) ' $PATHTOJSON -r)
-    join_by "<br/>&nbsp;| 📝 " $CHANGES
+    mapfile -t CHANGES < <(jq '.individualResults[] | select(.operation=="changes").differences[] | ("  - 📝 " + .objectType + " - " + .schema + "." + .name)' "$PATHTOJSON" -r)
+    printf "%s\n" "${CHANGES[@]}"
 fi
 
-printf "<br/>⚠ Objects to be dropped: <b>"$NUMOFDELETIONS"</b>"
+printf "\n⚠ Objects to be dropped: **%s**\n" "$NUMOFDELETIONS"
 if [ "$NUMOFDELETIONS" -gt 0 ]; then
-    DELETIONS=$(jq '.individualResults[] | select(.operation=="changes").onlyInSource[] | (.objectType + "&nbsp;-&nbsp;" + .schema + "." + .name) ' $PATHTOJSON -r)
-    join_by "<br/>&nbsp;| ⚠ " $DELETIONS
+    mapfile -t DELETIONS < <(jq '.individualResults[] | select(.operation=="changes").onlyInSource[] | ("  - ⚠ " + .objectType + " - " + .schema + "." + .name)' "$PATHTOJSON" -r)
+    printf "%s\n" "${DELETIONS[@]}"
 fi
-
-
