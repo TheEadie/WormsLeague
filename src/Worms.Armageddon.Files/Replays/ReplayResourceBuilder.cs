@@ -47,5 +47,9 @@ internal sealed class ReplayResourceBuilder
 
     public Team GetTeamByName(string name) => _teams.Single(x => x.Name == name);
 
-    public ReplayResource Build() => new(_start, true, _teams, _winner, _turns, _fullLog);
+    public ReplayResource Build()
+    {
+        var placements = PlacementCalculator.Calculate(_turns, _teams, _winner);
+        return new ReplayResource(_start, true, _teams, _winner, _turns, placements, _fullLog);
+    }
 }
