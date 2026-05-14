@@ -81,7 +81,12 @@ jobs:
 
       - name: Get Summary
         id: summary
-        run: echo "summary=$(build/flyway-summary.sh src/database/reports/report.json)" >> $GITHUB_OUTPUT
+        run: |
+          {
+            echo 'summary<<EOF'
+            build/flyway-summary.sh src/database/reports/report.json
+            echo EOF
+          } >> $GITHUB_OUTPUT
 
       - name: Comment on PR
         uses: thollander/actions-comment-pull-request@v3
