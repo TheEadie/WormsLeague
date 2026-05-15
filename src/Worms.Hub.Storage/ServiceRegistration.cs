@@ -10,7 +10,7 @@ namespace Worms.Hub.Storage;
 [PublicAPI]
 public static class ServiceRegistration
 {
-    private static readonly Version PlacementsMinVersion = new(0, 5);
+    private static readonly Version PlacementsMinVersion = new(0, 6);
     private static readonly Version ReplayLeagueFieldsMinVersion = new(0, 4);
 
     public static IServiceCollection AddHubStorageServices(this IServiceCollection builder) =>

@@ -5,7 +5,7 @@ namespace Worms.Hub.Gateway.FeatureFlags;
 internal sealed class GatewayFeatureFlags(DatabaseSchemaVersion schemaVersion) : IFeatureFlags
 {
     private static readonly Version LeaguesMinVersion = new(0, 3);
-    private static readonly Version PlacementsMinVersion = new(0, 5);
+    private static readonly Version PlacementsMinVersion = new(0, 6);
 
     public async Task<bool> IsLeaguesEnabledAsync()
     {
