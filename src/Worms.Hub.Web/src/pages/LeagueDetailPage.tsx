@@ -49,7 +49,7 @@ interface TurnDto {
 interface PlacementDto {
     machine: string
     teamName: string
-    position: number
+    position: number | null
 }
 
 interface ReplayInLeagueDto {
@@ -257,15 +257,17 @@ function LeagueDetailPage() {
                                                                       .slice()
                                                                       .sort(
                                                                           (a, b) =>
-                                                                              a.position -
-                                                                              b.position,
+                                                                              (a.position ?? Infinity) -
+                                                                              (b.position ?? Infinity),
                                                                       )
                                                                       .map((p) => {
-                                                                          const medal = [
-                                                                              '#ffca28',
-                                                                              '#bdbdbd',
-                                                                              '#cd7f32',
-                                                                          ][p.position - 1]
+                                                                          const medal = p.position !== null
+                                                                              ? [
+                                                                                  '#ffca28',
+                                                                                  '#bdbdbd',
+                                                                                  '#cd7f32',
+                                                                              ][p.position - 1]
+                                                                              : undefined
                                                                           const isWin =
                                                                               p.position === 1
                                                                           return (
