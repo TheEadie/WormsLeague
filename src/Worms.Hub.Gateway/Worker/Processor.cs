@@ -83,10 +83,11 @@ internal sealed class Processor(
         // Announce game complete
         var placementsEnabled = await featureFlags.IsPlacementsEnabledAsync();
         IReadOnlyList<PlacementInfo>? placements = null;
-        if (placementsEnabled && replayModel.Placements.Count > 0)
+        if (placementsEnabled && replayModel.Placements.Any(p => p.Position.HasValue))
         {
             placements = replayModel.Placements
-                .Select(p => new PlacementInfo(p.Team.Name, p.Position))
+                .Where(p => p.Position.HasValue)
+                .Select(p => new PlacementInfo(p.Team.Name, p.Position!.Value))
                 .ToList();
         }
 

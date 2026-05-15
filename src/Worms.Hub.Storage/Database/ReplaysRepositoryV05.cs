@@ -8,7 +8,7 @@ namespace Worms.Hub.Storage.Database;
 
 internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IReplaysRepository
 {
-    private sealed record ReplayPlacementDb(int ReplayId, string Machine, string TeamName, int Position)
+    private sealed record ReplayPlacementDb(int ReplayId, string Machine, string TeamName, int? Position)
     {
         public ReplayPlacement ToDomain() => new(Machine, TeamName, Position);
     }

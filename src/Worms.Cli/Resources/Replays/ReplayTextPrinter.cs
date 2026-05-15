@@ -19,7 +19,8 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
         tableBuilder.AddColumn(
             "TEAMS",
             [.. resources.Select(x =>
-                string.Join(", ", x.Details.Placements.OrderBy(p => p.Position).Select(p => $"{p.Position}: {p.Team.Name}")))]);
+                string.Join(", ", x.Details.Placements.OrderBy(p => p.Position).Select(p => $"{p.Position?.ToString(CultureInfo.InvariantCulture) ?? "-"}: {p.Team.Name}")))]);
+
 
         var table = tableBuilder.Build();
         TablePrinter.Print(writer, table);
@@ -41,7 +42,7 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
             writer.WriteLine("Teams:");
             var orderedPlacements = resource.Details.Placements.OrderBy(p => p.Position).ToList();
             var teamsTable = new TableBuilder(outputMaxWidth);
-            teamsTable.AddColumn("POS", [.. orderedPlacements.Select(p => p.Position.ToString(CultureInfo.CurrentCulture))]);
+            teamsTable.AddColumn("POS", [.. orderedPlacements.Select(p => p.Position?.ToString(CultureInfo.CurrentCulture) ?? "-")]);
             teamsTable.AddColumn("NAME", [.. orderedPlacements.Select(p => p.Team.Name)]);
             teamsTable.AddColumn("PLAYER", [.. orderedPlacements.Select(p => p.Team.Machine)]);
             teamsTable.AddColumn("COLOUR", [.. orderedPlacements.Select(p => p.Team.Colour.ToString())]);
