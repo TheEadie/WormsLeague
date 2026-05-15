@@ -174,7 +174,7 @@ function LeagueDetailPage() {
                                             Date
                                         </TableCell>
                                         <TableCell sx={{ fontWeight: 700 }}>Players</TableCell>
-                                        <TableCell sx={{ fontWeight: 700, width: 300 }}>
+                                        <TableCell sx={{ fontWeight: 700, width: 420 }}>
                                             Top weapons
                                         </TableCell>
                                         <TableCell sx={{ fontWeight: 700, width: 80 }}>
