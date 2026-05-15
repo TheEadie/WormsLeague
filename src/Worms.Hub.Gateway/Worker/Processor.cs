@@ -12,6 +12,7 @@ namespace Worms.Hub.Gateway.Worker;
 internal sealed class Processor(
     IMessageQueue<ReplayToUpdateMessage> messageQueue,
     IReplaysRepository replayRepository,
+    ITeamsRepository teamsRepository,
     ReplayFiles replayFiles,
     IAnnouncer announcer,
     IReplayTextReader replayTextReader,
@@ -79,6 +80,15 @@ internal sealed class Processor(
                 .ToList()
         };
         replayRepository.Update(updatedReplay);
+
+        // Upsert teams from placements
+        if (await featureFlags.IsTeamsEnabledAsync())
+        {
+            foreach (var placement in replayModel.Placements)
+            {
+                teamsRepository.Upsert(placement.Team.Machine, placement.Team.Name);
+            }
+        }
 
         // Announce game complete
         var placementsEnabled = await featureFlags.IsPlacementsEnabledAsync();

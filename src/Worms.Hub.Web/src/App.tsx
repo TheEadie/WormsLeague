@@ -6,6 +6,7 @@ import CallbackPage from './pages/CallbackPage'
 import LeagueListPage from './pages/LeagueListPage'
 import LeagueDetailPage from './pages/LeagueDetailPage'
 import GameDetailPage from './pages/GameDetailPage'
+import TeamsPage from './pages/TeamsPage'
 
 const router = createBrowserRouter([
     {
@@ -35,6 +36,14 @@ const router = createBrowserRouter([
                 element: (
                     <RequireAuth>
                         <GameDetailPage />
+                    </RequireAuth>
+                ),
+            },
+            {
+                path: 'teams',
+                element: (
+                    <RequireAuth>
+                        <TeamsPage />
                     </RequireAuth>
                 ),
             },
