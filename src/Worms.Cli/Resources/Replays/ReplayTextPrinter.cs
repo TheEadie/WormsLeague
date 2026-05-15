@@ -10,16 +10,25 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
     public void Print(TextWriter writer, IReadOnlyCollection<LocalReplay> resources, int outputMaxWidth)
     {
         var tableBuilder = new TableBuilder(outputMaxWidth);
+        var hasAnyPlacements = resources.Any(x => x.Details.Placements.Count > 0);
 
         tableBuilder.AddColumn(
             "NAME",
             [.. resources.Select(x => x.Details.Date.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture))]);
         tableBuilder.AddColumn("CONTEXT", [.. resources.Select(x => x.Context)]);
         tableBuilder.AddColumn("PROCESSED", [.. resources.Select(x => x.Details.Processed.ToString())]);
-        tableBuilder.AddColumn("WINNER", [.. resources.Select(x => x.Details.Winner)]);
+
+        if (!hasAnyPlacements)
+        {
+            tableBuilder.AddColumn("WINNER", [.. resources.Select(x => x.Details.Winner)]);
+        }
+
         tableBuilder.AddColumn(
             "TEAMS",
-            [.. resources.Select(x => string.Join(", ", x.Details.Teams.Select(t => t.Name)))]);
+            [.. resources.Select(x =>
+                x.Details.Placements.Count > 0
+                    ? string.Join(", ", x.Details.Placements.OrderBy(p => p.Position).Select(p => $"{p.Position}: {p.Team.Name}"))
+                    : string.Join(", ", x.Details.Teams.Select(t => t.Name)))]);
 
         var table = tableBuilder.Build();
         TablePrinter.Print(writer, table);
@@ -62,7 +71,17 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
             writer.WriteLine();
 
             writer.WriteLine("Awards:");
-            writer.WriteLine($"Winner: {resource.Details.Winner}");
+            if (resource.Details.Placements.Count > 0)
+            {
+                foreach (var placement in resource.Details.Placements.OrderBy(p => p.Position))
+                {
+                    writer.WriteLine($"{placement.Position}: {placement.Team.Name}");
+                }
+            }
+            else
+            {
+                writer.WriteLine($"Winner: {resource.Details.Winner}");
+            }
         }
     }
 
