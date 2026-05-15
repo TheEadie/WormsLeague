@@ -6,6 +6,7 @@ internal sealed class GatewayFeatureFlags(DatabaseSchemaVersion schemaVersion) :
 {
     private static readonly Version LeaguesMinVersion = new(0, 3);
     private static readonly Version PlacementsMinVersion = new(0, 6);
+    private static readonly Version TeamsMinVersion = new(0, 7);
 
     public async Task<bool> IsLeaguesEnabledAsync()
     {
@@ -17,5 +18,11 @@ internal sealed class GatewayFeatureFlags(DatabaseSchemaVersion schemaVersion) :
     {
         var current = await schemaVersion.GetCurrentVersionAsync();
         return current is not null && current >= PlacementsMinVersion;
+    }
+
+    public async Task<bool> IsTeamsEnabledAsync()
+    {
+        var current = await schemaVersion.GetCurrentVersionAsync();
+        return current is not null && current >= TeamsMinVersion;
     }
 }
