@@ -21,4 +21,4 @@ internal sealed record TeamDto(
 }
 
 [PublicAPI]
-internal sealed record ClaimTeamDto(bool Claimed);
+internal sealed record ClaimTeamDto(int Id, bool Claimed);

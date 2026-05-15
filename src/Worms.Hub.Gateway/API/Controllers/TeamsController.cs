@@ -25,15 +25,15 @@ internal sealed class TeamsController(
         return Ok(teams.Select(t => TeamDto.FromDomain(t, callerSubject)).ToList());
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult> Put(int id, [FromBody] ClaimTeamDto body)
+    [HttpPut]
+    public async Task<ActionResult> Put(ClaimTeamDto body)
     {
         if (!await featureFlags.IsTeamsEnabledAsync())
         {
             return NotFound();
         }
 
-        var team = teamsRepository.GetById(id);
+        var team = teamsRepository.GetById(body.Id);
         if (team is null)
         {
             return NotFound();
@@ -56,7 +56,7 @@ internal sealed class TeamsController(
                 player = playersRepository.Create(new Player(callerSubject!, displayName));
             }
 
-            teamsRepository.SetPlayerClaim(id, player.AuthSubject);
+            teamsRepository.SetPlayerClaim(body.Id, player.AuthSubject);
         }
         else
         {
@@ -66,7 +66,7 @@ internal sealed class TeamsController(
                 return Forbid();
             }
 
-            teamsRepository.SetPlayerClaim(id, null);
+            teamsRepository.SetPlayerClaim(body.Id, null);
         }
 
         return Ok();

@@ -61,13 +61,13 @@ function TeamsPage() {
             return m
         })
         try {
-            const res = await fetch(`${gatewayUrl}/api/v1/teams/${id}`, {
+            const res = await fetch(`${gatewayUrl}/api/v1/teams`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${auth.user!.access_token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ claimed }),
+                body: JSON.stringify({ id, claimed }),
             })
             if (!res.ok) {
                 const msg =
