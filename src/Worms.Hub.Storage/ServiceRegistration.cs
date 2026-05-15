@@ -36,5 +36,7 @@ public static class ServiceRegistration
             .AddScoped<CliFiles>()
             .AddScoped<ReplayFiles>()
             .AddScoped<SchemeFiles>()
-            .AddScoped<GameFiles>();
+            .AddScoped<GameFiles>()
+            .AddScoped<IPlayersRepository, PlayersRepository>()
+            .AddScoped<ITeamsRepository, TeamsRepository>();
 }
