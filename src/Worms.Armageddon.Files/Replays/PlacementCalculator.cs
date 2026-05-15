@@ -9,7 +9,7 @@ internal static class PlacementCalculator
     {
         if (string.IsNullOrEmpty(winner))
         {
-            return Array.Empty<Placement>();
+            return teams.Select(t => new Placement(t, null)).ToList();
         }
 
         // Pass 1: uncapped totals to find wormsPerTeam
@@ -27,7 +27,7 @@ internal static class PlacementCalculator
 
         if (wormsPerTeam == 0)
         {
-            return Array.Empty<Placement>();
+            return teams.Select(t => new Placement(t, null)).ToList();
         }
 
         // Pass 2: capped pass to find elimination turn index per team

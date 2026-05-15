@@ -12,9 +12,25 @@ internal sealed class Announcer(IConfiguration configuration, IHttpClientFactory
         await PostToSlack(slackMessage);
     }
 
-    public async Task AnnounceGameComplete(string winner)
+    public async Task AnnounceGameComplete(string winner, IReadOnlyList<PlacementInfo>? placements = null)
     {
         logger.LogInformation("Announcing game complete to Slack");
+
+        string headerText;
+        string bodyText;
+        if (placements?.Count > 0)
+        {
+            headerText = "Results:";
+            bodyText = string.Join("\n", placements
+                .OrderBy(p => p.Position)
+                .Select(p => $"{p.Position}: {p.TeamName}"));
+        }
+        else
+        {
+            headerText = "Winner:";
+            bodyText = winner;
+        }
+
         var slackMessage = new SlackMessage(
             "Game Complete",
             $$"""
@@ -31,7 +47,7 @@ internal sealed class Announcer(IConfiguration configuration, IHttpClientFactory
                       "type": "section",
                       "text": {
                           "type": "mrkdwn",
-                          "text": "*Winner:*\n{{winner}}"
+                          "text": "*{{headerText}}*\n{{bodyText}}"
                       }
                   }
               ]

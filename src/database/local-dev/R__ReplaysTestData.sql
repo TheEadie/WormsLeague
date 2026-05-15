@@ -1,60 +1,153 @@
-DELETE FROM public.replays;
+TRUNCATE public.replays RESTART IDENTITY CASCADE;
 
-INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams)
+-- 1: Processed, 2 teams, with placements (Alpha wins)
+INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams, fulllog)
 VALUES (
     '2024-03-10',
     'Processed',
     'seed_replay1.WAgame',
     'redgate',
     '2024-03-10 19:00:00',
-    'Team Beta',
-    ARRAY['Team Alpha', 'Team Beta']
-);
-
-INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams)
-VALUES (
-    '2024-03-24',
-    'Processed',
-    'seed_replay2.WAgame',
-    'redgate',
-    '2024-03-24 20:15:00',
     'Team Alpha',
-    ARRAY['Team Alpha', 'Team Beta']
+    ARRAY['Team Alpha', 'Team Beta'],
+    $$Game Started at 2024-03-10 19:00:00 GMT
+Red: "machine-alpha" as "Team Alpha"
+Blue: "machine-beta" as "Team Beta"
+[00:00:05.00] ••• Team Alpha (machine-alpha) starts turn
+[00:00:12.00] ••• Team Alpha (machine-alpha) fires Bazooka
+[00:00:22.00] ••• Damage dealt: 52 to Team Beta (machine-beta)
+[00:00:28.00] ••• Team Alpha (machine-alpha) ends turn; time used: 23.00 sec turn, 3.00 sec retreat
+[00:00:33.00] ••• Team Beta (machine-beta) starts turn
+[00:00:41.00] ••• Team Beta (machine-beta) fires Shotgun
+[00:00:55.00] ••• Damage dealt: 33 to Team Alpha (machine-alpha)
+[00:01:00.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:01:05.00] ••• Team Alpha (machine-alpha) starts turn
+[00:01:11.00] ••• Team Alpha (machine-alpha) fires Banana Bomb (5 sec)
+[00:01:28.00] ••• Damage dealt: 74 (1 kill) to Team Beta (machine-beta)
+[00:01:35.00] ••• Team Alpha (machine-alpha) ends turn; time used: 30.00 sec turn, 3.00 sec retreat
+Team Alpha wins the match!
+$$
 );
 
-INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams)
+-- 2: Processed, 3 teams, with placements (Gamma wins)
+INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams, fulllog)
 VALUES (
     '2024-04-07',
     'Processed',
-    'seed_replay3.WAgame',
+    'seed_replay2.WAgame',
     'redgate',
     '2024-04-07 19:45:00',
-    'Team Beta',
-    ARRAY['Team Alpha', 'Team Beta']
+    'Team Gamma',
+    ARRAY['Team Alpha', 'Team Beta', 'Team Gamma'],
+    $$Game Started at 2024-04-07 19:45:00 GMT
+Red: "machine-alpha" as "Team Alpha"
+Blue: "machine-beta" as "Team Beta"
+Green: "machine-gamma" as "Team Gamma"
+[00:00:06.00] ••• Team Alpha (machine-alpha) starts turn
+[00:00:14.00] ••• Team Alpha (machine-alpha) fires Grenade (3 sec, min bounce)
+[00:00:29.00] ••• Damage dealt: 45 to Team Beta (machine-beta)
+[00:00:33.00] ••• Team Alpha (machine-alpha) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:00:38.00] ••• Team Beta (machine-beta) starts turn
+[00:00:46.00] ••• Team Beta (machine-beta) fires Bazooka
+[00:01:02.00] ••• Damage dealt: 38 to Team Gamma (machine-gamma)
+[00:01:07.00] ••• Team Beta (machine-beta) ends turn; time used: 29.00 sec turn, 3.00 sec retreat
+[00:01:12.00] ••• Team Gamma (machine-gamma) starts turn
+[00:01:19.00] ••• Team Gamma (machine-gamma) fires Shotgun
+[00:01:33.00] ••• Damage dealt: 67 (1 kill) to Team Alpha (machine-alpha)
+[00:01:38.00] ••• Team Gamma (machine-gamma) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:01:43.00] ••• Team Beta (machine-beta) starts turn
+[00:01:51.00] ••• Team Beta (machine-beta) fires Homing Missile
+[00:02:05.00] ••• Damage dealt: 41 to Team Gamma (machine-gamma)
+[00:02:10.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:02:15.00] ••• Team Gamma (machine-gamma) starts turn
+[00:02:21.00] ••• Team Gamma (machine-gamma) fires Banana Bomb (5 sec)
+[00:02:38.00] ••• Damage dealt: 78 (1 kill) to Team Beta (machine-beta)
+[00:02:45.00] ••• Team Gamma (machine-gamma) ends turn; time used: 30.00 sec turn, 3.00 sec retreat
+Team Gamma wins the match!
+$$
 );
 
-INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams)
+-- 3: Processed, 4 teams, with placements (Delta wins)
+INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams, fulllog)
 VALUES (
     '2024-04-21',
     'Processed',
-    'seed_replay4.WAgame',
+    'seed_replay3.WAgame',
     'redgate',
     '2024-04-21 20:00:00',
-    'Team Alpha',
-    ARRAY['Team Alpha', 'Team Beta']
+    'Team Delta',
+    ARRAY['Team Alpha', 'Team Beta', 'Team Gamma', 'Team Delta'],
+    $$Game Started at 2024-04-21 20:00:00 GMT
+Red: "machine-alpha" as "Team Alpha"
+Blue: "machine-beta" as "Team Beta"
+Green: "machine-gamma" as "Team Gamma"
+Yellow: "machine-delta" as "Team Delta"
+[00:00:04.00] ••• Team Alpha (machine-alpha) starts turn
+[00:00:12.00] ••• Team Alpha (machine-alpha) fires Bazooka
+[00:00:26.00] ••• Damage dealt: 44 to Team Beta (machine-beta)
+[00:00:31.00] ••• Team Alpha (machine-alpha) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:00:36.00] ••• Team Beta (machine-beta) starts turn
+[00:00:44.00] ••• Team Beta (machine-beta) fires Grenade (3 sec)
+[00:00:58.00] ••• Damage dealt: 51 to Team Gamma (machine-gamma)
+[00:01:03.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:01:08.00] ••• Team Gamma (machine-gamma) starts turn
+[00:01:16.00] ••• Team Gamma (machine-gamma) fires Shotgun
+[00:01:28.00] ••• Damage dealt: 37 to Team Delta (machine-delta)
+[00:01:33.00] ••• Team Gamma (machine-gamma) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
+[00:01:38.00] ••• Team Delta (machine-delta) starts turn
+[00:01:45.00] ••• Team Delta (machine-delta) fires Holy Hand Grenade
+[00:02:00.00] ••• Damage dealt: 86 (1 kill) to Team Alpha (machine-alpha)
+[00:02:07.00] ••• Team Delta (machine-delta) ends turn; time used: 29.00 sec turn, 3.00 sec retreat
+[00:02:12.00] ••• Team Beta (machine-beta) starts turn
+[00:02:19.00] ••• Team Beta (machine-beta) fires Bazooka
+[00:02:33.00] ••• Damage dealt: 55 (1 kill) to Team Gamma (machine-gamma)
+[00:02:38.00] ••• Team Beta (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:02:43.00] ••• Team Delta (machine-delta) starts turn
+[00:02:50.00] ••• Team Delta (machine-delta) fires Banana Bomb (5 sec)
+[00:03:06.00] ••• Damage dealt: 71 (1 kill) to Team Beta (machine-beta)
+[00:03:12.00] ••• Team Delta (machine-delta) ends turn; time used: 29.00 sec turn, 3.00 sec retreat
+[00:03:17.00] ••• Team Delta (machine-delta) starts turn
+[00:03:24.00] ••• Team Delta (machine-delta) fires Cluster Bomb
+[00:03:38.00] ••• Damage dealt: 63 (1 kill) to Team Gamma (machine-gamma)
+[00:03:44.00] ••• Team Delta (machine-delta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+Team Delta wins the match!
+$$
 );
 
-INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams)
+-- 4: Processed, 2 teams, draw — no winner, null positions
+INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams, fulllog)
 VALUES (
     '2024-05-05',
-    'Pending',
-    'seed_replay5.WAgame',
+    'Processed',
+    'seed_replay4.WAgame',
     'redgate',
+    '2024-05-05 19:30:00',
     NULL,
-    NULL,
-    NULL
+    ARRAY['Team Alpha', 'Team Beta'],
+    $$Game Started at 2024-05-05 19:30:00 GMT
+Red: "machine-alpha" as "Team Alpha"
+Blue: "machine-beta" as "Team Beta"
+[00:00:07.00] ••• Team Alpha (machine-alpha) starts turn
+[00:00:15.00] ••• Team Alpha (machine-alpha) fires Bazooka
+[00:00:28.00] ••• Damage dealt: 35 to Team Beta (machine-beta)
+[00:00:33.00] ••• Team Alpha (machine-alpha) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:00:38.00] ••• Team Beta (machine-beta) starts turn
+[00:00:46.00] ••• Team Beta (machine-beta) fires Shotgun
+[00:00:59.00] ••• Damage dealt: 42 to Team Alpha (machine-alpha)
+[00:01:04.00] ••• Team Beta (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:01:09.00] ••• Team Alpha (machine-alpha) starts turn
+[00:01:17.00] ••• Team Alpha (machine-alpha) fires Grenade (3 sec, min bounce)
+[00:01:32.00] ••• Damage dealt: 28 to Team Beta (machine-beta)
+[00:01:37.00] ••• Team Alpha (machine-alpha) ends turn; time used: 28.00 sec turn, 3.00 sec retreat
+[00:01:42.00] ••• Team Beta (machine-beta) starts turn
+[00:01:50.00] ••• Team Beta (machine-beta) fires Homing Missile
+[00:02:04.00] ••• Damage dealt: 33 to Team Alpha (machine-alpha)
+[00:02:09.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+The round was drawn.
+$$
 );
 
+-- 5: Processed, 2 teams, with placements and full log (Alpha wins)
 INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams, fulllog)
 VALUES (
     '2024-06-01',
@@ -65,25 +158,63 @@ VALUES (
     'Team Alpha',
     ARRAY['Team Alpha', 'Team Beta'],
     $$Game Started at 2024-06-01 19:00:00 GMT
-Red: "player1" as "Team Alpha"
-Blue: "player2" as "Team Beta"
-[00:00:05.00] ••• Team Alpha (player1) starts turn
-[00:00:08.00] ••• Team Alpha (player1) fires Shotgun
-[00:00:25.00] ••• Damage dealt: 45 to Team Beta (player2)
-[00:00:27.00] ••• Team Alpha (player1) ends turn; time used: 22.00 sec turn, 3.00 sec retreat
-[00:00:35.00] ••• Team Beta (player2) starts turn
-[00:00:40.00] ••• Team Beta (player2) fires Grenade (3 sec, min bounce)
-[00:00:58.00] ••• Damage dealt: 30 to Team Alpha (player1)
-[00:01:00.00] ••• Team Beta (player2) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
-[00:01:10.00] ••• Team Alpha (player1) starts turn
-[00:01:15.00] ••• Team Alpha (player1) fires Ninja Rope
-[00:01:20.00] ••• Team Alpha (player1) fires Banana Bomb (5 sec)
-[00:01:35.00] ••• Damage dealt: 80 (1 kill) to Team Beta (player2)
-[00:01:37.00] ••• Team Alpha (player1) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
-[00:01:45.00] ••• Team Beta (player2) starts turn
-[00:01:50.00] ••• Team Beta (player2) fires Bazooka
-[00:02:05.00] ••• Damage dealt: 50 to Team Alpha (player1)
-[00:02:07.00] ••• Team Beta (player2) ends turn; time used: 22.00 sec turn, 3.00 sec retreat
+Red: "machine-alpha" as "Team Alpha"
+Blue: "machine-beta" as "Team Beta"
+[00:00:05.00] ••• Team Alpha (machine-alpha) starts turn
+[00:00:12.00] ••• Team Alpha (machine-alpha) fires Shotgun
+[00:00:21.00] ••• Damage dealt: 38 to Team Beta (machine-beta)
+[00:00:30.00] ••• Team Alpha (machine-alpha) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
+[00:00:35.00] ••• Team Beta (machine-beta) starts turn
+[00:00:43.00] ••• Team Beta (machine-beta) fires Bazooka
+[00:00:58.00] ••• Damage dealt: 47 to Team Alpha (machine-alpha)
+[00:01:02.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:01:07.00] ••• Team Alpha (machine-alpha) starts turn
+[00:01:14.00] ••• Team Alpha (machine-alpha) fires Banana Bomb (5 sec)
+[00:01:28.00] ••• Damage dealt: 65 to Team Beta (machine-beta)
+[00:01:35.00] ••• Team Alpha (machine-alpha) ends turn; time used: 28.00 sec turn, 3.00 sec retreat
+[00:01:40.00] ••• Team Beta (machine-beta) starts turn
+[00:01:48.00] ••• Team Beta (machine-beta) fires Grenade (3 sec, min bounce)
+[00:02:03.00] ••• Damage dealt: 29 to Team Alpha (machine-alpha)
+[00:02:08.00] ••• Team Beta (machine-beta) ends turn; time used: 28.00 sec turn, 3.00 sec retreat
+[00:02:13.00] ••• Team Alpha (machine-alpha) starts turn
+[00:02:20.00] ••• Team Alpha (machine-alpha) fires Holy Hand Grenade
+[00:02:38.00] ••• Damage dealt: 91 (1 kill) to Team Beta (machine-beta)
+[00:02:45.00] ••• Team Alpha (machine-alpha) ends turn; time used: 32.00 sec turn, 3.00 sec retreat
 Team Alpha wins the match!
 $$
 );
+
+-- 6: Pending — awaiting processing (name used for sort; appears first in UI)
+INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams)
+VALUES (
+    '2024-06-15',
+    'Pending',
+    'seed_replay5.WAgame',
+    'redgate',
+    NULL,
+    NULL,
+    NULL
+);
+
+-- Placements for replay 1 (2 teams: Alpha 1st, Beta 2nd)
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (1, 'machine-alpha', 'Team Alpha', 1);
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (1, 'machine-beta', 'Team Beta', 2);
+
+-- Placements for replay 2 (3 teams: Gamma 1st, Alpha 2nd, Beta 3rd)
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (2, 'machine-gamma', 'Team Gamma', 1);
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (2, 'machine-alpha', 'Team Alpha', 2);
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (2, 'machine-beta', 'Team Beta', 3);
+
+-- Placements for replay 3 (4 teams: Delta 1st, Beta 2nd, Alpha 3rd, Gamma 4th)
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (3, 'machine-delta', 'Team Delta', 1);
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (3, 'machine-beta', 'Team Beta', 2);
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (3, 'machine-alpha', 'Team Alpha', 3);
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (3, 'machine-gamma', 'Team Gamma', 4);
+
+-- Placements for replay 4 (draw — null positions for both teams)
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (4, 'machine-alpha', 'Team Alpha', NULL);
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (4, 'machine-beta', 'Team Beta', NULL);
+
+-- Placements for replay 5 (2 teams: Alpha 1st, Beta 2nd)
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (5, 'machine-alpha', 'Team Alpha', 1);
+INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (5, 'machine-beta', 'Team Beta', 2);

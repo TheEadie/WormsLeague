@@ -46,6 +46,12 @@ interface TurnDto {
     damage: DamageSummaryDto[]
 }
 
+interface PlacementDto {
+    machine: string
+    teamName: string
+    position: number | null
+}
+
 interface ReplayInLeagueDto {
     id: string
     name: string
@@ -54,6 +60,7 @@ interface ReplayInLeagueDto {
     winner: string | null
     teams: string[] | null
     turns: TurnDto[] | null
+    placements: PlacementDto[] | null
 }
 
 function formatDuration(ms: number): string {
@@ -167,7 +174,7 @@ function LeagueDetailPage() {
                                             Date
                                         </TableCell>
                                         <TableCell sx={{ fontWeight: 700 }}>Players</TableCell>
-                                        <TableCell sx={{ fontWeight: 700, width: 300 }}>
+                                        <TableCell sx={{ fontWeight: 700, width: 420 }}>
                                             Top weapons
                                         </TableCell>
                                         <TableCell sx={{ fontWeight: 700, width: 80 }}>
@@ -244,40 +251,133 @@ function LeagueDetailPage() {
                                                             sx={{ flexWrap: 'wrap' }}
                                                             useFlexGap
                                                         >
-                                                            {replay.teams
-                                                                ?.slice()
-                                                                .sort((a) =>
-                                                                    a === replay.winner ? -1 : 1,
-                                                                )
-                                                                .map((team) => (
-                                                                    <Box
-                                                                        key={team}
-                                                                        sx={{
-                                                                            display: 'flex',
-                                                                            alignItems: 'center',
-                                                                            gap: 0.5,
-                                                                        }}
-                                                                    >
-                                                                        {team === replay.winner && (
-                                                                            <WorkspacePremiumIcon
-                                                                                sx={{
-                                                                                    fontSize: 14,
-                                                                                    color: 'warning.main',
-                                                                                }}
-                                                                            />
-                                                                        )}
-                                                                        <Chip
-                                                                            label={team}
-                                                                            size="small"
-                                                                            variant="outlined"
-                                                                            sx={{
-                                                                                fontFamily:
-                                                                                    monoFontFamily,
-                                                                                fontSize: 11,
-                                                                            }}
-                                                                        />
-                                                                    </Box>
-                                                                ))}
+                                                            {replay.placements !== null &&
+                                                            replay.placements.length > 0
+                                                                ? replay.placements
+                                                                      .slice()
+                                                                      .sort(
+                                                                          (a, b) =>
+                                                                              (a.position ??
+                                                                                  Infinity) -
+                                                                              (b.position ??
+                                                                                  Infinity),
+                                                                      )
+                                                                      .map((p) => {
+                                                                          const medal =
+                                                                              p.position !== null
+                                                                                  ? [
+                                                                                        '#ffca28',
+                                                                                        '#bdbdbd',
+                                                                                        '#cd7f32',
+                                                                                    ][
+                                                                                        p.position -
+                                                                                            1
+                                                                                    ]
+                                                                                  : undefined
+                                                                          const isWin =
+                                                                              p.position === 1
+                                                                          return (
+                                                                              <Box
+                                                                                  key={`${p.machine}-${p.teamName}`}
+                                                                                  sx={{
+                                                                                      display:
+                                                                                          'inline-flex',
+                                                                                      alignItems:
+                                                                                          'center',
+                                                                                      gap: 0.5,
+                                                                                      borderRadius: 99,
+                                                                                      pl: 0.25,
+                                                                                      pr: 0.75,
+                                                                                      py: 0.25,
+                                                                                      border: '1px solid',
+                                                                                      borderColor:
+                                                                                          isWin &&
+                                                                                          medal
+                                                                                              ? `${medal}88`
+                                                                                              : 'divider',
+                                                                                      bgcolor:
+                                                                                          isWin &&
+                                                                                          medal
+                                                                                              ? `${medal}18`
+                                                                                              : 'transparent',
+                                                                                  }}
+                                                                              >
+                                                                                  <Box
+                                                                                      sx={{
+                                                                                          width: 18,
+                                                                                          height: 18,
+                                                                                          borderRadius:
+                                                                                              '50%',
+                                                                                          bgcolor:
+                                                                                              medal ??
+                                                                                              'action.disabledBackground',
+                                                                                          display:
+                                                                                              'grid',
+                                                                                          placeItems:
+                                                                                              'center',
+                                                                                          fontFamily:
+                                                                                              monoFontFamily,
+                                                                                          fontSize: 9,
+                                                                                          fontWeight: 700,
+                                                                                          color: medal
+                                                                                              ? '#000'
+                                                                                              : 'text.secondary',
+                                                                                      }}
+                                                                                  >
+                                                                                      {p.position}
+                                                                                  </Box>
+                                                                                  <Typography
+                                                                                      sx={{
+                                                                                          fontSize: 12,
+                                                                                          fontWeight:
+                                                                                              isWin
+                                                                                                  ? 700
+                                                                                                  : 500,
+                                                                                      }}
+                                                                                  >
+                                                                                      {p.teamName}
+                                                                                  </Typography>
+                                                                              </Box>
+                                                                          )
+                                                                      })
+                                                                : replay.teams
+                                                                      ?.slice()
+                                                                      .sort((a) =>
+                                                                          a === replay.winner
+                                                                              ? -1
+                                                                              : 1,
+                                                                      )
+                                                                      .map((team) => (
+                                                                          <Box
+                                                                              key={team}
+                                                                              sx={{
+                                                                                  display: 'flex',
+                                                                                  alignItems:
+                                                                                      'center',
+                                                                                  gap: 0.5,
+                                                                              }}
+                                                                          >
+                                                                              {team ===
+                                                                                  replay.winner && (
+                                                                                  <WorkspacePremiumIcon
+                                                                                      sx={{
+                                                                                          fontSize: 14,
+                                                                                          color: 'warning.main',
+                                                                                      }}
+                                                                                  />
+                                                                              )}
+                                                                              <Chip
+                                                                                  label={team}
+                                                                                  size="small"
+                                                                                  variant="outlined"
+                                                                                  sx={{
+                                                                                      fontFamily:
+                                                                                          monoFontFamily,
+                                                                                      fontSize: 11,
+                                                                                  }}
+                                                                              />
+                                                                          </Box>
+                                                                      ))}
                                                         </Stack>
                                                     </TableCell>
                                                     <TableCell>

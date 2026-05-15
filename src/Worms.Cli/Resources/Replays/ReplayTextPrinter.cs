@@ -16,10 +16,11 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
             [.. resources.Select(x => x.Details.Date.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture))]);
         tableBuilder.AddColumn("CONTEXT", [.. resources.Select(x => x.Context)]);
         tableBuilder.AddColumn("PROCESSED", [.. resources.Select(x => x.Details.Processed.ToString())]);
-        tableBuilder.AddColumn("WINNER", [.. resources.Select(x => x.Details.Winner)]);
         tableBuilder.AddColumn(
             "TEAMS",
-            [.. resources.Select(x => string.Join(", ", x.Details.Teams.Select(t => t.Name)))]);
+            [.. resources.Select(x =>
+                string.Join(", ", x.Details.Placements.OrderBy(p => p.Position).Select(p => $"{p.Position?.ToString(CultureInfo.InvariantCulture) ?? "-"}: {p.Team.Name}")))]);
+
 
         var table = tableBuilder.Build();
         TablePrinter.Print(writer, table);
@@ -39,10 +40,12 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
             writer.WriteLine();
 
             writer.WriteLine("Teams:");
+            var orderedPlacements = resource.Details.Placements.OrderBy(p => p.Position).ToList();
             var teamsTable = new TableBuilder(outputMaxWidth);
-            teamsTable.AddColumn("NAME", [.. resource.Details.Teams.Select(x => x.Name)]);
-            teamsTable.AddColumn("PLAYER", [.. resource.Details.Teams.Select(x => x.Machine)]);
-            teamsTable.AddColumn("COLOUR", [.. resource.Details.Teams.Select(x => x.Colour.ToString())]);
+            teamsTable.AddColumn("POS", [.. orderedPlacements.Select(p => p.Position?.ToString(CultureInfo.CurrentCulture) ?? "-")]);
+            teamsTable.AddColumn("NAME", [.. orderedPlacements.Select(p => p.Team.Name)]);
+            teamsTable.AddColumn("PLAYER", [.. orderedPlacements.Select(p => p.Team.Machine)]);
+            teamsTable.AddColumn("COLOUR", [.. orderedPlacements.Select(p => p.Team.Colour.ToString())]);
             TablePrinter.Print(writer, teamsTable.Build());
             writer.WriteLine();
 
@@ -61,8 +64,6 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
             TablePrinter.Print(writer, turnsTable.Build());
             writer.WriteLine();
 
-            writer.WriteLine("Awards:");
-            writer.WriteLine($"Winner: {resource.Details.Winner}");
         }
     }
 

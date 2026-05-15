@@ -45,6 +45,12 @@ interface TurnDto {
     damage: DamageSummaryDto[]
 }
 
+interface PlacementDto {
+    machine: string
+    teamName: string
+    position: number | null
+}
+
 interface ReplayDetailDto {
     id: string
     name: string
@@ -53,6 +59,7 @@ interface ReplayDetailDto {
     winner: string | null
     teams: string[] | null
     turns: TurnDto[] | null
+    placements: PlacementDto[] | null
 }
 
 interface LeagueDto {
@@ -133,11 +140,6 @@ function TurnByTurnPanel({ turns }: TurnByTurnPanelProps) {
                                                     size="small"
                                                     label={w.name}
                                                     variant="outlined"
-                                                    sx={
-                                                        i === turn.weapons.length - 1
-                                                            ? { fontWeight: 700 }
-                                                            : undefined
-                                                    }
                                                 />
                                             ))}
                                         </Stack>
@@ -492,7 +494,15 @@ function GameDetailPage() {
                                     })}
                                 </Typography>
                             )}
-                            {replay.winner !== null && (
+                            {league.version !== null && (
+                                <Chip
+                                    label={`Scheme v${league.version}`}
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{ fontFamily: monoFontFamily, fontSize: 11 }}
+                                />
+                            )}
+                            {replay.winner !== null && replay.placements === null && (
                                 <Chip
                                     label={replay.winner}
                                     color={replay.winner === 'Draw' ? 'default' : 'warning'}
@@ -502,32 +512,103 @@ function GameDetailPage() {
                             )}
                         </Box>
 
-                        {/* Team chips */}
-                        {replay.teams !== null && (
-                            <Stack
-                                direction="row"
-                                spacing={1}
-                                sx={{ mb: 2.5, flexWrap: 'wrap' }}
-                                useFlexGap
-                            >
-                                {replay.teams.map((team) => (
-                                    <Chip
-                                        key={team}
-                                        label={team}
-                                        size="small"
-                                        variant="outlined"
-                                        sx={{ fontFamily: monoFontFamily, fontSize: 11 }}
-                                    />
-                                ))}
-                                {league.version !== null && (
-                                    <Chip
-                                        label={`Scheme v${league.version}`}
-                                        size="small"
-                                        variant="outlined"
-                                        sx={{ fontFamily: monoFontFamily, fontSize: 11 }}
-                                    />
+                        {/* Finishing order */}
+                        {(replay.teams !== null || replay.placements !== null) && (
+                            <Box sx={{ mb: 2.5 }}>
+                                {replay.placements !== null && replay.placements.length > 0 && (
+                                    <Typography
+                                        variant="overline"
+                                        color="text.secondary"
+                                        sx={{ letterSpacing: '0.12em', display: 'block' }}
+                                    >
+                                        Result
+                                    </Typography>
                                 )}
-                            </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{ mt: 0.5, flexWrap: 'wrap' }}
+                                    useFlexGap
+                                >
+                                    {replay.placements !== null && replay.placements.length > 0
+                                        ? replay.placements
+                                              .slice()
+                                              .sort((a, b) => {
+                                                  if (a.position === null && b.position === null)
+                                                      return 0
+                                                  if (a.position === null) return 1
+                                                  if (b.position === null) return -1
+                                                  return a.position - b.position
+                                              })
+                                              .map((p, i) => {
+                                                  const place = p.position ?? i + 1
+                                                  const isWin = place === 1
+                                                  const medal = ['#ffca28', '#bdbdbd', '#cd7f32'][
+                                                      place - 1
+                                                  ]
+                                                  return (
+                                                      <Paper
+                                                          key={`${p.machine}-${p.teamName}`}
+                                                          variant="outlined"
+                                                          sx={{
+                                                              display: 'flex',
+                                                              alignItems: 'center',
+                                                              gap: 1.25,
+                                                              pl: 0.5,
+                                                              pr: 2,
+                                                              py: 0.75,
+                                                              borderRadius: 99,
+                                                              ...(isWin
+                                                                  ? {
+                                                                        borderColor:
+                                                                            'rgba(255,202,40,0.5)',
+                                                                        bgcolor:
+                                                                            'rgba(255,202,40,0.12)',
+                                                                    }
+                                                                  : {}),
+                                                          }}
+                                                      >
+                                                          <Box
+                                                              sx={{
+                                                                  width: 28,
+                                                                  height: 28,
+                                                                  borderRadius: '50%',
+                                                                  bgcolor:
+                                                                      medal ??
+                                                                      'action.disabledBackground',
+                                                                  color: '#000',
+                                                                  display: 'grid',
+                                                                  placeItems: 'center',
+                                                                  fontFamily: monoFontFamily,
+                                                                  fontWeight: 700,
+                                                                  fontSize: 13,
+                                                                  flexShrink: 0,
+                                                              }}
+                                                          >
+                                                              {p.position ?? '?'}
+                                                          </Box>
+                                                          <Typography
+                                                              sx={{
+                                                                  fontWeight: 700,
+                                                                  fontSize: 13,
+                                                              }}
+                                                          >
+                                                              {p.teamName}
+                                                          </Typography>
+                                                      </Paper>
+                                                  )
+                                              })
+                                        : (replay.teams ?? []).map((label) => (
+                                              <Chip
+                                                  key={label}
+                                                  label={label}
+                                                  size="small"
+                                                  variant="outlined"
+                                                  sx={{ fontFamily: monoFontFamily, fontSize: 11 }}
+                                              />
+                                          ))}
+                                </Stack>
+                            </Box>
                         )}
 
                         {/* Stats strip */}

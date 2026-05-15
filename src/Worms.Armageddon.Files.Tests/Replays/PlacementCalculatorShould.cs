@@ -125,7 +125,9 @@ internal sealed class PlacementCalculatorShould
 
         var replay = _replayTextReader.GetModel(log);
 
-        replay.Placements.ShouldBeEmpty();
+        replay.Placements.Count.ShouldBe(2);
+        replay.Placements.ShouldContain(p => p.Team.Name == "Team1" && p.Position == null);
+        replay.Placements.ShouldContain(p => p.Team.Name == "Team2" && p.Position == null);
     }
 
     [Test]
