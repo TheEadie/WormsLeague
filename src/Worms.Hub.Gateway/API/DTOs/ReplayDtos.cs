@@ -55,9 +55,7 @@ internal sealed record ReplayDetailDto(
             turns = turnList.Count > 0 ? turnList : null;
         }
 
-        var placements = replay.Placements is { Count: > 0 }
-            ? replay.Placements.Select(PlacementDto.FromDomain).ToList()
-            : (IReadOnlyList<PlacementDto>?) null;
+        var placements = replay.Placements?.Select(PlacementDto.FromDomain).ToList();
 
         return new ReplayDetailDto(
             replay.Id,
