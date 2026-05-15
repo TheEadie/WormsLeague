@@ -11,7 +11,7 @@ public sealed class TeamsRepository(IConfiguration configuration) : ITeamsReposi
     private const string SelectSql =
         "SELECT t.id AS Id, t.machine AS Machine, t.team_name AS TeamName, "
         + "p.display_name AS ClaimedByPlayerName, p.auth_subject AS ClaimedByAuthSubject "
-        + "FROM teams t LEFT JOIN players p ON t.player_id = p.id";
+        + "FROM teams t LEFT JOIN players p ON t.player_auth_subject = p.auth_subject";
 
     public IReadOnlyCollection<Team> GetAll()
     {
@@ -38,13 +38,13 @@ public sealed class TeamsRepository(IConfiguration configuration) : ITeamsReposi
             new { machine, teamName });
     }
 
-    public void SetPlayerClaim(int teamId, int? playerId)
+    public void SetPlayerClaim(int teamId, string? authSubject)
     {
         var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
         _ = connection.Execute(
-            "UPDATE teams SET player_id = @playerId WHERE id = @teamId",
-            new { teamId, playerId });
+            "UPDATE teams SET player_auth_subject = @authSubject WHERE id = @teamId",
+            new { teamId, authSubject });
     }
 
     private static Team MapToDomain(TeamDb db) =>

@@ -13,10 +13,10 @@ public sealed class PlayersRepository(IConfiguration configuration) : IPlayersRe
         var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
         var db = connection.QuerySingleOrDefault<PlayerDb>(
-            "SELECT id, auth_subject AS AuthSubject, display_name AS DisplayName "
+            "SELECT auth_subject AS AuthSubject, display_name AS DisplayName "
             + "FROM players WHERE auth_subject = @authSubject",
             new { authSubject });
-        return db is null ? null : new Player(db.Id, db.AuthSubject, db.DisplayName);
+        return db is null ? null : new Player(db.AuthSubject, db.DisplayName);
     }
 
     public Player Create(Player player)
@@ -24,14 +24,12 @@ public sealed class PlayersRepository(IConfiguration configuration) : IPlayersRe
         ArgumentNullException.ThrowIfNull(player);
         var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql =
-            "INSERT INTO players (auth_subject, display_name) "
-            + "VALUES (@authSubject, @displayName) RETURNING id";
-        var id = connection.QuerySingle<int>(sql,
+        connection.Execute(
+            "INSERT INTO players (auth_subject, display_name) VALUES (@authSubject, @displayName)",
             new { authSubject = player.AuthSubject, displayName = player.DisplayName });
-        return player with { Id = id };
+        return player;
     }
 }
 
 [PublicAPI]
-public record PlayerDb(int Id, string AuthSubject, string DisplayName);
+public record PlayerDb(string AuthSubject, string DisplayName);
