@@ -71,8 +71,8 @@ internal sealed class Processor(
             FullLog = replayLog,
             Date = replayModel.Date == default ? null : replayModel.Date,
             Winner = string.IsNullOrEmpty(replayModel.Winner) ? null : replayModel.Winner,
-            Teams = replayModel.Teams.Count > 0
-                ? replayModel.Teams.Select(t => t.Name).ToList()
+            Teams = replayModel.Placements.Count > 0
+                ? replayModel.Placements.Select(p => p.Team.Name).ToList()
                 : null,
             Placements = replayModel.Placements
                 .Select(p => new ReplayPlacement(p.Team.Machine, p.Team.Name, p.Position))

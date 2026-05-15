@@ -6,7 +6,6 @@ namespace Worms.Armageddon.Files.Replays;
 public record ReplayResource(
     DateTime Date,
     bool Processed,
-    IReadOnlyCollection<Team> Teams,
     string Winner,
     IReadOnlyCollection<Turn> Turns,
     IReadOnlyCollection<Placement> Placements,

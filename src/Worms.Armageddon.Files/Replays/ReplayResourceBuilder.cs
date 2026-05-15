@@ -50,6 +50,6 @@ internal sealed class ReplayResourceBuilder
     public ReplayResource Build()
     {
         var placements = PlacementCalculator.Calculate(_turns, _teams, _winner);
-        return new ReplayResource(_start, true, _teams, _winner, _turns, placements, _fullLog);
+        return new ReplayResource(_start, true, _winner, _turns, placements, _fullLog);
     }
 }

@@ -46,17 +46,23 @@ internal sealed class ReplayTextReaderShould
                    Yellow: "{_yellowTeam.Name}"
                    Magenta: "{_magentaTeam.Name}"
                    Cyan: "{_cyanTeam.Name}"
+                   [00:00:00.00] ••• {_redTeam.Name} starts turn
+                   [00:00:10.00] ••• {_redTeam.Name} fires Bazooka
+                   [00:00:20.00] ••• Damage dealt: 100 (1 kill) to {_blueTeam.Name}
+                   [00:00:25.00] ••• {_redTeam.Name} ends turn; time used: 20.00 sec turn, 5.00 sec retreat
+                   {_redTeam.Name} wins the match!
                    """;
 
         var replay = _replayTextReader.GetModel(log);
 
-        replay.Teams.Count.ShouldBe(6);
-        replay.Teams.ShouldContain(_redTeam);
-        replay.Teams.ShouldContain(_blueTeam);
-        replay.Teams.ShouldContain(_greenTeam);
-        replay.Teams.ShouldContain(_yellowTeam);
-        replay.Teams.ShouldContain(_magentaTeam);
-        replay.Teams.ShouldContain(_cyanTeam);
+        var teams = replay.Placements.Select(p => p.Team).ToList();
+        teams.Count.ShouldBe(6);
+        teams.ShouldContain(_redTeam);
+        teams.ShouldContain(_blueTeam);
+        teams.ShouldContain(_greenTeam);
+        teams.ShouldContain(_yellowTeam);
+        teams.ShouldContain(_magentaTeam);
+        teams.ShouldContain(_cyanTeam);
     }
 
     [Test]
@@ -69,17 +75,23 @@ internal sealed class ReplayTextReaderShould
                    Yellow: "{_yellowTeam.Machine}"  as "{_yellowTeam.Name}"
                    Magenta: "{_magentaTeam.Machine}" as "{_magentaTeam.Name}"
                    Cyan: "{_cyanTeam.Machine}"    as "{_cyanTeam.Name}"
+                   [00:00:00.00] ••• {_redTeam.Name} ({_redTeam.Machine}) starts turn
+                   [00:00:10.00] ••• {_redTeam.Name} ({_redTeam.Machine}) fires Bazooka
+                   [00:00:20.00] ••• Damage dealt: 100 (1 kill) to {_blueTeam.Name} ({_blueTeam.Machine})
+                   [00:00:25.00] ••• {_redTeam.Name} ({_redTeam.Machine}) ends turn; time used: 20.00 sec turn, 5.00 sec retreat
+                   {_redTeam.Name} wins the match!
                    """;
 
         var replay = _replayTextReader.GetModel(log);
 
-        replay.Teams.Count.ShouldBe(6);
-        replay.Teams.ShouldContain(_redTeam);
-        replay.Teams.ShouldContain(_blueTeam);
-        replay.Teams.ShouldContain(_greenTeam);
-        replay.Teams.ShouldContain(_yellowTeam);
-        replay.Teams.ShouldContain(_magentaTeam);
-        replay.Teams.ShouldContain(_cyanTeam);
+        var teams = replay.Placements.Select(p => p.Team).ToList();
+        teams.Count.ShouldBe(6);
+        teams.ShouldContain(_redTeam);
+        teams.ShouldContain(_blueTeam);
+        teams.ShouldContain(_greenTeam);
+        teams.ShouldContain(_yellowTeam);
+        teams.ShouldContain(_magentaTeam);
+        teams.ShouldContain(_cyanTeam);
     }
 
     [Test]

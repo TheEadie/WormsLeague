@@ -39,10 +39,12 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
             writer.WriteLine();
 
             writer.WriteLine("Teams:");
+            var orderedPlacements = resource.Details.Placements.OrderBy(p => p.Position).ToList();
             var teamsTable = new TableBuilder(outputMaxWidth);
-            teamsTable.AddColumn("NAME", [.. resource.Details.Teams.Select(x => x.Name)]);
-            teamsTable.AddColumn("PLAYER", [.. resource.Details.Teams.Select(x => x.Machine)]);
-            teamsTable.AddColumn("COLOUR", [.. resource.Details.Teams.Select(x => x.Colour.ToString())]);
+            teamsTable.AddColumn("POS", [.. orderedPlacements.Select(p => p.Position.ToString(CultureInfo.CurrentCulture))]);
+            teamsTable.AddColumn("NAME", [.. orderedPlacements.Select(p => p.Team.Name)]);
+            teamsTable.AddColumn("PLAYER", [.. orderedPlacements.Select(p => p.Team.Machine)]);
+            teamsTable.AddColumn("COLOUR", [.. orderedPlacements.Select(p => p.Team.Colour.ToString())]);
             TablePrinter.Print(writer, teamsTable.Build());
             writer.WriteLine();
 
@@ -61,11 +63,6 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
             TablePrinter.Print(writer, turnsTable.Build());
             writer.WriteLine();
 
-            writer.WriteLine("Ranking:");
-            foreach (var placement in resource.Details.Placements.OrderBy(p => p.Position))
-            {
-                writer.WriteLine($"{placement.Position}: {placement.Team.Name}");
-            }
         }
     }
 
