@@ -86,6 +86,8 @@ if (runAsBatchJob)
 {
     var processor = app.Services.GetService<Processor>();
     await processor!.UpdateReplay();
+    var backfiller = app.Services.GetRequiredService<PlacementsBackfiller>();
+    await backfiller.RunAsync(CancellationToken.None);
     return;
 }
 

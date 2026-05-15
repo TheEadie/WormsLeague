@@ -22,7 +22,8 @@ internal static class ServiceRegistration
             .AddWormsArmageddonFilesServices()
             .AddHttpClient()
             .AddScoped<Processor>()
-            .AddScoped<IAnnouncer, Announcer>();
+            .AddScoped<IAnnouncer, Announcer>()
+            .AddSingleton<PlacementsBackfiller>();
         builder.TryAddScoped<IFeatureFlags, GatewayFeatureFlags>();
         return builder;
     }
