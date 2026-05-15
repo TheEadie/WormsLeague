@@ -12,4 +12,7 @@ public sealed record Team(
 {
     public bool IsClaimedBy(string? subject) =>
         ClaimedByAuthSubject is not null && ClaimedByAuthSubject == subject;
+
+    public bool IsClaimedByAnother(string? subject) =>
+        ClaimedByAuthSubject is not null && !IsClaimedBy(subject);
 }
