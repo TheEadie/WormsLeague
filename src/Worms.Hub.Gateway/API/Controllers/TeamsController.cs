@@ -43,8 +43,7 @@ internal sealed class TeamsController(
 
         if (body.Claimed)
         {
-            if (team.ClaimedByAuthSubject is not null
-                && team.ClaimedByAuthSubject != callerSubject)
+            if (team.ClaimedByAuthSubject is not null && !team.IsClaimedBy(callerSubject))
             {
                 return Conflict();
             }
@@ -60,8 +59,7 @@ internal sealed class TeamsController(
         }
         else
         {
-            if (team.ClaimedByAuthSubject is not null
-                && team.ClaimedByAuthSubject != callerSubject)
+            if (team.ClaimedByAuthSubject is not null && !team.IsClaimedBy(callerSubject))
             {
                 return Forbid();
             }

@@ -16,8 +16,7 @@ internal sealed record TeamDto(
             team.Machine,
             team.TeamName,
             team.ClaimedByPlayerName,
-            team.ClaimedByAuthSubject is not null
-                && team.ClaimedByAuthSubject == callerAuthSubject);
+            team.IsClaimedBy(callerAuthSubject));
 }
 
 [PublicAPI]

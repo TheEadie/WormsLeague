@@ -8,4 +8,8 @@ public sealed record Team(
     string Machine,
     string TeamName,
     string? ClaimedByPlayerName,
-    string? ClaimedByAuthSubject);
+    string? ClaimedByAuthSubject)
+{
+    public bool IsClaimedBy(string? subject) =>
+        ClaimedByAuthSubject is not null && ClaimedByAuthSubject == subject;
+}
