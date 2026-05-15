@@ -41,7 +41,7 @@ In development (`ASPNETCORE_ENVIRONMENT=Development`), `MapControllers()` is cal
 
 ## Announcers
 
-`IAnnouncer` has two methods: `AnnounceGameStarting(hostName)` and `AnnounceGameComplete(winner)`. The only implementation is `SlackAnnouncer` which POSTs to a Slack incoming webhook configured as `WORMS_SLACKWEBHOOKURL`. In DEBUG builds the `<!here>` mention is stripped to avoid noisy notifications during development.
+`IAnnouncer` has two methods: `AnnounceGameStarting(hostName)` and `AnnounceGameComplete(winner, placements?)`. The only implementation is `SlackAnnouncer` which POSTs to a Slack incoming webhook configured as `WORMS_SLACKWEBHOOKURL`. In DEBUG builds the `<!here>` mention is stripped to avoid noisy notifications during development.
 
 ## Worker (queue consumer)
 
