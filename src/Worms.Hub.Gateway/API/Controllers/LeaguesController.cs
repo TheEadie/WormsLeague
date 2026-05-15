@@ -69,13 +69,15 @@ internal sealed class LeaguesController(
     }
 
     [HttpGet("{id}/replays")]
-    public ActionResult<IReadOnlyList<ReplayDetailDto>> GetReplays(string id)
+    public async Task<ActionResult<IReadOnlyList<ReplayDetailDto>>> GetReplays(string id)
     {
         var league = leaguesRepository.GetById(id);
         if (league is null)
         {
             return NotFound();
         }
+
+        var placementsEnabled = await featureFlags.IsPlacementsEnabledAsync();
 
         return Ok(replaysRepository.GetByLeagueId(id).Select(replay =>
         {
@@ -84,12 +86,12 @@ internal sealed class LeaguesController(
             {
                 parsed = replayTextReader.GetModel(replay.FullLog);
             }
-            return ReplayDetailDto.FromDomain(replay, parsed);
+            return ReplayDetailDto.FromDomain(replay, parsed, placementsEnabled);
         }).ToList());
     }
 
     [HttpGet("{id}/replays/{replayId}")]
-    public ActionResult<ReplayDetailDto> GetReplay(string id, string replayId)
+    public async Task<ActionResult<ReplayDetailDto>> GetReplay(string id, string replayId)
     {
         var league = leaguesRepository.GetById(id);
         if (league is null)
@@ -103,12 +105,14 @@ internal sealed class LeaguesController(
             return NotFound();
         }
 
+        var placementsEnabled = await featureFlags.IsPlacementsEnabledAsync();
+
         ReplayResource? parsed = null;
         if (!string.IsNullOrEmpty(replay.FullLog))
         {
             parsed = replayTextReader.GetModel(replay.FullLog);
         }
 
-        return ReplayDetailDto.FromDomain(replay, parsed);
+        return ReplayDetailDto.FromDomain(replay, parsed, placementsEnabled);
     }
 }

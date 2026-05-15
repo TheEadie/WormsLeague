@@ -21,6 +21,13 @@ internal sealed record ReplayDto(
 internal sealed record CreateReplayDto(string Name, IFormFile ReplayFile);
 
 [PublicAPI]
+internal sealed record PlacementDto(string Machine, string TeamName, int Position)
+{
+    internal static PlacementDto FromDomain(ReplayPlacement p) =>
+        new(p.Machine, p.TeamName, p.Position);
+}
+
+[PublicAPI]
 internal sealed record ReplayDetailDto(
     string Id,
     string Name,
@@ -28,9 +35,10 @@ internal sealed record ReplayDetailDto(
     DateTime? Date,
     string? Winner,
     IReadOnlyList<string>? Teams,
-    IReadOnlyList<TurnDto>? Turns)
+    IReadOnlyList<TurnDto>? Turns,
+    IReadOnlyList<PlacementDto>? Placements)
 {
-    internal static ReplayDetailDto FromDomain(Replay replay, ReplayResource? parsed)
+    internal static ReplayDetailDto FromDomain(Replay replay, ReplayResource? parsed, bool placementsEnabled)
     {
         IReadOnlyList<TurnDto>? turns = null;
 
@@ -47,6 +55,12 @@ internal sealed record ReplayDetailDto(
             turns = turnList.Count > 0 ? turnList : null;
         }
 
+        IReadOnlyList<PlacementDto>? placements = null;
+        if (placementsEnabled && replay.Placements is { Count: > 0 })
+        {
+            placements = replay.Placements.Select(PlacementDto.FromDomain).ToList();
+        }
+
         return new ReplayDetailDto(
             replay.Id,
             replay.Name,
@@ -54,7 +68,8 @@ internal sealed record ReplayDetailDto(
             replay.Date,
             replay.Winner,
             replay.Teams,
-            turns);
+            turns,
+            placements);
     }
 }
 
