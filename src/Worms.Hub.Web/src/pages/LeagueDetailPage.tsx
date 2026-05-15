@@ -46,6 +46,12 @@ interface TurnDto {
     damage: DamageSummaryDto[]
 }
 
+interface PlacementDto {
+    machine: string
+    teamName: string
+    position: number
+}
+
 interface ReplayInLeagueDto {
     id: string
     name: string
@@ -54,6 +60,7 @@ interface ReplayInLeagueDto {
     winner: string | null
     teams: string[] | null
     turns: TurnDto[] | null
+    placements: PlacementDto[] | null
 }
 
 function formatDuration(ms: number): string {
@@ -244,40 +251,66 @@ function LeagueDetailPage() {
                                                             sx={{ flexWrap: 'wrap' }}
                                                             useFlexGap
                                                         >
-                                                            {replay.teams
-                                                                ?.slice()
-                                                                .sort((a) =>
-                                                                    a === replay.winner ? -1 : 1,
-                                                                )
-                                                                .map((team) => (
-                                                                    <Box
-                                                                        key={team}
-                                                                        sx={{
-                                                                            display: 'flex',
-                                                                            alignItems: 'center',
-                                                                            gap: 0.5,
-                                                                        }}
-                                                                    >
-                                                                        {team === replay.winner && (
-                                                                            <WorkspacePremiumIcon
-                                                                                sx={{
-                                                                                    fontSize: 14,
-                                                                                    color: 'warning.main',
-                                                                                }}
-                                                                            />
-                                                                        )}
-                                                                        <Chip
-                                                                            label={team}
-                                                                            size="small"
-                                                                            variant="outlined"
-                                                                            sx={{
-                                                                                fontFamily:
-                                                                                    monoFontFamily,
-                                                                                fontSize: 11,
-                                                                            }}
-                                                                        />
-                                                                    </Box>
-                                                                ))}
+                                                            {replay.placements !== null &&
+                                                            replay.placements.length > 0
+                                                                ? replay.placements
+                                                                      .slice()
+                                                                      .sort(
+                                                                          (a, b) =>
+                                                                              a.position -
+                                                                              b.position,
+                                                                      )
+                                                                      .map((p) => (
+                                                                          <Chip
+                                                                              key={`${p.machine}-${p.teamName}`}
+                                                                              label={`${p.position}: ${p.teamName}`}
+                                                                              size="small"
+                                                                              variant="outlined"
+                                                                              sx={{
+                                                                                  fontFamily:
+                                                                                      monoFontFamily,
+                                                                                  fontSize: 11,
+                                                                              }}
+                                                                          />
+                                                                      ))
+                                                                : replay.teams
+                                                                      ?.slice()
+                                                                      .sort((a) =>
+                                                                          a === replay.winner
+                                                                              ? -1
+                                                                              : 1,
+                                                                      )
+                                                                      .map((team) => (
+                                                                          <Box
+                                                                              key={team}
+                                                                              sx={{
+                                                                                  display: 'flex',
+                                                                                  alignItems:
+                                                                                      'center',
+                                                                                  gap: 0.5,
+                                                                              }}
+                                                                          >
+                                                                              {team ===
+                                                                                  replay.winner && (
+                                                                                  <WorkspacePremiumIcon
+                                                                                      sx={{
+                                                                                          fontSize: 14,
+                                                                                          color: 'warning.main',
+                                                                                      }}
+                                                                                  />
+                                                                              )}
+                                                                              <Chip
+                                                                                  label={team}
+                                                                                  size="small"
+                                                                                  variant="outlined"
+                                                                                  sx={{
+                                                                                      fontFamily:
+                                                                                          monoFontFamily,
+                                                                                      fontSize: 11,
+                                                                                  }}
+                                                                              />
+                                                                          </Box>
+                                                                      ))}
                                                         </Stack>
                                                     </TableCell>
                                                     <TableCell>

@@ -45,6 +45,12 @@ interface TurnDto {
     damage: DamageSummaryDto[]
 }
 
+interface PlacementDto {
+    machine: string
+    teamName: string
+    position: number
+}
+
 interface ReplayDetailDto {
     id: string
     name: string
@@ -53,6 +59,7 @@ interface ReplayDetailDto {
     winner: string | null
     teams: string[] | null
     turns: TurnDto[] | null
+    placements: PlacementDto[] | null
 }
 
 interface LeagueDto {
@@ -492,7 +499,7 @@ function GameDetailPage() {
                                     })}
                                 </Typography>
                             )}
-                            {replay.winner !== null && (
+                            {replay.winner !== null && replay.placements === null && (
                                 <Chip
                                     label={replay.winner}
                                     color={replay.winner === 'Draw' ? 'default' : 'warning'}
@@ -503,22 +510,35 @@ function GameDetailPage() {
                         </Box>
 
                         {/* Team chips */}
-                        {replay.teams !== null && (
+                        {(replay.teams !== null || replay.placements !== null) && (
                             <Stack
                                 direction="row"
                                 spacing={1}
                                 sx={{ mb: 2.5, flexWrap: 'wrap' }}
                                 useFlexGap
                             >
-                                {replay.teams.map((team) => (
-                                    <Chip
-                                        key={team}
-                                        label={team}
-                                        size="small"
-                                        variant="outlined"
-                                        sx={{ fontFamily: monoFontFamily, fontSize: 11 }}
-                                    />
-                                ))}
+                                {replay.placements !== null && replay.placements.length > 0
+                                    ? replay.placements
+                                          .slice()
+                                          .sort((a, b) => a.position - b.position)
+                                          .map((p) => (
+                                              <Chip
+                                                  key={`${p.machine}-${p.teamName}`}
+                                                  label={`${p.position}: ${p.teamName}`}
+                                                  size="small"
+                                                  variant="outlined"
+                                                  sx={{ fontFamily: monoFontFamily, fontSize: 11 }}
+                                              />
+                                          ))
+                                    : (replay.teams ?? []).map((label) => (
+                                          <Chip
+                                              key={label}
+                                              label={label}
+                                              size="small"
+                                              variant="outlined"
+                                              sx={{ fontFamily: monoFontFamily, fontSize: 11 }}
+                                          />
+                                      ))}
                                 {league.version !== null && (
                                     <Chip
                                         label={`Scheme v${league.version}`}
