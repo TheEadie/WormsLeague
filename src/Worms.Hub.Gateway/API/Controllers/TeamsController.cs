@@ -43,13 +43,13 @@ internal sealed class TeamsController(
 
         if (body.Claimed)
         {
-            if (team.ClaimedByAuth0Subject is not null
-                && team.ClaimedByAuth0Subject != callerSubject)
+            if (team.ClaimedByAuthSubject is not null
+                && team.ClaimedByAuthSubject != callerSubject)
             {
                 return Conflict();
             }
 
-            var player = playersRepository.GetByAuth0Subject(callerSubject!);
+            var player = playersRepository.GetByAuthSubject(callerSubject!);
             if (player is null)
             {
                 var displayName = ResolveDisplayName();
@@ -60,8 +60,8 @@ internal sealed class TeamsController(
         }
         else
         {
-            if (team.ClaimedByAuth0Subject is not null
-                && team.ClaimedByAuth0Subject != callerSubject)
+            if (team.ClaimedByAuthSubject is not null
+                && team.ClaimedByAuthSubject != callerSubject)
             {
                 return Forbid();
             }

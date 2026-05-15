@@ -8,4 +8,4 @@ public sealed record Team(
     string Machine,
     string TeamName,
     string? ClaimedByPlayerName,
-    string? ClaimedByAuth0Subject);
+    string? ClaimedByAuthSubject);

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS public.players (
     id            integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    auth0_subject text    NOT NULL UNIQUE,
+    auth_subject text    NOT NULL UNIQUE,
     display_name  text    NOT NULL
 );
 

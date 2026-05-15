@@ -10,7 +10,7 @@ public sealed class TeamsRepository(IConfiguration configuration) : ITeamsReposi
 {
     private const string SelectSql =
         "SELECT t.id AS Id, t.machine AS Machine, t.team_name AS TeamName, "
-        + "p.display_name AS ClaimedByPlayerName, p.auth0_subject AS ClaimedByAuth0Subject "
+        + "p.display_name AS ClaimedByPlayerName, p.auth_subject AS ClaimedByAuthSubject "
         + "FROM teams t LEFT JOIN players p ON t.player_id = p.id";
 
     public IReadOnlyCollection<Team> GetAll()
@@ -48,7 +48,7 @@ public sealed class TeamsRepository(IConfiguration configuration) : ITeamsReposi
     }
 
     private static Team MapToDomain(TeamDb db) =>
-        new(db.Id, db.Machine, db.TeamName, db.ClaimedByPlayerName, db.ClaimedByAuth0Subject);
+        new(db.Id, db.Machine, db.TeamName, db.ClaimedByPlayerName, db.ClaimedByAuthSubject);
 }
 
 [PublicAPI]
@@ -57,4 +57,4 @@ public record TeamDb(
     string Machine,
     string TeamName,
     string? ClaimedByPlayerName,
-    string? ClaimedByAuth0Subject);
+    string? ClaimedByAuthSubject);

@@ -4,6 +4,6 @@ namespace Worms.Hub.Storage.Database;
 
 public interface IPlayersRepository
 {
-    Player? GetByAuth0Subject(string auth0Subject);
+    Player? GetByAuthSubject(string authSubject);
     Player Create(Player player);
 }
