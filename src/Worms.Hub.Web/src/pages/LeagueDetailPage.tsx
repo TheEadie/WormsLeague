@@ -257,25 +257,33 @@ function LeagueDetailPage() {
                                                                       .slice()
                                                                       .sort(
                                                                           (a, b) =>
-                                                                              (a.position ?? Infinity) -
-                                                                              (b.position ?? Infinity),
+                                                                              (a.position ??
+                                                                                  Infinity) -
+                                                                              (b.position ??
+                                                                                  Infinity),
                                                                       )
                                                                       .map((p) => {
-                                                                          const medal = p.position !== null
-                                                                              ? [
-                                                                                  '#ffca28',
-                                                                                  '#bdbdbd',
-                                                                                  '#cd7f32',
-                                                                              ][p.position - 1]
-                                                                              : undefined
+                                                                          const medal =
+                                                                              p.position !== null
+                                                                                  ? [
+                                                                                        '#ffca28',
+                                                                                        '#bdbdbd',
+                                                                                        '#cd7f32',
+                                                                                    ][
+                                                                                        p.position -
+                                                                                            1
+                                                                                    ]
+                                                                                  : undefined
                                                                           const isWin =
                                                                               p.position === 1
                                                                           return (
                                                                               <Box
                                                                                   key={`${p.machine}-${p.teamName}`}
                                                                                   sx={{
-                                                                                      display: 'inline-flex',
-                                                                                      alignItems: 'center',
+                                                                                      display:
+                                                                                          'inline-flex',
+                                                                                      alignItems:
+                                                                                          'center',
                                                                                       gap: 0.5,
                                                                                       borderRadius: 99,
                                                                                       pl: 0.25,
@@ -283,11 +291,13 @@ function LeagueDetailPage() {
                                                                                       py: 0.25,
                                                                                       border: '1px solid',
                                                                                       borderColor:
-                                                                                          isWin && medal
+                                                                                          isWin &&
+                                                                                          medal
                                                                                               ? `${medal}88`
                                                                                               : 'divider',
                                                                                       bgcolor:
-                                                                                          isWin && medal
+                                                                                          isWin &&
+                                                                                          medal
                                                                                               ? `${medal}18`
                                                                                               : 'transparent',
                                                                                   }}
@@ -296,12 +306,15 @@ function LeagueDetailPage() {
                                                                                       sx={{
                                                                                           width: 18,
                                                                                           height: 18,
-                                                                                          borderRadius: '50%',
+                                                                                          borderRadius:
+                                                                                              '50%',
                                                                                           bgcolor:
                                                                                               medal ??
                                                                                               'action.disabledBackground',
-                                                                                          display: 'grid',
-                                                                                          placeItems: 'center',
+                                                                                          display:
+                                                                                              'grid',
+                                                                                          placeItems:
+                                                                                              'center',
                                                                                           fontFamily:
                                                                                               monoFontFamily,
                                                                                           fontSize: 9,
@@ -317,7 +330,9 @@ function LeagueDetailPage() {
                                                                                       sx={{
                                                                                           fontSize: 12,
                                                                                           fontWeight:
-                                                                                              isWin ? 700 : 500,
+                                                                                              isWin
+                                                                                                  ? 700
+                                                                                                  : 500,
                                                                                       }}
                                                                                   >
                                                                                       {p.teamName}

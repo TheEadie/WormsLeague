@@ -543,11 +543,9 @@ function GameDetailPage() {
                                               .map((p, i) => {
                                                   const place = p.position ?? i + 1
                                                   const isWin = place === 1
-                                                  const medal = [
-                                                      '#ffca28',
-                                                      '#bdbdbd',
-                                                      '#cd7f32',
-                                                  ][place - 1]
+                                                  const medal = ['#ffca28', '#bdbdbd', '#cd7f32'][
+                                                      place - 1
+                                                  ]
                                                   return (
                                                       <Paper
                                                           key={`${p.machine}-${p.teamName}`}
@@ -562,8 +560,10 @@ function GameDetailPage() {
                                                               borderRadius: 99,
                                                               ...(isWin
                                                                   ? {
-                                                                        borderColor: 'rgba(255,202,40,0.5)',
-                                                                        bgcolor: 'rgba(255,202,40,0.12)',
+                                                                        borderColor:
+                                                                            'rgba(255,202,40,0.5)',
+                                                                        bgcolor:
+                                                                            'rgba(255,202,40,0.12)',
                                                                     }
                                                                   : {}),
                                                           }}
