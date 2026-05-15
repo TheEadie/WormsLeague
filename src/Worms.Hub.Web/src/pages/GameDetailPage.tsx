@@ -48,7 +48,7 @@ interface TurnDto {
 interface PlacementDto {
     machine: string
     teamName: string
-    position: number
+    position: number | null
 }
 
 interface ReplayDetailDto {
@@ -520,11 +520,16 @@ function GameDetailPage() {
                                 {replay.placements !== null && replay.placements.length > 0
                                     ? replay.placements
                                           .slice()
-                                          .sort((a, b) => a.position - b.position)
+                                          .sort((a, b) => {
+                                              if (a.position === null && b.position === null) return 0
+                                              if (a.position === null) return 1
+                                              if (b.position === null) return -1
+                                              return a.position - b.position
+                                          })
                                           .map((p) => (
                                               <Chip
                                                   key={`${p.machine}-${p.teamName}`}
-                                                  label={`${p.position}: ${p.teamName}`}
+                                                  label={p.position !== null ? `${p.position}: ${p.teamName}` : p.teamName}
                                                   size="small"
                                                   variant="outlined"
                                                   sx={{ fontFamily: monoFontFamily, fontSize: 11 }}
