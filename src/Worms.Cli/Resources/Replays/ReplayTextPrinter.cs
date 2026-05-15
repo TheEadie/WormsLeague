@@ -10,25 +10,16 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
     public void Print(TextWriter writer, IReadOnlyCollection<LocalReplay> resources, int outputMaxWidth)
     {
         var tableBuilder = new TableBuilder(outputMaxWidth);
-        var hasAnyPlacements = resources.Any(x => x.Details.Placements.Count > 0);
 
         tableBuilder.AddColumn(
             "NAME",
             [.. resources.Select(x => x.Details.Date.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture))]);
         tableBuilder.AddColumn("CONTEXT", [.. resources.Select(x => x.Context)]);
         tableBuilder.AddColumn("PROCESSED", [.. resources.Select(x => x.Details.Processed.ToString())]);
-
-        if (!hasAnyPlacements)
-        {
-            tableBuilder.AddColumn("WINNER", [.. resources.Select(x => x.Details.Winner)]);
-        }
-
         tableBuilder.AddColumn(
             "TEAMS",
             [.. resources.Select(x =>
-                x.Details.Placements.Count > 0
-                    ? string.Join(", ", x.Details.Placements.OrderBy(p => p.Position).Select(p => $"{p.Position}: {p.Team.Name}"))
-                    : string.Join(", ", x.Details.Teams.Select(t => t.Name)))]);
+                string.Join(", ", x.Details.Placements.OrderBy(p => p.Position).Select(p => $"{p.Position}: {p.Team.Name}")))]);
 
         var table = tableBuilder.Build();
         TablePrinter.Print(writer, table);
@@ -70,17 +61,10 @@ internal sealed class ReplayTextPrinter : IResourcePrinter<LocalReplay>
             TablePrinter.Print(writer, turnsTable.Build());
             writer.WriteLine();
 
-            writer.WriteLine("Awards:");
-            if (resource.Details.Placements.Count > 0)
+            writer.WriteLine("Ranking:");
+            foreach (var placement in resource.Details.Placements.OrderBy(p => p.Position))
             {
-                foreach (var placement in resource.Details.Placements.OrderBy(p => p.Position))
-                {
-                    writer.WriteLine($"{placement.Position}: {placement.Team.Name}");
-                }
-            }
-            else
-            {
-                writer.WriteLine($"Winner: {resource.Details.Winner}");
+                writer.WriteLine($"{placement.Position}: {placement.Team.Name}");
             }
         }
     }
