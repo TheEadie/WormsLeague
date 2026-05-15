@@ -260,19 +260,69 @@ function LeagueDetailPage() {
                                                                               a.position -
                                                                               b.position,
                                                                       )
-                                                                      .map((p) => (
-                                                                          <Chip
-                                                                              key={`${p.machine}-${p.teamName}`}
-                                                                              label={`${p.position}: ${p.teamName}`}
-                                                                              size="small"
-                                                                              variant="outlined"
-                                                                              sx={{
-                                                                                  fontFamily:
-                                                                                      monoFontFamily,
-                                                                                  fontSize: 11,
-                                                                              }}
-                                                                          />
-                                                                      ))
+                                                                      .map((p) => {
+                                                                          const medal = [
+                                                                              '#ffca28',
+                                                                              '#bdbdbd',
+                                                                              '#cd7f32',
+                                                                          ][p.position - 1]
+                                                                          const isWin =
+                                                                              p.position === 1
+                                                                          return (
+                                                                              <Box
+                                                                                  key={`${p.machine}-${p.teamName}`}
+                                                                                  sx={{
+                                                                                      display: 'inline-flex',
+                                                                                      alignItems: 'center',
+                                                                                      gap: 0.5,
+                                                                                      borderRadius: 99,
+                                                                                      pl: 0.25,
+                                                                                      pr: 0.75,
+                                                                                      py: 0.25,
+                                                                                      border: '1px solid',
+                                                                                      borderColor:
+                                                                                          isWin && medal
+                                                                                              ? `${medal}88`
+                                                                                              : 'divider',
+                                                                                      bgcolor:
+                                                                                          isWin && medal
+                                                                                              ? `${medal}18`
+                                                                                              : 'transparent',
+                                                                                  }}
+                                                                              >
+                                                                                  <Box
+                                                                                      sx={{
+                                                                                          width: 18,
+                                                                                          height: 18,
+                                                                                          borderRadius: '50%',
+                                                                                          bgcolor:
+                                                                                              medal ??
+                                                                                              'action.disabledBackground',
+                                                                                          display: 'grid',
+                                                                                          placeItems: 'center',
+                                                                                          fontFamily:
+                                                                                              monoFontFamily,
+                                                                                          fontSize: 9,
+                                                                                          fontWeight: 700,
+                                                                                          color: medal
+                                                                                              ? '#000'
+                                                                                              : 'text.secondary',
+                                                                                      }}
+                                                                                  >
+                                                                                      {p.position}
+                                                                                  </Box>
+                                                                                  <Typography
+                                                                                      sx={{
+                                                                                          fontSize: 12,
+                                                                                          fontWeight:
+                                                                                              isWin ? 700 : 500,
+                                                                                      }}
+                                                                                  >
+                                                                                      {p.teamName}
+                                                                                  </Typography>
+                                                                              </Box>
+                                                                          )
+                                                                      })
                                                                 : replay.teams
                                                                       ?.slice()
                                                                       .sort((a) =>
