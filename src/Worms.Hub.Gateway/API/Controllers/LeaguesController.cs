@@ -69,7 +69,7 @@ internal sealed class LeaguesController(
     }
 
     [HttpGet("{id}/replays")]
-    public async Task<ActionResult<IReadOnlyList<ReplayDetailDto>>> GetReplays(string id)
+    public ActionResult<IReadOnlyList<ReplayDetailDto>> GetReplays(string id)
     {
         var league = leaguesRepository.GetById(id);
         if (league is null)
@@ -89,7 +89,7 @@ internal sealed class LeaguesController(
     }
 
     [HttpGet("{id}/replays/{replayId}")]
-    public async Task<ActionResult<ReplayDetailDto>> GetReplay(string id, string replayId)
+    public ActionResult<ReplayDetailDto> GetReplay(string id, string replayId)
     {
         var league = leaguesRepository.GetById(id);
         if (league is null)
