@@ -38,7 +38,7 @@ internal sealed record ReplayDetailDto(
     IReadOnlyList<TurnDto>? Turns,
     IReadOnlyList<PlacementDto>? Placements)
 {
-    internal static ReplayDetailDto FromDomain(Replay replay, ReplayResource? parsed, bool placementsEnabled)
+    internal static ReplayDetailDto FromDomain(Replay replay, ReplayResource? parsed)
     {
         IReadOnlyList<TurnDto>? turns = null;
 
@@ -55,11 +55,9 @@ internal sealed record ReplayDetailDto(
             turns = turnList.Count > 0 ? turnList : null;
         }
 
-        IReadOnlyList<PlacementDto>? placements = null;
-        if (placementsEnabled && replay.Placements is { Count: > 0 })
-        {
-            placements = replay.Placements.Select(PlacementDto.FromDomain).ToList();
-        }
+        var placements = replay.Placements is { Count: > 0 }
+            ? replay.Placements.Select(PlacementDto.FromDomain).ToList()
+            : (IReadOnlyList<PlacementDto>?) null;
 
         return new ReplayDetailDto(
             replay.Id,

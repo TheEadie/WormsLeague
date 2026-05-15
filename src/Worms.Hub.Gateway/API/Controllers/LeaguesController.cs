@@ -77,8 +77,6 @@ internal sealed class LeaguesController(
             return NotFound();
         }
 
-        var placementsEnabled = await featureFlags.IsPlacementsEnabledAsync();
-
         return Ok(replaysRepository.GetByLeagueId(id).Select(replay =>
         {
             ReplayResource? parsed = null;
@@ -86,7 +84,7 @@ internal sealed class LeaguesController(
             {
                 parsed = replayTextReader.GetModel(replay.FullLog);
             }
-            return ReplayDetailDto.FromDomain(replay, parsed, placementsEnabled);
+            return ReplayDetailDto.FromDomain(replay, parsed);
         }).ToList());
     }
 
@@ -105,14 +103,12 @@ internal sealed class LeaguesController(
             return NotFound();
         }
 
-        var placementsEnabled = await featureFlags.IsPlacementsEnabledAsync();
-
         ReplayResource? parsed = null;
         if (!string.IsNullOrEmpty(replay.FullLog))
         {
             parsed = replayTextReader.GetModel(replay.FullLog);
         }
 
-        return ReplayDetailDto.FromDomain(replay, parsed, placementsEnabled);
+        return ReplayDetailDto.FromDomain(replay, parsed);
     }
 }
