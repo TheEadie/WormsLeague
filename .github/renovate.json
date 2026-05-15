@@ -6,8 +6,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "(^|/)Pulumi\\.*\\.yaml$"
+      "managerFilePatterns": [
+        "/(^|/)Pulumi\\.*\\.yaml$/"
       ],
       "matchStrings": [
         "(?<depName>.*?):(?<currentValue>.*?)( |\\n)"
