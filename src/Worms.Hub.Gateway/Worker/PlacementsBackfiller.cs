@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Dapper;
 using Npgsql;
 using Worms.Armageddon.Files.Replays.Text;
-using Worms.Hub.Gateway.FeatureFlags;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
 
@@ -19,16 +18,9 @@ internal sealed class PlacementsBackfiller(
         using var activity = Telemetry.Source.StartActivity("Placement Backfill");
 
         using var scope = serviceProvider.CreateScope();
-        var featureFlags = scope.ServiceProvider.GetRequiredService<IFeatureFlags>();
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
         var replayRepository = scope.ServiceProvider.GetRequiredService<IReplaysRepository>();
         var replayTextReader = scope.ServiceProvider.GetRequiredService<IReplayTextReader>();
-
-        if (!await featureFlags.IsPlacementsEnabledAsync())
-        {
-            logger.LogInformation("Placements feature not enabled — skipping backfill.");
-            return;
-        }
 
         var connectionString = configuration.GetConnectionString("Database");
         await using var connection = new NpgsqlConnection(connectionString);
