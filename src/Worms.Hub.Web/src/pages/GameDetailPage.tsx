@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link as RouterLink } from 'react-router'
 import { useAuth } from 'react-oidc-context'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Chip from '@mui/material/Chip'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -67,6 +68,91 @@ interface LeagueDto {
     name: string
     version: string | null
     schemeUrl: string | null
+}
+
+interface TeamDto {
+    id: number
+    machine: string
+    teamName: string
+    claimedBy: string | null
+    isMyTeam: boolean
+}
+
+interface PlacementPillProps {
+    placement: PlacementDto
+    index: number
+    unclaimedTeam: TeamDto | undefined
+    pendingClaim: Set<number>
+    onClaim: (id: number) => void
+}
+
+function PlacementPill({
+    placement,
+    index,
+    unclaimedTeam,
+    pendingClaim,
+    onClaim,
+}: PlacementPillProps) {
+    const place = placement.position ?? index + 1
+    const isWin = place === 1
+    const medal = ['#ffca28', '#bdbdbd', '#cd7f32'][place - 1]
+    return (
+        <Paper
+            variant="outlined"
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.25,
+                pl: 0.5,
+                pr: 2,
+                py: 0.75,
+                borderRadius: 99,
+                ...(isWin
+                    ? {
+                          borderColor: 'rgba(255,202,40,0.5)',
+                          bgcolor: 'rgba(255,202,40,0.12)',
+                      }
+                    : {}),
+            }}
+        >
+            <Box
+                sx={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: '50%',
+                    bgcolor: medal ?? 'action.disabledBackground',
+                    color: '#000',
+                    display: 'grid',
+                    placeItems: 'center',
+                    fontFamily: monoFontFamily,
+                    fontWeight: 700,
+                    fontSize: 13,
+                    flexShrink: 0,
+                }}
+            >
+                {placement.position ?? '?'}
+            </Box>
+            <Typography sx={{ fontWeight: 700, fontSize: 13 }}>{placement.teamName}</Typography>
+            {unclaimedTeam && (
+                <Button
+                    size="small"
+                    variant="outlined"
+                    disabled={pendingClaim.has(unclaimedTeam.id)}
+                    onClick={() => onClaim(unclaimedTeam.id)}
+                    sx={{
+                        ml: 0.5,
+                        height: 22,
+                        fontSize: 11,
+                        px: 1,
+                        py: 0,
+                        minWidth: 0,
+                    }}
+                >
+                    Claim
+                </Button>
+            )}
+        </Paper>
+    )
 }
 
 function formatDuration(ms: number): string {
@@ -368,6 +454,9 @@ function GameDetailPage() {
     const [error, setError] = useState<string | null>(null)
     const [notFound, setNotFound] = useState(false)
     const [activePanel, setActivePanel] = useState(0)
+    const [teams, setTeams] = useState<TeamDto[] | null>(null)
+    const [teamsRefetchKey, setTeamsRefetchKey] = useState(0)
+    const [pendingClaim, setPendingClaim] = useState<Set<number>>(new Set())
 
     useEffect(() => {
         if (!auth.user?.access_token || !id || !replayId) return
@@ -393,6 +482,58 @@ function GameDetailPage() {
             })
             .catch((err: unknown) => setError(String(err)))
     }, [auth.user?.access_token, id, replayId])
+
+    useEffect(() => {
+        if (!auth.user?.access_token) return
+        const token = auth.user.access_token
+        fetch(`${gatewayUrl}/api/v1/teams`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`)
+                return res.json() as Promise<TeamDto[]>
+            })
+            .then((data) => setTeams(data))
+            .catch(() => {
+                // Silently omit Claim buttons on failure — leave teams as null
+            })
+    }, [auth.user?.access_token, teamsRefetchKey])
+
+    async function handleClaim(id: number) {
+        setPendingClaim((prev) => new Set(prev).add(id))
+        try {
+            const res = await fetch(`${gatewayUrl}/api/v1/teams`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${auth.user!.access_token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, claimed: true }),
+            })
+            if (res.ok) {
+                setTeamsRefetchKey((k) => k + 1)
+            }
+            // On non-OK response, button silently re-enables (no error shown)
+        } catch {
+            // Network error — silently re-enable
+        } finally {
+            setPendingClaim((prev) => {
+                const s = new Set(prev)
+                s.delete(id)
+                return s
+            })
+        }
+    }
+
+    const unclaimedTeamsByKey = new Map<string, TeamDto>()
+    if (teams !== null && replay?.placements) {
+        for (const team of teams) {
+            if (team.claimedBy === null) {
+                const key = `${team.machine}\0${team.teamName}`
+                unclaimedTeamsByKey.set(key, team)
+            }
+        }
+    }
 
     const panels = [
         {
@@ -540,64 +681,18 @@ function GameDetailPage() {
                                                   if (b.position === null) return -1
                                                   return a.position - b.position
                                               })
-                                              .map((p, i) => {
-                                                  const place = p.position ?? i + 1
-                                                  const isWin = place === 1
-                                                  const medal = ['#ffca28', '#bdbdbd', '#cd7f32'][
-                                                      place - 1
-                                                  ]
-                                                  return (
-                                                      <Paper
-                                                          key={`${p.machine}-${p.teamName}`}
-                                                          variant="outlined"
-                                                          sx={{
-                                                              display: 'flex',
-                                                              alignItems: 'center',
-                                                              gap: 1.25,
-                                                              pl: 0.5,
-                                                              pr: 2,
-                                                              py: 0.75,
-                                                              borderRadius: 99,
-                                                              ...(isWin
-                                                                  ? {
-                                                                        borderColor:
-                                                                            'rgba(255,202,40,0.5)',
-                                                                        bgcolor:
-                                                                            'rgba(255,202,40,0.12)',
-                                                                    }
-                                                                  : {}),
-                                                          }}
-                                                      >
-                                                          <Box
-                                                              sx={{
-                                                                  width: 28,
-                                                                  height: 28,
-                                                                  borderRadius: '50%',
-                                                                  bgcolor:
-                                                                      medal ??
-                                                                      'action.disabledBackground',
-                                                                  color: '#000',
-                                                                  display: 'grid',
-                                                                  placeItems: 'center',
-                                                                  fontFamily: monoFontFamily,
-                                                                  fontWeight: 700,
-                                                                  fontSize: 13,
-                                                                  flexShrink: 0,
-                                                              }}
-                                                          >
-                                                              {p.position ?? '?'}
-                                                          </Box>
-                                                          <Typography
-                                                              sx={{
-                                                                  fontWeight: 700,
-                                                                  fontSize: 13,
-                                                              }}
-                                                          >
-                                                              {p.teamName}
-                                                          </Typography>
-                                                      </Paper>
-                                                  )
-                                              })
+                                              .map((p, i) => (
+                                                  <PlacementPill
+                                                      key={`${p.machine}-${p.teamName}`}
+                                                      placement={p}
+                                                      index={i}
+                                                      unclaimedTeam={unclaimedTeamsByKey.get(
+                                                          `${p.machine}\0${p.teamName}`,
+                                                      )}
+                                                      pendingClaim={pendingClaim}
+                                                      onClaim={(id) => void handleClaim(id)}
+                                                  />
+                                              ))
                                         : (replay.teams ?? []).map((label) => (
                                               <Chip
                                                   key={label}
