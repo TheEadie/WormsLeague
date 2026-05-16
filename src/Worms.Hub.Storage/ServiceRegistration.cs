@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
@@ -10,28 +9,10 @@ namespace Worms.Hub.Storage;
 [PublicAPI]
 public static class ServiceRegistration
 {
-    private static readonly Version PlacementsMinVersion = new(0, 6);
-    private static readonly Version ReplayLeagueFieldsMinVersion = new(0, 4);
-
     public static IServiceCollection AddHubStorageServices(this IServiceCollection builder) =>
         builder.AddSingleton<DatabaseSchemaVersion>()
             .AddScoped<IRepository<Game>, GamesRepository>()
-            .AddScoped<IReplaysRepository>(sp =>
-            {
-                var version = sp.GetRequiredService<DatabaseSchemaVersion>()
-                    .GetCurrentVersionAsync().GetAwaiter().GetResult();
-                if (version is not null && version >= PlacementsMinVersion)
-                {
-                    return new ReplaysRepositoryV05(sp.GetRequiredService<IConfiguration>());
-                }
-
-                if (version is not null && version >= ReplayLeagueFieldsMinVersion)
-                {
-                    return new ReplaysRepositoryV04(sp.GetRequiredService<IConfiguration>());
-                }
-
-                return new ReplaysRepository(sp.GetRequiredService<IConfiguration>());
-            })
+            .AddScoped<IReplaysRepository, ReplaysRepositoryV05>()
             .AddScoped<LeaguesRepository>()
             .AddScoped<CliFiles>()
             .AddScoped<ReplayFiles>()
