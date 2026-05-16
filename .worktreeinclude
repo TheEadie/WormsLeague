@@ -1,0 +1,7 @@
+# Files to copy into new Claude Code worktrees (must also be gitignored to take effect)
+
+# Avoid reinstalling npm packages in every worktree
+node_modules/
+
+# Copy local environment overrides
+src/Worms.Hub.Web/.env.local
