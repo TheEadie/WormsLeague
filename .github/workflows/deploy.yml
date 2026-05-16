@@ -1,20 +1,28 @@
-name: Deploy - Main
+name: Deploy
 permissions:
   contents: read
   pull-requests: write
 
 on:
   push:
-    paths:
-      - "deployment/Worms.Hub.Infrastructure/**"
-      - ".github/workflows/deploy-main.yml"
-    branches:
-      - main
 
 jobs:
+  changes:
+    name: Detect Changes
+    uses: ./.github/workflows/zz-detect-changes.yml
+
+  deploy-preview:
+    name: Deploy Preview
+    needs: changes
+    if: needs.changes.outputs.deployment == 'true' && github.ref != 'refs/heads/main'
+    uses: ./.github/workflows/zz-deploy-preview.yml
+    secrets: inherit
+
   deploy:
     name: Azure Infrastructure
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.deployment == 'true' && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout
@@ -68,11 +76,18 @@ jobs:
           FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
           FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
 
-  actions-timeline:
-    name: Timeline
-    needs: [deploy]
+  overall-deploy:
+    name: Overall Deploy
+    needs: [changes, deploy, deploy-preview]
     runs-on: ubuntu-latest
     steps:
+      - name: Check all builds passed
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
+            echo "::error::One or more build jobs failed"
+            exit 1
+          fi
       - uses: Kesin11/actions-timeline@v3
+        if: always()
         with:
           show-waiting-runner: true
