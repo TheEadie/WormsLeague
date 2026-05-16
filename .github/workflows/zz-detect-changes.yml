@@ -16,6 +16,8 @@ on:
         value: ${{ jobs.changes.outputs.clis-release }}
       web-build:
         value: ${{ jobs.changes.outputs.web-build }}
+      deployment:
+        value: ${{ jobs.changes.outputs.deployment }}
 
 jobs:
   changes:
@@ -27,6 +29,7 @@ jobs:
       wa-runner-test: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.wa-runner-test == 'true' || steps.filter.outputs.hub-common == 'true' }}
       clis-release: ${{ steps.filter.outputs.clis == 'true' }}
       web-build: ${{ steps.filter.outputs.web == 'true' }}
+      deployment: ${{ steps.filter.outputs.deployment == 'true' }}
     steps:
     - name: Checkout
       uses: actions/checkout@v6
@@ -72,3 +75,6 @@ jobs:
           web:
             - 'src/Worms.Hub.Web/**'
             - 'build/web/**'
+          deployment:
+            - 'deployment/Worms.Hub.Infrastructure/**'
+            - 'build/flyway-summary.sh'
