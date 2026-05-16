@@ -42,11 +42,19 @@ jobs:
     uses: ./.github/workflows/zz-build-web.yml
     secrets: inherit
 
-  actions-timeline:
-    name: Timeline
+  overall-build:
+    name: Overall Build
+    if: always()
     needs: [changes, build-hub, build-cli, build-web]
     runs-on: ubuntu-latest
     steps:
+      - name: Check all builds passed
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
+            echo "::error::One or more build jobs failed"
+            exit 1
+          fi
       - uses: Kesin11/actions-timeline@v3
+        if: always()
         with:
           show-waiting-runner: true

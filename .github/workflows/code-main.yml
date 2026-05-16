@@ -59,11 +59,19 @@ jobs:
       clis-release: ${{ needs.changes.outputs.clis-release }}
     secrets: inherit
 
-  actions-timeline:
-    name: Timeline
+  overall-build:
+    name: Overall Build
+    if: always()
     needs: [changes, build-hub, build-cli, build-web, release-hub, release-cli]
     runs-on: ubuntu-latest
     steps:
+      - name: Check all builds passed
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
+            echo "::error::One or more build jobs failed"
+            exit 1
+          fi
       - uses: Kesin11/actions-timeline@v3
+        if: always()
         with:
           show-waiting-runner: true
