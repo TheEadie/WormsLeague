@@ -12,8 +12,48 @@ permissions:
   security-events: write
 
 jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      csharp: ${{ steps.filter.outputs.csharp }}
+      javascript-typescript: ${{ steps.filter.outputs.javascript-typescript }}
+      actions: ${{ steps.filter.outputs.actions }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Filter
+        uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            csharp:
+              - '**/*.cs'
+              - '**/*.csproj'
+              - '**/*.sln'
+              - '**/Directory.Build.props'
+              - '**/Directory.Build.targets'
+              - '**/global.json'
+            javascript-typescript:
+              - '**/*.js'
+              - '**/*.jsx'
+              - '**/*.ts'
+              - '**/*.tsx'
+              - '**/package.json'
+              - '**/package-lock.json'
+            actions:
+              - '.github/workflows/**'
+              - '.github/actions/**'
+
   roslyn:
-    name: Roysln
+    name: Roslyn
+    needs: detect-changes
+    if: needs.detect-changes.outputs.csharp == 'true' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -44,7 +84,7 @@ jobs:
             exit 1
           fi
 
-      - name: Upload Rosyln SARIF
+      - name: Upload Roslyn SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@v4
         with:
@@ -52,6 +92,8 @@ jobs:
 
   jetbrains:
     name: Jetbrains
+    needs: detect-changes
+    if: needs.detect-changes.outputs.csharp == 'true' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -85,8 +127,9 @@ jobs:
 
   codeql-actions:
     name: CodeQL (actions)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.actions == 'true' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
@@ -104,8 +147,9 @@ jobs:
 
   codeql-csharp:
     name: CodeQL (csharp)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.csharp == 'true' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
@@ -131,6 +175,8 @@ jobs:
 
   codeql-javascript-typescript:
     name: CodeQL (javascript-typescript)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.javascript-typescript == 'true' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -147,6 +193,8 @@ jobs:
 
   eslint:
     name: ESLint
+    needs: detect-changes
+    if: needs.detect-changes.outputs.javascript-typescript == 'true' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -167,6 +215,8 @@ jobs:
 
   prettier:
     name: Prettier
+    needs: detect-changes
+    if: needs.detect-changes.outputs.javascript-typescript == 'true' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
