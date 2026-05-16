@@ -27,6 +27,7 @@ jobs:
   build-hub:
     name: Build - Hub
     needs: changes
+    if: needs.changes.outputs.code == 'true'
     uses: ./.github/workflows/zz-build-hub.yml
     with:
       wa-runner-test: ${{ needs.changes.outputs.wa-runner-test }}
@@ -35,12 +36,14 @@ jobs:
   build-cli:
     name: Build - CLI
     needs: changes
+    if: needs.changes.outputs.code == 'true'
     uses: ./.github/workflows/zz-build-cli.yml
     secrets: inherit
 
   build-web:
     name: Build - Web
     needs: changes
+    if: needs.changes.outputs.code == 'true'
     uses: ./.github/workflows/zz-build-web.yml
     secrets: inherit
 
