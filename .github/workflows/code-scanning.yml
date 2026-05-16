@@ -242,13 +242,7 @@ jobs:
             echo "::error::One or more code scanning jobs failed"
             exit 1
           fi
-
-  actions-timeline:
-    name: Timeline
-    if: always()
-    needs: [detect-changes, roslyn, jetbrains, codeql-actions, codeql-csharp, codeql-javascript-typescript, eslint, prettier, overall-scan]
-    runs-on: ubuntu-latest
-    steps:
       - uses: Kesin11/actions-timeline@v3
+        if: always()
         with:
           show-waiting-runner: true
