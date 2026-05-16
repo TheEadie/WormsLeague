@@ -230,9 +230,23 @@ jobs:
       - name: Run Prettier
         run: cd src/Worms.Hub.Web && npx prettier --check src
 
+  overall-scan:
+    name: Overall Scan
+    if: always()
+    needs: [detect-changes, roslyn, jetbrains, codeql-actions, codeql-csharp, codeql-javascript-typescript, eslint, prettier]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all scans passed
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
+            echo "::error::One or more code scanning jobs failed"
+            exit 1
+          fi
+
   actions-timeline:
     name: Timeline
-    needs: [roslyn, jetbrains, codeql-actions, codeql-csharp, codeql-javascript-typescript, eslint, prettier]
+    if: always()
+    needs: [detect-changes, roslyn, jetbrains, codeql-actions, codeql-csharp, codeql-javascript-typescript, eslint, prettier, overall-scan]
     runs-on: ubuntu-latest
     steps:
       - uses: Kesin11/actions-timeline@v3
