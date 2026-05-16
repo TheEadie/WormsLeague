@@ -78,6 +78,7 @@ jobs:
 
   overall-deploy:
     name: Overall Deploy
+    if: always()
     needs: [changes, deploy, deploy-preview]
     runs-on: ubuntu-latest
     steps:
