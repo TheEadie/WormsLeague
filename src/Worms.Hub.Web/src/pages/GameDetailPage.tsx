@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useParams, Link as RouterLink } from 'react-router'
 import { useAuth } from 'react-oidc-context'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Chip from '@mui/material/Chip'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -26,6 +25,7 @@ import TimelineIcon from '@mui/icons-material/Timeline'
 import GpsFixedIcon from '@mui/icons-material/GpsFixed'
 import { monoFontFamily } from '../theme'
 import { gatewayUrl } from '../api'
+import { PlacementDto, PlacementPill, TeamDto } from './PlacementPill'
 
 interface WeaponDto {
     name: string
@@ -46,12 +46,6 @@ interface TurnDto {
     damage: DamageSummaryDto[]
 }
 
-interface PlacementDto {
-    machine: string
-    teamName: string
-    position: number | null
-}
-
 interface ReplayDetailDto {
     id: string
     name: string
@@ -68,91 +62,6 @@ interface LeagueDto {
     name: string
     version: string | null
     schemeUrl: string | null
-}
-
-interface TeamDto {
-    id: number
-    machine: string
-    teamName: string
-    claimedBy: string | null
-    isMyTeam: boolean
-}
-
-interface PlacementPillProps {
-    placement: PlacementDto
-    index: number
-    unclaimedTeam: TeamDto | undefined
-    pendingClaim: Set<number>
-    onClaim: (id: number) => void
-}
-
-function PlacementPill({
-    placement,
-    index,
-    unclaimedTeam,
-    pendingClaim,
-    onClaim,
-}: PlacementPillProps) {
-    const place = placement.position ?? index + 1
-    const isWin = place === 1
-    const medal = ['#ffca28', '#bdbdbd', '#cd7f32'][place - 1]
-    return (
-        <Paper
-            variant="outlined"
-            sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.25,
-                pl: 0.5,
-                pr: 2,
-                py: 0.75,
-                borderRadius: 99,
-                ...(isWin
-                    ? {
-                          borderColor: 'rgba(255,202,40,0.5)',
-                          bgcolor: 'rgba(255,202,40,0.12)',
-                      }
-                    : {}),
-            }}
-        >
-            <Box
-                sx={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: '50%',
-                    bgcolor: medal ?? 'action.disabledBackground',
-                    color: '#000',
-                    display: 'grid',
-                    placeItems: 'center',
-                    fontFamily: monoFontFamily,
-                    fontWeight: 700,
-                    fontSize: 13,
-                    flexShrink: 0,
-                }}
-            >
-                {placement.position ?? '?'}
-            </Box>
-            <Typography sx={{ fontWeight: 700, fontSize: 13 }}>{placement.teamName}</Typography>
-            {unclaimedTeam && (
-                <Button
-                    size="small"
-                    variant="outlined"
-                    disabled={pendingClaim.has(unclaimedTeam.id)}
-                    onClick={() => onClaim(unclaimedTeam.id)}
-                    sx={{
-                        ml: 0.5,
-                        height: 22,
-                        fontSize: 11,
-                        px: 1,
-                        py: 0,
-                        minWidth: 0,
-                    }}
-                >
-                    Claim
-                </Button>
-            )}
-        </Paper>
-    )
 }
 
 function formatDuration(ms: number): string {
