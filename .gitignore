@@ -207,3 +207,6 @@ dotnet-tools.json
 
 # Vite local environment overrides
 src/Worms.Hub.Web/.env.local
+
+# Claude Code worktrees
+.claude/worktrees/
