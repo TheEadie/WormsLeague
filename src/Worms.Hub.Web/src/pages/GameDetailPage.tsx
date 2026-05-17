@@ -364,7 +364,7 @@ function GameDetailPage() {
     const [notFound, setNotFound] = useState(false)
     const [activePanel, setActivePanel] = useState(0)
     const [teams, setTeams] = useState<TeamDto[] | null>(null)
-    const [teamsRefetchKey, setTeamsRefetchKey] = useState(0)
+    const [refetchKey, setRefetchKey] = useState(0)
     const [pendingClaim, setPendingClaim] = useState<Set<number>>(new Set())
 
     useEffect(() => {
@@ -390,7 +390,7 @@ function GameDetailPage() {
                 setLeague(leagueData)
             })
             .catch((err: unknown) => setError(String(err)))
-    }, [auth.user?.access_token, id, replayId])
+    }, [auth.user?.access_token, id, replayId, refetchKey])
 
     useEffect(() => {
         if (!auth.user?.access_token) return
@@ -406,7 +406,7 @@ function GameDetailPage() {
             .catch(() => {
                 // Silently omit Claim buttons on failure — leave teams as null
             })
-    }, [auth.user?.access_token, teamsRefetchKey])
+    }, [auth.user?.access_token, refetchKey])
 
     async function handleClaim(id: number) {
         setPendingClaim((prev) => new Set(prev).add(id))
@@ -422,7 +422,7 @@ function GameDetailPage() {
                 body: JSON.stringify({ id, claimed: true, displayName }),
             })
             if (res.ok) {
-                setTeamsRefetchKey((k) => k + 1)
+                setRefetchKey((k) => k + 1)
             }
             // On non-OK response, button silently re-enables (no error shown)
         } catch {
