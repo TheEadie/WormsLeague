@@ -1,3 +1,4 @@
+TRUNCATE public.teams, public.players RESTART IDENTITY CASCADE;
 TRUNCATE public.replays RESTART IDENTITY CASCADE;
 
 -- 1: Processed, 2 teams, with placements (Alpha wins)
@@ -218,3 +219,13 @@ INSERT INTO public.replay_placements (replay_id, machine, team_name, position) V
 -- Placements for replay 5 (2 teams: Alpha 1st, Beta 2nd)
 INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (5, 'machine-alpha', 'Team Alpha', 1);
 INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (5, 'machine-beta', 'Team Beta', 2);
+
+-- All teams
+INSERT INTO public.teams (machine, team_name) VALUES ('machine-alpha', 'Team Alpha');
+INSERT INTO public.teams (machine, team_name) VALUES ('machine-beta', 'Team Beta');
+INSERT INTO public.teams (machine, team_name) VALUES ('machine-gamma', 'Team Gamma');
+INSERT INTO public.teams (machine, team_name) VALUES ('machine-delta', 'Team Delta');
+
+-- Pre-claim Team Beta to another player to demonstrate the "already claimed" state
+INSERT INTO public.players (auth_subject, display_name) VALUES ('google-oauth2|100000000000000000001', 'Other Player');
+UPDATE public.teams SET player_auth_subject = 'google-oauth2|100000000000000000001' WHERE machine = 'machine-beta' AND team_name = 'Team Beta';
