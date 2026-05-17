@@ -410,6 +410,8 @@ function GameDetailPage() {
 
     async function handleClaim(id: number) {
         setPendingClaim((prev) => new Set(prev).add(id))
+        const displayName =
+            auth.user?.profile.nickname ?? auth.user?.profile.name ?? auth.user?.profile.sub
         try {
             const res = await fetch(`${gatewayUrl}/api/v1/teams`, {
                 method: 'PUT',
@@ -417,7 +419,7 @@ function GameDetailPage() {
                     Authorization: `Bearer ${auth.user!.access_token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ id, claimed: true }),
+                body: JSON.stringify({ id, claimed: true, displayName }),
             })
             if (res.ok) {
                 setTeamsRefetchKey((k) => k + 1)
@@ -434,13 +436,11 @@ function GameDetailPage() {
         }
     }
 
-    const unclaimedTeamsByKey = new Map<string, TeamDto>()
+    const teamsByKey = new Map<string, TeamDto>()
     if (teams !== null && replay?.placements) {
         for (const team of teams) {
-            if (team.claimedBy === null) {
-                const key = `${team.machine}\0${team.teamName}`
-                unclaimedTeamsByKey.set(key, team)
-            }
+            const key = `${team.machine}\0${team.teamName}`
+            teamsByKey.set(key, team)
         }
     }
 
@@ -590,18 +590,26 @@ function GameDetailPage() {
                                                   if (b.position === null) return -1
                                                   return a.position - b.position
                                               })
-                                              .map((p, i) => (
-                                                  <PlacementPill
-                                                      key={`${p.machine}-${p.teamName}`}
-                                                      placement={p}
-                                                      index={i}
-                                                      unclaimedTeam={unclaimedTeamsByKey.get(
-                                                          `${p.machine}\0${p.teamName}`,
-                                                      )}
-                                                      pendingClaim={pendingClaim}
-                                                      onClaim={(id) => void handleClaim(id)}
-                                                  />
-                                              ))
+                                              .map((p, i) => {
+                                                  const team = teamsByKey.get(
+                                                      `${p.machine}\0${p.teamName}`,
+                                                  )
+                                                  return (
+                                                      <PlacementPill
+                                                          key={`${p.machine}-${p.teamName}`}
+                                                          placement={p}
+                                                          index={i}
+                                                          playerName={team?.claimedBy ?? null}
+                                                          unclaimedTeam={
+                                                              team?.claimedBy === null
+                                                                  ? team
+                                                                  : undefined
+                                                          }
+                                                          pendingClaim={pendingClaim}
+                                                          onClaim={(id) => void handleClaim(id)}
+                                                      />
+                                                  )
+                                              })
                                         : (replay.teams ?? []).map((label) => (
                                               <Chip
                                                   key={label}

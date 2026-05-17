@@ -21,6 +21,7 @@ export interface TeamDto {
 interface PlacementPillProps {
     placement: PlacementDto
     index: number
+    playerName: string | null
     unclaimedTeam: TeamDto | undefined
     pendingClaim: Set<number>
     onClaim: (id: number) => void
@@ -29,6 +30,7 @@ interface PlacementPillProps {
 export function PlacementPill({
     placement,
     index,
+    playerName,
     unclaimedTeam,
     pendingClaim,
     onClaim,
@@ -72,7 +74,18 @@ export function PlacementPill({
             >
                 {placement.position ?? '?'}
             </Box>
-            <Typography sx={{ fontWeight: 700, fontSize: 13 }}>{placement.teamName}</Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
+                {playerName !== null ? (
+                    <>
+                        <Typography sx={{ fontWeight: 700, fontSize: 13 }}>{playerName}</Typography>
+                        <Typography sx={{ fontSize: 10, color: 'text.secondary' }}>
+                            {placement.teamName}
+                        </Typography>
+                    </>
+                ) : (
+                    <Typography sx={{ fontWeight: 700, fontSize: 13 }}>{placement.teamName}</Typography>
+                )}
+            </Box>
             {unclaimedTeam && (
                 <Button
                     size="small"
