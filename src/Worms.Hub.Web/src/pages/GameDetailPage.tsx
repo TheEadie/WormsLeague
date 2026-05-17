@@ -444,6 +444,10 @@ function GameDetailPage() {
         }
     }
 
+    const playerHasTeamInReplay =
+        replay?.placements?.some((p) => teamsByKey.get(`${p.machine}\0${p.teamName}`)?.isMyTeam) ??
+        false
+
     const panels = [
         {
             label: 'Turn-by-turn',
@@ -601,6 +605,7 @@ function GameDetailPage() {
                                                           index={i}
                                                           playerName={team?.claimedBy ?? null}
                                                           unclaimedTeam={
+                                                              !playerHasTeamInReplay &&
                                                               team?.claimedBy === null
                                                                   ? team
                                                                   : undefined
