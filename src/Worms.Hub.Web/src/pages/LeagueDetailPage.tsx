@@ -336,7 +336,8 @@ function LeagueDetailPage() {
                                                                                                   : 500,
                                                                                       }}
                                                                                   >
-                                                                                      {p.playerName ?? p.teamName}
+                                                                                      {p.playerName ??
+                                                                                          p.teamName}
                                                                                   </Typography>
                                                                               </Box>
                                                                           )

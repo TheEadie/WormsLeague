@@ -76,13 +76,17 @@ export function PlacementPill({
             <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
                 {placement.playerName !== null ? (
                     <>
-                        <Typography sx={{ fontWeight: 700, fontSize: 13 }}>{placement.playerName}</Typography>
+                        <Typography sx={{ fontWeight: 700, fontSize: 13 }}>
+                            {placement.playerName}
+                        </Typography>
                         <Typography sx={{ fontSize: 10, color: 'text.secondary' }}>
                             {placement.teamName}
                         </Typography>
                     </>
                 ) : (
-                    <Typography sx={{ fontWeight: 700, fontSize: 13 }}>{placement.teamName}</Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: 13 }}>
+                        {placement.teamName}
+                    </Typography>
                 )}
             </Box>
             {unclaimedTeam && (
