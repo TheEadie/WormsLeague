@@ -19,6 +19,7 @@ import Typography from '@mui/material/Typography'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import { monoFontFamily } from '../theme'
 import { gatewayUrl } from '../api'
+import { TeamDto } from './PlacementPill'
 
 interface LeagueDto {
     id: string
@@ -90,6 +91,7 @@ function LeagueDetailPage() {
     const auth = useAuth()
     const [league, setLeague] = useState<LeagueDto | null>(null)
     const [replays, setReplays] = useState<ReplayInLeagueDto[] | null>(null)
+    const [teams, setTeams] = useState<TeamDto[] | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [notFound, setNotFound] = useState(false)
 
@@ -117,6 +119,26 @@ function LeagueDetailPage() {
             })
             .catch((err: unknown) => setError(String(err)))
     }, [auth.user?.access_token, id])
+
+    useEffect(() => {
+        if (!auth.user?.access_token) return
+        fetch(`${gatewayUrl}/api/v1/teams`, {
+            headers: { Authorization: `Bearer ${auth.user.access_token}` },
+        })
+            .then((res) => {
+                if (!res.ok) return
+                return res.json() as Promise<TeamDto[]>
+            })
+            .then((data) => { if (data) setTeams(data) })
+            .catch(() => { /* silently omit — display falls back to team name */ })
+    }, [auth.user?.access_token])
+
+    const teamsByKey = new Map<string, TeamDto>()
+    if (teams !== null) {
+        for (const team of teams) {
+            teamsByKey.set(`${team.machine}\0${team.teamName}`, team)
+        }
+    }
 
     return (
         <Container maxWidth="xl" sx={{ py: { xs: 2, md: 4 } }}>
@@ -335,7 +357,7 @@ function LeagueDetailPage() {
                                                                                                   : 500,
                                                                                       }}
                                                                                   >
-                                                                                      {p.teamName}
+                                                                                      {teamsByKey.get(`${p.machine}\0${p.teamName}`)?.claimedBy ?? p.teamName}
                                                                                   </Typography>
                                                                               </Box>
                                                                           )
