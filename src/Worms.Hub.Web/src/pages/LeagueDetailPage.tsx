@@ -50,6 +50,7 @@ interface PlacementDto {
     machine: string
     teamName: string
     position: number | null
+    playerName: string | null
 }
 
 interface ReplayInLeagueDto {
@@ -335,7 +336,8 @@ function LeagueDetailPage() {
                                                                                                   : 500,
                                                                                       }}
                                                                                   >
-                                                                                      {p.teamName}
+                                                                                      {p.playerName ??
+                                                                                          p.teamName}
                                                                                   </Typography>
                                                                               </Box>
                                                                           )

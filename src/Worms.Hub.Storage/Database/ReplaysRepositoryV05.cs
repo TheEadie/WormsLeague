@@ -8,9 +8,9 @@ namespace Worms.Hub.Storage.Database;
 
 internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IReplaysRepository
 {
-    private sealed record ReplayPlacementDb(int ReplayId, string Machine, string TeamName, int? Position)
+    private sealed record ReplayPlacementDb(int ReplayId, string Machine, string TeamName, int? Position, string? PlayerName)
     {
-        public ReplayPlacement ToDomain() => new(Machine, TeamName, Position);
+        public ReplayPlacement ToDomain() => new(Machine, TeamName, Position, PlayerName);
     }
 
     static ReplaysRepositoryV05() =>
@@ -27,8 +27,12 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
         var ids = dbObjects.Select(r => r.Id).ToArray();
         var placements = ids.Length > 0
             ? connection.Query<ReplayPlacementDb>(
-                    "SELECT replay_id AS ReplayId, machine AS Machine, team_name AS TeamName, position AS Position "
-                    + "FROM replay_placements WHERE replay_id = ANY(@ids)",
+                    "SELECT rp.replay_id AS ReplayId, rp.machine AS Machine, rp.team_name AS TeamName, "
+                    + "rp.position AS Position, pl.display_name AS PlayerName "
+                    + "FROM replay_placements rp "
+                    + "LEFT JOIN teams t ON t.machine = rp.machine AND t.team_name = rp.team_name "
+                    + "LEFT JOIN players pl ON pl.auth_subject = t.player_auth_subject "
+                    + "WHERE rp.replay_id = ANY(@ids)",
                     new { ids })
                 .ToLookup(p => p.ReplayId)
             : Enumerable.Empty<ReplayPlacementDb>().ToLookup(p => p.ReplayId);
@@ -49,8 +53,12 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
         var ids = dbObjects.Select(r => r.Id).ToArray();
         var placements = ids.Length > 0
             ? connection.Query<ReplayPlacementDb>(
-                    "SELECT replay_id AS ReplayId, machine AS Machine, team_name AS TeamName, position AS Position "
-                    + "FROM replay_placements WHERE replay_id = ANY(@ids)",
+                    "SELECT rp.replay_id AS ReplayId, rp.machine AS Machine, rp.team_name AS TeamName, "
+                    + "rp.position AS Position, pl.display_name AS PlayerName "
+                    + "FROM replay_placements rp "
+                    + "LEFT JOIN teams t ON t.machine = rp.machine AND t.team_name = rp.team_name "
+                    + "LEFT JOIN players pl ON pl.auth_subject = t.player_auth_subject "
+                    + "WHERE rp.replay_id = ANY(@ids)",
                     new { ids })
                 .ToLookup(p => p.ReplayId)
             : Enumerable.Empty<ReplayPlacementDb>().ToLookup(p => p.ReplayId);

@@ -51,7 +51,7 @@ internal sealed class TeamsController(
             var player = playersRepository.GetByAuthSubject(callerSubject!);
             if (player is null)
             {
-                var displayName = ResolveDisplayName();
+                var displayName = body.DisplayName ?? ResolveDisplayName();
                 player = playersRepository.Create(new Player(callerSubject!, displayName));
             }
 

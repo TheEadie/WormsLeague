@@ -45,7 +45,7 @@ internal sealed class PlacementsBackfiller(
             {
                 var replayModel = replayTextReader.GetModel(replay.FullLog);
                 var placements = replayModel.Placements
-                    .Select(p => new ReplayPlacement(p.Team.Machine, p.Team.Name, p.Position))
+                    .Select(p => new ReplayPlacement(p.Team.Machine, p.Team.Name, p.Position, null))
                     .ToList();
                 replayRepository.Update(replay with { Placements = placements });
             }

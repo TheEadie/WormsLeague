@@ -60,6 +60,9 @@ function TeamsPage() {
             m.delete(id)
             return m
         })
+        const displayName = claimed
+            ? (auth.user?.profile.nickname ?? auth.user?.profile.name ?? auth.user?.profile.sub)
+            : undefined
         try {
             const res = await fetch(`${gatewayUrl}/api/v1/teams`, {
                 method: 'PUT',
@@ -67,7 +70,7 @@ function TeamsPage() {
                     Authorization: `Bearer ${auth.user!.access_token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ id, claimed }),
+                body: JSON.stringify({ id, claimed, displayName }),
             })
             if (!res.ok) {
                 const msg =

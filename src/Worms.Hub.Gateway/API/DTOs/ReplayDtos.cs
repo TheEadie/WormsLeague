@@ -21,10 +21,10 @@ internal sealed record ReplayDto(
 internal sealed record CreateReplayDto(string Name, IFormFile ReplayFile);
 
 [PublicAPI]
-internal sealed record PlacementDto(string Machine, string TeamName, int? Position)
+internal sealed record PlacementDto(string Machine, string TeamName, int? Position, string? PlayerName)
 {
     internal static PlacementDto FromDomain(ReplayPlacement p) =>
-        new(p.Machine, p.TeamName, p.Position);
+        new(p.Machine, p.TeamName, p.Position, p.PlayerName);
 }
 
 [PublicAPI]
