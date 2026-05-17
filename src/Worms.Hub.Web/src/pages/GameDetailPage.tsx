@@ -603,7 +603,6 @@ function GameDetailPage() {
                                                           key={`${p.machine}-${p.teamName}`}
                                                           placement={p}
                                                           index={i}
-                                                          playerName={team?.claimedBy ?? null}
                                                           unclaimedTeam={
                                                               !playerHasTeamInReplay &&
                                                               team?.claimedBy === null
