@@ -93,7 +93,7 @@ internal sealed class StartupBackfiller(
 
         logger.LogInformation("Starting ratings backfill...");
 
-        var leaguesRepository = scope.ServiceProvider.GetRequiredService<LeaguesRepository>();
+        var leaguesRepository = scope.ServiceProvider.GetRequiredService<ILeaguesRepository>();
         var ratingsCalculator = scope.ServiceProvider.GetRequiredService<RatingsCalculator>();
 
         foreach (var league in leaguesRepository.GetAll())

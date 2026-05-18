@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using PlayerRank;
 using PlayerRank.Scoring.Elo;
 using Worms.Hub.Storage.Database;
@@ -6,9 +7,11 @@ using Worms.Hub.Storage.Domain;
 namespace Worms.Hub.Gateway.Ratings;
 
 internal sealed class RatingsCalculator(
+    ILeaguesRepository leaguesRepository,
     IReplaysRepository replaysRepository,
     ITeamsRepository teamsRepository,
-    IRatingsRepository ratingsRepository)
+    IRatingsRepository ratingsRepository,
+    ILogger<RatingsCalculator> logger)
 {
     public void Calculate(string leagueId)
     {
@@ -72,5 +75,22 @@ internal sealed class RatingsCalculator(
         }).ToList();
 
         ratingsRepository.ReplaceForLeague(leagueId, ratings);
+    }
+
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types",
+        Justification = "ELO calculation failure for one league must not block remaining leagues or the claim/unclaim operation")]
+    public void CalculateForTeam(string machine, string teamName)
+    {
+        foreach (var leagueId in leaguesRepository.GetLeaguesTeamPlaysIn(machine, teamName))
+        {
+            try
+            {
+                Calculate(leagueId);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to calculate ELO ratings for league {LeagueId}.", leagueId);
+            }
+        }
     }
 }

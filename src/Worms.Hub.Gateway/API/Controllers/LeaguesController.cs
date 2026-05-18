@@ -10,7 +10,7 @@ namespace Worms.Hub.Gateway.API.Controllers;
 
 internal sealed class LeaguesController(
     SchemeFiles schemeFiles,
-    LeaguesRepository leaguesRepository,
+    ILeaguesRepository leaguesRepository,
     IReplaysRepository replaysRepository,
     IReplayTextReader replayTextReader,
     IRatingsRepository ratingsRepository,
