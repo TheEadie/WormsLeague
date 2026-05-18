@@ -1,7 +1,7 @@
 TRUNCATE public.teams, public.players RESTART IDENTITY CASCADE;
 TRUNCATE public.replays RESTART IDENTITY CASCADE;
 
--- 1: Processed, 2 teams, with placements (Alpha wins)
+-- 1: Processed, 2 teams, with placements (Blitz Brigade wins)
 INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams, fulllog)
 VALUES (
     '2024-03-10',
@@ -9,28 +9,28 @@ VALUES (
     'seed_replay1.WAgame',
     'redgate',
     '2024-03-10 19:00:00',
-    'Team Alpha',
-    ARRAY['Team Alpha', 'Team Beta'],
+    'Blitz Brigade',
+    ARRAY['Blitz Brigade', 'Banana Boys'],
     $$Game Started at 2024-03-10 19:00:00 GMT
-Red: "machine-alpha" as "Team Alpha"
-Blue: "machine-beta" as "Team Beta"
-[00:00:05.00] ••• Team Alpha (machine-alpha) starts turn
-[00:00:12.00] ••• Team Alpha (machine-alpha) fires Bazooka
-[00:00:22.00] ••• Damage dealt: 52 to Team Beta (machine-beta)
-[00:00:28.00] ••• Team Alpha (machine-alpha) ends turn; time used: 23.00 sec turn, 3.00 sec retreat
-[00:00:33.00] ••• Team Beta (machine-beta) starts turn
-[00:00:41.00] ••• Team Beta (machine-beta) fires Shotgun
-[00:00:55.00] ••• Damage dealt: 33 to Team Alpha (machine-alpha)
-[00:01:00.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
-[00:01:05.00] ••• Team Alpha (machine-alpha) starts turn
-[00:01:11.00] ••• Team Alpha (machine-alpha) fires Banana Bomb (5 sec)
-[00:01:28.00] ••• Damage dealt: 74 (1 kill) to Team Beta (machine-beta)
-[00:01:35.00] ••• Team Alpha (machine-alpha) ends turn; time used: 30.00 sec turn, 3.00 sec retreat
-Team Alpha wins the match!
+Red: "machine-alpha" as "Blitz Brigade"
+Blue: "machine-beta" as "Banana Boys"
+[00:00:05.00] ••• Blitz Brigade (machine-alpha) starts turn
+[00:00:12.00] ••• Blitz Brigade (machine-alpha) fires Bazooka
+[00:00:22.00] ••• Damage dealt: 52 to Banana Boys (machine-beta)
+[00:00:28.00] ••• Blitz Brigade (machine-alpha) ends turn; time used: 23.00 sec turn, 3.00 sec retreat
+[00:00:33.00] ••• Banana Boys (machine-beta) starts turn
+[00:00:41.00] ••• Banana Boys (machine-beta) fires Shotgun
+[00:00:55.00] ••• Damage dealt: 33 to Blitz Brigade (machine-alpha)
+[00:01:00.00] ••• Banana Boys (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:01:05.00] ••• Blitz Brigade (machine-alpha) starts turn
+[00:01:11.00] ••• Blitz Brigade (machine-alpha) fires Banana Bomb (5 sec)
+[00:01:28.00] ••• Damage dealt: 74 (1 kill) to Banana Boys (machine-beta)
+[00:01:35.00] ••• Blitz Brigade (machine-alpha) ends turn; time used: 30.00 sec turn, 3.00 sec retreat
+Blitz Brigade wins the match!
 $$
 );
 
--- 2: Processed, 3 teams, with placements (Gamma wins)
+-- 2: Processed, 3 teams, with placements (Holy Rollers wins)
 INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams, fulllog)
 VALUES (
     '2024-04-07',
@@ -38,37 +38,37 @@ VALUES (
     'seed_replay2.WAgame',
     'redgate',
     '2024-04-07 19:45:00',
-    'Team Gamma',
-    ARRAY['Team Alpha', 'Team Beta', 'Team Gamma'],
+    'Holy Rollers',
+    ARRAY['Blitz Brigade', 'Banana Boys', 'Holy Rollers'],
     $$Game Started at 2024-04-07 19:45:00 GMT
-Red: "machine-alpha" as "Team Alpha"
-Blue: "machine-beta" as "Team Beta"
-Green: "machine-gamma" as "Team Gamma"
-[00:00:06.00] ••• Team Alpha (machine-alpha) starts turn
-[00:00:14.00] ••• Team Alpha (machine-alpha) fires Grenade (3 sec, min bounce)
-[00:00:29.00] ••• Damage dealt: 45 to Team Beta (machine-beta)
-[00:00:33.00] ••• Team Alpha (machine-alpha) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
-[00:00:38.00] ••• Team Beta (machine-beta) starts turn
-[00:00:46.00] ••• Team Beta (machine-beta) fires Bazooka
-[00:01:02.00] ••• Damage dealt: 38 to Team Gamma (machine-gamma)
-[00:01:07.00] ••• Team Beta (machine-beta) ends turn; time used: 29.00 sec turn, 3.00 sec retreat
-[00:01:12.00] ••• Team Gamma (machine-gamma) starts turn
-[00:01:19.00] ••• Team Gamma (machine-gamma) fires Shotgun
-[00:01:33.00] ••• Damage dealt: 67 (1 kill) to Team Alpha (machine-alpha)
-[00:01:38.00] ••• Team Gamma (machine-gamma) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
-[00:01:43.00] ••• Team Beta (machine-beta) starts turn
-[00:01:51.00] ••• Team Beta (machine-beta) fires Homing Missile
-[00:02:05.00] ••• Damage dealt: 41 to Team Gamma (machine-gamma)
-[00:02:10.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
-[00:02:15.00] ••• Team Gamma (machine-gamma) starts turn
-[00:02:21.00] ••• Team Gamma (machine-gamma) fires Banana Bomb (5 sec)
-[00:02:38.00] ••• Damage dealt: 78 (1 kill) to Team Beta (machine-beta)
-[00:02:45.00] ••• Team Gamma (machine-gamma) ends turn; time used: 30.00 sec turn, 3.00 sec retreat
-Team Gamma wins the match!
+Red: "machine-alpha" as "Blitz Brigade"
+Blue: "machine-beta" as "Banana Boys"
+Green: "machine-gamma" as "Holy Rollers"
+[00:00:06.00] ••• Blitz Brigade (machine-alpha) starts turn
+[00:00:14.00] ••• Blitz Brigade (machine-alpha) fires Grenade (3 sec, min bounce)
+[00:00:29.00] ••• Damage dealt: 45 to Banana Boys (machine-beta)
+[00:00:33.00] ••• Blitz Brigade (machine-alpha) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:00:38.00] ••• Banana Boys (machine-beta) starts turn
+[00:00:46.00] ••• Banana Boys (machine-beta) fires Bazooka
+[00:01:02.00] ••• Damage dealt: 38 to Holy Rollers (machine-gamma)
+[00:01:07.00] ••• Banana Boys (machine-beta) ends turn; time used: 29.00 sec turn, 3.00 sec retreat
+[00:01:12.00] ••• Holy Rollers (machine-gamma) starts turn
+[00:01:19.00] ••• Holy Rollers (machine-gamma) fires Shotgun
+[00:01:33.00] ••• Damage dealt: 67 (1 kill) to Blitz Brigade (machine-alpha)
+[00:01:38.00] ••• Holy Rollers (machine-gamma) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:01:43.00] ••• Banana Boys (machine-beta) starts turn
+[00:01:51.00] ••• Banana Boys (machine-beta) fires Homing Missile
+[00:02:05.00] ••• Damage dealt: 41 to Holy Rollers (machine-gamma)
+[00:02:10.00] ••• Banana Boys (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:02:15.00] ••• Holy Rollers (machine-gamma) starts turn
+[00:02:21.00] ••• Holy Rollers (machine-gamma) fires Banana Bomb (5 sec)
+[00:02:38.00] ••• Damage dealt: 78 (1 kill) to Banana Boys (machine-beta)
+[00:02:45.00] ••• Holy Rollers (machine-gamma) ends turn; time used: 30.00 sec turn, 3.00 sec retreat
+Holy Rollers wins the match!
 $$
 );
 
--- 3: Processed, 4 teams, with placements (Delta wins)
+-- 3: Processed, 4 teams, with placements (Mad Bombers wins)
 INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams, fulllog)
 VALUES (
     '2024-04-21',
@@ -76,46 +76,46 @@ VALUES (
     'seed_replay3.WAgame',
     'redgate',
     '2024-04-21 20:00:00',
-    'Team Delta',
-    ARRAY['Team Alpha', 'Team Beta', 'Team Gamma', 'Team Delta'],
+    'Mad Bombers',
+    ARRAY['Blitz Brigade', 'Banana Boys', 'Holy Rollers', 'Mad Bombers'],
     $$Game Started at 2024-04-21 20:00:00 GMT
-Red: "machine-alpha" as "Team Alpha"
-Blue: "machine-beta" as "Team Beta"
-Green: "machine-gamma" as "Team Gamma"
-Yellow: "machine-delta" as "Team Delta"
-[00:00:04.00] ••• Team Alpha (machine-alpha) starts turn
-[00:00:12.00] ••• Team Alpha (machine-alpha) fires Bazooka
-[00:00:26.00] ••• Damage dealt: 44 to Team Gamma (machine-gamma)
-[00:00:31.00] ••• Team Alpha (machine-alpha) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
-[00:00:36.00] ••• Team Beta (machine-beta) starts turn
-[00:00:44.00] ••• Team Beta (machine-beta) fires Holy Hand Grenade
-[00:00:58.00] ••• Damage dealt: 86 (1 kill) to Team Gamma (machine-gamma)
-[00:01:03.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
-[00:01:08.00] ••• Team Delta (machine-delta) starts turn
-[00:01:16.00] ••• Team Delta (machine-delta) fires Bazooka
-[00:01:28.00] ••• Damage dealt: 37 to Team Alpha (machine-alpha)
-[00:01:33.00] ••• Team Delta (machine-delta) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
-[00:01:38.00] ••• Team Alpha (machine-alpha) starts turn
-[00:01:45.00] ••• Team Alpha (machine-alpha) fires Shotgun
-[00:01:58.00] ••• Damage dealt: 29 to Team Beta (machine-beta)
-[00:02:03.00] ••• Team Alpha (machine-alpha) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
-[00:02:08.00] ••• Team Beta (machine-beta) starts turn
-[00:02:15.00] ••• Team Beta (machine-beta) fires Grenade (3 sec)
-[00:02:29.00] ••• Damage dealt: 51 to Team Alpha (machine-alpha)
-[00:02:34.00] ••• Team Beta (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
-[00:02:39.00] ••• Team Delta (machine-delta) starts turn
-[00:02:46.00] ••• Team Delta (machine-delta) fires Banana Bomb (5 sec)
-[00:03:02.00] ••• Damage dealt: 71 (1 kill) to Team Alpha (machine-alpha)
-[00:03:08.00] ••• Team Delta (machine-delta) ends turn; time used: 29.00 sec turn, 3.00 sec retreat
-[00:03:13.00] ••• Team Beta (machine-beta) starts turn
-[00:03:20.00] ••• Team Beta (machine-beta) fires Homing Missile
-[00:03:34.00] ••• Damage dealt: 45 to Team Delta (machine-delta)
-[00:03:39.00] ••• Team Beta (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
-[00:03:44.00] ••• Team Delta (machine-delta) starts turn
-[00:03:51.00] ••• Team Delta (machine-delta) fires Cluster Bomb
-[00:04:05.00] ••• Damage dealt: 63 (1 kill) to Team Beta (machine-beta)
-[00:04:11.00] ••• Team Delta (machine-delta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
-Team Delta wins the match!
+Red: "machine-alpha" as "Blitz Brigade"
+Blue: "machine-beta" as "Banana Boys"
+Green: "machine-gamma" as "Holy Rollers"
+Yellow: "machine-delta" as "Mad Bombers"
+[00:00:04.00] ••• Blitz Brigade (machine-alpha) starts turn
+[00:00:12.00] ••• Blitz Brigade (machine-alpha) fires Bazooka
+[00:00:26.00] ••• Damage dealt: 44 to Holy Rollers (machine-gamma)
+[00:00:31.00] ••• Blitz Brigade (machine-alpha) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:00:36.00] ••• Banana Boys (machine-beta) starts turn
+[00:00:44.00] ••• Banana Boys (machine-beta) fires Holy Hand Grenade
+[00:00:58.00] ••• Damage dealt: 86 (1 kill) to Holy Rollers (machine-gamma)
+[00:01:03.00] ••• Banana Boys (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:01:08.00] ••• Mad Bombers (machine-delta) starts turn
+[00:01:16.00] ••• Mad Bombers (machine-delta) fires Bazooka
+[00:01:28.00] ••• Damage dealt: 37 to Blitz Brigade (machine-alpha)
+[00:01:33.00] ••• Mad Bombers (machine-delta) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
+[00:01:38.00] ••• Blitz Brigade (machine-alpha) starts turn
+[00:01:45.00] ••• Blitz Brigade (machine-alpha) fires Shotgun
+[00:01:58.00] ••• Damage dealt: 29 to Banana Boys (machine-beta)
+[00:02:03.00] ••• Blitz Brigade (machine-alpha) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
+[00:02:08.00] ••• Banana Boys (machine-beta) starts turn
+[00:02:15.00] ••• Banana Boys (machine-beta) fires Grenade (3 sec)
+[00:02:29.00] ••• Damage dealt: 51 to Blitz Brigade (machine-alpha)
+[00:02:34.00] ••• Banana Boys (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:02:39.00] ••• Mad Bombers (machine-delta) starts turn
+[00:02:46.00] ••• Mad Bombers (machine-delta) fires Banana Bomb (5 sec)
+[00:03:02.00] ••• Damage dealt: 71 (1 kill) to Blitz Brigade (machine-alpha)
+[00:03:08.00] ••• Mad Bombers (machine-delta) ends turn; time used: 29.00 sec turn, 3.00 sec retreat
+[00:03:13.00] ••• Banana Boys (machine-beta) starts turn
+[00:03:20.00] ••• Banana Boys (machine-beta) fires Homing Missile
+[00:03:34.00] ••• Damage dealt: 45 to Mad Bombers (machine-delta)
+[00:03:39.00] ••• Banana Boys (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:03:44.00] ••• Mad Bombers (machine-delta) starts turn
+[00:03:51.00] ••• Mad Bombers (machine-delta) fires Cluster Bomb
+[00:04:05.00] ••• Damage dealt: 63 (1 kill) to Banana Boys (machine-beta)
+[00:04:11.00] ••• Mad Bombers (machine-delta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+Mad Bombers wins the match!
 $$
 );
 
@@ -128,31 +128,31 @@ VALUES (
     'redgate',
     '2024-05-05 19:30:00',
     NULL,
-    ARRAY['Team Alpha', 'Team Beta'],
+    ARRAY['Blitz Brigade', 'Banana Boys'],
     $$Game Started at 2024-05-05 19:30:00 GMT
-Red: "machine-alpha" as "Team Alpha"
-Blue: "machine-beta" as "Team Beta"
-[00:00:07.00] ••• Team Alpha (machine-alpha) starts turn
-[00:00:15.00] ••• Team Alpha (machine-alpha) fires Bazooka
-[00:00:28.00] ••• Damage dealt: 35 to Team Beta (machine-beta)
-[00:00:33.00] ••• Team Alpha (machine-alpha) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
-[00:00:38.00] ••• Team Beta (machine-beta) starts turn
-[00:00:46.00] ••• Team Beta (machine-beta) fires Shotgun
-[00:00:59.00] ••• Damage dealt: 42 to Team Alpha (machine-alpha)
-[00:01:04.00] ••• Team Beta (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
-[00:01:09.00] ••• Team Alpha (machine-alpha) starts turn
-[00:01:17.00] ••• Team Alpha (machine-alpha) fires Grenade (3 sec, min bounce)
-[00:01:32.00] ••• Damage dealt: 28 to Team Beta (machine-beta)
-[00:01:37.00] ••• Team Alpha (machine-alpha) ends turn; time used: 28.00 sec turn, 3.00 sec retreat
-[00:01:42.00] ••• Team Beta (machine-beta) starts turn
-[00:01:50.00] ••• Team Beta (machine-beta) fires Homing Missile
-[00:02:04.00] ••• Damage dealt: 33 to Team Alpha (machine-alpha)
-[00:02:09.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+Red: "machine-alpha" as "Blitz Brigade"
+Blue: "machine-beta" as "Banana Boys"
+[00:00:07.00] ••• Blitz Brigade (machine-alpha) starts turn
+[00:00:15.00] ••• Blitz Brigade (machine-alpha) fires Bazooka
+[00:00:28.00] ••• Damage dealt: 35 to Banana Boys (machine-beta)
+[00:00:33.00] ••• Blitz Brigade (machine-alpha) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:00:38.00] ••• Banana Boys (machine-beta) starts turn
+[00:00:46.00] ••• Banana Boys (machine-beta) fires Shotgun
+[00:00:59.00] ••• Damage dealt: 42 to Blitz Brigade (machine-alpha)
+[00:01:04.00] ••• Banana Boys (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:01:09.00] ••• Blitz Brigade (machine-alpha) starts turn
+[00:01:17.00] ••• Blitz Brigade (machine-alpha) fires Grenade (3 sec, min bounce)
+[00:01:32.00] ••• Damage dealt: 28 to Banana Boys (machine-beta)
+[00:01:37.00] ••• Blitz Brigade (machine-alpha) ends turn; time used: 28.00 sec turn, 3.00 sec retreat
+[00:01:42.00] ••• Banana Boys (machine-beta) starts turn
+[00:01:50.00] ••• Banana Boys (machine-beta) fires Homing Missile
+[00:02:04.00] ••• Damage dealt: 33 to Blitz Brigade (machine-alpha)
+[00:02:09.00] ••• Banana Boys (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
 The round was drawn.
 $$
 );
 
--- 5: Processed, 2 teams, with placements and full log (Alpha wins)
+-- 5: Processed, 2 teams, with placements and full log (Blitz Brigade wins)
 INSERT INTO public.replays (name, status, filename, league_id, date, winner, teams, fulllog)
 VALUES (
     '2024-06-01',
@@ -160,32 +160,32 @@ VALUES (
     'seed_replay_withlog.WAgame',
     'redgate',
     '2024-06-01 19:00:00',
-    'Team Alpha',
-    ARRAY['Team Alpha', 'Team Beta'],
+    'Blitz Brigade',
+    ARRAY['Blitz Brigade', 'Banana Boys'],
     $$Game Started at 2024-06-01 19:00:00 GMT
-Red: "machine-alpha" as "Team Alpha"
-Blue: "machine-beta" as "Team Beta"
-[00:00:05.00] ••• Team Alpha (machine-alpha) starts turn
-[00:00:12.00] ••• Team Alpha (machine-alpha) fires Shotgun
-[00:00:21.00] ••• Damage dealt: 38 to Team Beta (machine-beta)
-[00:00:30.00] ••• Team Alpha (machine-alpha) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
-[00:00:35.00] ••• Team Beta (machine-beta) starts turn
-[00:00:43.00] ••• Team Beta (machine-beta) fires Bazooka
-[00:00:58.00] ••• Damage dealt: 47 to Team Alpha (machine-alpha)
-[00:01:02.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
-[00:01:07.00] ••• Team Alpha (machine-alpha) starts turn
-[00:01:14.00] ••• Team Alpha (machine-alpha) fires Banana Bomb (5 sec)
-[00:01:28.00] ••• Damage dealt: 65 to Team Beta (machine-beta)
-[00:01:35.00] ••• Team Alpha (machine-alpha) ends turn; time used: 28.00 sec turn, 3.00 sec retreat
-[00:01:40.00] ••• Team Beta (machine-beta) starts turn
-[00:01:48.00] ••• Team Beta (machine-beta) fires Grenade (3 sec, min bounce)
-[00:02:03.00] ••• Damage dealt: 29 to Team Alpha (machine-alpha)
-[00:02:08.00] ••• Team Beta (machine-beta) ends turn; time used: 28.00 sec turn, 3.00 sec retreat
-[00:02:13.00] ••• Team Alpha (machine-alpha) starts turn
-[00:02:20.00] ••• Team Alpha (machine-alpha) fires Holy Hand Grenade
-[00:02:38.00] ••• Damage dealt: 91 (1 kill) to Team Beta (machine-beta)
-[00:02:45.00] ••• Team Alpha (machine-alpha) ends turn; time used: 32.00 sec turn, 3.00 sec retreat
-Team Alpha wins the match!
+Red: "machine-alpha" as "Blitz Brigade"
+Blue: "machine-beta" as "Banana Boys"
+[00:00:05.00] ••• Blitz Brigade (machine-alpha) starts turn
+[00:00:12.00] ••• Blitz Brigade (machine-alpha) fires Shotgun
+[00:00:21.00] ••• Damage dealt: 38 to Banana Boys (machine-beta)
+[00:00:30.00] ••• Blitz Brigade (machine-alpha) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
+[00:00:35.00] ••• Banana Boys (machine-beta) starts turn
+[00:00:43.00] ••• Banana Boys (machine-beta) fires Bazooka
+[00:00:58.00] ••• Damage dealt: 47 to Blitz Brigade (machine-alpha)
+[00:01:02.00] ••• Banana Boys (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:01:07.00] ••• Blitz Brigade (machine-alpha) starts turn
+[00:01:14.00] ••• Blitz Brigade (machine-alpha) fires Banana Bomb (5 sec)
+[00:01:28.00] ••• Damage dealt: 65 to Banana Boys (machine-beta)
+[00:01:35.00] ••• Blitz Brigade (machine-alpha) ends turn; time used: 28.00 sec turn, 3.00 sec retreat
+[00:01:40.00] ••• Banana Boys (machine-beta) starts turn
+[00:01:48.00] ••• Banana Boys (machine-beta) fires Grenade (3 sec, min bounce)
+[00:02:03.00] ••• Damage dealt: 29 to Blitz Brigade (machine-alpha)
+[00:02:08.00] ••• Banana Boys (machine-beta) ends turn; time used: 28.00 sec turn, 3.00 sec retreat
+[00:02:13.00] ••• Blitz Brigade (machine-alpha) starts turn
+[00:02:20.00] ••• Blitz Brigade (machine-alpha) fires Holy Hand Grenade
+[00:02:38.00] ••• Damage dealt: 91 (1 kill) to Banana Boys (machine-beta)
+[00:02:45.00] ••• Blitz Brigade (machine-alpha) ends turn; time used: 32.00 sec turn, 3.00 sec retreat
+Blitz Brigade wins the match!
 $$
 );
 
@@ -202,15 +202,15 @@ VALUES (
 );
 
 -- All teams
-INSERT INTO public.teams (machine, team_name) VALUES ('machine-alpha', 'Team Alpha');
-INSERT INTO public.teams (machine, team_name) VALUES ('machine-beta', 'Team Beta');
-INSERT INTO public.teams (machine, team_name) VALUES ('machine-gamma', 'Team Gamma');
-INSERT INTO public.teams (machine, team_name) VALUES ('machine-delta', 'Team Delta');
+INSERT INTO public.teams (machine, team_name) VALUES ('machine-alpha', 'Blitz Brigade');
+INSERT INTO public.teams (machine, team_name) VALUES ('machine-beta', 'Banana Boys');
+INSERT INTO public.teams (machine, team_name) VALUES ('machine-gamma', 'Holy Rollers');
+INSERT INTO public.teams (machine, team_name) VALUES ('machine-delta', 'Mad Bombers');
 
--- Pre-claim Team Beta to another player to demonstrate the "already claimed" state
-INSERT INTO public.players (auth_subject, display_name) VALUES ('google-oauth2|100000000000000000001', 'Other Player');
-UPDATE public.teams SET player_auth_subject = 'google-oauth2|100000000000000000001' WHERE machine = 'machine-beta' AND team_name = 'Team Beta';
+-- Pre-claim Banana Boys to another player to demonstrate the "already claimed" state
+INSERT INTO public.players (auth_subject, display_name) VALUES ('google-oauth2|100000000000000000001', 'Concrete Donkey');
+UPDATE public.teams SET player_auth_subject = 'google-oauth2|100000000000000000001' WHERE machine = 'machine-beta' AND team_name = 'Banana Boys';
 
--- Claim Team Alpha so that at least two players are claimed (required for ELO rankings to appear)
-INSERT INTO public.players (auth_subject, display_name) VALUES ('google-oauth2|100000000000000000002', 'Alpha Player');
-UPDATE public.teams SET player_auth_subject = 'google-oauth2|100000000000000000002' WHERE machine = 'machine-alpha' AND team_name = 'Team Alpha';
+-- Claim Blitz Brigade so that at least two players are claimed (required for ELO rankings to appear)
+INSERT INTO public.players (auth_subject, display_name) VALUES ('google-oauth2|100000000000000000002', 'BazookaJoe');
+UPDATE public.teams SET player_auth_subject = 'google-oauth2|100000000000000000002' WHERE machine = 'machine-alpha' AND team_name = 'Blitz Brigade';

@@ -184,56 +184,77 @@ function LeagueDetailPage() {
                                                 sx={{ fontWeight: 700, width: 100 }}
                                                 align="right"
                                             >
-                                                ELO
+                                                Rating
                                             </TableCell>
                                             <TableCell
-                                                sx={{ fontWeight: 700, width: 120 }}
+                                                sx={{ fontWeight: 700, width: 80 }}
                                                 align="right"
                                             >
-                                                Games Played
+                                                Played
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {league.standings.map((s, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>
-                                                    <Typography
-                                                        sx={{
-                                                            fontFamily: monoFontFamily,
-                                                            fontSize: 12,
-                                                            color: 'text.secondary',
-                                                        }}
-                                                    >
-                                                        {index + 1}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Typography variant="body2">
-                                                        {s.playerName}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    <Typography
-                                                        sx={{
-                                                            fontFamily: monoFontFamily,
-                                                            fontSize: 14,
-                                                            fontWeight: 700,
-                                                        }}
-                                                    >
-                                                        {s.elo}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="text.secondary"
-                                                    >
-                                                        {s.gamesPlayed}
-                                                    </Typography>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                        {league.standings.map((s, index) => {
+                                            const place = index + 1
+                                            const medal = (
+                                                ['#ffca28', '#bdbdbd', '#cd7f32'] as const
+                                            )[index]
+                                            return (
+                                                <TableRow key={index}>
+                                                    <TableCell>
+                                                        <Box
+                                                            sx={{
+                                                                width: 22,
+                                                                height: 22,
+                                                                borderRadius: '50%',
+                                                                bgcolor:
+                                                                    medal ??
+                                                                    'action.disabledBackground',
+                                                                display: 'grid',
+                                                                placeItems: 'center',
+                                                                fontFamily: monoFontFamily,
+                                                                fontSize: 11,
+                                                                fontWeight: 700,
+                                                                color: medal
+                                                                    ? '#000'
+                                                                    : 'text.secondary',
+                                                            }}
+                                                        >
+                                                            {place}
+                                                        </Box>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography variant="body2">
+                                                            {s.playerName}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Typography
+                                                            sx={{
+                                                                fontFamily: monoFontFamily,
+                                                                fontSize: 16,
+                                                                fontWeight: 700,
+                                                                color: 'primary.main',
+                                                            }}
+                                                        >
+                                                            {s.elo}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Typography
+                                                            sx={{
+                                                                fontFamily: monoFontFamily,
+                                                                fontSize: 12,
+                                                                color: 'text.secondary',
+                                                            }}
+                                                        >
+                                                            {s.gamesPlayed}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        })}
                                     </TableBody>
                                 </Table>
                             </TableContainer>
