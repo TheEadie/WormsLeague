@@ -80,7 +80,7 @@ internal sealed class RatingsCalculator(
         Justification = "ELO calculation failure for one league must not block remaining leagues or the claim/unclaim operation")]
     public void CalculateForTeam(string machine, string teamName)
     {
-        foreach (var leagueId in replaysRepository.GetAffectedLeagueIds(machine, teamName))
+        foreach (var leagueId in replaysRepository.GetLeaguesWithTeam(machine, teamName))
         {
             try
             {

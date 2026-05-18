@@ -109,7 +109,7 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
         return item with { Id = replayId.ToString(CultureInfo.InvariantCulture) };
     }
 
-    public IReadOnlyList<string> GetAffectedLeagueIds(string machine, string teamName)
+    public IReadOnlyList<string> GetLeaguesWithTeam(string machine, string teamName)
     {
         var connectionString = configuration.GetConnectionString("Database");
         using var connection = new NpgsqlConnection(connectionString);
