@@ -4,6 +4,7 @@ using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Gateway.Announcers.Slack;
 using Worms.Hub.Gateway.API.Validators;
 using Worms.Hub.Gateway.FeatureFlags;
+using Worms.Hub.Gateway.Ratings;
 using Worms.Hub.Gateway.Worker;
 using Worms.Hub.Queues;
 using Worms.Hub.Storage;
@@ -23,6 +24,7 @@ internal static class ServiceRegistration
             .AddHttpClient()
             .AddScoped<Processor>()
             .AddScoped<IAnnouncer, Announcer>()
+            .AddScoped<RatingsCalculator>()
             .AddSingleton<PlacementsBackfiller>();
         builder.TryAddScoped<IFeatureFlags, GatewayFeatureFlags>();
         return builder;
