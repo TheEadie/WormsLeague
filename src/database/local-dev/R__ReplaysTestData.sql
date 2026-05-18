@@ -85,32 +85,36 @@ Green: "machine-gamma" as "Team Gamma"
 Yellow: "machine-delta" as "Team Delta"
 [00:00:04.00] ••• Team Alpha (machine-alpha) starts turn
 [00:00:12.00] ••• Team Alpha (machine-alpha) fires Bazooka
-[00:00:26.00] ••• Damage dealt: 44 to Team Beta (machine-beta)
+[00:00:26.00] ••• Damage dealt: 44 to Team Gamma (machine-gamma)
 [00:00:31.00] ••• Team Alpha (machine-alpha) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
 [00:00:36.00] ••• Team Beta (machine-beta) starts turn
-[00:00:44.00] ••• Team Beta (machine-beta) fires Grenade (3 sec)
-[00:00:58.00] ••• Damage dealt: 51 to Team Gamma (machine-gamma)
+[00:00:44.00] ••• Team Beta (machine-beta) fires Holy Hand Grenade
+[00:00:58.00] ••• Damage dealt: 86 (1 kill) to Team Gamma (machine-gamma)
 [00:01:03.00] ••• Team Beta (machine-beta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
-[00:01:08.00] ••• Team Gamma (machine-gamma) starts turn
-[00:01:16.00] ••• Team Gamma (machine-gamma) fires Shotgun
-[00:01:28.00] ••• Damage dealt: 37 to Team Delta (machine-delta)
-[00:01:33.00] ••• Team Gamma (machine-gamma) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
-[00:01:38.00] ••• Team Delta (machine-delta) starts turn
-[00:01:45.00] ••• Team Delta (machine-delta) fires Holy Hand Grenade
-[00:02:00.00] ••• Damage dealt: 86 (1 kill) to Team Alpha (machine-alpha)
-[00:02:07.00] ••• Team Delta (machine-delta) ends turn; time used: 29.00 sec turn, 3.00 sec retreat
-[00:02:12.00] ••• Team Beta (machine-beta) starts turn
-[00:02:19.00] ••• Team Beta (machine-beta) fires Bazooka
-[00:02:33.00] ••• Damage dealt: 55 (1 kill) to Team Gamma (machine-gamma)
-[00:02:38.00] ••• Team Beta (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
-[00:02:43.00] ••• Team Delta (machine-delta) starts turn
-[00:02:50.00] ••• Team Delta (machine-delta) fires Banana Bomb (5 sec)
-[00:03:06.00] ••• Damage dealt: 71 (1 kill) to Team Beta (machine-beta)
-[00:03:12.00] ••• Team Delta (machine-delta) ends turn; time used: 29.00 sec turn, 3.00 sec retreat
-[00:03:17.00] ••• Team Delta (machine-delta) starts turn
-[00:03:24.00] ••• Team Delta (machine-delta) fires Cluster Bomb
-[00:03:38.00] ••• Damage dealt: 63 (1 kill) to Team Gamma (machine-gamma)
-[00:03:44.00] ••• Team Delta (machine-delta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
+[00:01:08.00] ••• Team Delta (machine-delta) starts turn
+[00:01:16.00] ••• Team Delta (machine-delta) fires Bazooka
+[00:01:28.00] ••• Damage dealt: 37 to Team Alpha (machine-alpha)
+[00:01:33.00] ••• Team Delta (machine-delta) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
+[00:01:38.00] ••• Team Alpha (machine-alpha) starts turn
+[00:01:45.00] ••• Team Alpha (machine-alpha) fires Shotgun
+[00:01:58.00] ••• Damage dealt: 29 to Team Beta (machine-beta)
+[00:02:03.00] ••• Team Alpha (machine-alpha) ends turn; time used: 25.00 sec turn, 3.00 sec retreat
+[00:02:08.00] ••• Team Beta (machine-beta) starts turn
+[00:02:15.00] ••• Team Beta (machine-beta) fires Grenade (3 sec)
+[00:02:29.00] ••• Damage dealt: 51 to Team Alpha (machine-alpha)
+[00:02:34.00] ••• Team Beta (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:02:39.00] ••• Team Delta (machine-delta) starts turn
+[00:02:46.00] ••• Team Delta (machine-delta) fires Banana Bomb (5 sec)
+[00:03:02.00] ••• Damage dealt: 71 (1 kill) to Team Alpha (machine-alpha)
+[00:03:08.00] ••• Team Delta (machine-delta) ends turn; time used: 29.00 sec turn, 3.00 sec retreat
+[00:03:13.00] ••• Team Beta (machine-beta) starts turn
+[00:03:20.00] ••• Team Beta (machine-beta) fires Homing Missile
+[00:03:34.00] ••• Damage dealt: 45 to Team Delta (machine-delta)
+[00:03:39.00] ••• Team Beta (machine-beta) ends turn; time used: 26.00 sec turn, 3.00 sec retreat
+[00:03:44.00] ••• Team Delta (machine-delta) starts turn
+[00:03:51.00] ••• Team Delta (machine-delta) fires Cluster Bomb
+[00:04:05.00] ••• Damage dealt: 63 (1 kill) to Team Beta (machine-beta)
+[00:04:11.00] ••• Team Delta (machine-delta) ends turn; time used: 27.00 sec turn, 3.00 sec retreat
 Team Delta wins the match!
 $$
 );
