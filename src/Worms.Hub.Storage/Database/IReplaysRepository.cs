@@ -8,4 +8,5 @@ public interface IReplaysRepository
     Replay Create(Replay item);
     void Update(Replay item);
     IReadOnlyList<Replay> GetByLeagueId(string leagueId);
+    IReadOnlyList<string> GetAffectedLeagueIds(string machine, string teamName);
 }

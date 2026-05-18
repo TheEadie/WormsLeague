@@ -109,6 +109,20 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
         return item with { Id = replayId.ToString(CultureInfo.InvariantCulture) };
     }
 
+    public IReadOnlyList<string> GetAffectedLeagueIds(string machine, string teamName)
+    {
+        var connectionString = configuration.GetConnectionString("Database");
+        using var connection = new NpgsqlConnection(connectionString);
+        return [.. connection.Query<string>(
+            "SELECT DISTINCT r.league_id "
+            + "FROM replay_placements rp "
+            + "JOIN replays r ON r.id = rp.replay_id "
+            + "WHERE rp.machine = @machine AND rp.team_name = @teamName "
+            + "AND r.status = 'Processed' "
+            + "AND r.league_id IS NOT NULL",
+            new { machine, teamName })];
+    }
+
     public void Update(Replay item)
     {
         ArgumentNullException.ThrowIfNull(item);
