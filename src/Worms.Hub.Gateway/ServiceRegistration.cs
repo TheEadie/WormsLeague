@@ -13,8 +13,17 @@ namespace Worms.Hub.Gateway;
 
 internal static class ServiceRegistration
 {
-    public static IServiceCollection AddGatewayServices(this IServiceCollection builder) =>
-        builder.AddWormsArmageddonFilesServices().AddHttpClient().AddScoped<IAnnouncer, Announcer>().AddScoped<ReplayFileValidator>().AddScoped<CliFileValidator>().AddScoped<IFeatureFlags, GatewayFeatureFlags>();
+    public static IServiceCollection AddGatewayServices(this IServiceCollection builder)
+    {
+        builder.AddWormsArmageddonFilesServices()
+            .AddHttpClient()
+            .AddScoped<IAnnouncer, Announcer>()
+            .AddScoped<ReplayFileValidator>()
+            .AddScoped<CliFileValidator>()
+            .AddScoped<IFeatureFlags, GatewayFeatureFlags>();
+        builder.TryAddScoped<RatingsCalculator>();
+        return builder;
+    }
 
     public static IServiceCollection AddWorkerServices(this IServiceCollection builder)
     {
@@ -24,8 +33,8 @@ internal static class ServiceRegistration
             .AddHttpClient()
             .AddScoped<Processor>()
             .AddScoped<IAnnouncer, Announcer>()
-            .AddScoped<RatingsCalculator>()
             .AddSingleton<StartupBackfiller>();
+        builder.TryAddScoped<RatingsCalculator>();
         builder.TryAddScoped<IFeatureFlags, GatewayFeatureFlags>();
         return builder;
     }
