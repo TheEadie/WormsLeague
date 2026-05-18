@@ -19,7 +19,7 @@ internal sealed class RatingsCalculator(
 
         // Replays ordered by date ASC, then name ASC as tiebreaker (nulls last)
         var replays = replaysRepository.GetByLeagueId(leagueId)
-            .Where(r => r.Status == "Processed" && r.Placements is { Count: > 0 })
+            .Where(r => r is { Status: "Processed", Placements.Count: > 0 })
             .OrderBy(r => r.Date ?? DateTime.MaxValue)
             .ThenBy(r => r.Name)
             .ToList();
