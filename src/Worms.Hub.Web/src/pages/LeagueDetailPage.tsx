@@ -20,11 +20,18 @@ import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import { monoFontFamily } from '../theme'
 import { gatewayUrl } from '../api'
 
+interface StandingDto {
+    playerName: string
+    elo: number
+    gamesPlayed: number
+}
+
 interface LeagueDto {
     id: string
     name: string
     version: string | null
     schemeUrl: string | null
+    standings: StandingDto[] | null
 }
 
 interface WeaponDto {
@@ -157,6 +164,81 @@ function LeagueDetailPage() {
                             </Box>
                         )}
                     </Box>
+
+                    {league.standings !== null && league.standings.length > 0 && (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5 }}>
+                                Standings
+                            </Typography>
+                            <TableContainer component={Paper} variant="outlined">
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell sx={{ fontWeight: 700, width: 60 }}>
+                                                Rank
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 700 }}>
+                                                Player Name
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{ fontWeight: 700, width: 100 }}
+                                                align="right"
+                                            >
+                                                ELO
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{ fontWeight: 700, width: 120 }}
+                                                align="right"
+                                            >
+                                                Games Played
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {league.standings.map((s, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>
+                                                    <Typography
+                                                        sx={{
+                                                            fontFamily: monoFontFamily,
+                                                            fontSize: 12,
+                                                            color: 'text.secondary',
+                                                        }}
+                                                    >
+                                                        {index + 1}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography variant="body2">
+                                                        {s.playerName}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    <Typography
+                                                        sx={{
+                                                            fontFamily: monoFontFamily,
+                                                            fontSize: 14,
+                                                            fontWeight: 700,
+                                                        }}
+                                                    >
+                                                        {s.elo}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                    >
+                                                        {s.gamesPlayed}
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Box>
+                    )}
 
                     {replays.length === 0 && (
                         <Typography color="text.secondary">
