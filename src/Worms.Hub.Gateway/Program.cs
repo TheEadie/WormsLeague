@@ -55,7 +55,7 @@ if (runWorker)
 {
     _ = builder.Services.AddWorkerServices();
     _ = builder.Services.AddHostedService<CheckForMessagesService>();
-    _ = builder.Services.AddHostedService<PlacementsBackfillService>();
+    _ = builder.Services.AddHostedService<StartupBackfillService>();
 }
 
 var app = builder.Build();
@@ -86,7 +86,7 @@ if (runAsBatchJob)
 {
     var processor = app.Services.GetService<Processor>();
     await processor!.UpdateReplay();
-    var backfiller = app.Services.GetRequiredService<PlacementsBackfiller>();
+    var backfiller = app.Services.GetRequiredService<StartupBackfiller>();
     await backfiller.RunAsync(CancellationToken.None);
     return;
 }

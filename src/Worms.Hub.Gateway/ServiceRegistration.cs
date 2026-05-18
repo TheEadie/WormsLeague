@@ -25,7 +25,7 @@ internal static class ServiceRegistration
             .AddScoped<Processor>()
             .AddScoped<IAnnouncer, Announcer>()
             .AddScoped<RatingsCalculator>()
-            .AddSingleton<PlacementsBackfiller>();
+            .AddSingleton<StartupBackfiller>();
         builder.TryAddScoped<IFeatureFlags, GatewayFeatureFlags>();
         return builder;
     }
