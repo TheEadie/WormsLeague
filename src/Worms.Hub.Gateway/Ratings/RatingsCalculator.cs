@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Logging;
 using PlayerRank;
 using PlayerRank.Scoring.Elo;
 using Worms.Hub.Storage.Database;
