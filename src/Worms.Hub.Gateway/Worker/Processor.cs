@@ -1,7 +1,9 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Worms.Armageddon.Files.Replays.Text;
 using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Gateway.FeatureFlags;
+using Worms.Hub.Gateway.Ratings;
 using Worms.Hub.Queues;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
@@ -17,8 +19,10 @@ internal sealed class Processor(
     IAnnouncer announcer,
     IReplayTextReader replayTextReader,
     IFeatureFlags featureFlags,
+    RatingsCalculator ratingsCalculator,
     ILogger<Processor> logger)
 {
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "ELO calculation failure must not block replay processing")]
     public async Task UpdateReplay()
     {
         logger.LogInformation("Starting replay updater...");
@@ -87,6 +91,19 @@ internal sealed class Processor(
             foreach (var placement in replayModel.Placements)
             {
                 teamsRepository.Upsert(placement.Team.Machine, placement.Team.Name);
+            }
+        }
+
+        // Calculate ELO ratings for the league
+        if (await featureFlags.IsEloRatingsEnabledAsync() && updatedReplay.LeagueId is not null)
+        {
+            try
+            {
+                ratingsCalculator.Calculate(updatedReplay.LeagueId);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to calculate ELO ratings for league {LeagueId}.", updatedReplay.LeagueId);
             }
         }
 
