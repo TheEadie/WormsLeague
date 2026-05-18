@@ -197,29 +197,6 @@ VALUES (
     NULL
 );
 
--- Placements for replay 1 (2 teams: Alpha 1st, Beta 2nd)
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (1, 'machine-alpha', 'Team Alpha', 1);
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (1, 'machine-beta', 'Team Beta', 2);
-
--- Placements for replay 2 (3 teams: Gamma 1st, Alpha 2nd, Beta 3rd)
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (2, 'machine-gamma', 'Team Gamma', 1);
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (2, 'machine-alpha', 'Team Alpha', 2);
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (2, 'machine-beta', 'Team Beta', 3);
-
--- Placements for replay 3 (4 teams: Delta 1st, Beta 2nd, Alpha 3rd, Gamma 4th)
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (3, 'machine-delta', 'Team Delta', 1);
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (3, 'machine-beta', 'Team Beta', 2);
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (3, 'machine-alpha', 'Team Alpha', 3);
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (3, 'machine-gamma', 'Team Gamma', 4);
-
--- Placements for replay 4 (draw — null positions for both teams)
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (4, 'machine-alpha', 'Team Alpha', NULL);
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (4, 'machine-beta', 'Team Beta', NULL);
-
--- Placements for replay 5 (2 teams: Alpha 1st, Beta 2nd)
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (5, 'machine-alpha', 'Team Alpha', 1);
-INSERT INTO public.replay_placements (replay_id, machine, team_name, position) VALUES (5, 'machine-beta', 'Team Beta', 2);
-
 -- All teams
 INSERT INTO public.teams (machine, team_name) VALUES ('machine-alpha', 'Team Alpha');
 INSERT INTO public.teams (machine, team_name) VALUES ('machine-beta', 'Team Beta');
@@ -229,3 +206,7 @@ INSERT INTO public.teams (machine, team_name) VALUES ('machine-delta', 'Team Del
 -- Pre-claim Team Beta to another player to demonstrate the "already claimed" state
 INSERT INTO public.players (auth_subject, display_name) VALUES ('google-oauth2|100000000000000000001', 'Other Player');
 UPDATE public.teams SET player_auth_subject = 'google-oauth2|100000000000000000001' WHERE machine = 'machine-beta' AND team_name = 'Team Beta';
+
+-- Claim Team Alpha so that at least two players are claimed (required for ELO rankings to appear)
+INSERT INTO public.players (auth_subject, display_name) VALUES ('google-oauth2|100000000000000000002', 'Alpha Player');
+UPDATE public.teams SET player_auth_subject = 'google-oauth2|100000000000000000002' WHERE machine = 'machine-alpha' AND team_name = 'Team Alpha';
