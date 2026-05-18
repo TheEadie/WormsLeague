@@ -19,12 +19,7 @@ import Typography from '@mui/material/Typography'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import { monoFontFamily } from '../theme'
 import { gatewayUrl } from '../api'
-
-interface StandingDto {
-    playerName: string
-    elo: number
-    gamesPlayed: number
-}
+import type { StandingDto } from '../types'
 
 interface LeagueDto {
     id: string

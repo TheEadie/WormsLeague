@@ -8,15 +8,19 @@ import CardContent from '@mui/material/CardContent'
 import Chip from '@mui/material/Chip'
 import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
+import Divider from '@mui/material/Divider'
+import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { monoFontFamily } from '../theme'
 import { gatewayUrl } from '../api'
+import type { StandingDto } from '../types'
 
 interface LeagueDto {
     id: string
     name: string
     version: string | null
     schemeUrl: string
+    standings: StandingDto[] | null
 }
 
 function LeagueCard({ league }: { league: LeagueDto }) {
@@ -72,6 +76,95 @@ function LeagueCard({ league }: { league: LeagueDto }) {
                             variant="outlined"
                             sx={{ mt: 1.5, fontFamily: monoFontFamily, fontSize: 11 }}
                         />
+                    )}
+
+                    {league.standings !== null && league.standings.length > 0 && (
+                        <>
+                            <Divider sx={{ mt: 2, mb: 1.5 }} />
+                            <Box>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'baseline',
+                                        justifyContent: 'space-between',
+                                        mb: 1,
+                                    }}
+                                >
+                                    <Typography
+                                        variant="caption"
+                                        color="text.secondary"
+                                        sx={{
+                                            letterSpacing: '0.1em',
+                                        }}
+                                    >
+                                        LEADERBOARD
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontFamily: monoFontFamily,
+                                            fontSize: 10,
+                                            color: 'text.disabled',
+                                        }}
+                                    >
+                                        top {Math.min(3, league.standings.length)} of{' '}
+                                        {league.standings.length}
+                                    </Typography>
+                                </Box>
+                                <Stack spacing={0.5}>
+                                    {league.standings.slice(0, 3).map((s, index) => {
+                                        const place = index + 1
+                                        const medal = (['#ffca28', '#bdbdbd', '#cd7f32'] as const)[
+                                            index
+                                        ]
+                                        return (
+                                            <Box
+                                                key={s.playerName}
+                                                sx={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: '22px 1fr auto',
+                                                    gap: 1,
+                                                    alignItems: 'center',
+                                                }}
+                                            >
+                                                <Typography
+                                                    sx={{
+                                                        fontFamily: monoFontFamily,
+                                                        fontSize: 12,
+                                                        fontWeight: 700,
+                                                        color: medal,
+                                                        textAlign: 'center',
+                                                    }}
+                                                >
+                                                    {place}
+                                                </Typography>
+                                                <Typography
+                                                    variant="body2"
+                                                    sx={{
+                                                        fontWeight: place === 1 ? 700 : 500,
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                    }}
+                                                >
+                                                    {s.playerName}
+                                                </Typography>
+                                                <Typography
+                                                    sx={{
+                                                        fontFamily: monoFontFamily,
+                                                        fontSize: 13,
+                                                        fontWeight: 700,
+                                                        color: 'primary.main',
+                                                        textAlign: 'right',
+                                                    }}
+                                                >
+                                                    {s.elo}
+                                                </Typography>
+                                            </Box>
+                                        )
+                                    })}
+                                </Stack>
+                            </Box>
+                        </>
                     )}
                 </CardContent>
             </Card>
