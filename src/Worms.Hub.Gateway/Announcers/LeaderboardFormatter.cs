@@ -49,8 +49,8 @@ internal static class LeaderboardFormatter
         if (entry.PositionChange is { } c)
         {
             arrow = c < 0
-                ? $" ⇧{Math.Abs(c).ToString(CultureInfo.InvariantCulture)}"
-                : $" ⇩{Math.Abs(c).ToString(CultureInfo.InvariantCulture)}";
+                ? $" ⇧{(-c).ToString(CultureInfo.InvariantCulture)}"
+                : $" ⇩{c.ToString(CultureInfo.InvariantCulture)}";
         }
         else
         {
