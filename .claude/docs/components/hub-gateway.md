@@ -15,6 +15,8 @@ The single binary can run in different modes controlled by `WORMS_`-prefixed env
 
 Without `HUB_DISTRIBUTED`, both gateway and worker run in the same process (monolith).
 
+**Batch mode does not start hosted services.** `WORMS_BATCH=true` causes `Program.cs` to invoke `Processor.UpdateReplay()` and `return` before `app.RunAsync()`, so no `IHostedService` / `BackgroundService` registrations execute. Any one-shot startup work — backfills, schema repairs, one-off migrations — must be implemented as a directly-callable class (pattern: `StartupBackfiller`, `PlacementsBackfiller`) and invoked from **both** the hosted-service wrapper (for normal worker mode) and the batch-job block in `Program.cs` (for production cron runs). Plans that introduce a new backfill list the `Program.cs` batch-path edit as a required file; reviewers confirm both call sites are wired before approving.
+
 ## API controllers
 
 All controllers inherit `V1ApiController` which sets:
@@ -64,7 +66,11 @@ End-to-end flow for a replay upload:
 - `AddGatewayServices()` — registers `IAnnouncer`, validators, HTTP client
 - `AddWorkerServices()` — registers its `Processor`, plus pulls in Storage, Queue, Files, and Announcer services
 
-Services used by both the gateway and the worker (e.g. `AddWormsArmageddonFilesServices()`, which registers `IReplayTextReader`) must be called inside **each** component's own `Add*Services()` method, not placed unconditionally in `Program.cs`. Because `AddGatewayServices()` and `AddWorkerServices()` are both called in monolith mode, any method registered from multiple components must use `TryAddScoped` / `TryAddSingleton` / `TryAddEnumerable` throughout so repeated calls in monolith mode are safe (no double-registered parsers or handlers).
+Services used by both the gateway and the worker (e.g. `AddWormsArmageddonFilesServices()`, which registers `IReplayTextReader`) must be called inside **each** component's own `Add*Services()` method, not placed unconditionally in `Program.cs`. Because `AddGatewayServices()` and `AddWorkerServices()` are both called in monolith mode, any type registered from more than one extension method must use `TryAddScoped` / `TryAddSingleton` / `TryAddEnumerable` throughout — there are no exceptions. If `AddGatewayServices` uses `TryAddScoped<IFoo, Foo>()`, then `AddWorkerServices` must also use the `Try*` form for the same type; a plain `AddScoped<IFoo, Foo>()` in either method produces a silent double-registration in monolith mode.
+
+`TryAdd*` lives in `Microsoft.Extensions.DependencyInjection.Extensions`, which is **not** part of the implicit usings on `Microsoft.NET.Sdk.Web`. Plans that introduce a `TryAdd*` call into a fresh registration file must include the `using` directive.
+
+When wiring code that consumes types named `League`, `Player`, etc., be aware of the namespace collisions between `PlayerRank.*` (the ELO engine) and `Worms.Hub.Storage.Domain.*`. Resolve with a fully qualified reference or a `using` alias rather than a bare `using` that brings the wrong type into scope.
 
 ## Middleware ordering
 
@@ -78,6 +84,13 @@ Any new endpoint backed by a DB migration must address independent gateway/DB ro
 - **Feature flag:** hide the endpoint until the migration has been confirmed applied.
 
 This decision must be made during spec — not discovered after deployment.
+
+## REST shape
+
+New endpoints must match the conventions used by neighbouring controllers, not invent their own. Specifically:
+
+- `PUT` takes the full resource — including its id — in the request body. The URL is the collection (`PUT /teams`), not a per-item segment (`PUT /teams/{id}`). The existing Games endpoints set the convention; new controllers follow it.
+- Before approving a new endpoint, diff its shape (verb, URL pattern, where the id lives) against the closest existing controller. Divergences are called out in review or reconciled in the plan.
 
 ## DTOs
 

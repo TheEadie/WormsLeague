@@ -19,6 +19,8 @@ Unit tests for .NET use **NUnit** with **Shouldly** for assertions. They are the
 
 The CLI, hub gateway, queues, and storage projects do not currently have dedicated unit-test projects — behaviour at those layers is exercised indirectly via the integration tier and the libraries above. When adding meaningful logic at those layers, prefer adding a new `<Project>.Tests` rather than retrofitting the integration test.
 
+When a slice introduces non-trivial logic into the Gateway — calculators, formatters, ranking, leaderboard builders — the slice creates the gateway test project rather than deferring. An acceptance criterion that calls for unit tests cannot be discharged by pointing at the absence of a test project; the slice that introduces the logic introduces the project.
+
 External dependencies are abstracted at the seam, not mocked at the call site:
 - File-system access goes through `System.IO.Abstractions` so unit tests use `MockFileSystem` instead of touching disk.
 - The Worms Armageddon process is abstracted by the Armageddon Game library, with a dedicated `Worms.Armageddon.Game.Fake` project providing a deterministic test double — units that orchestrate WA depend on the abstraction and are wired up against the fake in tests.
@@ -61,3 +63,7 @@ Linting (ESLint, Prettier, `tsc --noEmit`, Roslyn analysers) belongs in `code-sc
 ## Fixtures and sample data
 
 Sample replays and schemes live under `sample-data/` and are committed to the repo. Tests should reference fixtures from that folder rather than generating ad-hoc binary blobs inline. Add a new fixture when the existing ones genuinely don't cover the case — don't fork an existing one for a one-character variation.
+
+## Seed data as an acceptance criterion
+
+Any slice that adds a new column, chip, page section, or other user-visible surface must update local-dev seed data so the new surface is exercisable in `docker compose up`. This is part of the slice's acceptance criteria, not a follow-up. Reviewers treat unchecked manual-test items in the PR body as a blocker — "satisfies all acceptance criteria" is not a valid verdict when the seed data does not exercise the new surface end-to-end.

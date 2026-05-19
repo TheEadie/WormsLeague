@@ -54,6 +54,8 @@ Do not rely on transitive dependencies for packages that are imported directly i
 | `make web.lint` | ESLint (`eslint src`), TypeScript type-check (`tsc -b`), Prettier format check (`prettier --check src`) |
 | `make web.test` | Vitest unit tests (Vitest + React Testing Library) |
 
+In a fresh worktree, `make web.lint` and `npm run build` fail with `ERR_MODULE_NOT_FOUND` until `node_modules` is populated. Run `npm ci` inside `src/Worms.Hub.Web/` before either target — plans that list lint or build commands as verification must include this as the first step.
+
 ## Linting and formatting
 
 Three tools run under `make web.lint`:
@@ -63,6 +65,8 @@ Three tools run under `make web.lint`:
 - **Prettier** — `prettier --check src`; format source with `npx prettier --write src`
 
 `make web.lint` must pass before committing any SPA changes, including follow-up commits made in response to review feedback. Prettier formatting drift is a CI failure; catch it locally before pushing.
+
+Any change touching `.tsx` / `.ts` ends with `npx prettier --write src` before `make web.lint`. Do not hand-format TSX in plan snippets to match Prettier — let the formatter own indentation, trailing commas, and line-break placement around `as const`. Plan snippets that round-tripped through Prettier produce diffs the first time they are pasted; the implementer reformats, the plan does not pre-format.
 
 `web.lint` is a standalone target for local use and Code Scanning. It is **not** wired into `make test` and is **not** a step in the build CI workflow. See [ci-patterns.md](../steering/ci-patterns.md).
 
@@ -98,6 +102,26 @@ Page components rendered inside `Layout` must size themselves with `flex: 1` on 
 
 - Scalar style shorthands (`fontWeight`, `display`, `color`, etc.) are not accepted as direct JSX props on MUI components. Place them in the `sx` prop: `<Typography sx={{ fontWeight: 700 }}>`.
 - `primaryTypographyProps` and `secondaryTypographyProps` on `<ListItemText>` are removed in MUI v9. Use `slotProps={{ primary: { ... }, secondary: { ... } }}` instead.
+
+## React keys
+
+Keyed lists use stable identifiers, never display strings or labels. Use the recurring list shapes below as the canonical choice:
+
+- **Placement rows** — `${machine}:${teamName}` (or the placement's server id when one exists).
+- **Standings rows** — the array index for a server-ordered list, or a stable league/player id.
+- **Team rows** — the team's `AuthSubject` (or the team id once one exists).
+
+Do not key by a player's display name, a rendered label, or any value the user can change.
+
+## Table and list conventions
+
+New tables, chip strips, and list surfaces reuse the styling vocabulary the existing surfaces (replays table, league cards) already use:
+
+- **Rank positions** render with the medal-circle component, not a bare integer.
+- **Headline numeric metric** (e.g. rating, damage) uses `primary.main` with a heavier weight; secondary numeric columns use the de-emphasised monospace treatment.
+- **Column headers** are short and consistent with neighbours — match the shortest existing header (e.g. `Played`, `Length`) rather than expanding (`Games Played`, `Match Length`).
+
+Slice specs for any new table-or-list surface either explicitly reuse this vocabulary or call out a conscious deviation. The polish is captured in the original slice, not deferred to a follow-up PR.
 
 ## React purity
 

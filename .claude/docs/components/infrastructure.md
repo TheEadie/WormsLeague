@@ -42,6 +42,8 @@ Migrations are in `src/database/migrations/` as Flyway SQL files (versioned `V<x
 
 Local dev seeds live in `src/database/local-dev/` — these run automatically in `docker compose up` via the `flyway-init` service but are not applied in CI or production.
 
+The `worms-hub:database-version` value in `Pulumi.*.yaml` is **not** bumped in the same PR as the migration that introduces the new version. The convention is to ship the migration first, confirm it applies cleanly, and bump the Pulumi database version in a separate follow-up infra PR. Slice plans that add a migration must not list `Pulumi.*.yaml` as a candidate edit; reviewers do not flag the missing version bump.
+
 ## Adding a new image version
 
 Update the `worms-hub:gateway-image` or `worms-hub:wa-runner-image` value in the appropriate `Pulumi.*.yaml` and run `pulumi up`. The release workflow does this automatically when triggered.
