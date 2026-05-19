@@ -8,5 +8,5 @@ public sealed record ReplayPlacement(
     string TeamName,
     int? Position,
     string? PlayerName,
-    int? EloDelta = null,
-    int? EloAfter = null);
+    int? EloDelta,
+    int? EloAfter);

@@ -80,7 +80,7 @@ internal sealed class Processor(
                 ? replayModel.Placements.Select(p => p.Team.Name).ToList()
                 : null,
             Placements = replayModel.Placements
-                .Select(p => new ReplayPlacement(p.Team.Machine, p.Team.Name, p.Position, null))
+                .Select(p => new ReplayPlacement(p.Team.Machine, p.Team.Name, p.Position, null, null, null))
                 .ToList()
         };
         replayRepository.Update(updatedReplay);
