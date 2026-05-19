@@ -40,63 +40,38 @@ This ensures the spec accurately reflects the epic's intent, the system's bounda
 
 The default position is always the simplest thing that meets the stated need.
 
-Before probing for detail, identify the simplest version of the slice and present it to the user. Then identify any aspects of the request that could be implemented in a more complex or robust way — things like validation, error handling, configuration options, edge case coverage, or extensibility. For each of these, ask the user whether they want it included. Do not assume more is better.
+Before probing for detail, identify the simplest version of the slice and present it to the user. Then identify any aspects of the request that could be implemented in a more complex or robust way — things like validation, error handling, configuration options, edge case coverage, or extensibility.
+
+Walk through these one at a time, asking the user whether each should be included. For each one, give your recommended answer (usually "leave it out for this slice") with a brief reason, so the user can react to a concrete proposal. Ask one question per turn and wait for the answer before moving to the next — do not bundle them into a single list. If a question can be answered by exploring the codebase rather than asking the user, do that instead. Do not assume more is better.
 
 If the user's initial request already contains complexity that isn't strictly necessary to deliver the slice, surface that and ask whether it can be simplified or deferred to a later slice.
 
-Wait for the user's answers before continuing.
-
 ## Step 4 — Grill the user until the spec is watertight
 
-This step is iterative. You must complete multiple rounds of questioning. Do not move to Step 5 until every question has been answered.
+Interview the user relentlessly about every aspect of this slice until you reach a shared understanding. Walk down each branch of the decision tree, resolving dependencies between decisions one-by-one. Follow each branch where it leads — if a happy-path question surfaces an error case or edge case, chase it down then rather than deferring it to a later "round".
 
-### Round A — Core behaviour
+**How to ask:**
 
-Ask about anything unclear in the happy path:
+- Ask questions **one at a time** — never bundle multiple questions into a single turn. Wait for the answer before moving on.
+- For each question, **provide your recommended answer** along with the question, so the user can react to a concrete proposal rather than starting from a blank slate. Explain briefly why you recommend it.
+- If a question can be answered by **exploring the codebase**, explore it instead of asking the user. Only ask when the answer genuinely requires the user's intent or knowledge.
+- After each answer, if the spec content is now settled for that point, fold it into the relevant section straight away rather than batching at the end.
 
-- Which components or projects are affected
-- What data flows in and out, and in what format
-- How the user discovers or triggers the feature
-- What "success" looks like from the user's perspective
+**Areas to make sure you cover.** This is not a script to read through in order — it's a checklist of categories the spec must address before you can exit this step. Use it to notice gaps that the decision-tree walk would otherwise miss.
 
-Wait for answers. Do not proceed until each question has a response.
+- **Core behaviour and happy path** — which components/projects are affected; what data flows in and out and in what format; how the user discovers or triggers the feature; what "success" looks like from the user's perspective.
+- **Error cases and failure modes** — for every operation the slice performs: what if required data is missing or malformed; what if a network call, database query, or external service fails; what if the user triggers the action in the wrong state or without permission; what if two actions happen concurrently.
+- **Edge cases and boundaries** — empty / zero states; single vs. many; large data and input-size limits; ordering and timing (sequence, out-of-order events); transitions (navigate away, refresh, cancel mid-flow); repeated actions (double-submit, duplicate event processing); stale data (acting on data that has since changed).
 
-### Round B — Error cases and failure modes
+For each item the slice touches, confirm the expected behaviour — do not leave it as "TBD". If something genuinely doesn't apply to this slice (e.g. there are no concurrency concerns because the slice is read-only), note that and move on.
 
-For every operation the slice performs, ask what should happen when it goes wrong:
-
-- What if the required data is missing or malformed?
-- What if a network call, database query, or external service fails?
-- What if the user triggers the action in the wrong state or without permission?
-- What if two actions happen concurrently?
-
-Wait for answers. Do not proceed until each question has a response.
-
-### Round C — Edge cases and boundaries
-
-Systematically probe the edges. Work through each category and ask any that apply:
-
-- **Empty / zero states** — what does the UI or response look like with no data?
-- **Single vs. many** — does behaviour change with exactly one item vs. a list?
-- **Large data** — are there limits on input size, list length, or payload?
-- **Ordering and timing** — does sequence matter? Can events arrive out of order?
-- **Transitions** — what happens mid-flow if the user navigates away, refreshes, or cancels?
-- **Repeated actions** — what if the user submits twice, or the same event is processed twice?
-- **Stale data** — can the user act on data that has since changed?
-
-For each edge case identified, confirm the expected behaviour — do not leave it as "TBD".
-
-Wait for answers. Do not proceed until each question has a response.
-
-### Round D — Scope and deferral check
-
-After rounds A–C, review every answer and ask yourself: are there any remaining ambiguities, implicit assumptions, or "it depends" answers that have not been pinned down? If yes, ask those questions now. Repeat this check until the answer is no.
+**Scope and deferral sweep.** When you believe you're done, review every answer and ask yourself: are there any remaining ambiguities, implicit assumptions, or "it depends" answers that have not been pinned down? If yes, ask those questions now (one at a time, with a recommended answer). Repeat the sweep until the answer is no.
 
 Do not proceed to Step 5 until you can answer "yes" to all of the following:
 
 - Every requirement has a clear, unambiguous description.
 - Every error case has a specified outcome.
-- Every edge case identified in Round C either has a defined behaviour or has been explicitly deferred by the user.
+- Every edge case surfaced during the interview either has a defined behaviour or has been explicitly deferred by the user.
 - The "Open Questions" section of the spec will either be empty or contain only items the user has deliberately chosen to leave unresolved.
 - If the slice includes any UI page or visual component: the design mockup has been reviewed and approved. If the design is still in flux, the spec must flag which visual details are pending and explicitly defer them rather than describing a placeholder that will need wholesale replacement later.
 - If the slice introduces a capability for the first time (a new test framework, a new CI job category, a new make target category): the setup of that infrastructure is explicitly included in scope and its files are listed. Do not assume it can be added invisibly.

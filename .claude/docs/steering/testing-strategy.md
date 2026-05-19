@@ -24,6 +24,7 @@ When a slice introduces non-trivial logic into the Gateway — calculators, form
 External dependencies are abstracted at the seam, not mocked at the call site:
 - File-system access goes through `System.IO.Abstractions` so unit tests use `MockFileSystem` instead of touching disk.
 - The Worms Armageddon process is abstracted by the Armageddon Game library, with a dedicated `Worms.Armageddon.Game.Fake` project providing a deterministic test double — units that orchestrate WA depend on the abstraction and are wired up against the fake in tests.
+- The database is abstracted behind `IRepository<T>` (and the per-aggregate repository interfaces) in `Worms.Hub.Storage`. Unit tests of Hub layers above storage — Gateway endpoints, Worker handlers, Queue producers/consumers — mock or fake those repository interfaces so the suite stays fast and in-process. Do not stand up Postgres for tests of code that only talks to the repository contract.
 
 ### Integration tests (`Category=Integration`)
 
@@ -37,7 +38,11 @@ These exercise real infrastructure end-to-end. They are excluded from the defaul
 
 Integration tests have prerequisites (Docker available; in some cases a real Worms Armageddon installation on the host) and are slower than unit tests, so they are not part of the default local loop. They are intentionally not mocked — the value of the tier comes from running real Docker, real Azurite queues, and the real WA binary under Wine.
 
-The database is in the same bucket: prefer integration tests against a real Postgres (the one from `docker compose`) over mocking repositories. Mocks of the data layer have historically diverged from production behaviour and hidden migration bugs.
+### Repository contract tests
+
+Repository implementations themselves are the one place where mocks cannot protect us — a `GamesRepository` that compiles fine against a stale SQL query will still pass any higher-layer test that mocks it, but will throw at runtime once the schema moves. Each repository needs a small, dedicated integration test suite (`Category=Integration`) that exercises every method against a real Postgres from `docker compose` and asserts on round-trip behaviour: insert via `Add`, read via `GetAll`/`GetById`, update via `Update`, and any bespoke query method on the per-aggregate repo. These tests guard against drift between SQL strings, the `XxxDb` mapping record, and the live schema. They are the reason higher layers can mock repositories safely — if a mock returns something the real repo could never produce, that's a code-review issue; if the real repo's SQL has drifted from the schema, the contract test catches it before production does.
+
+A slice that adds a new repository method must add a contract test for that method in the same slice. A slice that changes the schema must update affected contract tests, not defer them.
 
 ## What to write where
 

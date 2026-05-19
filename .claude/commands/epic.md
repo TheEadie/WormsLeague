@@ -27,7 +27,7 @@ Keep both documents strictly high level.
 
 `plan.md` is concerned with:
 
-- An ordered list of vertical slices, each small enough to be a single PR, described at a "what is delivered" level
+- An ordered list of **vertical tracer-bullet slices**, each cutting end-to-end through every relevant layer, each small enough to be a single PR, described at a "what is delivered" level
 
 Neither file is concerned with:
 
@@ -88,7 +88,16 @@ Tell the user the file has been populated and invite them to read through it bef
 
 ## Phase 4 — Deep interrogation
 
-This is the main body of the command. Work through the spec section by section with the user, asking the kinds of questions that surface the high-level shape of the epic. Examples:
+This is the main body of the command. Interview the user relentlessly about every aspect of the epic until you reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
+
+**How to ask:**
+
+- Ask questions **one at a time** — never bundle multiple questions into a single turn. Wait for the answer before moving on.
+- For each question, **provide your recommended answer** along with the question, so the user can react to a concrete proposal rather than starting from a blank slate. Explain briefly why you recommend it.
+- If a question can be answered by **exploring the codebase**, explore it instead of asking the user. Only ask when the answer genuinely requires the user's intent or knowledge.
+- After each answer, update the relevant section of `spec.md` immediately (using the Edit tool) so the document tracks the conversation. Then move to the next question.
+
+Work through the spec section by section, surfacing the high-level shape of the epic. The areas to cover:
 
 - **Purpose:** What is the epic for? What does success look like?
 - **Capabilities:** What are the major things the system must do? What are the things it deliberately will not do?
@@ -101,8 +110,6 @@ This is the main body of the command. Work through the spec section by section w
 
 Do **not** ask about target users / personas — that section is intentionally omitted.
 
-Ask one focused area at a time. After each answer, update the relevant section of `spec.md` immediately (using the Edit tool) so the document tracks the conversation. Then move to the next area.
-
 Apply the following discipline throughout:
 
 - If the user gives an answer that drifts into implementation detail or edge cases, gently steer back to the high-level intent and note the detail as something for the slice stage.
@@ -114,11 +121,20 @@ Continue until the user agrees every section is in a state they are happy with, 
 
 ## Phase 5 — Slice breakdown (plan.md)
 
-Once `spec.md` is stable, create `.claude/specs/<slug>/plan.md` and derive the ordered slice checklist from the Major Capabilities. Apply these principles:
+Once `spec.md` is stable, create `.claude/specs/<slug>/plan.md` and derive the ordered slice checklist from the Major Capabilities.
 
-- **Granularity:** each slice should be small enough to be developed and shipped as a single PR. If a capability is large, split it.
-- **Ordering:** sequence slices by dependency, and prefer vertical slices over horizontal layers. Foundational scaffolding comes first; after that, group work so a single coherent capability can be completed before the next begins. Only break this rule when a true cross-cutting dependency forces it.
-- **High-level only:** describe each slice in one short sentence that captures *what* it delivers, not *how* it works. No class names, file paths, method signatures, or implementation details.
+Break the plan into **tracer bullet** slices. Each slice is a thin **vertical** cut that goes through ALL integration layers end-to-end — NOT a horizontal slice of one layer.
+
+- Each slice delivers a narrow but COMPLETE path through every relevant layer (e.g. schema, API, UI, tests — whichever layers this epic has).
+- A completed slice is demoable or verifiable on its own.
+- Prefer many thin slices over few thick ones.
+- Do not produce slices like "build the database schema", "build the API", "build the UI" — those are horizontal layers. Instead, produce slices like "user can create and view a single foo end-to-end", which forces a sliver of schema + API + UI + tests in one PR.
+
+Apply these additional principles:
+
+- **Granularity:** each slice should be small enough to be developed and shipped as a single PR. If a capability is large, split it into multiple vertical slices (e.g. by entity, by sub-capability, by happy-path vs edge case) — never by layer.
+- **Ordering:** sequence slices by dependency. Foundational scaffolding that is genuinely cross-cutting (e.g. project skeleton, CI) may come first, but keep it minimal — push as much as possible into the vertical slices themselves.
+- **High-level only:** describe each slice in one short sentence that captures *what* it delivers end-to-end, not *how* it works. No class names, file paths, method signatures, or implementation details.
 - **Complete coverage:** every capability described in the spec must be reachable by following the list. Do not omit capabilities or silently defer them.
 - **Respect non-goals:** do not include slices the spec explicitly excludes.
 
@@ -126,7 +142,8 @@ Before writing into the file, present the proposed slice list to the user as a n
 
 1. Is the ordering correct?
 2. Are any slices missing, or should any be merged or split?
-3. Are any slices out of scope (i.e. described in the spec's non-goals)?
+3. Is any slice secretly a horizontal layer (e.g. "build the schema", "build the API") that needs reshaping into a vertical end-to-end cut?
+4. Are any slices out of scope (i.e. described in the spec's non-goals)?
 
 Incorporate their feedback, then write the agreed list into `plan.md` using the plan template below.
 
@@ -193,7 +210,7 @@ Use this structure when creating `.claude/specs/<slug>/plan.md`. The plan is int
 ```markdown
 # [Epic Name] — Delivery Plan
 
-Companion to [`spec.md`](./spec.md). Each slice below is sized to ship as a single PR and described at a "what is delivered" level only — not how it is built.
+Companion to [`spec.md`](./spec.md). Each slice below is a vertical tracer bullet that cuts end-to-end through every relevant layer (schema, API, UI, tests — whichever apply), sized to ship as a single PR, and described at a "what is delivered" level only — not how it is built. Slices are never horizontal layers.
 
 ## Slices
 
@@ -213,8 +230,10 @@ Companion to [`spec.md`](./spec.md). Each slice below is sized to ship as a sing
 ## Rules for plan.md
 
 - The slice list is an ordered checklist. Items at the top must be completable before items below them.
+- Every slice (other than minimal cross-cutting scaffolding) must be a vertical tracer bullet — a thin end-to-end cut through every relevant layer, demoable on its own.
+- Reject any slice whose name or description implies a single horizontal layer (e.g. "database schema", "API endpoints", "UI components"). Reshape it into vertical end-to-end slices.
 - Each entry is one line: a checkbox, a bolded short name, an em dash, and a single sentence.
-- The short name should be meaningful enough that the user can identify the slice at a glance (e.g. "CLI scaffolding", "Seeded RNG", "T-SQL script output").
+- The short name should be meaningful enough that the user can identify the slice at a glance and convey the end-to-end capability it delivers (e.g. "Create-and-view foo", "Seeded RNG produces reproducible run", "Slack announce on game end").
 - No section headings, sub-lists, or commentary beyond the pointer back to `spec.md` and the checklist itself.
 - Do not add slices not derivable from `spec.md`.
 - Mark a slice `[x]` only if `spec.md` explicitly states that capability already exists.

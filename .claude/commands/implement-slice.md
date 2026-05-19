@@ -39,13 +39,26 @@ Use TaskCreate to break the plan into discrete tasks before starting any work �
 Follow the plan exactly. For each task:
 
 1. Mark the task `in_progress`.
-2. Make the changes the plan describes.
+2. Make the changes the plan describes — using TDD when the task involves code with testable behaviour (see below).
 3. Run any verification steps the plan specifies for this section.
 4. Mark the task `completed`.
 
 If the plan is silent on something you need to decide, make the simplest reasonable choice and record it as a learning (see below).
 
 If a verification step fails, diagnose the root cause rather than retrying the same action. If the fix requires a significant deviation from the plan, note it as a learning.
+
+### Use TDD for code with behaviour
+
+When a task involves writing code with observable behaviour (calculators, parsers, formatters, ranking logic, request handlers, etc. — anything the plan lists tests against), implement it test-first using red-green-refactor in **vertical slices**: one test → minimal code to pass → next test. Do **not** write all the tests for a task up front and then all the implementation — bulk-written tests verify imagined behaviour, not real behaviour, and become coupled to shape rather than capability.
+
+If a skill named `tdd` is listed in your available skills, invoke it via the Skill tool before starting the first such task in this slice and follow its workflow. If no `tdd` skill is available, apply these principles inline:
+
+- Test behaviour through the public interface, not implementation details — a test that breaks during a pure refactor was testing the wrong thing.
+- One test at a time; only enough code to make the current test pass; don't anticipate future tests.
+- Never refactor while red. Get to green, then refactor with tests passing.
+- Follow [.claude/docs/steering/testing-strategy.md](../docs/steering/testing-strategy.md) for tier choice and seams.
+
+TDD does **not** apply to: docs changes, config/infra edits, migration SQL, dependency bumps, file moves, or other changes that aren't exercising behaviour. Follow the plan directly for those.
 
 ### What to record as a learning
 
