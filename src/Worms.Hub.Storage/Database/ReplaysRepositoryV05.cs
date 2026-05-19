@@ -8,9 +8,16 @@ namespace Worms.Hub.Storage.Database;
 
 internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IReplaysRepository
 {
-    private sealed record ReplayPlacementDb(int ReplayId, string Machine, string TeamName, int? Position, string? PlayerName)
+    private sealed record ReplayPlacementDb(
+        int ReplayId,
+        string Machine,
+        string TeamName,
+        int? Position,
+        string? PlayerName,
+        int? EloDelta,
+        int? EloAfter)
     {
-        public ReplayPlacement ToDomain() => new(Machine, TeamName, Position, PlayerName);
+        public ReplayPlacement ToDomain() => new(Machine, TeamName, Position, PlayerName, EloDelta, EloAfter);
     }
 
     static ReplaysRepositoryV05() =>
@@ -28,7 +35,8 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
         var placements = ids.Length > 0
             ? connection.Query<ReplayPlacementDb>(
                     "SELECT rp.replay_id AS ReplayId, rp.machine AS Machine, rp.team_name AS TeamName, "
-                    + "rp.position AS Position, pl.display_name AS PlayerName "
+                    + "rp.position AS Position, pl.display_name AS PlayerName, "
+                    + "rp.elo_delta AS EloDelta, rp.elo_after AS EloAfter "
                     + "FROM replay_placements rp "
                     + "LEFT JOIN teams t ON t.machine = rp.machine AND t.team_name = rp.team_name "
                     + "LEFT JOIN players pl ON pl.auth_subject = t.player_auth_subject "
@@ -54,7 +62,8 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
         var placements = ids.Length > 0
             ? connection.Query<ReplayPlacementDb>(
                     "SELECT rp.replay_id AS ReplayId, rp.machine AS Machine, rp.team_name AS TeamName, "
-                    + "rp.position AS Position, pl.display_name AS PlayerName "
+                    + "rp.position AS Position, pl.display_name AS PlayerName, "
+                    + "rp.elo_delta AS EloDelta, rp.elo_after AS EloAfter "
                     + "FROM replay_placements rp "
                     + "LEFT JOIN teams t ON t.machine = rp.machine AND t.team_name = rp.team_name "
                     + "LEFT JOIN players pl ON pl.auth_subject = t.player_auth_subject "
@@ -146,13 +155,23 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
             foreach (var p in item.Placements)
             {
                 _ = connection.Execute(
-                    "INSERT INTO replay_placements (replay_id, machine, team_name, position) "
-                    + "VALUES (@replayId, @machine, @teamName, @position)",
-                    new { replayId, machine = p.Machine, teamName = p.TeamName, position = p.Position },
+                    "INSERT INTO replay_placements "
+                    + "(replay_id, machine, team_name, position, elo_delta, elo_after) "
+                    + "VALUES (@replayId, @machine, @teamName, @position, @eloDelta, @eloAfter)",
+                    new
+                    {
+                        replayId,
+                        machine = p.Machine,
+                        teamName = p.TeamName,
+                        position = p.Position,
+                        eloDelta = p.EloDelta,
+                        eloAfter = p.EloAfter
+                    },
                     transaction);
             }
         }
 
         transaction.Commit();
     }
+
 }

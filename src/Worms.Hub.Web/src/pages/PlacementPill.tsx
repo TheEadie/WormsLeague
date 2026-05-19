@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import { monoFontFamily } from '../theme'
@@ -9,6 +10,8 @@ export interface PlacementDto {
     teamName: string
     position: number | null
     playerName: string | null
+    eloDelta: number | null
+    eloAfter: number | null
 }
 
 export interface TeamDto {
@@ -89,6 +92,50 @@ export function PlacementPill({
                     </Typography>
                 )}
             </Box>
+            {placement.eloAfter !== null && (
+                <>
+                    <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{ mx: 0.5, my: 0.25, borderColor: 'divider' }}
+                    />
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            lineHeight: 1.1,
+                            alignItems: 'flex-end',
+                        }}
+                    >
+                        <Typography
+                            sx={{
+                                fontFamily: monoFontFamily,
+                                fontWeight: 700,
+                                fontSize: 13,
+                                color: 'text.primary',
+                            }}
+                        >
+                            {placement.eloAfter}
+                        </Typography>
+                        <Typography
+                            sx={{
+                                fontFamily: monoFontFamily,
+                                fontWeight: 700,
+                                fontSize: 10,
+                                color:
+                                    (placement.eloDelta ?? 0) > 0
+                                        ? 'success.main'
+                                        : (placement.eloDelta ?? 0) < 0
+                                          ? 'error.main'
+                                          : 'text.disabled',
+                            }}
+                        >
+                            {(placement.eloDelta ?? 0) > 0 ? '+' : ''}
+                            {placement.eloDelta ?? 0} ELO
+                        </Typography>
+                    </Box>
+                </>
+            )}
             {unclaimedTeam && (
                 <Button
                     size="small"
