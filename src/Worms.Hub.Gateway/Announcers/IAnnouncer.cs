@@ -6,5 +6,9 @@ internal interface IAnnouncer
 {
     Task AnnounceGameStarting(string hostName);
 
-    Task AnnounceGameComplete(string winner, IReadOnlyList<PlacementInfo>? placements = null);
+    Task AnnounceGameComplete(
+        string winner,
+        IReadOnlyList<PlacementInfo>? placements = null,
+        IReadOnlyList<LeaderboardEntry>? leaderboard = null,
+        string? leaderboardFailureNote = null);
 }
