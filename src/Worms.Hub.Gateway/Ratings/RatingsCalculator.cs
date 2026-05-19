@@ -18,8 +18,8 @@ internal sealed class RatingsCalculator(
     private sealed record Selection(string AuthSubject, string Machine, string TeamName);
 
     private sealed record ReplayInfo(
-        int ReplayId,
-        int RecordedGameIndex,
+        Replay Replay,
+        int? RecordedGameIndex,
         IReadOnlyList<Selection> Selections);
 
     public void Calculate(string leagueId)
@@ -38,7 +38,8 @@ internal sealed class RatingsCalculator(
 
         var league = new PlayerRank.League();
         var gamesPlayed = new Dictionary<string, int>();
-        var recordedReplays = new List<ReplayInfo>();
+        var visitedReplays = new List<ReplayInfo>();
+        var recordedGameCount = 0;
 
         foreach (var replay in replays)
         {
@@ -56,6 +57,7 @@ internal sealed class RatingsCalculator(
 
             if (matchedPlayers.Count == 0)
             {
+                visitedReplays.Add(new ReplayInfo(replay, RecordedGameIndex: null, Selections: []));
                 continue;
             }
 
@@ -74,10 +76,11 @@ internal sealed class RatingsCalculator(
             }
 
             league.RecordGame(game);
+            recordedGameCount++;
 
-            recordedReplays.Add(new ReplayInfo(
-                int.Parse(replay.Id, CultureInfo.InvariantCulture),
-                recordedReplays.Count + 1,
+            visitedReplays.Add(new ReplayInfo(
+                replay,
+                recordedGameCount,
                 matchedPlayers.ConvertAll(
                     mp => new Selection(mp.AuthSubject, mp.Machine, mp.TeamName))));
         }
@@ -96,25 +99,34 @@ internal sealed class RatingsCalculator(
 
         var history = league.GetLeaderBoardHistory(eloStrategy).ToList();
 
-        replaysRepository.ClearPlacementEloForLeague(leagueId);
-
-        foreach (var r in recordedReplays)
+        foreach (var info in visitedReplays)
         {
-            var post = history[r.RecordedGameIndex];
-            var pre = history[r.RecordedGameIndex - 1];
-            foreach (var sel in r.Selections)
-            {
-                var after = RatingAt(post, sel.AuthSubject);
-                var before = RatingAt(pre, sel.AuthSubject);
-                replaysRepository.UpdatePlacementElo(
-                    r.ReplayId,
-                    sel.Machine,
-                    sel.TeamName,
-                    eloDelta: after - before,
-                    eloAfter: after);
-            }
+            var deltas = info.RecordedGameIndex is { } idx
+                ? BuildPlacementDeltas(info.Selections, history[idx - 1], history[idx])
+                : [];
+
+            var updatedPlacements = info.Replay.Placements!
+                .Select(p => deltas.TryGetValue((p.Machine, p.TeamName), out var d)
+                    ? p with { EloDelta = d.Delta, EloAfter = d.After }
+                    : p with { EloDelta = null, EloAfter = null })
+                .ToList();
+
+            replaysRepository.Update(info.Replay with { Placements = updatedPlacements });
         }
     }
+
+    private static Dictionary<(string Machine, string TeamName), (int Delta, int After)> BuildPlacementDeltas(
+        IReadOnlyList<Selection> selections,
+        History pre,
+        History post) =>
+        selections.ToDictionary(
+            s => (s.Machine, s.TeamName),
+            s =>
+            {
+                var after = RatingAt(post, s.AuthSubject);
+                var before = RatingAt(pre, s.AuthSubject);
+                return (Delta: after - before, After: after);
+            });
 
     private static int RatingAt(History snapshot, string authSubject)
     {

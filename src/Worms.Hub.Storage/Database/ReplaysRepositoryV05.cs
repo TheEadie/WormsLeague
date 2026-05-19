@@ -155,9 +155,18 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
             foreach (var p in item.Placements)
             {
                 _ = connection.Execute(
-                    "INSERT INTO replay_placements (replay_id, machine, team_name, position) "
-                    + "VALUES (@replayId, @machine, @teamName, @position)",
-                    new { replayId, machine = p.Machine, teamName = p.TeamName, position = p.Position },
+                    "INSERT INTO replay_placements "
+                    + "(replay_id, machine, team_name, position, elo_delta, elo_after) "
+                    + "VALUES (@replayId, @machine, @teamName, @position, @eloDelta, @eloAfter)",
+                    new
+                    {
+                        replayId,
+                        machine = p.Machine,
+                        teamName = p.TeamName,
+                        position = p.Position,
+                        eloDelta = p.EloDelta,
+                        eloAfter = p.EloAfter
+                    },
                     transaction);
             }
         }
@@ -165,26 +174,4 @@ internal sealed class ReplaysRepositoryV05(IConfiguration configuration) : IRepl
         transaction.Commit();
     }
 
-    public void UpdatePlacementElo(int replayId, string machine, string teamName, int? eloDelta, int? eloAfter)
-    {
-        var connectionString = configuration.GetConnectionString("Database");
-        using var connection = new NpgsqlConnection(connectionString);
-        _ = connection.Execute(
-            "UPDATE replay_placements "
-            + "SET elo_delta = @eloDelta, elo_after = @eloAfter "
-            + "WHERE replay_id = @replayId AND machine = @machine AND team_name = @teamName",
-            new { replayId, machine, teamName, eloDelta, eloAfter });
-    }
-
-    public void ClearPlacementEloForLeague(string leagueId)
-    {
-        var connectionString = configuration.GetConnectionString("Database");
-        using var connection = new NpgsqlConnection(connectionString);
-        _ = connection.Execute(
-            "UPDATE replay_placements rp "
-            + "SET elo_delta = NULL, elo_after = NULL "
-            + "FROM replays r "
-            + "WHERE rp.replay_id = r.id AND r.league_id = @leagueId",
-            new { leagueId });
-    }
 }
