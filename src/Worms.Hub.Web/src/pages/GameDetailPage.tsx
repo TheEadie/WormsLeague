@@ -23,9 +23,11 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import TimelineIcon from '@mui/icons-material/Timeline'
 import GpsFixedIcon from '@mui/icons-material/GpsFixed'
+import ArticleIcon from '@mui/icons-material/Article'
 import { monoFontFamily } from '../theme'
 import { gatewayUrl } from '../api'
 import { PlacementDto, PlacementPill, TeamDto } from './PlacementPill'
+import ReplayLogPanel from './ReplayLogPanel'
 
 interface WeaponDto {
     name: string
@@ -55,6 +57,7 @@ interface ReplayDetailDto {
     teams: string[] | null
     turns: TurnDto[] | null
     placements: PlacementDto[] | null
+    fullLog: string | null
 }
 
 interface LeagueDto {
@@ -458,6 +461,11 @@ function GameDetailPage() {
             label: 'Weapons',
             icon: <GpsFixedIcon sx={{ fontSize: 18 }} />,
             content: <WeaponsPanel turns={replay?.turns ?? null} />,
+        },
+        {
+            label: 'Replay log',
+            icon: <ArticleIcon sx={{ fontSize: 18 }} />,
+            content: <ReplayLogPanel log={replay?.fullLog ?? null} />,
         },
     ]
 
