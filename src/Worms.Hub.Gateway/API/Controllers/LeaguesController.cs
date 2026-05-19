@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Worms.Armageddon.Files.Replays;
 using Worms.Armageddon.Files.Replays.Text;
 using Worms.Hub.Gateway.API.DTOs;
-using Worms.Hub.Gateway.FeatureFlags;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Files;
 
@@ -13,24 +12,18 @@ internal sealed class LeaguesController(
     ILeaguesRepository leaguesRepository,
     IReplaysRepository replaysRepository,
     IReplayTextReader replayTextReader,
-    IRatingsRepository ratingsRepository,
-    IFeatureFlags featureFlags) : V1ApiController
+    IRatingsRepository ratingsRepository) : V1ApiController
 {
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<LeagueDto>>> GetAll()
     {
-        var eloEnabled = await featureFlags.IsEloRatingsEnabledAsync();
         var dbLeagues = leaguesRepository.GetAll();
         var tasks = dbLeagues.Select(async dbLeague =>
         {
             var latestDetails = await schemeFiles.GetLatestDetails(dbLeague.Id);
-            IReadOnlyList<StandingDto>? standings = null;
-            if (eloEnabled)
-            {
-                standings = ratingsRepository.GetByLeagueId(dbLeague.Id)
-                    .Select(r => new StandingDto(r.DisplayName, r.Rating, r.GamesPlayed))
-                    .ToList();
-            }
+            IReadOnlyList<StandingDto> standings = ratingsRepository.GetByLeagueId(dbLeague.Id)
+                .Select(r => new StandingDto(r.DisplayName, r.Rating, r.GamesPlayed))
+                .ToList();
 
             return LeagueDto.FromDomain(
                 dbLeague.Id,
@@ -53,13 +46,9 @@ internal sealed class LeaguesController(
         }
 
         var latestDetails = await schemeFiles.GetLatestDetails(id);
-        IReadOnlyList<StandingDto>? standings = null;
-        if (await featureFlags.IsEloRatingsEnabledAsync())
-        {
-            standings = ratingsRepository.GetByLeagueId(id)
-                .Select(r => new StandingDto(r.DisplayName, r.Rating, r.GamesPlayed))
-                .ToList();
-        }
+        IReadOnlyList<StandingDto> standings = ratingsRepository.GetByLeagueId(id)
+            .Select(r => new StandingDto(r.DisplayName, r.Rating, r.GamesPlayed))
+            .ToList();
 
         return LeagueDto.FromDomain(
             dbLeague.Id,

@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Worms.Hub.Gateway.API.DTOs;
-using Worms.Hub.Gateway.FeatureFlags;
 using Worms.Hub.Gateway.Ratings;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
@@ -11,30 +10,19 @@ namespace Worms.Hub.Gateway.API.Controllers;
 internal sealed class TeamsController(
     ITeamsRepository teamsRepository,
     IPlayersRepository playersRepository,
-    IFeatureFlags featureFlags,
     RatingsCalculator ratingsCalculator) : V1ApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<TeamDto>>> GetAll()
+    public ActionResult<IReadOnlyList<TeamDto>> GetAll()
     {
-        if (!await featureFlags.IsTeamsEnabledAsync())
-        {
-            return NotFound();
-        }
-
         var callerSubject = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var teams = teamsRepository.GetAll();
         return Ok(teams.Select(t => TeamDto.FromDomain(t, callerSubject)).ToList());
     }
 
     [HttpPut]
-    public async Task<ActionResult> Put(ClaimTeamDto body)
+    public ActionResult Put(ClaimTeamDto body)
     {
-        if (!await featureFlags.IsTeamsEnabledAsync())
-        {
-            return NotFound();
-        }
-
         var team = teamsRepository.GetById(body.Id);
         if (team is null)
         {
@@ -69,10 +57,7 @@ internal sealed class TeamsController(
             teamsRepository.SetPlayerClaim(body.Id, null);
         }
 
-        if (await featureFlags.IsEloRatingsEnabledAsync())
-        {
-            ratingsCalculator.CalculateForTeam(team.Machine, team.TeamName);
-        }
+        ratingsCalculator.CalculateForTeam(team.Machine, team.TeamName);
 
         return Ok();
     }

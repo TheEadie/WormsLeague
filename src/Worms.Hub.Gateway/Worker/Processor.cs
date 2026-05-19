@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Worms.Armageddon.Files.Replays.Text;
 using Worms.Hub.Gateway.Announcers;
-using Worms.Hub.Gateway.FeatureFlags;
 using Worms.Hub.Gateway.Ratings;
 using Worms.Hub.Queues;
 using Worms.Hub.Storage.Database;
@@ -18,7 +17,6 @@ internal sealed class Processor(
     ReplayFiles replayFiles,
     IAnnouncer announcer,
     IReplayTextReader replayTextReader,
-    IFeatureFlags featureFlags,
     RatingsCalculator ratingsCalculator,
     ILogger<Processor> logger)
 {
@@ -86,19 +84,16 @@ internal sealed class Processor(
         replayRepository.Update(updatedReplay);
 
         // Upsert teams from placements
-        if (await featureFlags.IsTeamsEnabledAsync())
+        foreach (var placement in replayModel.Placements)
         {
-            foreach (var placement in replayModel.Placements)
-            {
-                teamsRepository.Upsert(placement.Team.Machine, placement.Team.Name);
-            }
+            teamsRepository.Upsert(placement.Team.Machine, placement.Team.Name);
         }
 
         // Calculate ELO ratings for the league
         List<LeaderboardEntry>? leaderboard = null;
         string? leaderboardFailureNote = null;
 
-        if (await featureFlags.IsEloRatingsEnabledAsync() && updatedReplay.LeagueId is not null)
+        if (updatedReplay.LeagueId is not null)
         {
             try
             {
