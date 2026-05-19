@@ -7,9 +7,11 @@ Your task is to implement a slice by following its `plan.md` precisely, tracking
 
 ## Step 1 — Identify the slice
 
-If the user has named a specific slice or path, use that.
+Scan the user's request for a GitHub issue reference (full URL or `#NNN`). If one is present, this is **issue mode**: fetch the issue with `gh issue view <number-or-url> --json number,title,body,url`, and read its `plan` sticky comment (see `.claude/docs/sticky-comments.md`). If the `plan` sticky comment does not exist, stop and tell the user to run `/plan-spec` against this issue first. Skip the epic-discovery flow below.
 
-Otherwise, find the next slice that is ready to implement:
+Otherwise, if the user has named a specific slice or path, use that.
+
+If neither, find the next slice that is ready to implement:
 
 1. List the epics under `.claude/specs/`. If more than one exists, ask which epic to work on.
 2. Read the epic's `plan.md`. Find the first unchecked (`- [ ]`) slice.
@@ -22,8 +24,8 @@ Do not proceed until the user has confirmed the target slice.
 
 Read everything before touching any files:
 
-- The slice's `plan.md` — the authoritative implementation guide
-- The slice's `spec.md` — acceptance criteria you will verify against at the end
+- The slice's plan — `plan.md` in epic mode, or the `plan` sticky comment in issue mode. This is the authoritative implementation guide.
+- The slice's spec — `spec.md` in epic mode, or the GitHub issue body in issue mode. These are the acceptance criteria you will verify against at the end.
 - The root `CLAUDE.md` — repo-wide conventions
 - All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present
 - Relevant component docs under `.claude/docs/components/` for the areas touched
@@ -77,13 +79,17 @@ Every file you create or modify that is not in the plan's "Files to Create / Mod
 
 ## Step 5 — Tick the slice in the epic plan
 
-After all implementation tasks are complete, mark the slice as done in the epic's top-level `plan.md` by changing its checkbox from `- [ ]` to `- [x]`.
+**Epic mode only.** After all implementation tasks are complete, mark the slice as done in the epic's top-level `plan.md` by changing its checkbox from `- [ ]` to `- [x]`.
 
-## Step 6 — Write learnings.md
+In issue mode there is no epic plan; skip this step (the issue stays open — `/pr` handles closing it).
 
-After ticking the epic plan, write `learnings.md` in the same directory as the slice's `plan.md`.
+## Step 6 — Write the learnings
 
-Write it even if there are no learnings — its presence signals the slice has been implemented. If there is nothing to record, say so briefly.
+Write the learnings even if there are nothing notable — their presence signals the slice has been implemented. If there is nothing to record, say so briefly.
+
+**Epic mode:** write `learnings.md` in the same directory as the slice's `plan.md`.
+
+**Issue mode:** render the learnings body to a temp file with `<!-- claude:sticky:learnings -->` as the first line, then create or update the `learnings` sticky comment on the issue using the flow in `.claude/docs/sticky-comments.md`. Do not create any files under `.claude/specs/`.
 
 ### Learnings file template
 
@@ -110,7 +116,7 @@ Omit this section if there are none.]
 
 Tell the user:
 - The implementation is complete
-- Where `learnings.md` was written and a one-line summary of the most significant learning (if any)
+- Where the learnings were written — the `learnings.md` path in epic mode, or the issue URL (`learnings` sticky comment) in issue mode — and a one-line summary of the most significant learning (if any)
 - That the slice is ready for review and PR creation with `/pr`
 
 Do not commit, push, or open a PR — the user triggers that.
