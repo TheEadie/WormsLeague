@@ -12,7 +12,11 @@ internal sealed class Announcer(IConfiguration configuration, IHttpClientFactory
         await PostToSlack(slackMessage);
     }
 
-    public async Task AnnounceGameComplete(string winner, IReadOnlyList<PlacementInfo>? placements = null)
+    public async Task AnnounceGameComplete(
+        string winner,
+        IReadOnlyList<PlacementInfo>? placements = null,
+        IReadOnlyList<LeaderboardEntry>? leaderboard = null,
+        string? leaderboardFailureNote = null)
     {
         logger.LogInformation("Announcing game complete to Slack");
 
@@ -29,6 +33,36 @@ internal sealed class Announcer(IConfiguration configuration, IHttpClientFactory
         {
             headerText = "Winner:";
             bodyText = winner;
+        }
+
+        var leaderboardBlock = string.Empty;
+        if (leaderboard?.Count > 0)
+        {
+            var text = LeaderboardFormatter.Format(leaderboard);
+            leaderboardBlock = $$"""
+                ,
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "```{{text}}```"
+                        }
+                    }
+                """;
+        }
+        else if (leaderboardFailureNote is not null)
+        {
+            var safeNote = JsonSerializer.Serialize(leaderboardFailureNote)[1..^1];
+            leaderboardBlock = $$"""
+                ,
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "{{safeNote}}"
+                        }
+                    }
+                """;
         }
 
         var slackMessage = new SlackMessage(
@@ -49,7 +83,7 @@ internal sealed class Announcer(IConfiguration configuration, IHttpClientFactory
                           "type": "mrkdwn",
                           "text": "*{{headerText}}*\n{{bodyText}}"
                       }
-                  }
+                  }{{leaderboardBlock}}
               ]
               """);
         await PostToSlack(slackMessage);

@@ -95,15 +95,24 @@ internal sealed class Processor(
         }
 
         // Calculate ELO ratings for the league
+        List<LeaderboardEntry>? leaderboard = null;
+        string? leaderboardFailureNote = null;
+
         if (await featureFlags.IsEloRatingsEnabledAsync() && updatedReplay.LeagueId is not null)
         {
             try
             {
-                ratingsCalculator.Calculate(updatedReplay.LeagueId);
+                var change = ratingsCalculator.Calculate(updatedReplay.LeagueId);
+                leaderboard = BuildLeaderboard(change);
+                if (leaderboard.Count == 0)
+                {
+                    leaderboard = null;
+                }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Failed to calculate ELO ratings for league {LeagueId}.", updatedReplay.LeagueId);
+                leaderboardFailureNote = "ELO leaderboard unavailable.";
             }
         }
 
@@ -117,11 +126,37 @@ internal sealed class Processor(
                 .ToList();
         }
 
-        await announcer.AnnounceGameComplete(replayModel.Winner, placements);
+        await announcer.AnnounceGameComplete(replayModel.Winner, placements, leaderboard, leaderboardFailureNote);
 
         // Delete the message from the queue
         await messageQueue.DeleteMessage(token);
 
         logger.LogInformation("Replay updater finished.");
+    }
+
+    private static List<LeaderboardEntry> BuildLeaderboard(LeagueRatingsChange change)
+    {
+        var before = change.Before.ToDictionary(p => p.PlayerAuthSubject);
+
+        return change.After.Select(post =>
+        {
+            int? eloDelta = null;
+            int? positionChange = null;
+            if (before.TryGetValue(post.PlayerAuthSubject, out var pre))
+            {
+                var elo = post.Rating - pre.Rating;
+                if (elo != 0)
+                {
+                    eloDelta = elo;
+                }
+                var rank = post.Rank - pre.Rank;
+                if (rank != 0)
+                {
+                    positionChange = rank;
+                }
+            }
+
+            return new LeaderboardEntry(post.Rank, post.Rating, post.DisplayName, eloDelta, positionChange);
+        }).ToList();
     }
 }

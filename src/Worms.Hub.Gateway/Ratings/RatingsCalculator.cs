@@ -20,8 +20,10 @@ internal sealed class RatingsCalculator(
         int? RecordedGameIndex,
         IReadOnlyList<Selection> Selections);
 
-    public void Calculate(string leagueId)
+    public LeagueRatingsChange Calculate(string leagueId)
     {
+        var before = SnapshotStandings(ratingsRepository.GetByLeagueId(leagueId));
+
         // Build alias lookup: (machine, teamName) -> playerAuthSubject
         var claimedTeams = teamsRepository.GetAll()
             .Where(t => t.ClaimedByAuthSubject is not null)
@@ -111,6 +113,29 @@ internal sealed class RatingsCalculator(
 
             replaysRepository.Update(info.Replay with { Placements = updatedPlacements });
         }
+
+        var after = SnapshotStandings(ratingsRepository.GetByLeagueId(leagueId));
+        return new LeagueRatingsChange(before, after);
+    }
+
+    private static List<PlayerStanding> SnapshotStandings(IReadOnlyList<PlayerRating> ratings)
+    {
+        // IRatingsRepository.GetByLeagueId returns rows ordered by rating DESC, so we only
+        // have to walk the list and assign standard competition ranks (1, 2, 2, 4, ...).
+        var standings = new List<PlayerStanding>(ratings.Count);
+        var rank = 1;
+        for (var i = 0; i < ratings.Count; i++)
+        {
+            if (i > 0 && ratings[i].Rating < ratings[i - 1].Rating)
+            {
+                rank = i + 1;
+            }
+
+            var r = ratings[i];
+            standings.Add(new PlayerStanding(r.PlayerAuthSubject, r.DisplayName, rank, r.Rating));
+        }
+
+        return standings;
     }
 
     private static Dictionary<(string Machine, string TeamName), (int Delta, int After)> BuildPlacementDeltas(
