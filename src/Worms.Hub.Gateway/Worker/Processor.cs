@@ -20,6 +20,7 @@ internal sealed class Processor(
     IReplayTextReader replayTextReader,
     IFeatureFlags featureFlags,
     RatingsCalculator ratingsCalculator,
+    IRatingsRepository ratingsRepository,
     ILogger<Processor> logger)
 {
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "ELO calculation failure must not block replay processing")]
@@ -95,15 +96,26 @@ internal sealed class Processor(
         }
 
         // Calculate ELO ratings for the league
+        List<LeaderboardEntry>? leaderboard = null;
+        string? leaderboardFailureNote = null;
+
         if (await featureFlags.IsEloRatingsEnabledAsync() && updatedReplay.LeagueId is not null)
         {
             try
             {
+                var preGameRatings = ratingsRepository.GetByLeagueId(updatedReplay.LeagueId);
                 ratingsCalculator.Calculate(updatedReplay.LeagueId);
+                var postGameRatings = ratingsRepository.GetByLeagueId(updatedReplay.LeagueId);
+                leaderboard = BuildLeaderboard(preGameRatings, postGameRatings);
+                if (leaderboard.Count == 0)
+                {
+                    leaderboard = null;
+                }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Failed to calculate ELO ratings for league {LeagueId}.", updatedReplay.LeagueId);
+                leaderboardFailureNote = "ELO leaderboard unavailable.";
             }
         }
 
@@ -117,11 +129,66 @@ internal sealed class Processor(
                 .ToList();
         }
 
-        await announcer.AnnounceGameComplete(replayModel.Winner, placements);
+        await announcer.AnnounceGameComplete(replayModel.Winner, placements, leaderboard, leaderboardFailureNote);
 
         // Delete the message from the queue
         await messageQueue.DeleteMessage(token);
 
         logger.LogInformation("Replay updater finished.");
+    }
+
+    private static List<LeaderboardEntry> BuildLeaderboard(
+        IReadOnlyList<PlayerRating> preGameRatings,
+        IReadOnlyList<PlayerRating> postGameRatings)
+    {
+        var entries = new List<LeaderboardEntry>(postGameRatings.Count);
+        var preBySubject = preGameRatings.ToDictionary(r => r.PlayerAuthSubject, r => r.Rating);
+        var preRankBySubject = ComputeRanks(preGameRatings);
+
+        var rank = 1;
+        for (var i = 0; i < postGameRatings.Count; i++)
+        {
+            if (i > 0 && postGameRatings[i].Rating < postGameRatings[i - 1].Rating)
+            {
+                rank = i + 1;
+            }
+
+            var post = postGameRatings[i];
+            var eloDelta = preBySubject.TryGetValue(post.PlayerAuthSubject, out var preElo)
+                ? post.Rating - preElo
+                : (int?)null;
+            if (eloDelta == 0)
+            {
+                eloDelta = null;
+            }
+
+            var preRank = preRankBySubject.GetValueOrDefault(post.PlayerAuthSubject, rank);
+            int? positionChange = rank - preRank;
+            if (positionChange == 0)
+            {
+                positionChange = null;
+            }
+
+            entries.Add(new LeaderboardEntry(rank, post.Rating, post.DisplayName, eloDelta, positionChange));
+        }
+
+        return entries;
+    }
+
+    private static Dictionary<string, int> ComputeRanks(IReadOnlyList<PlayerRating> ratings)
+    {
+        var result = new Dictionary<string, int>(ratings.Count);
+        var rank = 1;
+        for (var i = 0; i < ratings.Count; i++)
+        {
+            if (i > 0 && ratings[i].Rating < ratings[i - 1].Rating)
+            {
+                rank = i + 1;
+            }
+
+            result[ratings[i].PlayerAuthSubject] = rank;
+        }
+
+        return result;
     }
 }
