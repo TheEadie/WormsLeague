@@ -42,7 +42,8 @@ internal sealed record ReplayDetailDto(
     string? Winner,
     IReadOnlyList<string>? Teams,
     IReadOnlyList<TurnDto>? Turns,
-    IReadOnlyList<PlacementDto>? Placements)
+    IReadOnlyList<PlacementDto>? Placements,
+    string? FullLog)
 {
     internal static ReplayDetailDto FromDomain(Replay replay, ReplayResource? parsed)
     {
@@ -71,7 +72,8 @@ internal sealed record ReplayDetailDto(
             replay.Winner,
             replay.Teams,
             turns,
-            placements);
+            placements,
+            replay.FullLog);
     }
 }
 
