@@ -8,4 +8,6 @@ public interface IReplaysRepository
     Replay Create(Replay item);
     void Update(Replay item);
     IReadOnlyList<Replay> GetByLeagueId(string leagueId);
+    void UpdatePlacementElo(int replayId, string machine, string teamName, int? eloDelta, int? eloAfter);
+    void ClearPlacementEloForLeague(string leagueId);
 }
