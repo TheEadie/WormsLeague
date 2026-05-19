@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using PlayerRank;
+using PlayerRank.Scoring;
 using PlayerRank.Scoring.Elo;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
@@ -13,6 +15,20 @@ internal sealed class RatingsCalculator(
     IRatingsRepository ratingsRepository,
     ILogger<RatingsCalculator> logger)
 {
+    private sealed record MultiPlayerSelection(string AuthSubject, string Machine, string TeamName);
+
+    private sealed record MultiPlayerReplayInfo(
+        int ReplayId,
+        int RecordedGameIndex,
+        IReadOnlyList<MultiPlayerSelection> Selections);
+
+    private sealed record SinglePlayerReplayInfo(
+        int ReplayId,
+        string AuthSubject,
+        string Machine,
+        string TeamName,
+        int PriorRecordedGameIndex);
+
     public void Calculate(string leagueId)
     {
         // Build alias lookup: (machine, teamName) -> playerAuthSubject
@@ -31,12 +47,21 @@ internal sealed class RatingsCalculator(
         // games_played counts: playerAuthSubject -> count of replays with at least one claimed placement
         var gamesPlayed = new Dictionary<string, int>();
 
+        // Per-replay bookkeeping for delta write-back.
+        var multiPlayerReplays = new List<MultiPlayerReplayInfo>();
+        var singlePlayerReplays = new List<SinglePlayerReplayInfo>();
+        var recordedGameCount = 0;
+
         foreach (var replay in replays)
         {
             // Map placements to claimed players (may have duplicates if same player has multiple teams in one game — take first)
             var matchedPlayers = replay.Placements!
                 .Where(p => p.Position.HasValue && claimedTeams.ContainsKey((p.Machine, p.TeamName)))
-                .Select(p => (AuthSubject: claimedTeams[(p.Machine, p.TeamName)], Position: p.Position!.Value))
+                .Select(p => (
+                    AuthSubject: claimedTeams[(p.Machine, p.TeamName)],
+                    Position: p.Position!.Value,
+                    p.Machine,
+                    p.TeamName))
                 .GroupBy(x => x.AuthSubject)
                 .Select(g => g.OrderBy(x => x.Position).First()) // best position if same player has multiple teams
                 .ToList();
@@ -48,12 +73,24 @@ internal sealed class RatingsCalculator(
                 gamesPlayed[mp.AuthSubject]++;
             }
 
-            // ELO: only include replays with 2+ distinct matched players
-            if (matchedPlayers.Count < 2)
+            if (matchedPlayers.Count == 0)
             {
                 continue;
             }
 
+            if (matchedPlayers.Count == 1)
+            {
+                var only = matchedPlayers[0];
+                singlePlayerReplays.Add(new SinglePlayerReplayInfo(
+                    int.Parse(replay.Id, CultureInfo.InvariantCulture),
+                    only.AuthSubject,
+                    only.Machine,
+                    only.TeamName,
+                    recordedGameCount));
+                continue;
+            }
+
+            // matchedPlayers.Count >= 2 — record the game.
             var game = new PlayerRank.Game();
             foreach (var mp in matchedPlayers)
             {
@@ -61,6 +98,13 @@ internal sealed class RatingsCalculator(
             }
 
             league.RecordGame(game);
+            recordedGameCount++;
+
+            multiPlayerReplays.Add(new MultiPlayerReplayInfo(
+                int.Parse(replay.Id, CultureInfo.InvariantCulture),
+                recordedGameCount,
+                matchedPlayers.ConvertAll(
+                    mp => new MultiPlayerSelection(mp.AuthSubject, mp.Machine, mp.TeamName))));
         }
 
         var eloStrategy = new EloScoringStrategy(new Points(64), new Points(400), new Points(1000));
@@ -75,6 +119,54 @@ internal sealed class RatingsCalculator(
         }).ToList();
 
         ratingsRepository.ReplaceForLeague(leagueId, ratings);
+
+        // ---- Per-placement delta write-back ----
+        var history = league.GetLeaderBoardHistory(eloStrategy).ToList();
+
+        // 1. Clear every placement in the league.
+        replaysRepository.ClearPlacementEloForLeague(leagueId);
+
+        // 2. Write multi-player rows.
+        foreach (var r in multiPlayerReplays)
+        {
+            var post = history[r.RecordedGameIndex];
+            var pre = history[r.RecordedGameIndex - 1];
+            foreach (var sel in r.Selections)
+            {
+                var after = RatingAt(post, sel.AuthSubject);
+                var before = RatingAt(pre, sel.AuthSubject);
+                replaysRepository.UpdatePlacementElo(
+                    r.ReplayId,
+                    sel.Machine,
+                    sel.TeamName,
+                    eloDelta: after - before,
+                    eloAfter: after);
+            }
+        }
+
+        // 3. Write single-matched-player rows.
+        foreach (var r in singlePlayerReplays)
+        {
+            var snap = r.PriorRecordedGameIndex == 0 ? null : history[r.PriorRecordedGameIndex];
+            var elo = RatingAt(snap, r.AuthSubject);
+            replaysRepository.UpdatePlacementElo(
+                r.ReplayId,
+                r.Machine,
+                r.TeamName,
+                eloDelta: 0,
+                eloAfter: elo);
+        }
+    }
+
+    private static int RatingAt(History? snapshot, string authSubject)
+    {
+        if (snapshot is null)
+        {
+            return 1000;
+        }
+
+        var score = snapshot.Leaderboard.FirstOrDefault(s => s.Name == authSubject);
+        return score is null ? 1000 : (int)score.Points.GetValue();
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types",
