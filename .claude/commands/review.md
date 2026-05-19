@@ -1,11 +1,16 @@
 ---
-description: Review an implementation against its spec, plan, and repo quality standards, producing an advisory report
+description: Review an implementation against its spec and the repo's coding standards, producing an advisory report. Dispatches parallel sub-agents per axis.
 effort: high
 ---
 
-You review the changes made for a slice against the spec, plan, and repo quality standards. You produce a `review.md` report. You do NOT make code changes, commit, or modify the branch.
+You orchestrate a two-axis review of the changes made for a slice:
 
-Your review is advisory. The user will read it and decide which items to act on. Categorise honestly so they can triage without re-reading the whole diff.
+- **Spec axis** — does the diff satisfy the slice's `spec.md`? Handled by `spec-reviewer`.
+- **Standards axis** — does the diff follow the repo's documented coding standards? Handled by `csharp-reviewer` and/or `react-reviewer` depending on which languages the diff touches.
+
+The sub-agents run **in parallel** so neither pollutes the other's context. You merge their findings into a single `review.md`, axis-separated. You do NOT make code changes, commit, or modify the branch.
+
+Your review is advisory. The user will read it and decide which items to act on.
 
 ## Step 1 — Identify the slice
 
@@ -19,118 +24,74 @@ Otherwise, infer from context:
 
 Do not proceed until the slice is confirmed.
 
-## Step 2 — Read all inputs
-
-Read, in order:
-
-- The slice's `spec.md` — the acceptance criteria you will check against
-- The slice's `plan.md` — the intended files changed and implementation approach
-- The slice's `learnings.md` — implementer notes on deviations and surprises
-- The epic's `spec.md` — scope and non-goals
-- The root `CLAUDE.md` — repo conventions and component doc pointers
-- All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present
-- The relevant component doc(s) under `.claude/docs/components/` for the areas touched
-
-## Step 3 — Get the diff
+## Step 2 — Get the diff and classify touched files
 
 Determine the base branch (default `main`). Run:
 
 ```
-git diff <base>...<current-branch>
+git diff --name-only <base>...<current-branch>
 ```
 
-Read the full diff. Note every file added, modified, or deleted.
+Classify the resulting file list:
 
-## Step 4 — Run quality checks
+- **C# files** — `*.cs`, `*.csproj`, `*.razor`, `*.sln`, `Directory.*.props`/`targets`, anywhere under `src/` outside `src/Worms.Hub.Web/`.
+- **Web files** — anything under `src/Worms.Hub.Web/`.
+- **Other** — migrations, Docker, infra, docs, CI workflow files. These are still part of the spec review, but no language reviewer runs for them.
 
-Run the build and lint for every component touched by the diff. Use the make targets:
+Also note which component(s) the C# files belong to (e.g. `Worms.Cli`, `Worms.Hub.Gateway`) so you can pass that hint to `csharp-reviewer`.
 
-- `.NET` code present: `dotnet build` the affected solution/project — must exit clean. The repo sets `TreatWarningsAsErrors` and runs Roslynator; any warning is a **Blocker**.
-- Web code present (`src/Worms.Hub.Web/`): `make web.lint` — ESLint and `tsc --noEmit` must both pass. Any error is a **Blocker**.
+## Step 3 — Dispatch sub-agents in parallel
 
-Record the exact output of any failing command as evidence for the finding.
+Send **one message** with multiple `Agent` tool calls so they run concurrently:
 
-## Step 5 — Review the diff
+1. **Always** spawn `spec-reviewer` with:
+   - The slice directory path.
+   - The base branch and current branch.
 
-### 5a — Acceptance criteria
+2. **If any C# files changed**, spawn `csharp-reviewer` with:
+   - The base branch and current branch.
+   - The list of C# files touched.
+   - The component(s) those files belong to.
 
-For each acceptance criterion in the slice's `spec.md`, determine whether the diff satisfies it. Verify against the actual diff — read the specific file and line in the diff to confirm. Do not infer satisfaction from the plan's intended structure or from what you expect the implementation to have done. Mark each criterion MET, PARTIAL, or NOT MET with a file:line citation.
+3. **If any web files changed**, spawn `react-reviewer` with:
+   - The base branch and current branch.
+   - The list of web files touched (paths under `src/Worms.Hub.Web/`).
 
-### 5b — Scope
+Do not duplicate the sub-agents' work in the main context — let them read the standards docs and the diff themselves.
 
-Start by listing every file that appears in the diff. Then compare that list against the plan's "Files to Create / Modify" table.
+## Step 4 — Merge into review.md
 
-- Flag files in the diff that are not in the plan.
-- Flag planned files that are absent from the diff.
-- Flag changes that go beyond what the plan describes for a file.
+Once all sub-agents have returned, write `review.md` in the slice directory using the template below. Preserve each sub-agent's findings verbatim within its section — do not rerank across axes and do not collapse multiple axes into a single severity list. Renumber findings only if needed to keep them unique within their axis (e.g. `Spec B1`, `C# B1`, `Web B1` are all fine; if the spec reviewer returned no findings, the section is "None").
 
-Changes not in the plan are not automatically wrong — but they need a reason. Check `learnings.md` first; if the deviation is explained there, note it as resolved. If it is unexplained, raise it as a finding.
-
-### 5c — Coding guidelines
-
-Check the diff for violations of the coding guidelines and CI patterns in `.claude/docs/steering/`
-
-For any CI-related changes (new jobs, job conditions, change-detection gates, triggers), cross-reference the change against `.claude/docs/steering/ci-patterns.md` — do not evaluate correctness from spec wording alone. A criterion like "job skips on unrelated changes" may conflict with repo-wide CI conventions even if the spec asked for it.
-
-For web code, check against the ESLint config and Prettier settings in `src/Worms.Hub.Web/`.
-
-### 5d — Tests
-
-Check the diff against `.claude/docs/steering/testing-strategy.md`:
-
-## Step 6 — Write review.md
-
-Write `review.md` in the same directory as the slice's `spec.md` and `plan.md`, using the template below.
+Write a one-paragraph verdict that summarises both axes honestly: a Spec-pass / Standards-fail change reads differently from the reverse, and the verdict should make that clear.
 
 ```markdown
 # Review — [Slice Name]
 
 ## Verdict
 
-[One paragraph. Does the implementation satisfy the spec? Any blockers the user must address before merging?]
+[One paragraph. Summarise both axes: does the implementation satisfy the spec? Does it follow the standards? Any blockers the user must address before merging?]
 
-## Acceptance Criteria
+## Spec
 
-| Criterion | Status | Evidence |
-|---|---|---|
-| [criterion from spec] | MET / PARTIAL / NOT MET | file:line or explanation |
+[Verbatim from spec-reviewer: Acceptance Criteria table, Blockers, Suggestions, Nitpicks. If a sub-section is empty, write "None".]
 
-## Scope
+## C# Standards
 
-[Does the diff match the plan's Files to Create / Modify table? List anything outside scope, with a note on whether learnings.md explains it.]
+[Verbatim from csharp-reviewer, including the build PASS/FAIL line. Omit this whole section if csharp-reviewer was not dispatched.]
 
-## Blockers
+## Web Standards
 
-[Zero or more entries, numbered B1, B2, … Use the finding format below.]
-
-## Suggestions
-
-[Zero or more entries, numbered S1, S2, … Same format.]
-
-## Nitpicks
-
-[Zero or more entries, numbered N1, N2, … Same format.]
-
-### Finding format
-
-#### B1 — [short title]
-
-- **File:** `path/to/file:line`
-- **Issue:** One sentence describing what is wrong.
-- **Fix:** Short direction for the fix.
-- **Decision:** — *(pending)*
-
-## Tests
-
-[What test coverage was added or changed. Any coverage gaps. Any padding tests that should be removed or rewritten. Any fragile patterns.]
+[Verbatim from react-reviewer, including the lint PASS/FAIL line. Omit this whole section if react-reviewer was not dispatched.]
 
 ## Recommended Actions
 
-[For every finding, state your recommended action and a one-line reason:]
+[For every finding across all axes, state your recommended action and a one-line reason. Reference findings by axis-prefixed ID:]
 
-- **B1** — Accept — [why the fix is clearly right]
-- **S1** — Decline — [why it's not worth it or out of scope]
-- **N1** — Accept — [reason]
+- **Spec B1** — Accept — [why the fix is clearly right]
+- **C# B1** — Accept — [reason]
+- **C# S1** — Decline — [why it's not worth it or out of scope]
+- **Web N1** — Accept — [reason]
 
 Valid actions: `Accept` or `Decline`. Cover every finding.
 ```
@@ -138,9 +99,9 @@ Valid actions: `Accept` or `Decline`. Cover every finding.
 ## Rules
 
 - Write only `review.md`. Do not edit code, commit, or touch the branch.
+- Dispatch sub-agents in parallel in a single message — not sequentially.
+- The orchestrator (you) does not re-do the sub-agents' analysis. Your job is dispatch, merge, verdict, and recommended actions.
 - Stay in scope: review only files in the diff. Do not audit the rest of the repo.
-- Ignore process files in the diff (`learnings.md`, `plan.md`, `spec.md`, `review.md`) — these are workflow artefacts, not feature code.
-- Be specific. "Error handling could be improved" is not useful; "`GifCreator.cs:42` does not handle the case where `frames` is empty" is.
+- Ignore process files (`learnings.md`, `plan.md`, `spec.md`, `review.md`) when reasoning about scope — these are workflow artefacts, not feature code.
 - Match the bar the spec set. Do not raise production-grade concerns (HA, exhaustive logging, observability) the spec did not ask for.
-- Categorise honestly. A Blocker genuinely breaks a spec criterion or the build. A Suggestion is meaningful improvement. A Nitpick is style. Do not inflate severity.
-- Every finding must cite a line read from the actual current file. Do not raise a finding based on plan code examples, prior knowledge, or inference. A suggestion stating "X is missing" or "Y deviates from convention" must quote the actual file at the relevant location — if you have not read that file, read it before raising the finding. If the implementation already matches the desired state, do not raise the finding at all.
+- If a sub-agent returns nothing in a category, write "None" in that sub-section — don't omit it (except for whole axes that weren't dispatched).
