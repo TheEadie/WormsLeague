@@ -20,7 +20,6 @@ internal sealed class Processor(
     IReplayTextReader replayTextReader,
     IFeatureFlags featureFlags,
     RatingsCalculator ratingsCalculator,
-    IRatingsRepository ratingsRepository,
     ILogger<Processor> logger)
 {
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "ELO calculation failure must not block replay processing")]
@@ -103,10 +102,8 @@ internal sealed class Processor(
         {
             try
             {
-                var preGameRatings = ratingsRepository.GetByLeagueId(updatedReplay.LeagueId);
-                ratingsCalculator.Calculate(updatedReplay.LeagueId);
-                var postGameRatings = ratingsRepository.GetByLeagueId(updatedReplay.LeagueId);
-                leaderboard = BuildLeaderboard(preGameRatings, postGameRatings);
+                var change = ratingsCalculator.Calculate(updatedReplay.LeagueId);
+                leaderboard = BuildLeaderboard(change);
                 if (leaderboard.Count == 0)
                 {
                     leaderboard = null;
@@ -137,58 +134,29 @@ internal sealed class Processor(
         logger.LogInformation("Replay updater finished.");
     }
 
-    private static List<LeaderboardEntry> BuildLeaderboard(
-        IReadOnlyList<PlayerRating> preGameRatings,
-        IReadOnlyList<PlayerRating> postGameRatings)
+    private static List<LeaderboardEntry> BuildLeaderboard(LeagueRatingsChange change)
     {
-        var entries = new List<LeaderboardEntry>(postGameRatings.Count);
-        var preBySubject = preGameRatings.ToDictionary(r => r.PlayerAuthSubject, r => r.Rating);
-        var preRankBySubject = ComputeRanks(preGameRatings);
+        var before = change.Before.ToDictionary(p => p.PlayerAuthSubject);
 
-        var rank = 1;
-        for (var i = 0; i < postGameRatings.Count; i++)
+        return change.After.Select(post =>
         {
-            if (i > 0 && postGameRatings[i].Rating < postGameRatings[i - 1].Rating)
+            int? eloDelta = null;
+            int? positionChange = null;
+            if (before.TryGetValue(post.PlayerAuthSubject, out var pre))
             {
-                rank = i + 1;
+                var elo = post.Rating - pre.Rating;
+                if (elo != 0)
+                {
+                    eloDelta = elo;
+                }
+                var rank = post.Rank - pre.Rank;
+                if (rank != 0)
+                {
+                    positionChange = rank;
+                }
             }
 
-            var post = postGameRatings[i];
-            var eloDelta = preBySubject.TryGetValue(post.PlayerAuthSubject, out var preElo)
-                ? post.Rating - preElo
-                : (int?)null;
-            if (eloDelta == 0)
-            {
-                eloDelta = null;
-            }
-
-            var preRank = preRankBySubject.GetValueOrDefault(post.PlayerAuthSubject, rank);
-            int? positionChange = rank - preRank;
-            if (positionChange == 0)
-            {
-                positionChange = null;
-            }
-
-            entries.Add(new LeaderboardEntry(rank, post.Rating, post.DisplayName, eloDelta, positionChange));
-        }
-
-        return entries;
-    }
-
-    private static Dictionary<string, int> ComputeRanks(IReadOnlyList<PlayerRating> ratings)
-    {
-        var result = new Dictionary<string, int>(ratings.Count);
-        var rank = 1;
-        for (var i = 0; i < ratings.Count; i++)
-        {
-            if (i > 0 && ratings[i].Rating < ratings[i - 1].Rating)
-            {
-                rank = i + 1;
-            }
-
-            result[ratings[i].PlayerAuthSubject] = rank;
-        }
-
-        return result;
+            return new LeaderboardEntry(post.Rank, post.Rating, post.DisplayName, eloDelta, positionChange);
+        }).ToList();
     }
 }
