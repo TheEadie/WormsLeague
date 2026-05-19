@@ -59,6 +59,12 @@ ReplayResource
 
 All types are `record`s with `[PublicAPI]` (JetBrains annotation, used by ReSharper to suppress unused-member warnings since these are consumed externally).
 
+`ReplayResource` has direct constructor callers outside this assembly — `LocalReplayRetriever` in `Worms.Cli.Resources` builds one from a filename alone, bypassing the parser. Any change to its positional record signature must grep across the CLI and Hub source trees for direct constructor calls before being declared self-contained; `ReplayResourceBuilder` is not the only construction site.
+
+## Fabricated replay logs
+
+Logs used for seed data, fixtures, or tests must obey the game's elimination invariant: a team cannot be killed after it has lost its last worm. The placement parser infers `wormsPerTeam` from observed kills, so an impossible event (e.g. Delta killing Gamma twice when Gamma only had one worm) silently changes the inferred team size and produces wrong placements. Before committing a fabricated replay log, run it through `ReplayResourceBuilder` and confirm the resulting placements match the intent — visual eyeballing of the kill order is not enough.
+
 ## Replay filename parsing
 
 `IReplayFilenameParser` / `ReplayFilenameParser` extracts metadata (date, player names) from the WA replay filename convention.
