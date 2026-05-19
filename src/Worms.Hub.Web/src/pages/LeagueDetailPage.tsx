@@ -26,7 +26,7 @@ interface LeagueDto {
     name: string
     version: string | null
     schemeUrl: string | null
-    standings: StandingDto[] | null
+    standings: StandingDto[]
 }
 
 interface WeaponDto {
@@ -162,7 +162,7 @@ function LeagueDetailPage() {
                         )}
                     </Box>
 
-                    {league.standings !== null && league.standings.length > 0 && (
+                    {league.standings.length > 0 && (
                         <Box sx={{ mb: 3 }}>
                             <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5 }}>
                                 Standings

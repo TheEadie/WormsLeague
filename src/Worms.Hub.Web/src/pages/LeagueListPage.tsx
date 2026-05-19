@@ -20,7 +20,7 @@ interface LeagueDto {
     name: string
     version: string | null
     schemeUrl: string
-    standings: StandingDto[] | null
+    standings: StandingDto[]
 }
 
 function LeagueCard({ league }: { league: LeagueDto }) {
@@ -78,7 +78,7 @@ function LeagueCard({ league }: { league: LeagueDto }) {
                         />
                     )}
 
-                    {league.standings !== null && league.standings.length > 0 && (
+                    {league.standings.length > 0 && (
                         <>
                             <Divider sx={{ mt: 2, mb: 1.5 }} />
                             <Box>
