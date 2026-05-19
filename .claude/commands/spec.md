@@ -9,9 +9,9 @@ YOU DO NOT IMPLEMENT THE USER'S REQUEST. Only create the required spec file.
 
 ## Step 1 — Understand the request
 
-If the user has already named a slice or supplied a GitHub Issue, use that. If they have a GitHub Issue, fetch the issue description to learn what is needed.
+Scan the user's request for a GitHub issue reference (a full GitHub issue URL, or a `#NNN` token). If one is present, this is **issue mode** — use that issue as the source of truth for what the slice is. Fetch the issue with `gh issue view <number-or-url> --json number,title,body,url` and use its title and body to learn what is needed. In issue mode, skip the epic-plan discovery below; the resulting spec will be written back to the issue body in Step 5 and no file will be created.
 
-Otherwise, propose the next slice from an epic plan:
+Otherwise, if the user has already named a specific slice, use that. If not, propose the next slice from an epic plan:
 
 1. List the epics under `.claude/specs/`. If none exist, stop and ask the user to run `/epic` first. If exactly one exists, use it. If more than one exists, ask the user which epic this slice belongs to.
 2. Read the chosen epic's `.claude/specs/<epic-slug>/plan.md` and find the first unchecked (`- [ ]`) slice whose dependencies (any earlier slices it relies on) are all checked (`- [x]`).
@@ -26,8 +26,9 @@ A slice is intended to be a small, deliverable chunk that ships as a single PR �
 
 Before writing anything, read the following to understand how the slice fits the wider work and the existing system:
 
-- `.claude/specs/<epic-slug>/spec.md` — the epic's purpose, goals, non-goals, major capabilities, system shape, constraints, and definition of done. The slice must sit consistently within this scope.
-- `.claude/specs/<epic-slug>/plan.md` — the ordered slice list. Locate this slice in the plan, note which earlier slices it depends on (and may assume are complete), and which later slices it must NOT pre-empt.
+- **Epic-mode only** — `.claude/specs/<epic-slug>/spec.md`: the epic's purpose, goals, non-goals, major capabilities, system shape, constraints, and definition of done. The slice must sit consistently within this scope.
+- **Epic-mode only** — `.claude/specs/<epic-slug>/plan.md`: the ordered slice list. Locate this slice in the plan, note which earlier slices it depends on (and may assume are complete), and which later slices it must NOT pre-empt.
+- In **issue mode** there is no epic; skip the two bullets above and treat the GitHub issue body as the source of intent.
 - The root `CLAUDE.md` — repo-wide conventions and pointers.
 - All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present.
 - The relevant component doc(s) under `.claude/docs/components/` — load whichever match the area this slice touches (e.g. `cli.md`, `hub-gateway.md`, `armageddon-files.md`). The mapping is in the root `CLAUDE.md`.
@@ -77,7 +78,21 @@ Do not proceed to Step 5 until you can answer "yes" to all of the following:
 - If the slice introduces a capability for the first time (a new test framework, a new CI job category, a new make target category): the setup of that infrastructure is explicitly included in scope and its files are listed. Do not assume it can be added invisibly.
 - If the slice adds or extends an endpoint that returns a richer response type for a single item while a corresponding list endpoint exists: a scope decision has been made and recorded — either the list endpoint is updated in this slice or the asymmetry is explicitly deferred.
 
-## Step 5 — Create the spec file
+## Step 5 — Write the spec
+
+The destination depends on which mode you are in.
+
+### Issue mode (GitHub issue input)
+
+Render the spec using the template below to a temp file (e.g. `/tmp/spec-body.md`), then **overwrite the issue body** with it (replacing the original description entirely):
+
+```bash
+gh issue edit <number> --body-file /tmp/spec-body.md
+```
+
+Always use `--body-file` so multi-line content and special characters survive intact. The spec is the issue body itself — it does NOT use a sticky-comment marker (those are only for plan/learnings/review; see `.claude/docs/sticky-comments.md`). Do not create any files under `.claude/specs/`. Confirm the edit succeeded and capture the issue URL for Step 6.
+
+### Epic mode (slice from a plan)
 
 1. Create a numbered subdirectory under `.claude/specs/<epic-slug>/slices/`. Determine the next number by finding the highest-numbered folder currently in that `slices/` directory and incrementing by one, zero-padded to two digits (e.g. if the highest is `02-event-log`, the new folder is `03-audit-export/`). If the `slices/` directory does not yet exist or contains no numbered folders, start at `01`.
 2. Derive the slug from the slice's short name in `plan.md` (lowercase, hyphenated). If the user is specifying a slice not in the plan, agree a slug with them.
@@ -120,11 +135,11 @@ Do not proceed to Step 5 until you can answer "yes" to all of the following:
 
 ## Step 6 — Hand off
 
-After creating the spec file, tell the user where it lives and that it is ready for review or implementation. Do not commit, branch, or open a PR — the existing `/pr` skill handles that once code changes exist. Do not tick the slice off in `plan.md` — that happens at delivery time, not spec time.
+Tell the user where the spec lives — the issue URL in issue mode, or the `spec.md` path in epic mode — and that it is ready for review or implementation. Do not commit, branch, or open a PR — the existing `/pr` skill handles that once code changes exist. Do not tick the slice off in `plan.md` — that happens at delivery time, not spec time.
 
 ## If the slice is too large
 
-If the slice is too large to be a single PR-sized deliverable, you MUST suggest breaking it into multiple smaller sub-slices. Propose a concrete breakdown and wait for the user to agree before creating any files.
+If the slice is too large to be a single PR-sized deliverable, you MUST suggest breaking it into multiple smaller sub-slices. Propose a concrete breakdown and wait for the user to agree before creating any files. In issue mode, a breakdown means opening one new GitHub issue per sub-slice (ask the user before doing so) rather than creating folders; do not silently write multiple specs into the single issue body.
 
 Once agreed, create the parent numbered subdirectory under `.claude/specs/<epic-slug>/slices/` (e.g. `03-audit-export/`), then numbered sub-subdirectories inside it for each sub-slice (using the format `01-`, `02-`, etc. so ordering is unambiguous). Each sub-subdirectory gets its own `spec.md`.
 
