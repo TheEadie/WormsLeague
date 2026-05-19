@@ -15,19 +15,12 @@ internal sealed class RatingsCalculator(
     IRatingsRepository ratingsRepository,
     ILogger<RatingsCalculator> logger)
 {
-    private sealed record MultiPlayerSelection(string AuthSubject, string Machine, string TeamName);
+    private sealed record Selection(string AuthSubject, string Machine, string TeamName);
 
-    private sealed record MultiPlayerReplayInfo(
+    private sealed record ReplayInfo(
         int ReplayId,
         int RecordedGameIndex,
-        IReadOnlyList<MultiPlayerSelection> Selections);
-
-    private sealed record SinglePlayerReplayInfo(
-        int ReplayId,
-        string AuthSubject,
-        string Machine,
-        string TeamName,
-        int PriorRecordedGameIndex);
+        IReadOnlyList<Selection> Selections);
 
     public void Calculate(string leagueId)
     {
@@ -44,13 +37,8 @@ internal sealed class RatingsCalculator(
             .ToList();
 
         var league = new PlayerRank.League();
-        // games_played counts: playerAuthSubject -> count of replays with at least one claimed placement
         var gamesPlayed = new Dictionary<string, int>();
-
-        // Per-replay bookkeeping for delta write-back.
-        var multiPlayerReplays = new List<MultiPlayerReplayInfo>();
-        var singlePlayerReplays = new List<SinglePlayerReplayInfo>();
-        var recordedGameCount = 0;
+        var recordedReplays = new List<ReplayInfo>();
 
         foreach (var replay in replays)
         {
@@ -66,31 +54,19 @@ internal sealed class RatingsCalculator(
                 .Select(g => g.OrderBy(x => x.Position).First()) // best position if same player has multiple teams
                 .ToList();
 
-            // Count games_played for each matched player
+            if (matchedPlayers.Count == 0)
+            {
+                continue;
+            }
+
             foreach (var mp in matchedPlayers)
             {
                 gamesPlayed.TryAdd(mp.AuthSubject, 0);
                 gamesPlayed[mp.AuthSubject]++;
             }
 
-            if (matchedPlayers.Count == 0)
-            {
-                continue;
-            }
-
-            if (matchedPlayers.Count == 1)
-            {
-                var only = matchedPlayers[0];
-                singlePlayerReplays.Add(new SinglePlayerReplayInfo(
-                    int.Parse(replay.Id, CultureInfo.InvariantCulture),
-                    only.AuthSubject,
-                    only.Machine,
-                    only.TeamName,
-                    recordedGameCount));
-                continue;
-            }
-
-            // matchedPlayers.Count >= 2 — record the game.
+            // Solo games are a no-op inside EloScoringStrategy (pairwise loop never fires), so recording
+            // them keeps history indexing uniform without affecting ratings.
             var game = new PlayerRank.Game();
             foreach (var mp in matchedPlayers)
             {
@@ -98,19 +74,17 @@ internal sealed class RatingsCalculator(
             }
 
             league.RecordGame(game);
-            recordedGameCount++;
 
-            multiPlayerReplays.Add(new MultiPlayerReplayInfo(
+            recordedReplays.Add(new ReplayInfo(
                 int.Parse(replay.Id, CultureInfo.InvariantCulture),
-                recordedGameCount,
+                recordedReplays.Count + 1,
                 matchedPlayers.ConvertAll(
-                    mp => new MultiPlayerSelection(mp.AuthSubject, mp.Machine, mp.TeamName))));
+                    mp => new Selection(mp.AuthSubject, mp.Machine, mp.TeamName))));
         }
 
         var eloStrategy = new EloScoringStrategy(new Points(64), new Points(400), new Points(1000));
         var leaderboard = league.GetLeaderBoard(eloStrategy).ToList();
 
-        // Build result: all players with at least one game
         var ratings = gamesPlayed.Keys.Select(authSubject =>
         {
             var score = leaderboard.FirstOrDefault(s => s.Name == authSubject);
@@ -120,14 +94,11 @@ internal sealed class RatingsCalculator(
 
         ratingsRepository.ReplaceForLeague(leagueId, ratings);
 
-        // ---- Per-placement delta write-back ----
         var history = league.GetLeaderBoardHistory(eloStrategy).ToList();
 
-        // 1. Clear every placement in the league.
         replaysRepository.ClearPlacementEloForLeague(leagueId);
 
-        // 2. Write multi-player rows.
-        foreach (var r in multiPlayerReplays)
+        foreach (var r in recordedReplays)
         {
             var post = history[r.RecordedGameIndex];
             var pre = history[r.RecordedGameIndex - 1];
@@ -143,28 +114,10 @@ internal sealed class RatingsCalculator(
                     eloAfter: after);
             }
         }
-
-        // 3. Write single-matched-player rows.
-        foreach (var r in singlePlayerReplays)
-        {
-            var snap = r.PriorRecordedGameIndex == 0 ? null : history[r.PriorRecordedGameIndex];
-            var elo = RatingAt(snap, r.AuthSubject);
-            replaysRepository.UpdatePlacementElo(
-                r.ReplayId,
-                r.Machine,
-                r.TeamName,
-                eloDelta: 0,
-                eloAfter: elo);
-        }
     }
 
-    private static int RatingAt(History? snapshot, string authSubject)
+    private static int RatingAt(History snapshot, string authSubject)
     {
-        if (snapshot is null)
-        {
-            return 1000;
-        }
-
         var score = snapshot.Leaderboard.FirstOrDefault(s => s.Name == authSubject);
         return score is null ? 1000 : (int)score.Points.GetValue();
     }
