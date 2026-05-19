@@ -53,6 +53,8 @@ interface PlacementDto {
     teamName: string
     position: number | null
     playerName: string | null
+    eloDelta: number | null
+    eloAfter: number | null
 }
 
 interface ReplayInLeagueDto {
