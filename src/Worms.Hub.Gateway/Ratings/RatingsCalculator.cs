@@ -1,7 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using PlayerRank;
-using PlayerRank.Scoring;
 using PlayerRank.Scoring.Elo;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
