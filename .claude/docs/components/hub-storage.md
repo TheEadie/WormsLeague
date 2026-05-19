@@ -57,6 +57,6 @@ File abstractions in `Files/` wrap filesystem operations and derive their paths 
 When a slice adds columns to an **existing** table and the gateway reads those columns, the plan must include an explicit compatibility decision before implementation:
 
 - **Require DB upgrade first:** the gateway may crash if deployed against the old schema. Only acceptable if gateway and DB are always upgraded together.
-- **Degrade gracefully:** gate the new endpoint or query behind a `DatabaseSchemaVersion` check. The DI-factory pattern selects between a base repository implementation and a versioned subtype at startup based on the detected schema version, so controllers never reference `DatabaseSchemaVersion` directly.
+- **Degrade gracefully:** gate the new endpoint or query behind a runtime schema-version check, returning a fallback (e.g. empty list, 503) until the migration has run. A DI-factory pattern that picks between a base repository and a versioned subtype at startup keeps the version check out of controller code.
 
 Any plan that extends a repository to read new columns must document which approach is chosen and enumerate all write paths (controllers, workers, tests) that construct or persist the affected record type, confirming each sets the new field correctly.

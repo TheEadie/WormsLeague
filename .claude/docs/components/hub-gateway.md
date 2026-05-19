@@ -66,10 +66,6 @@ End-to-end flow for a replay upload:
 
 Services used by both the gateway and the worker (e.g. `AddWormsArmageddonFilesServices()`, which registers `IReplayTextReader`) must be called inside **each** component's own `Add*Services()` method, not placed unconditionally in `Program.cs`. Because `AddGatewayServices()` and `AddWorkerServices()` are both called in monolith mode, any method registered from multiple components must use `TryAddScoped` / `TryAddSingleton` / `TryAddEnumerable` throughout so repeated calls in monolith mode are safe (no double-registered parsers or handlers).
 
-## Feature flags
-
-Controllers must depend on `IFeatureFlags`, not on `DatabaseSchemaVersion` or any other concrete source directly. `GatewayFeatureFlags` aggregates all feature-gate sources (schema version, environment variables, etc.) and is the single place where feature decisions are made. Any new schema-version or feature-gate check must be added to `GatewayFeatureFlags` rather than injected into a controller.
-
 ## Middleware ordering
 
 Inside the `if (runGateway)` block in `Program.cs`, `UseRequestLogging()` must be the **first** middleware call, before `UseStaticFiles()`, `MapControllers()`, and `MapFallbackToFile()`. Middleware placed after endpoint dispatch misses requests short-circuited by static-file serving and fallback routing.
@@ -78,7 +74,7 @@ Inside the `if (runGateway)` block in `Program.cs`, `UseRequestLogging()` must b
 
 Any new endpoint backed by a DB migration must address independent gateway/DB rollout risk. If the gateway can be deployed before the migration runs, it will crash rather than degrade gracefully. Mitigate with one of:
 
-- **Schema-version gate:** check `DatabaseSchemaVersion` (via `IFeatureFlags`) before querying the new table and return a suitable fallback or 503.
+- **Schema-version gate:** detect the database's current schema version at request time and return a suitable fallback or 503 if the new column or table is not yet present. The ELO Rankings epic used a dedicated abstraction for this; if a similar need recurs, re-introduce a focused abstraction rather than inlining a version check into a controller.
 - **Feature flag:** hide the endpoint until the migration has been confirmed applied.
 
 This decision must be made during spec — not discovered after deployment.
