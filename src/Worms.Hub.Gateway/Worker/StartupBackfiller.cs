@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Dapper;
 using Npgsql;
 using Worms.Armageddon.Files.Replays.Text;
-using Worms.Hub.Gateway.FeatureFlags;
 using Worms.Hub.Gateway.Ratings;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
@@ -74,13 +73,6 @@ internal sealed class StartupBackfiller(
 
         using var scope = serviceProvider.CreateScope();
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-        var featureFlags = scope.ServiceProvider.GetRequiredService<IFeatureFlags>();
-
-        if (!await featureFlags.IsEloRatingsEnabledAsync())
-        {
-            logger.LogInformation("ELO ratings feature not yet enabled — skipping ratings backfill.");
-            return;
-        }
 
         var connectionString = configuration.GetConnectionString("Database");
         await using var connection = new NpgsqlConnection(connectionString);
