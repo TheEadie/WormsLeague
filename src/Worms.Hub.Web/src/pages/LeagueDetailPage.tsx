@@ -439,6 +439,34 @@ function LeagueDetailPage() {
                                                                                       {p.playerName ??
                                                                                           p.teamName}
                                                                                   </Typography>
+                                                                                  {p.eloDelta !==
+                                                                                      null && (
+                                                                                      <Typography
+                                                                                          sx={{
+                                                                                              fontFamily:
+                                                                                                  monoFontFamily,
+                                                                                              fontSize: 10,
+                                                                                              fontWeight: 700,
+                                                                                              ml: 0.25,
+                                                                                              color:
+                                                                                                  p.eloDelta >
+                                                                                                  0
+                                                                                                      ? 'success.main'
+                                                                                                      : p.eloDelta <
+                                                                                                          0
+                                                                                                        ? 'error.main'
+                                                                                                        : 'text.disabled',
+                                                                                          }}
+                                                                                      >
+                                                                                          {p.eloDelta >
+                                                                                          0
+                                                                                              ? '+'
+                                                                                              : ''}
+                                                                                          {
+                                                                                              p.eloDelta
+                                                                                          }
+                                                                                      </Typography>
+                                                                                  )}
                                                                               </Box>
                                                                           )
                                                                       })
