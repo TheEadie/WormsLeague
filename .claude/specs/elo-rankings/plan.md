@@ -13,3 +13,5 @@ Companion to [`spec.md`](./spec.md). Each slice below is sized to ship as a sing
 - [x] **ELO on alias changes** — ELO recalculation triggered when a player claims or unclaims an alias, so historical replays are accounted for when a player registers or removes an alias
 - [x] **ELO delta on game detail** — Per-game ELO delta shown on each placement pill on the game/replay detail page (e.g. "+12 ELO"), deferred from the ELO rankings slice
 - [x] **ELO leaderboard on league cards** — Top-3 ELO leaderboard preview shown on each league card on the leagues list page, deferred from the ELO rankings slice
+- [ ] **Slack post — league leaderboard with ELO changes** — Slack game-complete message extended to include the full league leaderboard after the game, showing each player's position change and ELO ranking change resulting from the game
+- [ ] **Remove feature flags** — Remove the feature flags introduced during this epic once the feature is fully deployed to production
