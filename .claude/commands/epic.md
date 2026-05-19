@@ -88,7 +88,16 @@ Tell the user the file has been populated and invite them to read through it bef
 
 ## Phase 4 — Deep interrogation
 
-This is the main body of the command. Work through the spec section by section with the user, asking the kinds of questions that surface the high-level shape of the epic. Examples:
+This is the main body of the command. Interview the user relentlessly about every aspect of the epic until you reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
+
+**How to ask:**
+
+- Ask questions **one at a time** — never bundle multiple questions into a single turn. Wait for the answer before moving on.
+- For each question, **provide your recommended answer** along with the question, so the user can react to a concrete proposal rather than starting from a blank slate. Explain briefly why you recommend it.
+- If a question can be answered by **exploring the codebase**, explore it instead of asking the user. Only ask when the answer genuinely requires the user's intent or knowledge.
+- After each answer, update the relevant section of `spec.md` immediately (using the Edit tool) so the document tracks the conversation. Then move to the next question.
+
+Work through the spec section by section, surfacing the high-level shape of the epic. The areas to cover:
 
 - **Purpose:** What is the epic for? What does success look like?
 - **Capabilities:** What are the major things the system must do? What are the things it deliberately will not do?
@@ -100,8 +109,6 @@ This is the main body of the command. Work through the spec section by section w
 - **Done-ness:** How will the user know the epic is in a usable state? What is the smallest viable version?
 
 Do **not** ask about target users / personas — that section is intentionally omitted.
-
-Ask one focused area at a time. After each answer, update the relevant section of `spec.md` immediately (using the Edit tool) so the document tracks the conversation. Then move to the next area.
 
 Apply the following discipline throughout:
 
