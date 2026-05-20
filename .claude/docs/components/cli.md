@@ -61,11 +61,14 @@ OpenTelemetry traces are started in `Program.Main` before DI setup. Each signifi
 
 ## Testing
 
-CLI unit tests live in `src/Worms.Cli.Tests` (NUnit + Shouldly). Tests drive the CLI through the same `CliStructure.BuildCommandLine()` root + DI container that production uses, via the `TestHost` composition root. `TestHost` overrides four production seams:
+CLI unit tests live in `src/Worms.Cli.Tests` (NUnit + Shouldly). Tests drive the CLI through the same `CliStructure.BuildCommandLine()` root + DI container that production uses, via the `TestHost` composition root. `TestHost` overrides five production seams:
 
 - `IHttpClientFactory` — backed by a recording handler (`RecordingHttpMessageHandler`) that captures requests and returns scripted responses.
 - `IFileSystem` — `MockFileSystem` so `TokenStore` reads and writes in memory.
 - `IBrowserLauncher` — recording test impl; no real browser is launched. The interface wraps the original static `BrowserLauncher` so production behaviour is unchanged.
 - `TimeProvider` — `FakeTimeProvider` from `Microsoft.Extensions.TimeProvider.Testing` so the device-code polling loop and its timeout can be fast-forwarded deterministically.
+- `IFolderOpener` — `RecordingFolderOpener` captures the folder paths passed to `OpenFolder` so tests can assert on which folder was opened without launching a real file manager.
+
+`TestHost` also registers the `Worms.Armageddon.Game.Fake` services so `IWormsArmageddon` is the in-memory fake — installed by default; opt in to a 'not installed' fake via `new TestHost(wormsInstalled: false)`. The fake is wrapped in a small recording decorator (`RecordingWormsArmageddon`) so tests can observe which `PlayReplay` calls the CLI issued.
 
 When adding tests for a new command, extend this project rather than creating a new one. Test classes follow the `<TypeUnderTest>Should` convention; test methods describe a behaviour.
