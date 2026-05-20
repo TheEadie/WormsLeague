@@ -58,3 +58,14 @@ All output goes to stderr via `ColorFormatter`. Use `ILogger<T>` in handlers; do
 ## Telemetry
 
 OpenTelemetry traces are started in `Program.Main` before DI setup. Each significant operation gets a span tag via `Activity.Current?.SetTag(...)`. Span names are constants in the `Telemetry` class.
+
+## Testing
+
+CLI unit tests live in `src/Worms.Cli.Tests` (NUnit + Shouldly). Tests drive the CLI through the same `CliStructure.BuildCommandLine()` root + DI container that production uses, via the `TestHost` composition root. `TestHost` overrides four production seams:
+
+- `IHttpClientFactory` — backed by a recording handler (`RecordingHttpMessageHandler`) that captures requests and returns scripted responses.
+- `IFileSystem` — `MockFileSystem` so `TokenStore` reads and writes in memory.
+- `IBrowserLauncher` — recording test impl; no real browser is launched. The interface wraps the original static `BrowserLauncher` so production behaviour is unchanged.
+- `TimeProvider` — `FakeTimeProvider` from `Microsoft.Extensions.TimeProvider.Testing` so the device-code polling loop and its timeout can be fast-forwarded deterministically.
+
+When adding tests for a new command, extend this project rather than creating a new one. Test classes follow the `<TypeUnderTest>Should` convention; test methods describe a behaviour.
