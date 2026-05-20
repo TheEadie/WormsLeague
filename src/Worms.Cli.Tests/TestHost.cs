@@ -19,9 +19,9 @@ namespace Worms.Cli.Tests;
 internal sealed class TestHost : IDisposable
 {
     public ServiceProvider Services { get; }
-    public Command RootCommand { get; }
-    public Runner Runner { get; }
-    public MockFileSystem FileSystem { get; }
+    private Command RootCommand { get; }
+    private Runner Runner { get; }
+    private MockFileSystem FileSystem { get; }
     public FakeTimeProvider Time { get; }
     public RecordingBrowserLauncher Browser { get; }
     public RecordingHttpMessageHandler Http { get; }

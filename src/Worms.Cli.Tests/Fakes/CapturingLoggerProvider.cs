@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Worms.Cli.Tests.Fakes;
 
-internal sealed record CapturedLogMessage(LogLevel Level, string Category, string Message);
+internal sealed record CapturedLogMessage(LogLevel Level, string Message);
 
 internal sealed class CapturingLoggerProvider : ILoggerProvider
 {
@@ -11,14 +11,14 @@ internal sealed class CapturingLoggerProvider : ILoggerProvider
 
     public IReadOnlyCollection<CapturedLogMessage> Messages => [.. _messages];
 
-    public ILogger CreateLogger(string categoryName) => new CapturingLogger(categoryName, _messages);
+    public ILogger CreateLogger(string categoryName) => new CapturingLogger(_messages);
 
     public void Dispose()
     {
         // Nothing to dispose.
     }
 
-    private sealed class CapturingLogger(string category, ConcurrentBag<CapturedLogMessage> messages) : ILogger
+    private sealed class CapturingLogger(ConcurrentBag<CapturedLogMessage> messages) : ILogger
     {
         public IDisposable BeginScope<TState>(TState state) where TState : notnull => NullScope.Instance;
 
@@ -32,7 +32,7 @@ internal sealed class CapturingLoggerProvider : ILoggerProvider
             Func<TState, Exception?, string> formatter)
         {
             ArgumentNullException.ThrowIfNull(formatter);
-            messages.Add(new CapturedLogMessage(logLevel, category, formatter(state, exception)));
+            messages.Add(new CapturedLogMessage(logLevel, formatter(state, exception)));
         }
 
         private sealed class NullScope : IDisposable

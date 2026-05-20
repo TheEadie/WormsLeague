@@ -1,9 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Cli.Resources.Remote.Auth;
-using Worms.Cli.Resources.Remote.Auth.Responses;
 
 namespace Worms.Cli.Tests.Commands;
 

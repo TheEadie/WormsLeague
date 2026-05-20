@@ -46,7 +46,7 @@ internal sealed class RecordingHttpMessageHandler : HttpMessageHandler
         }
     }
 
-    public void Enqueue(Func<HttpRequestMessage, HttpResponseMessage> responder) =>
+    private void Enqueue(Func<HttpRequestMessage, HttpResponseMessage> responder) =>
         _responses.Enqueue(responder);
 
     public void EnqueueResponse(HttpStatusCode status, string body, string mediaType = "application/json") =>
