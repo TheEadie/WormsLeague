@@ -6,11 +6,14 @@ using Worms.Cli.Resources.Remote.Auth;
 
 namespace Worms.Cli;
 
-internal sealed class Runner(IUserDetailsService userDetailsService, ILogger<Runner> logger)
+[SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Exposed as a composition seam for Worms.Cli.Tests; everything else in the assembly stays internal")]
+public sealed class Runner(IUserDetailsService userDetailsService, ILogger<Runner> logger)
 {
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "This is the global exception handler for the CLI")]
     public async Task<int> Run(Command rootCommand, string[] args, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(rootCommand);
+
         try
         {
             if (userDetailsService.IsUserLoggedIn())

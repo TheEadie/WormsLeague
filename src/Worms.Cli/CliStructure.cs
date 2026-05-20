@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Worms.Cli.Commands;
 using Worms.Cli.Commands.Resources;
@@ -11,9 +12,10 @@ using Version = Worms.Cli.Commands.Version;
 
 namespace Worms.Cli;
 
-internal static class CliStructure
+[SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Exposed as a composition seam for Worms.Cli.Tests; everything else in the assembly stays internal")]
+public static class CliStructure
 {
-    internal static Command BuildCommandLine(IServiceProvider serviceProvider)
+    public static Command BuildCommandLine(IServiceProvider serviceProvider)
     {
         var rootCommand = new Root();
         rootCommand.Add<Auth, AuthHandler>(serviceProvider);

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Worms.Cli.CommandLine;
@@ -17,7 +18,8 @@ using Worms.Cli.Resources.Schemes;
 
 namespace Worms.Cli;
 
-internal static class ServiceRegistration
+[SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Exposed as a composition seam for Worms.Cli.Tests; everything else in the assembly stays internal")]
+public static class ServiceRegistration
 {
     public static IServiceCollection AddWormsCliServices(this IServiceCollection builder) =>
         builder.AddScoped<AuthHandler>()
