@@ -60,7 +60,7 @@ internal sealed class Installed : IWormsArmageddon
         if (_fileSystem.File.Exists(replayPath))
         {
             _fileSystem.File.WriteAllBytes(
-                replayPath.Replace(".WAGame", ".log", StringComparison.InvariantCulture),
+                replayPath.Replace(".WAGame", ".log", StringComparison.InvariantCultureIgnoreCase),
                 []);
         }
 
