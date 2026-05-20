@@ -1,7 +1,5 @@
-using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;
-using Worms.Armageddon.Game;
 
 namespace Worms.Cli.Tests.Commands;
 
@@ -12,7 +10,7 @@ internal sealed class BrowseReplayShould
     public async Task OpenTheReplayFolderWhenWormsIsInstalled()
     {
         using var host = new TestHost();
-        var expectedFolder = host.Services.GetRequiredService<IWormsArmageddon>().FindInstallation().ReplayFolder;
+        var expectedFolder = host.WormsArmageddon.FindInstallation().ReplayFolder;
 
         var exitCode = await host.Run("browse", "replay");
 
