@@ -1,34 +1,26 @@
 ---
-description: Implement a slice from its plan.md, recording anything surprising or missing in learnings.md
+description: Implement a slice from its GitHub issue's `plan` sticky comment, recording anything surprising or missing as the `learnings` sticky comment
 effort: medium
 ---
 
-Your task is to implement a slice by following its `plan.md` precisely, tracking progress with tasks, and recording anything the plan missed or got wrong in `learnings.md`.
+Your task is to implement a slice by following its `plan` sticky comment precisely, tracking progress with tasks, and recording anything the plan missed or got wrong as the `learnings` sticky comment on the same GitHub issue.
 
-## Step 1 — Identify the slice
+## Step 1 — Identify the slice issue
 
-If the user has named a specific slice or path, use that.
+Scan the user's request for a GitHub issue reference (a full GitHub issue URL, or a `#NNN` token). If none is present, stop and ask the user which issue this implements. Do not proceed without an explicit issue reference.
 
-Otherwise, find the next slice that is ready to implement:
-
-1. List the epics under `.claude/specs/`. If more than one exists, ask which epic to work on.
-2. Read the epic's `plan.md`. Find the first unchecked (`- [ ]`) slice.
-3. Check whether `.claude/specs/<epic-slug>/slices/<slice-dir>/plan.md` exists. If it does not, stop and tell the user to run `/plan-spec` first to generate the implementation plan.
-4. Present the slice to the user and ask them to confirm or pick a different one.
-
-Do not proceed until the user has confirmed the target slice.
+Fetch the issue and its `plan` sticky comment (see `.claude/docs/sticky-comments.md`). If the `plan` sticky does not exist, stop and tell the user to run `/plan-spec` against this issue first.
 
 ## Step 2 — Read the plan and context
 
 Read everything before touching any files:
 
-- The slice's `plan.md` — the authoritative implementation guide
-- The slice's `spec.md` — acceptance criteria you will verify against at the end
+- The slice's plan — the `plan` sticky comment on the issue. This is the authoritative implementation guide.
+- The slice's spec — the GitHub issue body. These are the acceptance criteria you will verify against at the end.
 - The root `CLAUDE.md` — repo-wide conventions
 - All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present
 - Relevant component docs under `.claude/docs/components/` for the areas touched
-- Any `learnings.md` files from earlier slices in the same epic — they capture caveats that may apply here too
-- If the epic folder contains a `design/` directory (e.g. `.claude/specs/<epic-slug>/design/`) and this slice touches anything it covers, read the relevant files — treat them as a reference for layout, structure, and ideas, not as the authoritative definition.
+- The parent epic issue (if any) and its sibling sub-issues, via the GraphQL `issue.parent` query (see `.claude/docs/sticky-comments.md` → "Fetching the parent epic and sibling sub-issues"). For each earlier sibling sub-issue in `parent.subIssues.nodes` that has a `learnings` sticky, read it — caveats from prior slices may apply here too.
 
 ## Step 3 — Create tasks
 
@@ -73,21 +65,21 @@ Keep a running mental note of anything that warrants recording. Capture a learni
 
 Do not record learnings for steps that went exactly as planned.
 
-Every file you create or modify that is not in the plan's "Files to Create / Modify" table must be recorded in the "Files Added (not in plan)" section of `learnings.md`. This includes migration files, configuration files, CI workflow changes, and infrastructure files — not only application code.
+Every file you create or modify that is not in the plan's "Files to Create / Modify" table must be recorded in the "Files Added (not in plan)" section of the `learnings` sticky comment. This includes migration files, configuration files, CI workflow changes, and infrastructure files — not only application code.
 
-## Step 5 — Tick the slice in the epic plan
+## Step 5 — Write the learnings sticky comment
 
-After all implementation tasks are complete, mark the slice as done in the epic's top-level `plan.md` by changing its checkbox from `- [ ]` to `- [x]`.
+Write the learnings even if there is nothing notable — its presence signals the slice has been implemented. If there is nothing to record, say so briefly.
 
-## Step 6 — Write learnings.md
+Render the learnings body to a temp file (e.g. `/tmp/sticky-learnings.md`) with `<!-- claude:sticky:learnings -->` as the first line, then create or update the `learnings` sticky comment on the issue using the flow in `.claude/docs/sticky-comments.md`.
 
-After ticking the epic plan, write `learnings.md` in the same directory as the slice's `plan.md`.
+The issue stays open — `/pr` closes it when the implementing PR merges.
 
-Write it even if there are no learnings — its presence signals the slice has been implemented. If there is nothing to record, say so briefly.
-
-### Learnings file template
+### Learnings body template
 
 ```markdown
+<!-- claude:sticky:learnings -->
+
 # Learnings: [Slice Name]
 
 ## Implementation Notes
@@ -106,11 +98,11 @@ component docs in a future /update-docs pass.]
 Omit this section if there are none.]
 ```
 
-## Step 7 — Hand off
+## Step 6 — Hand off
 
 Tell the user:
 - The implementation is complete
-- Where `learnings.md` was written and a one-line summary of the most significant learning (if any)
+- The issue URL (the `learnings` sticky comment) and a one-line summary of the most significant learning (if any)
 - That the slice is ready for review and PR creation with `/pr`
 
 Do not commit, push, or open a PR — the user triggers that.

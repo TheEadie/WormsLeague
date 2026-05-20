@@ -1,28 +1,24 @@
 ---
-description: Review an implementation against its spec and the repo's coding standards, producing an advisory report. Dispatches parallel sub-agents per axis.
+description: Review an implementation against its spec and the repo's coding standards, producing an advisory report written as the `review` sticky comment on the slice's GitHub issue. Dispatches parallel sub-agents per axis.
 effort: high
 ---
 
 You orchestrate a two-axis review of the changes made for a slice:
 
-- **Spec axis** — does the diff satisfy the slice's `spec.md`? Handled by `spec-reviewer`.
+- **Spec axis** — does the diff satisfy the slice's spec (the GitHub issue body)? Handled by `spec-reviewer`.
 - **Standards axis** — does the diff follow the repo's documented coding standards? Handled by `csharp-reviewer` and/or `react-reviewer` depending on which languages the diff touches.
 
-The sub-agents run **in parallel** so neither pollutes the other's context. You merge their findings into a single `review.md`, axis-separated. You do NOT make code changes, commit, or modify the branch.
+The sub-agents run **in parallel** so neither pollutes the other's context. You merge their findings into a single `review` sticky comment on the slice's GitHub issue, axis-separated. You do NOT make code changes, commit, or modify the branch.
 
 Your review is advisory. The user will read it and decide which items to act on.
 
-## Step 1 — Identify the slice
+## Step 1 — Identify the slice issue
 
-If the user has named a specific slice or branch, use that.
+Scan the user's request for a GitHub issue reference (a full GitHub issue URL, or a `#NNN` token). If none is present, stop and ask the user which issue to review. Do not proceed without an explicit issue reference.
 
-Otherwise, infer from context:
+Fetch the issue and its sticky comments (see `.claude/docs/sticky-comments.md`). The issue body is the spec; the `plan` and `learnings` sticky comments must both exist (otherwise stop and tell the user the slice isn't ready for review). The review will be written as the `review` sticky comment on the same issue.
 
-1. Check the current branch name for an epic/slice hint (e.g. `feature/some-slug`).
-2. Look under `.claude/specs/` for a slice directory containing a `plan.md` and `learnings.md` — the presence of `learnings.md` means it has been implemented and is ready for review.
-3. If more than one candidate exists, list them and ask the user which to review.
-
-Do not proceed until the slice is confirmed.
+Record the issue URL and number for use below.
 
 ## Step 2 — Get the diff and classify touched files
 
@@ -45,7 +41,7 @@ Also note which component(s) the C# files belong to (e.g. `Worms.Cli`, `Worms.Hu
 Send **one message** with multiple `Agent` tool calls so they run concurrently:
 
 1. **Always** spawn `spec-reviewer` with:
-   - The slice directory path.
+   - The GitHub issue URL (the spec lives in its body; the `learnings` sticky lives on the same issue — see `.claude/docs/sticky-comments.md`).
    - The base branch and current branch.
 
 2. **If any C# files changed**, spawn `csharp-reviewer` with:
@@ -59,13 +55,17 @@ Send **one message** with multiple `Agent` tool calls so they run concurrently:
 
 Do not duplicate the sub-agents' work in the main context — let them read the standards docs and the diff themselves.
 
-## Step 4 — Merge into review.md
+## Step 4 — Merge into the `review` sticky comment
 
-Once all sub-agents have returned, write `review.md` in the slice directory using the template below. Preserve each sub-agent's findings verbatim within its section — do not rerank across axes and do not collapse multiple axes into a single severity list. Renumber findings only if needed to keep them unique within their axis (e.g. `Spec B1`, `C# B1`, `Web B1` are all fine; if the spec reviewer returned no findings, the section is "None").
+Once all sub-agents have returned, render the review using the template below. Render to a temp file (e.g. `/tmp/sticky-review.md`) with `<!-- claude:sticky:review -->` as the first line, then create or update the `review` sticky comment on the issue using the flow in `.claude/docs/sticky-comments.md`.
+
+Preserve each sub-agent's findings verbatim within its section — do not rerank across axes and do not collapse multiple axes into a single severity list. Renumber findings only if needed to keep them unique within their axis (e.g. `Spec B1`, `C# B1`, `Web B1` are all fine; if the spec reviewer returned no findings, the section is "None").
 
 Write a one-paragraph verdict that summarises both axes honestly: a Spec-pass / Standards-fail change reads differently from the reverse, and the verdict should make that clear.
 
 ```markdown
+<!-- claude:sticky:review -->
+
 # Review — [Slice Name]
 
 ## Verdict
@@ -98,10 +98,10 @@ Valid actions: `Accept` or `Decline`. Cover every finding.
 
 ## Rules
 
-- Write only `review.md`. Do not edit code, commit, or touch the branch.
+- Write only the `review` sticky comment on the slice issue. Do not edit code, commit, or touch the branch.
 - Dispatch sub-agents in parallel in a single message — not sequentially.
 - The orchestrator (you) does not re-do the sub-agents' analysis. Your job is dispatch, merge, verdict, and recommended actions.
 - Stay in scope: review only files in the diff. Do not audit the rest of the repo.
-- Ignore process files (`learnings.md`, `plan.md`, `spec.md`, `review.md`) when reasoning about scope — these are workflow artefacts, not feature code.
+- Ignore process artefacts (the issue body and its `plan` / `learnings` / `review` sticky comments) when reasoning about scope — these are workflow artefacts, not feature code.
 - Match the bar the spec set. Do not raise production-grade concerns (HA, exhaustive logging, observability) the spec did not ask for.
 - If a sub-agent returns nothing in a category, write "None" in that sub-section — don't omit it (except for whole axes that weren't dispatched).

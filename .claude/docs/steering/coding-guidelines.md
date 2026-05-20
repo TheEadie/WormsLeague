@@ -70,7 +70,7 @@ Any new domain field that represents a computed rank, position, score, or other 
 
 Any change to a public method signature, a shared positional record, or a shape illustrated in a component doc carries a doc edit in the same slice. Plans list the doc file alongside the code files; the doc update is not a follow-up. Shared positional records often have direct constructor callers outside their owning assembly — plans that change such records must grep across the CLI and Hub source trees for direct constructor calls before declaring the change self-contained.
 
-Once a slice's `review.md` is written and the slice is marked complete, additional scope landing in the same PR must either trigger a new spec/plan/review cycle within the PR or move to a follow-up slice. A bare DTO field added as `null` because "we'll fix it later" is a spec, not a drive-by.
+Once a slice's `review` sticky comment is written and the slice is marked complete, additional scope landing in the same PR must either trigger a new spec/plan/review cycle within the PR or move to a follow-up slice. A bare DTO field added as `null` because "we'll fix it later" is a spec, not a drive-by.
 
 ## Formatting
 

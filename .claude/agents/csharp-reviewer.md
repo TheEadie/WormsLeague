@@ -68,4 +68,4 @@ Return your findings in the message below. Stay **under 400 words total**. Cite 
 - **Cite the rule.** Every finding names the guideline (file + section/heading) it relates to. If you cannot cite one, the finding is not a standards finding — drop it.
 - **Read the actual file.** Do not raise findings based on memory or inference. If you have not opened the file at the cited line, open it before writing the finding.
 - Do not raise spec-drift findings (missing acceptance criteria, scope creep). That's the spec reviewer's job.
-- Ignore process artefacts (`plan.md`, `spec.md`, `learnings.md`, `review.md`) in the diff.
+- Ignore process artefacts (the GitHub issue body and its `plan` / `learnings` / `review` sticky comments) in the diff scope.
