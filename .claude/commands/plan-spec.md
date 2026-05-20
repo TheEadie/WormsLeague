@@ -1,38 +1,37 @@
 ---
-description: Generate a detailed implementation plan for the next spec slice, written to plan.md alongside spec.md
+description: Generate a detailed implementation plan for a slice and write it as the `plan` sticky comment on the slice's GitHub issue
 effort: high
 ---
 
-Your task is to produce a detailed implementation plan for a slice and write it to `plan.md` next to the slice's `spec.md`. This plan is the direct input to `/implement`, so it must be precise enough for an agent to execute without further clarification.
+Your task is to produce a detailed implementation plan for a slice and write it as the `plan` sticky comment on the slice's GitHub issue. This plan is the direct input to `/implement`, so it must be precise enough for an agent to execute without further clarification.
 
-YOU DO NOT IMPLEMENT THE SLICE. Only create the `plan.md` file.
+YOU DO NOT IMPLEMENT THE SLICE. Only write the `plan` sticky comment.
 
-## Step 1 — Identify the slice
+## Step 1 — Identify the slice issue
 
-Scan the user's request for a GitHub issue reference (full URL or `#NNN`). If one is present, this is **issue mode**: fetch the issue with `gh issue view <number-or-url> --json number,title,body,url`. The issue body is the slice's spec. The plan will be written as a sticky comment named `plan` on the same issue (see `.claude/docs/sticky-comments.md`) — no file will be created under `.claude/specs/`. Skip the epic-discovery flow below.
+Scan the user's request for a GitHub issue reference (a full GitHub issue URL, or a `#NNN` token). If none is present, stop and ask the user which issue this plan is for. Do not proceed without an explicit issue reference.
 
-Otherwise, if the user has named a specific slice or path, use that.
+Fetch the issue:
 
-If neither, find the next slice that has a `spec.md` but no `plan.md`:
+```bash
+gh issue view <number-or-url> --json number,title,body,url
+```
 
-1. List the epics under `.claude/specs/`. If none exist, stop and ask the user to run `/epic` first. If more than one exists, ask which epic to work on.
-2. For the chosen epic, read `plan.md` at the epic level to understand the intended sequence. Then scan `.claude/specs/<epic-slug>/slices/` (and any sub-slice directories) in numbered order, looking for the first directory that contains a `spec.md` but no `plan.md`.
-3. Present that slice to the user — its name and one-line description — and ask them to confirm or pick a different one.
+The issue body is the slice's spec. If the body still looks like the one-sentence stub created by `/epic` (i.e. `/spec` has not been run yet against this issue), stop and tell the user to run `/spec` first.
 
-Do not proceed until the user has confirmed the target slice.
+Record the issue number and URL for use in Step 4.
 
 ## Step 2 — Read all context
 
 Read everything needed to produce an accurate, codebase-consistent plan:
 
-- The slice's `spec.md` — requirements, out of scope, acceptance criteria. **In issue mode**, this is the GitHub issue body itself.
-- **Epic-mode only** — the epic's `spec.md` and `plan.md`: scope boundaries, what earlier slices have already delivered. In issue mode there is no epic; treat the issue body as the full scope.
-- The root `CLAUDE.md` — repo-wide conventions and pointers to component docs
-- All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present
-- The relevant component docs under `.claude/docs/components/` for the areas this slice touches
-- The source files the slice will most likely create or modify
-- Any `learnings.md` files from earlier slices in the same epic — they capture known caveats from prior implementation
-- If the epic folder contains a `design/` directory (e.g. `.claude/specs/<epic-slug>/design/`) and this slice touches anything it covers, read the relevant files — treat them as a reference for layout, structure, and ideas, not as the authoritative definition.
+- The slice issue body — requirements, out of scope, acceptance criteria.
+- If the issue body contains a `Part of #<n>` pointer, fetch that parent epic issue and read its body — scope boundaries, what earlier slices have already delivered.
+- For each earlier sub-issue of the same parent that is closed (or has a `learnings` sticky), read its `learnings` sticky comment — they capture known caveats from prior implementation.
+- The root `CLAUDE.md` — repo-wide conventions and pointers to component docs.
+- All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present.
+- The relevant component docs under `.claude/docs/components/` for the areas this slice touches.
+- The source files the slice will most likely create or modify.
 
 When reading source files, record exactly what you find. Any factual claim the plan makes about existing file state — "this function is not yet registered", "the middleware block currently contains X", "this method does not exist" — must be directly verified from the file you read, not inferred or assumed from prior knowledge.
 
@@ -47,19 +46,19 @@ Use the EnterPlanMode tool to enter plan mode. Think through the full implementa
 - Any risks or caveats the plan should call out explicitly
 - If the slice adds a new endpoint that returns a richer response type for a single item while a corresponding list endpoint already exists for the same domain resource, include an explicit scope decision: does the list endpoint need updating to match? Do not leave the asymmetry implicit — decide in or out of scope and note it in the plan.
 
-Use the ExitPlanMode tool to exit plan mode before writing any files.
+Use the ExitPlanMode tool to exit plan mode before writing the sticky comment.
 
-## Step 4 — Write the plan
+## Step 4 — Write the plan sticky comment
+
+Render the plan body to a temp file (e.g. `/tmp/sticky-plan.md`) with `<!-- claude:sticky:plan -->` as the first line, then create or update the `plan` sticky comment on the issue using the flow in `.claude/docs/sticky-comments.md`.
 
 Be concrete: file paths, exact dependency versions, make target names, CI job names, config values. An agent following this plan should not need to make decisions — all decisions are resolved here.
 
-**Epic mode:** write `plan.md` in the same directory as the slice's `spec.md`.
-
-**Issue mode:** render the plan body to a temp file with `<!-- claude:sticky:plan -->` as the first line, then create or update the `plan` sticky comment on the issue using the flow in `.claude/docs/sticky-comments.md`. Do not create any files under `.claude/specs/`.
-
-### Plan file template
+### Plan body template
 
 ```markdown
+<!-- claude:sticky:plan -->
+
 # Plan: [Slice Name]
 
 ## Context
@@ -104,4 +103,4 @@ makefile includes, CI job ordering), any known caveats from the codebase.]
 
 ## Step 5 — Hand off
 
-Tell the user where the plan lives — the `plan.md` path in epic mode, or the issue URL (and a note that it is the `plan` sticky comment) in issue mode — and that it is ready for review or implementation with `/implement`. Do not commit, branch, or open a PR.
+Tell the user the issue URL (noting that the plan is in the `plan` sticky comment) and that it is ready for review or implementation with `/implement`. Do not commit, branch, or open a PR.

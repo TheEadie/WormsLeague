@@ -1,6 +1,6 @@
 # Sticky comments on GitHub issues
 
-When the spec / plan / implement / review pipeline runs against a GitHub issue (issue mode), each artefact that would normally be written to a file in `.claude/specs/<epic>/slices/<slice>/` is instead written as a **named sticky comment** on the issue. The issue body holds the spec; the comments hold everything else.
+The spec / plan / implement / review / retro pipeline writes its artefacts to a GitHub issue. The issue body holds the spec; named **sticky comments** on the same issue hold every later artefact (plan, learnings, review, retrospective).
 
 Each sticky comment is identified by a hidden HTML-comment marker on its first line. Subsequent runs find and update the existing comment by marker, so the same artefact stays at one stable URL.
 
@@ -16,11 +16,12 @@ Followed by a blank line and then the rendered markdown. `<name>` is one of the 
 
 ## Well-known sticky names
 
-| Name | Written by | Replaces | Contains |
-|---|---|---|---|
-| `plan` | `/plan-spec` | `plan.md` | Implementation plan for the slice |
-| `learnings` | `/implement-slice` | `learnings.md` | Notes captured during implementation |
-| `review` | `/review` | `review.md` | Two-axis review findings and recommended actions |
+| Name | Written by | Contains |
+|---|---|---|
+| `plan` | `/plan-spec` | Implementation plan for the slice |
+| `learnings` | `/implement-slice` | Notes captured during implementation |
+| `review` | `/review` | Two-axis review findings and recommended actions |
+| `retrospective` | `/retro-epic` | Cross-slice retrospective written to the parent epic issue |
 
 The slice **spec** itself is not a sticky comment — it replaces the issue body (see `/spec`).
 
@@ -58,6 +59,6 @@ Always pass the body via `--body-file` / `-F body=@…`, never inline, so multi-
 
 When a workflow needs to flip a single line inside a sticky comment (e.g. `/implement` changing `**Decision:** *(pending)*` to `**Decision:** Accept` inside the `review` comment), read the current body, modify the string, then write the full updated body back via the same create-or-update flow. Do not append a second sticky with the same name.
 
-## Detecting issue mode
+## Required input
 
-A command is in **issue mode** when the user's request contains a GitHub issue URL or a `#NNN` reference, or when the orchestrator (`/implement`) was invoked in issue mode and is dispatching a sub-command. Otherwise it is in **epic mode** and uses files under `.claude/specs/`.
+Every command in the pipeline requires a GitHub issue reference (a full GitHub issue URL or a `#NNN` token) in the user's invocation. If none is supplied, the command asks for one before doing any other work. There is no file-based fallback.
