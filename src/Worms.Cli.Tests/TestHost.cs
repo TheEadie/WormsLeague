@@ -84,7 +84,7 @@ internal sealed class TestHost : IDisposable
         });
 
         services.RemoveAll<IFileSystem>();
-        services.AddSingleton<IFileSystem>(FileSystem);
+        services.AddSingleton(FileSystem);
 
         services.RemoveAll<IFolderOpener>();
         services.AddSingleton<IFolderOpener>(FolderOpener);

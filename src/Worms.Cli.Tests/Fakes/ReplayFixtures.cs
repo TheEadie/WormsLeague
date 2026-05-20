@@ -14,21 +14,17 @@ internal static class ReplayFixtures
                                        [00:11:26.60] ••• Team 3 (another person) ends turn; time used: 11.58 sec turn, 3.00 sec retreat
                                        """;
 
-    public static string WriteReplay(
+    public static void WriteReplay(
         TestHost host,
         string filenameNoExt,
         string? logContent = null)
     {
         var info = host.WormsArmageddon.FindInstallation();
         var fs = host.FileSystem;
-        var wagame = fs.Path.Combine(info.ReplayFolder, filenameNoExt + ".WAgame");
-        fs.File.WriteAllBytes(wagame, []);
+        fs.File.WriteAllBytes(fs.Path.Combine(info.ReplayFolder, filenameNoExt + ".WAgame"), []);
         if (logContent is not null)
         {
-            var log = fs.Path.Combine(info.ReplayFolder, filenameNoExt + ".log");
-            fs.File.WriteAllText(log, logContent);
+            fs.File.WriteAllText(fs.Path.Combine(info.ReplayFolder, filenameNoExt + ".log"), logContent);
         }
-
-        return wagame;
     }
 }
