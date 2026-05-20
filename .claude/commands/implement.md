@@ -1,9 +1,9 @@
 ---
-description: Orchestrate plan-spec, implement, review, and interactive finding resolution for a slice issue
+description: Orchestrate planning, implementation, review, and interactive finding resolution for a slice issue
 effort: medium
 ---
 
-You coordinate the full slice workflow: plan → implement → review → resolve. The first three phases each run in a separate agent with a clean context window. The resolution phase runs interactively in this session. Your role is to identify the slice issue, confirm with the user which phases need to run, then coordinate each phase in turn.
+You coordinate the full slice workflow: plan → implement → review → resolve. The first three phases each run in a separate sub-agent (`slice-planner`, `slice-implementer`, `slice-reviewer`) with a clean context window — each agent's frontmatter pins the model it runs on. The resolution phase runs interactively in this session. Your role is to identify the slice issue, confirm with the user which phases need to run, then coordinate each phase in turn.
 
 ## Step 1 — Identify the slice issue
 
@@ -24,11 +24,7 @@ Record the issue URL and number as `<issue>` for use below. Present the planned 
 
 Skip if the `plan` sticky comment already exists on the issue.
 
-Spawn an agent with this prompt, substituting `<issue>`:
-
-> Read the file `.claude/commands/plan-spec.md` and follow those instructions.
-> The target issue has already been confirmed by the user: `<issue>`.
-> Skip Step 1 (identification) and proceed directly from Step 2 onward.
+Dispatch the `slice-planner` agent (via the Agent tool with `subagent_type: "slice-planner"`), passing the issue URL/number `<issue>` in the prompt.
 
 After the agent completes, verify the `plan` sticky comment now exists on the issue. If it does not, stop and report the failure to the user.
 
@@ -36,11 +32,7 @@ After the agent completes, verify the `plan` sticky comment now exists on the is
 
 Skip if the `learnings` sticky comment already exists on the issue.
 
-Spawn an agent with this prompt, substituting `<issue>`:
-
-> Read the file `.claude/commands/implement-slice.md` and follow those instructions.
-> The target issue has already been confirmed by the user: `<issue>`.
-> Skip Step 1 (identification) and proceed directly from Step 2 onward.
+Dispatch the `slice-implementer` agent (via the Agent tool with `subagent_type: "slice-implementer"`), passing the issue URL/number `<issue>` in the prompt.
 
 After the agent completes, verify the `learnings` sticky comment now exists on the issue. If it does not, stop and report the failure to the user.
 
@@ -48,11 +40,7 @@ After the agent completes, verify the `learnings` sticky comment now exists on t
 
 Skip if the `review` sticky comment already exists on the issue.
 
-Spawn an agent with this prompt, substituting `<issue>`:
-
-> Read the file `.claude/commands/review.md` and follow those instructions.
-> The target issue has already been confirmed by the user: `<issue>`.
-> Skip Step 1 (identification) and proceed directly from Step 2 onward.
+Dispatch the `slice-reviewer` agent (via the Agent tool with `subagent_type: "slice-reviewer"`), passing the issue URL/number `<issue>` in the prompt.
 
 After the agent completes, verify the `review` sticky comment now exists on the issue. If it does not, stop and report the failure to the user.
 

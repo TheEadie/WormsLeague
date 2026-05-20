@@ -18,9 +18,9 @@ Followed by a blank line and then the rendered markdown. `<name>` is one of the 
 
 | Name | Written by | Contains |
 |---|---|---|
-| `plan` | `/plan-spec` | Implementation plan for the slice |
-| `learnings` | `/implement-slice` | Notes captured during implementation |
-| `review` | `/review` | Two-axis review findings and recommended actions |
+| `plan` | `slice-planner` (via `/implement`) | Implementation plan for the slice |
+| `learnings` | `slice-implementer` (via `/implement`) | Notes captured during implementation |
+| `review` | `slice-reviewer` (via `/implement`) | Two-axis review findings and recommended actions |
 | `retrospective` | `/retro-epic` | Cross-slice retrospective written to the parent epic issue |
 
 The slice **spec** itself is not a sticky comment — it replaces the issue body (see `/spec`).
