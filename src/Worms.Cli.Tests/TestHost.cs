@@ -9,8 +9,10 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
+using Worms.Armageddon.Game.Fake;
 using Worms.Armageddon.Gifs;
 using Worms.Cli.Resources;
+using Worms.Cli.Resources.Local.Folders;
 using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Tests.Fakes;
 
@@ -26,14 +28,17 @@ internal sealed class TestHost : IDisposable
     public RecordingBrowserLauncher Browser { get; }
     public RecordingHttpMessageHandler Http { get; }
     public CapturingLoggerProvider Logs { get; }
+    public RecordingWormsArmageddon WormsArmageddon { get; }
+    public RecordingFolderOpener FolderOpener { get; }
 
-    public TestHost()
+    public TestHost(bool wormsInstalled = true)
     {
         FileSystem = new MockFileSystem();
         Time = new FakeTimeProvider(DateTimeOffset.UtcNow);
         Browser = new RecordingBrowserLauncher();
         Http = new RecordingHttpMessageHandler();
         Logs = new CapturingLoggerProvider();
+        FolderOpener = new RecordingFolderOpener();
 
         var configuration = new ConfigurationBuilder().Build();
 
@@ -41,14 +46,48 @@ internal sealed class TestHost : IDisposable
             .AddHttpClient()
             .AddLogging(b => b.AddProvider(Logs).SetMinimumLevel(LogLevel.Debug))
             .AddWormsArmageddonFilesServices()
-            .AddWormsArmageddonGameServices()
             .AddWormsArmageddonGifsServices()
             .AddWormsCliResourcesServices()
             .AddWormsCliServices()
             .AddSingleton<IConfiguration>(configuration);
 
+        if (wormsInstalled)
+        {
+            services.AddFakeInstalledWormsArmageddonServices(FileSystem);
+        }
+        else
+        {
+            services.AddFakeNotInstalledWormsArmageddonServices();
+        }
+
+        // Wrap the registered IWormsArmageddon in a recording decorator.
+        var innerDescriptor = services.Single(d => d.ServiceType == typeof(IWormsArmageddon));
+        services.Remove(innerDescriptor);
+        services.AddScoped<IWormsArmageddon>(sp =>
+        {
+            IWormsArmageddon inner;
+            if (innerDescriptor.ImplementationInstance is not null)
+            {
+                inner = (IWormsArmageddon) innerDescriptor.ImplementationInstance;
+            }
+            else if (innerDescriptor.ImplementationFactory is not null)
+            {
+                inner = (IWormsArmageddon) innerDescriptor.ImplementationFactory(sp);
+            }
+            else
+            {
+                inner = (IWormsArmageddon) ActivatorUtilities.CreateInstance(
+                    sp, innerDescriptor.ImplementationType!);
+            }
+
+            return new RecordingWormsArmageddon(inner);
+        });
+
         services.RemoveAll<IFileSystem>();
         services.AddSingleton<IFileSystem>(FileSystem);
+
+        services.RemoveAll<IFolderOpener>();
+        services.AddSingleton<IFolderOpener>(FolderOpener);
 
         services.RemoveAll<IBrowserLauncher>();
         services.AddSingleton<IBrowserLauncher>(Browser);
@@ -62,6 +101,9 @@ internal sealed class TestHost : IDisposable
         Services = services.BuildServiceProvider();
         RootCommand = CliStructure.BuildCommandLine(Services);
         Runner = Services.GetRequiredService<Runner>();
+
+        // Resolve once so WormsArmageddon is non-null before tests use it.
+        WormsArmageddon = (RecordingWormsArmageddon) Services.GetRequiredService<IWormsArmageddon>();
     }
 
     public Task<int> Run(params string[] args) =>

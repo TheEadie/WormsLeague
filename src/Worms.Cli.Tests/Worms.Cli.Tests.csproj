@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Worms.Cli\Worms.Cli.csproj"/>
     <ProjectReference Include="..\Worms.Cli.Resources\Worms.Cli.Resources.csproj"/>
+    <ProjectReference Include="..\Worms.Armageddon.Game.Fake\Worms.Armageddon.Game.Fake.csproj"/>
   </ItemGroup>
 
 </Project>
