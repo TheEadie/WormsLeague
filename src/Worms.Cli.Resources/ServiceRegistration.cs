@@ -37,7 +37,7 @@ public static class ServiceRegistration
             .AddScoped<IResourceCreator<RemoteReplay, RemoteReplayCreateParameters>, RemoteReplayCreator>()
             .AddScoped<IResourceCreator<LocalGif, LocalGifCreateParameters>, LocalGifCreator>()
             .AddScoped<ITokenStore, TokenStore>()
-            .AddScoped<IBrowserLauncher, DefaultBrowserLauncher>()
+            .AddScoped<IBrowserLauncher, BrowserLauncher>()
             .AddSingleton(TimeProvider.System)
             .AddScoped<ILoginService, DeviceCodeLoginService>()
             .AddScoped<IAccessTokenRefreshService, AccessTokenRefreshService>()

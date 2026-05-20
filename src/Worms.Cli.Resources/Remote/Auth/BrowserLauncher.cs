@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace Worms.Cli.Resources.Remote.Auth;
 
-internal static class BrowserLauncher
+internal sealed class BrowserLauncher : IBrowserLauncher
 {
-    public static void OpenBrowser(string url)
+    public void OpenBrowser(string url)
     {
         try
         {
