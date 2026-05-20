@@ -249,9 +249,9 @@ Each slice sub-issue starts as a one-sentence stub. The body will be overwritten
 
 ```markdown
 [One sentence describing what this slice delivers end-to-end.]
-
-Part of #<parent-issue-number>.
 ```
+
+Do **not** add a `Part of #<parent>` line — the parent/child link is established by the `sub_issues` API call and is visible in GitHub's sub-issues panel; downstream commands query that relationship via GraphQL rather than parsing the body.
 
 The sub-issue **title** is the slice's short name (meaningful enough that the user can identify it at a glance and that conveys the end-to-end capability it delivers — e.g. "Create-and-view foo", "Seeded RNG produces reproducible run", "Slack announce on game end"). It is not prefixed with a number; ordering is conveyed by sub-issue creation order and by the GitHub sub-issues panel on the parent.
 
@@ -268,7 +268,7 @@ The sub-issue **title** is the slice's short name (meaningful enough that the us
 
 - Each sub-issue is a vertical tracer bullet — a thin end-to-end cut through every relevant layer, demoable on its own.
 - Reject any slice whose title or description implies a single horizontal layer (e.g. "database schema", "API endpoints", "UI components"). Reshape it into vertical end-to-end slices.
-- Each sub-issue body is one sentence plus the `Part of #<parent>` line. No section headings, sub-lists, or commentary beyond that.
+- Each sub-issue body is exactly one sentence. No section headings, sub-lists, back-pointer lines, or other commentary — the parent link is the `sub_issues` API call, not text in the body.
 - Do not add sub-issues not derivable from the parent body.
 - Do not close sub-issues during `/epic`. Slices are closed when their PR merges, not when their spec is drafted.
 - Create sub-issues in dependency order: every issue created earlier must be completable before issues created later.

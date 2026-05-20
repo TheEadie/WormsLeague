@@ -20,7 +20,7 @@ Read everything before touching any files:
 - The root `CLAUDE.md` — repo-wide conventions
 - All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present
 - Relevant component docs under `.claude/docs/components/` for the areas touched
-- If the issue body contains a `Part of #<n>` pointer, fetch the parent epic issue. For each earlier sub-issue of that parent that has a `learnings` sticky, read it — caveats from prior slices may apply here too.
+- The parent epic issue (if any) and its sibling sub-issues, via the GraphQL `issue.parent` query (see `.claude/docs/sticky-comments.md` → "Fetching the parent epic and sibling sub-issues"). For each earlier sibling sub-issue in `parent.subIssues.nodes` that has a `learnings` sticky, read it — caveats from prior slices may apply here too.
 
 ## Step 3 — Create tasks
 

@@ -26,8 +26,8 @@ Record the issue number and URL for use in Step 4.
 Read everything needed to produce an accurate, codebase-consistent plan:
 
 - The slice issue body — requirements, out of scope, acceptance criteria.
-- If the issue body contains a `Part of #<n>` pointer, fetch that parent epic issue and read its body — scope boundaries, what earlier slices have already delivered.
-- For each earlier sub-issue of the same parent that is closed (or has a `learnings` sticky), read its `learnings` sticky comment — they capture known caveats from prior implementation.
+- The parent epic issue (if any), reached via the GraphQL `issue.parent` query (see `.claude/docs/sticky-comments.md` → "Fetching the parent epic and sibling sub-issues"). If a parent exists, read its body for scope boundaries and the major capabilities this slice contributes to.
+- For each earlier sibling sub-issue in `parent.subIssues.nodes` that is closed (or has a `learnings` sticky), read its `learnings` sticky comment — they capture known caveats from prior implementation. The same single GraphQL query returns the sibling list.
 - The root `CLAUDE.md` — repo-wide conventions and pointers to component docs.
 - All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present.
 - The relevant component docs under `.claude/docs/components/` for the areas this slice touches.

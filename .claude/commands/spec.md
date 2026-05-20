@@ -29,9 +29,9 @@ Before writing anything, read the following to understand how the slice fits the
 - All steering docs under `.claude/docs/steering/` — coding guidelines, testing strategy, CI patterns, and any others present.
 - The relevant component doc(s) under `.claude/docs/components/` — load whichever match the area this slice touches (e.g. `cli.md`, `hub-gateway.md`, `armageddon-files.md`). The mapping is in the root `CLAUDE.md`.
 - Any source files directly relevant to the slice area.
-- If the issue body references a parent epic issue (`Part of #<n>`), fetch that issue too and read its body — the slice must sit consistently within the epic's goals, non-goals, and major capabilities.
+- Query the slice's parent epic via the GraphQL `issue.parent` field (see `.claude/docs/sticky-comments.md` → "Fetching the parent epic and sibling sub-issues"). If a parent exists, read its body — the slice must sit consistently within the epic's goals, non-goals, and major capabilities. If `parent` is `null`, treat this as a standalone slice with no enclosing epic.
 
-If the user's request appears to contradict the parent epic or to skip ahead in the delivery order, raise that with them before continuing.
+If the user's request appears to contradict the parent epic or to skip ahead in the delivery order (judged by the position of this slice among its siblings in `parent.subIssues`), raise that with them before continuing.
 
 ## Step 3 — Establish the simplest viable approach
 
@@ -110,8 +110,6 @@ Always use `--body-file` so multi-line content and special characters survive in
 [Any unresolved ambiguities the user has explicitly chosen to defer — not items that were never asked. If you have reached Step 5, this section should be empty or contain only deliberate deferrals. Do not write the spec if you still have unanswered questions; go back to Step 4.]
 ```
 
-If the issue body had a `Part of #<n>` line pointing at the parent epic, preserve it at the bottom of the rendered body so the hierarchy is still visible in the issue.
-
 ### Rules for the spec content
 
 - Focus on WHAT is needed, not HOW to build it
@@ -129,4 +127,4 @@ Tell the user the issue URL and that the spec is ready for review or implementat
 
 If the slice is too large to be a single PR-sized deliverable, you MUST suggest breaking it into multiple smaller sub-slices. Propose a concrete breakdown and wait for the user to agree before doing anything.
 
-Once agreed, open one new GitHub issue per sub-slice (use the same `gh issue create … --body-file …` flow that `/epic` uses) and link each as a native sub-issue under the **same parent epic** the current issue belongs to — not under the current issue itself. The current issue should then be closed as superseded, or its body reduced to a pointer at the replacement issues, depending on the user's preference (ask). Do not silently write multiple specs into a single issue body.
+Once agreed, open one new GitHub issue per sub-slice (use the same `gh issue create … --body-file …` flow that `/epic` uses) and link each as a native sub-issue under the **same parent epic** the current issue belongs to — not under the current issue itself. Look up that parent via the GraphQL `issue.parent` query (see `.claude/docs/sticky-comments.md`); if `parent` is null, the current issue is itself the epic and the new issues should be linked under it. The original issue should then be closed as superseded, or its body reduced to a pointer at the replacement issues, depending on the user's preference (ask). Do not silently write multiple specs into a single issue body.

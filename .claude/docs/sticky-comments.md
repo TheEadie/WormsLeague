@@ -62,3 +62,35 @@ When a workflow needs to flip a single line inside a sticky comment (e.g. `/impl
 ## Required input
 
 Every command in the pipeline requires a GitHub issue reference (a full GitHub issue URL or a `#NNN` token) in the user's invocation. If none is supplied, the command asks for one before doing any other work. There is no file-based fallback.
+
+## Fetching the parent epic and sibling sub-issues
+
+The slice → epic relationship is the native GitHub sub-issues link (set by `/epic` via `POST /repos/{owner}/{repo}/issues/{number}/sub_issues`). Discover it via GraphQL — do not parse the issue body for a text pointer.
+
+```bash
+REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+OWNER=${REPO%/*}
+NAME=${REPO#*/}
+
+gh api graphql -f query='
+  query($owner: String!, $repo: String!, $number: Int!) {
+    repository(owner: $owner, name: $repo) {
+      issue(number: $number) {
+        parent {
+          number
+          title
+          body
+          url
+          subIssues(first: 100) {
+            nodes { number title state }
+          }
+        }
+      }
+    }
+  }' -f owner="$OWNER" -f repo="$NAME" -F number=<slice-issue-number>
+```
+
+A single query returns:
+
+- `parent` — the epic issue body and metadata (or `null` if this issue has no parent — treat it as a standalone slice).
+- `parent.subIssues.nodes` — every sibling sub-issue under the same epic, in the order `/epic` created them. Use this to find earlier slices whose `learnings` sticky comments may capture caveats relevant here.

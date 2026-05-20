@@ -39,7 +39,7 @@ The orchestrator will tell you:
 
    A deviation explained there is NOT a finding; mention it as resolved.
 
-3. If the issue body contains a `Part of #<n>` pointer to a parent epic, fetch that epic issue and read its body for scope and non-goals.
+3. Query the slice's parent epic via the GraphQL `issue.parent` field (see `.claude/docs/sticky-comments.md` → "Fetching the parent epic and sibling sub-issues"). If a parent exists, read its body for scope and non-goals. If `parent` is `null`, treat this as a standalone slice.
 
 4. Run `git diff <base>...<current>` and read it in full. List every file added, modified, or deleted.
 
