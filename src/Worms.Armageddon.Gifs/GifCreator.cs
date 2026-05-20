@@ -60,7 +60,13 @@ public sealed class GifCreator(IWormsArmageddon wormsArmageddon, IFileSystem fil
             throw new GifFrameExtractionFailedException(replayPath, framesFolder);
         }
 
-        var frames = fileSystem.Directory.GetFiles(framesFolder, "*.png");
+        // Directory.GetFiles makes no ordering guarantee — on Linux/ext4 (the wa-runner
+        // container) it can return files in arbitrary order, which causes GIF frames to
+        // assemble out of sequence. WA names frames with a zero-padded counter, so an
+        // ordinal sort matches playback order.
+        var frames = fileSystem.Directory.GetFiles(framesFolder, "*.png")
+            .OrderBy(f => f, StringComparer.Ordinal)
+            .ToArray();
         if (frames.Length == 0)
         {
             throw new GifFrameExtractionFailedException(replayPath, framesFolder);
