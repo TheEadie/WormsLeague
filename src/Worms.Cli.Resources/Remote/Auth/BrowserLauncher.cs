@@ -3,28 +3,31 @@ using System.Runtime.InteropServices;
 
 namespace Worms.Cli.Resources.Remote.Auth;
 
-internal static class BrowserLauncher
+public sealed class BrowserLauncher : IBrowserLauncher
 {
-    public static void OpenBrowser(string url)
+    public void OpenBrowser(Uri url)
     {
+        ArgumentNullException.ThrowIfNull(url);
+
+        var target = url.OriginalString;
         try
         {
-            _ = Process.Start(url);
+            _ = Process.Start(target);
         }
         catch
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                url = url.Replace("&", "^&", StringComparison.InvariantCulture);
-                _ = Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                target = target.Replace("&", "^&", StringComparison.InvariantCulture);
+                _ = Process.Start(new ProcessStartInfo("cmd", $"/c start {target}") { CreateNoWindow = true });
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                _ = Process.Start("xdg-open", url);
+                _ = Process.Start("xdg-open", target);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                _ = Process.Start("open", url);
+                _ = Process.Start("open", target);
             }
             else
             {

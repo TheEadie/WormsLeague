@@ -1,6 +1,6 @@
 namespace Worms.Cli.Resources.Remote;
 
-internal interface IWormsServerApi
+public interface IWormsServerApi
 {
     Task<LatestCliDtoV1> GetLatestCliDetails();
 

@@ -8,6 +8,8 @@ namespace Worms.Cli.Resources.Remote.Auth;
 internal sealed class DeviceCodeLoginService(
     ITokenStore tokenStore,
     IHttpClientFactory httpClientFactory,
+    IBrowserLauncher browserLauncher,
+    TimeProvider timeProvider,
     ILogger<DeviceCodeLoginService> logger) : ILoginService
 {
     private const string Authority = "https://eadie.eu.auth0.com";
@@ -24,7 +26,7 @@ internal sealed class DeviceCodeLoginService(
             deviceCodeResponse.UserCode);
 
         logger.LogDebug("Opening browser...");
-        BrowserLauncher.OpenBrowser(deviceCodeResponse.VerificationUriComplete.OriginalString);
+        browserLauncher.OpenBrowser(deviceCodeResponse.VerificationUriComplete);
 
         logger.LogDebug("Requesting tokens...");
         var tokenResponse = await RequestTokenAsync(deviceCodeResponse, cancellationToken);
@@ -90,7 +92,7 @@ internal sealed class DeviceCodeLoginService(
     {
         using var span = Activity.Current?.Source.StartActivity(Telemetry.Spans.GetAuthTokens.SpanName);
         var timeout = TimeSpan.FromSeconds(deviceCodeResponse.ExpiresIn);
-        using var timeoutCts = new CancellationTokenSource(timeout);
+        using var timeoutCts = new CancellationTokenSource(timeout, timeProvider);
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
 
         logger.LogDebug(
@@ -130,7 +132,10 @@ internal sealed class DeviceCodeLoginService(
                 logger.LogDebug(
                     "Code not yet confirmed. Retrying in {IntervalSeconds} seconds",
                     deviceCodeResponse.Interval);
-                await Task.Delay(deviceCodeResponse.Interval * 1000, linkedCts.Token);
+                await Task.Delay(
+                    TimeSpan.FromSeconds(deviceCodeResponse.Interval),
+                    timeProvider,
+                    linkedCts.Token);
             }
             else
             {

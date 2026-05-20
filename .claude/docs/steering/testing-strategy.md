@@ -17,7 +17,7 @@ Fast, in-process tests with no external dependencies. The test projects that exi
 
 Unit tests for .NET use **NUnit** with **Shouldly** for assertions. They are the default `dotnet test` run and gate every PR via `make cli.test.unit` / equivalent. Web unit tests run independently via `make web.test`.
 
-The CLI, hub gateway, queues, and storage projects do not currently have dedicated unit-test projects — behaviour at those layers is exercised indirectly via the integration tier and the libraries above. When adding meaningful logic at those layers, prefer adding a new `<Project>.Tests` rather than retrofitting the integration test.
+The hub gateway, queues, and storage projects do not currently have dedicated unit-test projects — behaviour at those layers is exercised indirectly via the integration tier and the libraries above. When adding meaningful logic at those layers, prefer adding a new `<Project>.Tests` rather than retrofitting the integration test.
 
 When a slice introduces non-trivial logic into the Gateway — calculators, formatters, ranking, leaderboard builders — the slice creates the gateway test project rather than deferring. An acceptance criterion that calls for unit tests cannot be discharged by pointing at the absence of a test project; the slice that introduces the logic introduces the project.
 
