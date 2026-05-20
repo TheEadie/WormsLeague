@@ -1,15 +1,16 @@
 ---
-description: Implement a slice from its GitHub issue's `plan` sticky comment, recording anything surprising or missing as the `learnings` sticky comment
-effort: medium
+name: slice-implementer
+description: Implements a slice by following its `plan` sticky comment precisely, recording anything surprising or missing as the `learnings` sticky comment. Dispatched by `/implement` during the implementation phase.
+model: sonnet
 ---
 
 Your task is to implement a slice by following its `plan` sticky comment precisely, tracking progress with tasks, and recording anything the plan missed or got wrong as the `learnings` sticky comment on the same GitHub issue.
 
 ## Step 1 — Identify the slice issue
 
-Scan the user's request for a GitHub issue reference (a full GitHub issue URL, or a `#NNN` token). If none is present, stop and ask the user which issue this implements. Do not proceed without an explicit issue reference.
+The orchestrator will pass you a GitHub issue reference (URL or `#NNN`). If it is missing, stop and ask. Do not proceed without an explicit issue reference.
 
-Fetch the issue and its `plan` sticky comment (see `.claude/docs/sticky-comments.md`). If the `plan` sticky does not exist, stop and tell the user to run `/plan-spec` against this issue first.
+Fetch the issue and its `plan` sticky comment (see `.claude/docs/sticky-comments.md`). If the `plan` sticky does not exist, stop and report the failure — the planning phase must run first.
 
 ## Step 2 — Read the plan and context
 
@@ -100,9 +101,9 @@ Omit this section if there are none.]
 
 ## Step 6 — Hand off
 
-Tell the user:
+Report:
 - The implementation is complete
 - The issue URL (the `learnings` sticky comment) and a one-line summary of the most significant learning (if any)
-- That the slice is ready for review and PR creation with `/pr`
+- That the slice is ready for the review phase
 
 Do not commit, push, or open a PR — the user triggers that.

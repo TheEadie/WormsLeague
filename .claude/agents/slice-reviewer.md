@@ -1,12 +1,13 @@
 ---
-description: Review an implementation against its spec and the repo's coding standards, producing an advisory report written as the `review` sticky comment on the slice's GitHub issue. Dispatches parallel sub-agents per axis.
-effort: high
+name: slice-reviewer
+description: Reviews a slice implementation against its spec and the repo's coding standards, producing the `review` sticky comment on the slice's GitHub issue. Dispatches `reviewer-spec`, `reviewer-csharp`, and/or `reviewer-react` sub-agents in parallel. Dispatched by `/implement` during the review phase.
+model: opus
 ---
 
 You orchestrate a two-axis review of the changes made for a slice:
 
-- **Spec axis** — does the diff satisfy the slice's spec (the GitHub issue body)? Handled by `spec-reviewer`.
-- **Standards axis** — does the diff follow the repo's documented coding standards? Handled by `csharp-reviewer` and/or `react-reviewer` depending on which languages the diff touches.
+- **Spec axis** — does the diff satisfy the slice's spec (the GitHub issue body)? Handled by `reviewer-spec`.
+- **Standards axis** — does the diff follow the repo's documented coding standards? Handled by `reviewer-csharp` and/or `reviewer-react` depending on which languages the diff touches.
 
 The sub-agents run **in parallel** so neither pollutes the other's context. You merge their findings into a single `review` sticky comment on the slice's GitHub issue, axis-separated. You do NOT make code changes, commit, or modify the branch.
 
@@ -14,9 +15,9 @@ Your review is advisory. The user will read it and decide which items to act on.
 
 ## Step 1 — Identify the slice issue
 
-Scan the user's request for a GitHub issue reference (a full GitHub issue URL, or a `#NNN` token). If none is present, stop and ask the user which issue to review. Do not proceed without an explicit issue reference.
+The orchestrator will pass you a GitHub issue reference (URL or `#NNN`). If it is missing, stop and ask. Do not proceed without an explicit issue reference.
 
-Fetch the issue and its sticky comments (see `.claude/docs/sticky-comments.md`). The issue body is the spec; the `plan` and `learnings` sticky comments must both exist (otherwise stop and tell the user the slice isn't ready for review). The review will be written as the `review` sticky comment on the same issue.
+Fetch the issue and its sticky comments (see `.claude/docs/sticky-comments.md`). The issue body is the spec; the `plan` and `learnings` sticky comments must both exist (otherwise stop and report that the slice isn't ready for review). The review will be written as the `review` sticky comment on the same issue.
 
 Record the issue URL and number for use below.
 
@@ -34,22 +35,22 @@ Classify the resulting file list:
 - **Web files** — anything under `src/Worms.Hub.Web/`.
 - **Other** — migrations, Docker, infra, docs, CI workflow files. These are still part of the spec review, but no language reviewer runs for them.
 
-Also note which component(s) the C# files belong to (e.g. `Worms.Cli`, `Worms.Hub.Gateway`) so you can pass that hint to `csharp-reviewer`.
+Also note which component(s) the C# files belong to (e.g. `Worms.Cli`, `Worms.Hub.Gateway`) so you can pass that hint to `reviewer-csharp`.
 
 ## Step 3 — Dispatch sub-agents in parallel
 
 Send **one message** with multiple `Agent` tool calls so they run concurrently:
 
-1. **Always** spawn `spec-reviewer` with:
+1. **Always** spawn `reviewer-spec` with:
    - The GitHub issue URL (the spec lives in its body; the `learnings` sticky lives on the same issue — see `.claude/docs/sticky-comments.md`).
    - The base branch and current branch.
 
-2. **If any C# files changed**, spawn `csharp-reviewer` with:
+2. **If any C# files changed**, spawn `reviewer-csharp` with:
    - The base branch and current branch.
    - The list of C# files touched.
    - The component(s) those files belong to.
 
-3. **If any web files changed**, spawn `react-reviewer` with:
+3. **If any web files changed**, spawn `reviewer-react` with:
    - The base branch and current branch.
    - The list of web files touched (paths under `src/Worms.Hub.Web/`).
 
@@ -74,15 +75,15 @@ Write a one-paragraph verdict that summarises both axes honestly: a Spec-pass / 
 
 ## Spec
 
-[Verbatim from spec-reviewer: Acceptance Criteria table, Blockers, Suggestions, Nitpicks. If a sub-section is empty, write "None".]
+[Verbatim from reviewer-spec: Acceptance Criteria table, Blockers, Suggestions, Nitpicks. If a sub-section is empty, write "None".]
 
 ## C# Standards
 
-[Verbatim from csharp-reviewer, including the build PASS/FAIL line. Omit this whole section if csharp-reviewer was not dispatched.]
+[Verbatim from reviewer-csharp, including the build PASS/FAIL line. Omit this whole section if reviewer-csharp was not dispatched.]
 
 ## Web Standards
 
-[Verbatim from react-reviewer, including the lint PASS/FAIL line. Omit this whole section if react-reviewer was not dispatched.]
+[Verbatim from reviewer-react, including the lint PASS/FAIL line. Omit this whole section if reviewer-react was not dispatched.]
 
 ## Recommended Actions
 

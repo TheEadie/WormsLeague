@@ -121,7 +121,7 @@ Always use `--body-file` so multi-line content and special characters survive in
 
 ## Step 6 — Hand off
 
-Tell the user the issue URL and that the spec is ready for review or implementation with `/plan-spec` (then `/implement`). Do not commit, branch, or open a PR — the existing `/pr` skill handles that once code changes exist. Do not close the issue — it stays open until the implementing PR merges.
+Tell the user the issue URL and that the spec is ready for implementation with `/implement`. Do not commit, branch, or open a PR — the existing `/pr` skill handles that once code changes exist. Do not close the issue — it stays open until the implementing PR merges.
 
 ## If the slice is too large
 

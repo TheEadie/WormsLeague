@@ -1,5 +1,5 @@
 ---
-name: spec-reviewer
+name: reviewer-spec
 description: Reviews a slice diff against its GitHub issue spec (the issue body) and `learnings` sticky comment. Reports missing or partial acceptance criteria, scope creep (changes the spec did not ask for), and asked-for behaviour that looks wrong in the implementation. Use when reviewing a slice for spec drift.
 tools: Read, Grep, Glob, Bash
 ---

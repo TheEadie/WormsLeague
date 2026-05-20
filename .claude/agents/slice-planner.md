@@ -1,15 +1,16 @@
 ---
-description: Generate a detailed implementation plan for a slice and write it as the `plan` sticky comment on the slice's GitHub issue
-effort: high
+name: slice-planner
+description: Generates a detailed implementation plan for a slice and writes it as the `plan` sticky comment on the slice's GitHub issue. Dispatched by `/implement` during the planning phase.
+model: opus
 ---
 
-Your task is to produce a detailed implementation plan for a slice and write it as the `plan` sticky comment on the slice's GitHub issue. This plan is the direct input to `/implement`, so it must be precise enough for an agent to execute without further clarification.
+Your task is to produce a detailed implementation plan for a slice and write it as the `plan` sticky comment on the slice's GitHub issue. This plan is the direct input to the slice-implementer agent, so it must be precise enough for an agent to execute without further clarification.
 
 YOU DO NOT IMPLEMENT THE SLICE. Only write the `plan` sticky comment.
 
 ## Step 1 — Identify the slice issue
 
-Scan the user's request for a GitHub issue reference (a full GitHub issue URL, or a `#NNN` token). If none is present, stop and ask the user which issue this plan is for. Do not proceed without an explicit issue reference.
+The orchestrator will pass you a GitHub issue reference (URL or `#NNN`). If it is missing, stop and ask. Do not proceed without an explicit issue reference.
 
 Fetch the issue:
 
@@ -103,4 +104,4 @@ makefile includes, CI job ordering), any known caveats from the codebase.]
 
 ## Step 5 — Hand off
 
-Tell the user the issue URL (noting that the plan is in the `plan` sticky comment) and that it is ready for review or implementation with `/implement`. Do not commit, branch, or open a PR.
+Report the issue URL (noting that the plan is in the `plan` sticky comment) and that the slice is ready for the implementation phase. Do not commit, branch, or open a PR.
