@@ -23,12 +23,14 @@ The orchestrator will tell you:
 2. Read the relevant component doc(s) under `.claude/docs/components/` for the projects touched. Map: `Worms.Cli*` → `cli.md`; `Worms.Hub.Gateway` → `hub-gateway.md`; `Worms.Hub.Storage` → `hub-storage.md`; `Worms.Hub.Queues` → `hub-queues.md`; `Worms.Hub.Armageddon.Runner*` → `wa-runner.md`; `Worms.Armageddon.Files*` → `armageddon-files.md`; `Worms.Armageddon.Game*` → `armageddon-game.md`; `Worms.Armageddon.Gifs*` → `armageddon-gifs.md`; infrastructure code → `infrastructure.md`.
 3. Run `git diff <base>...<current>` and read every C# hunk. Open the full file when context around a hunk matters.
 4. Run the build for the affected solution / projects with `dotnet build --warnaserror`. Capture the exact output of any failure. The repo enables `TreatWarningsAsErrors`, latest analysers, and Roslynator — **any warning is a Blocker**.
-5. Run JetBrains inspections against the whole solution — this is the same scan as the `Jetbrains` / `InspectCode` CI job in `.github/workflows/code-scanning.yml`, so any warning here will fail CI:
+5. **Always run JetBrains inspections — this step is mandatory and must never be skipped, even if the build passed.** A passing build and a passing inspection check different things; skipping one does not substitute for the other. This is the same scan as the `Jetbrains` / `InspectCode` CI job in `.github/workflows/code-scanning.yml`:
    ```bash
    dotnet tool restore
    dotnet jb inspectcode Worms.sln --output=jetbrains.sarif --format=sarif
    ```
-   Use a Bash timeout of 600000ms — the scan takes ~90s. Then count results: `jq '[.runs[].results[]] | length' jetbrains.sarif`. If >0, list them with `jq -r '.runs[].results[] | "\(.ruleId)\t\(.locations[0].physicalLocation.artifactLocation.uri):\(.locations[0].physicalLocation.region.startLine)\t\(.message.text)"' jetbrains.sarif`. Treat each warning that touches a file in the diff as a Blocker; warnings only in untouched files are out of scope for this review — mention them once as context, do not raise per-finding entries.
+   Use a Bash timeout of 600000ms — the scan takes ~90s. Then count results: `jq '[.runs[].results[]] | length' jetbrains.sarif`. If >0, list them with `jq -r '.runs[].results[] | "\(.ruleId)\t\(.locations[0].physicalLocation.artifactLocation.uri):\(.locations[0].physicalLocation.region.startLine)\t\(.message.text)"' jetbrains.sarif`. Treat each warning that touches a file in the diff as a Blocker; warnings only in untouched files are out of scope — mention them once as context.
+
+   **If the tool fails to run for any reason** (not installed, timeout, command error), report it as a Blocker with the exact error output. Do not rationalize the failure away.
 6. Cross-check each hunk against the standards docs. Common things to look for (not exhaustive):
    - Visibility: new types default to `internal sealed`; `[PublicAPI]` on reflectively-wired types.
    - Records: positional records have no default values; predicates extracted when null-guard comparisons repeat.
@@ -73,6 +75,7 @@ Return your findings in the message below. Stay **under 400 words total**. Cite 
 
 ## Rules
 
+- **Always run JetBrains inspections.** Never skip or substitute them with a passing build result — they check different things. If the tool fails, report a Blocker.
 - **Skip what tooling already enforces.** Formatting from `.editorconfig`, Roslyn analyser rules, and JetBrains InspectCode rules — these surface via `dotnet build --warnaserror` or the inspection scan. Cite them once as a Blocker tied to the failing tool; do not re-raise the same issue as a separate standards finding.
 - **Hard violations vs judgement calls.** A documented rule clearly broken is a Blocker. A pattern that bends a convention for a possibly-good reason is a Suggestion.
 - **Cite the rule.** Every finding names the guideline (file + section/heading) it relates to. If you cannot cite one, the finding is not a standards finding — drop it.
