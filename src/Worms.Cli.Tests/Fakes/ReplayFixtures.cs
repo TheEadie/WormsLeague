@@ -1,7 +1,3 @@
-using System.IO.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
-using Worms.Armageddon.Game;
-
 namespace Worms.Cli.Tests.Fakes;
 
 internal static class ReplayFixtures
@@ -23,8 +19,8 @@ internal static class ReplayFixtures
         string filenameNoExt,
         string? logContent = null)
     {
-        var info = host.Services.GetRequiredService<IWormsArmageddon>().FindInstallation();
-        var fs = host.Services.GetRequiredService<IFileSystem>();
+        var info = host.WormsArmageddon.FindInstallation();
+        var fs = host.FileSystem;
         var wagame = fs.Path.Combine(info.ReplayFolder, filenameNoExt + ".WAgame");
         fs.File.WriteAllBytes(wagame, []);
         if (logContent is not null)

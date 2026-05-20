@@ -23,7 +23,7 @@ internal sealed class TestHost : IDisposable
     public ServiceProvider Services { get; }
     private Command RootCommand { get; }
     private Runner Runner { get; }
-    private MockFileSystem FileSystem { get; }
+    public IFileSystem FileSystem { get; }
     public FakeTimeProvider Time { get; }
     public RecordingBrowserLauncher Browser { get; }
     public RecordingHttpMessageHandler Http { get; }

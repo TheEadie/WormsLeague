@@ -1,8 +1,5 @@
-using System.IO.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;
-using Worms.Armageddon.Game;
 using Worms.Cli.Tests.Fakes;
 
 namespace Worms.Cli.Tests.Commands;
@@ -15,7 +12,7 @@ internal sealed class ProcessReplayShould
     {
         using var host = new TestHost();
         var wagame = ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
-        var fs = host.Services.GetRequiredService<IFileSystem>();
+        var fs = host.FileSystem;
         var expectedLog = wagame.Replace(".WAgame", ".log", StringComparison.OrdinalIgnoreCase);
 
         var exitCode = await host.Run("process", "replay", "2024-01-02");
@@ -30,7 +27,7 @@ internal sealed class ProcessReplayShould
         using var host = new TestHost();
         var wagame1 = ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
         var wagame2 = ReplayFixtures.WriteReplay(host, "2024-02-15 12.00.00 [Offline] One, Two");
-        var fs = host.Services.GetRequiredService<IFileSystem>();
+        var fs = host.FileSystem;
         var expectedLog1 = wagame1.Replace(".WAgame", ".log", StringComparison.OrdinalIgnoreCase);
         var expectedLog2 = wagame2.Replace(".WAgame", ".log", StringComparison.OrdinalIgnoreCase);
 
@@ -45,11 +42,11 @@ internal sealed class ProcessReplayShould
     public async Task ReturnZeroWhenNoMatch()
     {
         using var host = new TestHost();
-        var fs = host.Services.GetRequiredService<IFileSystem>();
+        var fs = host.FileSystem;
 
         var exitCode = await host.Run("process", "replay", "missing");
 
         exitCode.ShouldBe(0);
-        fs.Directory.GetFiles(host.Services.GetRequiredService<IWormsArmageddon>().FindInstallation().ReplayFolder).ShouldBeEmpty();
+        fs.Directory.GetFiles(host.WormsArmageddon.FindInstallation().ReplayFolder).ShouldBeEmpty();
     }
 }

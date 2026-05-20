@@ -1,5 +1,3 @@
-using System.IO.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Cli.Tests.Fakes;
@@ -14,7 +12,7 @@ internal sealed class DeleteReplayShould
     {
         using var host = new TestHost();
         var wagame = ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two", ReplayFixtures.MultiTurnLog);
-        var fs = host.Services.GetRequiredService<IFileSystem>();
+        var fs = host.FileSystem;
         var log = wagame.Replace(".WAgame", ".log", StringComparison.OrdinalIgnoreCase);
 
         var exitCode = await host.Run("delete", "replay", "2024-01-02");
@@ -29,7 +27,7 @@ internal sealed class DeleteReplayShould
     {
         using var host = new TestHost();
         var wagame = ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
-        var fs = host.Services.GetRequiredService<IFileSystem>();
+        var fs = host.FileSystem;
 
         var exitCode = await host.Run("delete", "replay", "2024-01-02");
 
@@ -52,7 +50,7 @@ internal sealed class DeleteReplayShould
         using var host = new TestHost();
         var wagame1 = ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
         var wagame2 = ReplayFixtures.WriteReplay(host, "2024-02-15 12.00.00 [Offline] One, Two");
-        var fs = host.Services.GetRequiredService<IFileSystem>();
+        var fs = host.FileSystem;
 
         var exitCode = await host.Run("delete", "replay", "*");
 
