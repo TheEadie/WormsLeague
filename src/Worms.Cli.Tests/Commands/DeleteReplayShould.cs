@@ -11,26 +11,27 @@ internal sealed class DeleteReplayShould
     public async Task DeleteBothTheWAgameAndItsLog()
     {
         using var host = new TestHost();
-        var wagame = ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two", ReplayFixtures.MultiTurnLog);
-        var log = wagame.Replace(".WAgame", ".log", StringComparison.OrdinalIgnoreCase);
+        var replayFolder = host.WormsArmageddon.FindInstallation().ReplayFolder;
+        ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two", ReplayFixtures.MultiTurnLog);
 
         var exitCode = await host.Run("delete", "replay", "2024-01-02");
 
         exitCode.ShouldBe(0);
-        host.FileSystem.File.Exists(wagame).ShouldBeFalse();
-        host.FileSystem.File.Exists(log).ShouldBeFalse();
+        host.FileSystem.File.Exists(Path.Combine(replayFolder, "2024-01-02 10.00.00 [Offline] One, Two.WAgame")).ShouldBeFalse();
+        host.FileSystem.File.Exists(Path.Combine(replayFolder, "2024-01-02 10.00.00 [Offline] One, Two.log")).ShouldBeFalse();
     }
 
     [Test]
     public async Task DeleteTheWAgameWhenNoLogPresent()
     {
         using var host = new TestHost();
-        var wagame = ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
+        var replayFolder = host.WormsArmageddon.FindInstallation().ReplayFolder;
+        ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
 
         var exitCode = await host.Run("delete", "replay", "2024-01-02");
 
         exitCode.ShouldBe(0);
-        host.FileSystem.File.Exists(wagame).ShouldBeFalse();
+        host.FileSystem.File.Exists(Path.Combine(replayFolder, "2024-01-02 10.00.00 [Offline] One, Two.WAgame")).ShouldBeFalse();
     }
 
     [Test]
@@ -46,13 +47,14 @@ internal sealed class DeleteReplayShould
     public async Task ReturnNonZeroWhenMultipleReplaysMatch()
     {
         using var host = new TestHost();
-        var wagame1 = ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
-        var wagame2 = ReplayFixtures.WriteReplay(host, "2024-02-15 12.00.00 [Offline] One, Two");
+        var replayFolder = host.WormsArmageddon.FindInstallation().ReplayFolder;
+        ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
+        ReplayFixtures.WriteReplay(host, "2024-02-15 12.00.00 [Offline] One, Two");
 
         var exitCode = await host.Run("delete", "replay", "*");
 
         exitCode.ShouldBe(1);
-        host.FileSystem.File.Exists(wagame1).ShouldBeTrue();
-        host.FileSystem.File.Exists(wagame2).ShouldBeTrue();
+        host.FileSystem.File.Exists(Path.Combine(replayFolder, "2024-01-02 10.00.00 [Offline] One, Two.WAgame")).ShouldBeTrue();
+        host.FileSystem.File.Exists(Path.Combine(replayFolder, "2024-02-15 12.00.00 [Offline] One, Two.WAgame")).ShouldBeTrue();
     }
 }
