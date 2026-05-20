@@ -26,9 +26,10 @@ Returns the filename (not the full path) of the generated GIF.
 1. Computes `framesFolder` from `GameInfo.CaptureFolder` (where WA deposits extracted PNGs)
 2. Deletes any existing frames in that folder
 3. Calls `IWormsArmageddon.ExtractReplayFrames(...)` — this runs WA with `/getvideo` to dump PNG frames
-4. Assembles frames into a GIF using **ImageMagick** (`MagickImageCollection`)
-5. Quantises to 256 colours and optimises transparency
-6. Deletes the frame folder
+4. Lists frames via `Directory.GetFiles` and sorts ordinally by filename — `GetFiles` makes no ordering guarantee, and on Linux/ext4 (where wa-runner runs in Docker) the returned order can be arbitrary, so the sort is required to keep playback in sequence
+5. Assembles frames into a GIF using **ImageMagick** (`MagickImageCollection`)
+6. Quantises to 256 colours and optimises transparency
+7. Deletes the frame folder
 
 If WA produces no frames (no folder, or folder with zero PNGs), `GifCreator` throws `GifFrameExtractionFailedException` carrying the `ReplayPath` and `FramesFolder`. Callers (e.g. the WA Runner `Processor`) log the exception and continue — GIF generation is non-fatal to replay processing.
 
