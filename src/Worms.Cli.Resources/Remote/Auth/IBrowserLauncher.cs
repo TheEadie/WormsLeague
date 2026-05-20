@@ -1,6 +1,6 @@
 namespace Worms.Cli.Resources.Remote.Auth;
 
-internal interface IBrowserLauncher
+public interface IBrowserLauncher
 {
-    void OpenBrowser(string url);
+    void OpenBrowser(Uri url);
 }

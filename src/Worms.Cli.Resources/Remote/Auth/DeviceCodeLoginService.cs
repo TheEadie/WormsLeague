@@ -26,7 +26,7 @@ internal sealed class DeviceCodeLoginService(
             deviceCodeResponse.UserCode);
 
         logger.LogDebug("Opening browser...");
-        browserLauncher.OpenBrowser(deviceCodeResponse.VerificationUriComplete.OriginalString);
+        browserLauncher.OpenBrowser(deviceCodeResponse.VerificationUriComplete);
 
         logger.LogDebug("Requesting tokens...");
         var tokenResponse = await RequestTokenAsync(deviceCodeResponse, cancellationToken);

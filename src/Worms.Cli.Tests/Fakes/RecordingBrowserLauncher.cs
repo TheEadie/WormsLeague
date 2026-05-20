@@ -4,7 +4,7 @@ namespace Worms.Cli.Tests.Fakes;
 
 internal sealed class RecordingBrowserLauncher : IBrowserLauncher
 {
-    public List<string> OpenedUrls { get; } = [];
+    public List<Uri> OpenedUrls { get; } = [];
 
-    public void OpenBrowser(string url) => OpenedUrls.Add(url);
+    public void OpenBrowser(Uri url) => OpenedUrls.Add(url);
 }

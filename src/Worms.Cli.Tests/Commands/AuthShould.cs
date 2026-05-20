@@ -25,7 +25,7 @@ internal sealed class AuthShould
         exitCode.ShouldBe(0);
 
         host.Browser.OpenedUrls.ShouldHaveSingleItem()
-            .ShouldBe("https://eadie.eu.auth0.com/activate?user_code=ABCD-EFGH");
+            .OriginalString.ShouldBe("https://eadie.eu.auth0.com/activate?user_code=ABCD-EFGH");
 
         host.Http.Requests.Count.ShouldBe(2);
 
