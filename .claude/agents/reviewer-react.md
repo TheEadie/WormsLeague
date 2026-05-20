@@ -1,5 +1,5 @@
 ---
-name: react-reviewer
+name: reviewer-react
 description: Reviews changes to the web UI (Worms.Hub.Web — React/TypeScript) against the web component doc and steering docs. Runs `make web.lint` and reports failures. Use when a slice touches `src/Worms.Hub.Web/`.
 tools: Read, Grep, Glob, Bash
 ---

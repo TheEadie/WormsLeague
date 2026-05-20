@@ -1,5 +1,5 @@
 ---
-name: csharp-reviewer
+name: reviewer-csharp
 description: Reviews C#/.NET changes in a slice diff against the repo's coding guidelines, testing strategy, CI patterns, and relevant component docs. Runs `dotnet build --warnaserror` and `dotnet jb inspectcode` (matching the `Jetbrains` CI job) and reports failures. Use when a slice touches C# code (.cs, .csproj, .razor, .sln).
 tools: Read, Grep, Glob, Bash
 ---
