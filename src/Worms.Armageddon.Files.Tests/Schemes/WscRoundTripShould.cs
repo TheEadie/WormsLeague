@@ -19,7 +19,6 @@ internal sealed class WscRoundTripShould : IDisposable
     public WscRoundTripShould()
     {
         var services = new ServiceCollection();
-        _ = services.AddSingleton<IFileSystem>(new FileSystem());
         _ = services.AddWormsArmageddonFilesServices();
         var serviceProvider = services.BuildServiceProvider();
         _writer = serviceProvider.GetRequiredService<IWscWriter>();
