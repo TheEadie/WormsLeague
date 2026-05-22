@@ -11,10 +11,12 @@ using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Game.Fake;
 using Worms.Armageddon.Gifs;
+using Worms.Cli.CommandLine;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Folders;
 using Worms.Cli.Resources.Local.Network;
 using Worms.Cli.Resources.Remote.Auth;
+using Worms.Cli.Resources.Remote.Updates;
 using Worms.Cli.Tests.Fakes;
 
 namespace Worms.Cli.Tests;
@@ -32,6 +34,8 @@ internal sealed class TestHost : IDisposable
     public RecordingWormsArmageddon WormsArmageddon { get; }
     public RecordingFolderOpener FolderOpener { get; }
     public StubIpAddressLookup IpAddressLookup { get; } = new();
+    public FakeCliInfoRetriever CliInfo { get; }
+    public RecordingCliUpdateDownloader CliUpdateDownloader { get; }
 
     public TestHost(bool wormsInstalled = true, bool hostCreatesReplay = true)
     {
@@ -93,6 +97,20 @@ internal sealed class TestHost : IDisposable
 
         services.RemoveAll<IBrowserLauncher>();
         services.AddSingleton<IBrowserLauncher>(Browser);
+
+        CliInfo = new FakeCliInfoRetriever();
+        services.RemoveAll<ICliInfoRetriever>();
+        services.AddSingleton<ICliInfoRetriever>(CliInfo);
+
+        // Seed a stub binary at the fake CLI's reported install path so
+        // CliUpdater.InstallUpdate can move it to a .bak file.
+        FileSystem.Directory.CreateDirectory(CliInfo.Info.Folder);
+        FileSystem.File.WriteAllBytes(
+            FileSystem.Path.Combine(CliInfo.Info.Folder, CliInfo.Info.FileName), []);
+
+        CliUpdateDownloader = new RecordingCliUpdateDownloader(FileSystem, CliInfo.Info.FileName);
+        services.RemoveAll<ICliUpdateDownloader>();
+        services.AddSingleton<ICliUpdateDownloader>(CliUpdateDownloader);
 
         services.RemoveAll<TimeProvider>();
         services.AddSingleton<TimeProvider>(Time);

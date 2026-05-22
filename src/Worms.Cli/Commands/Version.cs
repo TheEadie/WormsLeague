@@ -8,7 +8,7 @@ namespace Worms.Cli.Commands;
 
 internal sealed class Version() : Command("version", "Get the current version of the Worms CLI");
 
-internal sealed class VersionHandler(IWormsArmageddon wormsArmageddon, CliInfoRetriever cliInfoRetriever)
+internal sealed class VersionHandler(IWormsArmageddon wormsArmageddon, ICliInfoRetriever cliInfoRetriever)
     : AsynchronousCommandLineAction
 {
     public override Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)

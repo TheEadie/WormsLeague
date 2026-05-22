@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace Worms.Cli.CommandLine;
 
 internal sealed class CliInfoRetriever(IFileSystem fileSystem, ILogger<CliInfoRetriever> logger)
+    : ICliInfoRetriever
 {
     public CliInfo Get()
     {

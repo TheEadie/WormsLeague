@@ -28,7 +28,7 @@ internal static class Program
         var configuration = new ConfigurationBuilder().AddEnvironmentVariables("WORMS_").Build();
 
         var serviceCollection = new ServiceCollection().AddHttpClient()
-            .AddWormsCliLogging(GetLogLevel(args))
+            .AddWormsCliLogging(LogLevelParser.GetLogLevel(args))
             .AddWormsArmageddonFilesServices()
             .AddWormsArmageddonGameServices()
             .AddWormsArmageddonGifsServices()
@@ -46,28 +46,6 @@ internal static class Program
 
         _ = span?.SetTag(Telemetry.Spans.Root.ProcessExitCode, result);
         return result;
-    }
-
-    [SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "This is more readable")]
-    private static LogLevel GetLogLevel(string[] args)
-    {
-        var verbose = args.Contains("-v") || args.Contains("--verbose");
-        var quiet = args.Contains("-q") || args.Contains("--quiet");
-
-        _ = Activity.Current?.SetTag(Telemetry.Spans.Root.Verbose, verbose);
-        _ = Activity.Current?.SetTag(Telemetry.Spans.Root.Quiet, quiet);
-
-        if (verbose)
-        {
-            return LogLevel.Debug;
-        }
-
-        if (quiet)
-        {
-            return LogLevel.Error;
-        }
-
-        return LogLevel.Information;
     }
 
     [UnconditionalSuppressMessage("RequiresDynamicCodeEvaluation", "IL3050")]

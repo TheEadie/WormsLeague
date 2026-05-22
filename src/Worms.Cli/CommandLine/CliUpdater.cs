@@ -6,7 +6,7 @@ using Worms.Cli.Resources.Remote.Updates;
 namespace Worms.Cli.CommandLine;
 
 internal sealed class CliUpdater(
-    CliInfoRetriever cliInfoRetriever,
+    ICliInfoRetriever cliInfoRetriever,
     ICliUpdateRetriever cliUpdateRetriever,
     ICliUpdateDownloader cliUpdateDownloader,
     IFileSystem fileSystem,
@@ -75,14 +75,14 @@ internal sealed class CliUpdater(
         logger.LogDebug("Moving {Source} to {Destination}", updatePath, installPath);
         fileSystem.File.Move(updatePath, installPath);
 
-        var files = Directory.GetFiles(updateFolder);
+        var files = fileSystem.Directory.GetFiles(updateFolder);
         _ = Activity.Current?.AddTag(Telemetry.Spans.Update.NumberOfFiles, files.Length + 1);
 
         foreach (var file in files)
         {
-            var destination = Path.Combine(cliInfo.Folder, Path.GetFileName(file));
+            var destination = fileSystem.Path.Combine(cliInfo.Folder, fileSystem.Path.GetFileName(file));
             logger.LogDebug("Copying {Source} to {Destination}", file, destination);
-            File.Copy(file, destination, true);
+            fileSystem.File.Copy(file, destination, true);
         }
     }
 }

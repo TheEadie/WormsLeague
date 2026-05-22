@@ -53,7 +53,7 @@ Each `ServiceRegistration` extension follows the same pattern: a single `Add*Ser
 
 ## Logging
 
-All output goes to stderr via `ColorFormatter`. Use `ILogger<T>` in handlers; do not write to `Console` directly except for actual command output (i.e. the table of resources). Verbosity is controlled by `-v`/`-q` flags parsed in `Program.GetLogLevel()`.
+All output goes to stderr via `ColorFormatter`. Use `ILogger<T>` in handlers; do not write to `Console` directly except for actual command output (i.e. the table of resources). Verbosity is controlled by `-v`/`-q` flags parsed in `LogLevelParser.GetLogLevel(args)` (called from `Program.Main`). `LogLevelParser` is an internal static class so it can be unit-tested directly without a `TestHost`.
 
 ## Telemetry
 
@@ -71,5 +71,10 @@ CLI unit tests live in `src/Worms.Cli.Tests` (NUnit + Shouldly). Tests drive the
 - `IIpAddressLookup` — `StubIpAddressLookup` returns a configurable `IpAddressLookupResult`. Tests assert on whether `worms host` proceeds, falls back to an error, or surfaces the validation message, without touching real network interfaces.
 
 `TestHost` also registers the `Worms.Armageddon.Game.Fake` services so `IWormsArmageddon` is the in-memory fake — installed by default; opt in to a 'not installed' fake via `new TestHost(wormsInstalled: false)`, or suppress the fake's automatic `.WAGame` replay write via `new TestHost(hostCreatesReplay: false)` (used by the no-replay / old-replay `worms host` tests to populate the replay folder explicitly or leave it empty). The fake is wrapped in a small recording decorator (`RecordingWormsArmageddon`) so tests can observe which `PlayReplay` calls the CLI issued, and whether `Host()` was called.
+
+Two further seams are wired through `TestHost`:
+
+- `ICliInfoRetriever` — `FakeCliInfoRetriever` returns a fixed `CliInfo` (`Version=1.0.0`, `Folder=/cli`, `FileName=worms`). Accessible as `host.CliInfo`. Tests that need a different version can reassign `host.CliInfo.Info` before calling `host.Run(...)`. `TestHost` also seeds the `MockFileSystem` with a stub binary at the reported install path so `CliUpdater.InstallUpdate` can move it to a `.bak` file.
+- `ICliUpdateDownloader` — `RecordingCliUpdateDownloader` records each `DownloadLatestCli` call in `host.CliUpdateDownloader.Calls` and writes a stub binary into the update folder (via `IFileSystem`) so the subsequent file-move in `InstallUpdate` succeeds.
 
 When adding tests for a new command, extend this project rather than creating a new one. Test classes follow the `<TypeUnderTest>Should` convention; test methods describe a behaviour.
