@@ -16,7 +16,7 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddWormsArmageddonFilesServices(this IServiceCollection services)
     {
-        services.TryAddSingleton<IFileSystem>(new FileSystem());
+        services.TryAddSingleton<IFileSystem, FileSystem>();
         services.TryAddScoped<IWscReader, WscReader>();
         services.TryAddScoped<IWscWriter, WscWriter>();
         services.TryAddScoped<ISchemeTextReader, SchemeTextReader>();
