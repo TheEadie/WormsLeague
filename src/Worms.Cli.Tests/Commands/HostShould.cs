@@ -146,7 +146,7 @@ internal sealed class HostShould
     public async Task ReturnNonZeroWhenIpAddressNotFound()
     {
         using var host = new TestHost();
-        host.IpAddressLookup.Result = new IpAddressLookupResult.NotFound("No network adapter found for domain: red-gate.com");
+        host.IpAddressLookup.Result = new IpAddressNotFound("No network adapter found for domain: red-gate.com");
 
         var exitCode = await host.Run("host");
 

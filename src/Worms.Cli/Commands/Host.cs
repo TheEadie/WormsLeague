@@ -65,8 +65,8 @@ internal sealed class HostHandler(
 
         Validated<string> ipAddress = ipAddressLookup.LookupForDomain(Domain) switch
         {
-            IpAddressLookupResult.Found f => new Valid<string>(f.Address),
-            IpAddressLookupResult.NotFound nf => new Invalid<string>(nf.Error),
+            IpAddressFound f => new Valid<string>(f.Address),
+            IpAddressNotFound nf => new Invalid<string>(nf.Error),
             _ => throw new InvalidOperationException("Unexpected IpAddressLookupResult type")
         };
 

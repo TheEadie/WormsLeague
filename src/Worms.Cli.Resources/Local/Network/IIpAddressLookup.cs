@@ -5,8 +5,8 @@ public interface IIpAddressLookup
     IpAddressLookupResult LookupForDomain(string domain);
 }
 
-public abstract record IpAddressLookupResult
-{
-    public sealed record Found(string Address) : IpAddressLookupResult;
-    public sealed record NotFound(string Error) : IpAddressLookupResult;
-}
+public abstract record IpAddressLookupResult;
+
+public sealed record IpAddressFound(string Address) : IpAddressLookupResult;
+
+public sealed record IpAddressNotFound(string Error) : IpAddressLookupResult;

@@ -14,7 +14,7 @@ internal sealed class NetworkInterfaceIpAddressLookup : IIpAddressLookup
 
         if (adapter is null)
         {
-            return new IpAddressLookupResult.NotFound($"No network adapter found for domain: {domain}");
+            return new IpAddressNotFound($"No network adapter found for domain: {domain}");
         }
 
         var ipv4 = adapter.GetIPProperties()
@@ -22,7 +22,7 @@ internal sealed class NetworkInterfaceIpAddressLookup : IIpAddressLookup
             ?.Address.ToString();
 
         return ipv4 is null
-            ? new IpAddressLookupResult.NotFound($"No IPv4 address found for domain: {domain}")
-            : new IpAddressLookupResult.Found(ipv4);
+            ? new IpAddressNotFound($"No IPv4 address found for domain: {domain}")
+            : new IpAddressFound(ipv4);
     }
 }
