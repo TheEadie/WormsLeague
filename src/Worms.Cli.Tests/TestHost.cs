@@ -13,6 +13,7 @@ using Worms.Armageddon.Game.Fake;
 using Worms.Armageddon.Gifs;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Folders;
+using Worms.Cli.Resources.Local.Network;
 using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Tests.Fakes;
 
@@ -30,8 +31,9 @@ internal sealed class TestHost : IDisposable
     public CapturingLoggerProvider Logs { get; }
     public RecordingWormsArmageddon WormsArmageddon { get; }
     public RecordingFolderOpener FolderOpener { get; }
+    public StubIpAddressLookup IpAddressLookup { get; } = new();
 
-    public TestHost(bool wormsInstalled = true)
+    public TestHost(bool wormsInstalled = true, bool hostCreatesReplay = true)
     {
         FileSystem = new MockFileSystem();
         Time = new FakeTimeProvider(DateTimeOffset.UtcNow);
@@ -53,7 +55,7 @@ internal sealed class TestHost : IDisposable
 
         if (wormsInstalled)
         {
-            services.AddFakeInstalledWormsArmageddonServices(FileSystem);
+            services.AddFakeInstalledWormsArmageddonServices(FileSystem, hostCreatesReplay: hostCreatesReplay);
         }
         else
         {
@@ -94,6 +96,9 @@ internal sealed class TestHost : IDisposable
 
         services.RemoveAll<TimeProvider>();
         services.AddSingleton<TimeProvider>(Time);
+
+        services.RemoveAll<IIpAddressLookup>();
+        services.AddSingleton<IIpAddressLookup>(IpAddressLookup);
 
         services.AddHttpClient(Options.DefaultName)
             .ConfigurePrimaryHttpMessageHandler(_ => Http);

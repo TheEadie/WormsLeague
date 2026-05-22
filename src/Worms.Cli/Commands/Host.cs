@@ -1,13 +1,12 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 using Worms.Armageddon.Game;
 using Worms.Cli.Commands.Validation;
 using Worms.Cli.League;
 using Worms.Cli.Resources;
+using Worms.Cli.Resources.Local.Network;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Remote.Games;
 using Worms.Cli.Resources.Remote.Replays;
@@ -53,6 +52,8 @@ internal sealed class HostHandler(
     IRemoteGameUpdater gameUpdater,
     IResourceRetriever<LocalReplay> localReplayRetriever,
     IResourceCreator<RemoteReplay, RemoteReplayCreateParameters> remoteReplayCreator,
+    IIpAddressLookup ipAddressLookup,
+    TimeProvider timeProvider,
     ILogger<HostHandler> logger) : AsynchronousCommandLineAction
 {
     private const string LeagueName = "redgate";
@@ -62,12 +63,19 @@ internal sealed class HostHandler(
     {
         _ = Activity.Current?.SetTag("name", Telemetry.Spans.Host.SpanName);
 
+        Validated<string> ipAddress = ipAddressLookup.LookupForDomain(Domain) switch
+        {
+            IpAddressFound f => new Valid<string>(f.Address),
+            IpAddressNotFound nf => new Invalid<string>(nf.Error),
+            _ => throw new InvalidOperationException("Unexpected IpAddressLookupResult type")
+        };
+
         var config = new Config(
             parseResult.GetValue(Host.DryRun),
             parseResult.GetValue(Host.SkipSchemeDownload),
             parseResult.GetValue(Host.SkipUpload),
             parseResult.GetValue(Host.SkipAnnouncement),
-            GetIpAddress(Domain),
+            ipAddress,
             wormsArmageddon.FindInstallation());
 
         RecordTelemetryForConfig(config);
@@ -179,7 +187,7 @@ internal sealed class HostHandler(
         }
 
         // Check if the replay was created during this session
-        var timeSinceGameEnded = DateTime.UtcNow - replay.Details.Date;
+        var timeSinceGameEnded = timeProvider.GetUtcNow().DateTime - replay.Details.Date;
         if (timeSinceGameEnded > TimeSpan.FromHours(1))
         {
             logger.LogWarning("No recent replay found to upload");
@@ -198,32 +206,6 @@ internal sealed class HostHandler(
         }
     }
 
-    private static Validated<string> GetIpAddress(string domain)
-    {
-        return NetworkInterface.GetAllNetworkInterfaces()
-            .Bind(GetAdaptersForDomain())
-            .Validate(NetworkAdapterExists())
-            .Map(GetIpV4Address())
-            .Validate(IpV4AddressExists())
-            .Map(x => x!);
-
-        Func<NetworkInterface[], NetworkInterface?> GetAdaptersForDomain() =>
-            x => Array.Find(
-                x,
-                a => a.GetIPProperties().DnsSuffix == domain && a.OperationalStatus == OperationalStatus.Up);
-
-        Func<NetworkInterface?, string?> GetIpV4Address() =>
-            x => x!.GetIPProperties()
-                .UnicastAddresses.FirstOrDefault(u => u.Address.AddressFamily == AddressFamily.InterNetwork)
-                ?.Address.ToString();
-
-        List<ValidationRule<NetworkInterface?>> NetworkAdapterExists() =>
-            Valid.Rules<NetworkInterface?>().Must(x => x is not null, $"No network adapter found for domain: {domain}");
-
-        List<ValidationRule<string?>> IpV4AddressExists() =>
-            Valid.Rules<string?>().Must(x => x is not null, $"No IPv4 address found for domain: {domain}");
-    }
-
     private Task DownloadLatestOptions(bool skipSchemeDownload, bool dryRun)
     {
         if (skipSchemeDownload)
@@ -238,7 +220,7 @@ internal sealed class HostHandler(
     private Task StartWorms(bool dryRun, CancellationToken cancellationToken)
     {
         logger.LogInformation("Starting Worms Armageddon");
-        return !dryRun ? wormsArmageddon.Host() : Task.Delay(5000, cancellationToken);
+        return !dryRun ? wormsArmageddon.Host() : Task.Delay(TimeSpan.FromSeconds(5), timeProvider, cancellationToken);
     }
 
     private Task WaitForGameToClose(Task runGame)

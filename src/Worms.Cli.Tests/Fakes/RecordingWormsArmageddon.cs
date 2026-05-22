@@ -8,9 +8,15 @@ internal sealed class RecordingWormsArmageddon(IWormsArmageddon inner) : IWormsA
 
     public List<PlayReplayCall> PlayReplayCalls { get; } = [];
 
+    public bool HostWasCalled { get; private set; }
+
     public GameInfo FindInstallation() => inner.FindInstallation();
 
-    public Task Host() => inner.Host();
+    public Task Host()
+    {
+        HostWasCalled = true;
+        return inner.Host();
+    }
 
     public Task GenerateReplayLog(string replayPath) => inner.GenerateReplayLog(replayPath);
 
