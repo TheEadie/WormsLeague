@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Worms.Armageddon.Files.Schemes.Random;
 using Worms.Cli.Resources.Local.Folders;
 using Worms.Cli.Resources.Local.Gifs;
+using Worms.Cli.Resources.Local.Network;
 using Worms.Cli.Resources.Local.Replays;
 using Worms.Cli.Resources.Local.Schemes;
 using Worms.Cli.Resources.Remote;
@@ -38,6 +39,7 @@ public static class ServiceRegistration
             .AddScoped<IResourceCreator<LocalGif, LocalGifCreateParameters>, LocalGifCreator>()
             .AddScoped<ITokenStore, TokenStore>()
             .AddScoped<IBrowserLauncher, BrowserLauncher>()
+            .AddScoped<IIpAddressLookup, NetworkInterfaceIpAddressLookup>()
             .AddSingleton(TimeProvider.System)
             .AddScoped<ILoginService, DeviceCodeLoginService>()
             .AddScoped<IAccessTokenRefreshService, AccessTokenRefreshService>()
