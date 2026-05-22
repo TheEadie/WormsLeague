@@ -19,7 +19,7 @@ internal static class ValidationExtensions
         return errors.Count > 0 ? new Invalid<T>(errors) : new Valid<T>(value);
     }
 
-    public static Validated<T> Validate<T>(this Validated<T> value, List<ValidationRule<T>> validations) =>
+    private static Validated<T> Validate<T>(this Validated<T> value, List<ValidationRule<T>> validations) =>
         !value.IsValid ? value : value.Value.Validate(validations);
 
     public static async Task<Validated<T>> Validate<T>(
