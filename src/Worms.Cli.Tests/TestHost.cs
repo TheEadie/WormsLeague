@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -34,7 +35,7 @@ internal sealed class TestHost : IDisposable
     public RecordingWormsArmageddon WormsArmageddon { get; }
     public RecordingFolderOpener FolderOpener { get; }
     public StubIpAddressLookup IpAddressLookup { get; } = new();
-    public FakeCliInfoRetriever CliInfo { get; }
+    [PublicAPI] public FakeCliInfoRetriever CliInfo { get; }
     public RecordingCliUpdateDownloader CliUpdateDownloader { get; }
 
     public TestHost(bool wormsInstalled = true, bool hostCreatesReplay = true)
