@@ -1,3 +1,4 @@
+using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Worms.Armageddon.Files.Replays.Filename;
@@ -15,6 +16,7 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddWormsArmageddonFilesServices(this IServiceCollection services)
     {
+        services.TryAddSingleton<IFileSystem, FileSystem>();
         services.TryAddScoped<IWscReader, WscReader>();
         services.TryAddScoped<IWscWriter, WscWriter>();
         services.TryAddScoped<ISchemeTextReader, SchemeTextReader>();

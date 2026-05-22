@@ -1,3 +1,4 @@
+using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;
@@ -11,6 +12,7 @@ internal sealed class WscRoundTripShould : IDisposable
 {
     private readonly IWscWriter _writer;
     private readonly IWscReader _reader;
+    private readonly IFileSystem _fileSystem;
     private readonly string _tempDirectory;
     private readonly string _file;
 
@@ -21,11 +23,12 @@ internal sealed class WscRoundTripShould : IDisposable
         var serviceProvider = services.BuildServiceProvider();
         _writer = serviceProvider.GetRequiredService<IWscWriter>();
         _reader = serviceProvider.GetRequiredService<IWscReader>();
+        _fileSystem = serviceProvider.GetRequiredService<IFileSystem>();
 
         _tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         _file = Path.Combine(_tempDirectory, Path.GetRandomFileName() + ".wsc");
 
-        _ = Directory.CreateDirectory(_tempDirectory);
+        _ = _fileSystem.Directory.CreateDirectory(_tempDirectory);
     }
 
     [Test]
@@ -56,7 +59,7 @@ internal sealed class WscRoundTripShould : IDisposable
 
     public void Dispose()
     {
-        File.Delete(_file);
-        Directory.Delete(_tempDirectory);
+        _fileSystem.File.Delete(_file);
+        _fileSystem.Directory.Delete(_tempDirectory);
     }
 }

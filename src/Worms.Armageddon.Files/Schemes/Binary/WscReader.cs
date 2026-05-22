@@ -1,12 +1,15 @@
+using System.IO.Abstractions;
 using Syroot.Worms.Armageddon;
 
 namespace Worms.Armageddon.Files.Schemes.Binary;
 
-internal sealed class WscReader : IWscReader
+internal sealed class WscReader(IFileSystem fileSystem) : IWscReader
 {
     public Scheme Read(string path)
     {
-        var scheme = new Scheme(path);
+        var bytes = fileSystem.File.ReadAllBytes(path);
+        using var stream = new MemoryStream(bytes);
+        var scheme = new Scheme(stream);
 
         // This value incorrectly defaults to false in the 3rd party library
         // when the scheme is Version 1
