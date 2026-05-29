@@ -63,7 +63,7 @@ jobs:
             - 'build/download-wa-game.sh'
           hub-common:
             - 'src/Directory.Build.props'
-            - '.github/workflows/hub-*.yml'
+            - '.github/workflows/zz-*-hub.yml'
             - 'build/docker/makefile'
             - 'build/*.sh'
           clis:
@@ -74,7 +74,7 @@ jobs:
             - 'src/Worms.Armageddon.Gifs/**'
             - 'src/Directory.Build.props'
             - 'build/cli/**'
-            - '.github/workflows/hub-*.yml'
+            - '.github/workflows/zz-*-cli.yml'
           web:
             - 'src/Worms.Hub.Web/**'
             - 'build/web/**'
