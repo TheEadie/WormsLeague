@@ -88,4 +88,3 @@ jobs:
             - '.github/workflows/zz-build-*.yml'
             - '.github/workflows/zz-release-*.yml'
             - '.github/workflows/zz-detect-changes.yml'
-            - '.github/workflows/zz-inspections.yml'
