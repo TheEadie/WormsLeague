@@ -68,8 +68,7 @@ jobs:
             - 'build/*.sh'
           clis:
             - 'src/Worms.Cli/**'
-            - 'src/Worms.Cli.*/**'
-            - '!src/Worms.Cli.Tests/**'
+            - 'src/Worms.Cli.Resources/**'
             - 'src/Worms.Armageddon.Files/**'
             - 'src/Worms.Armageddon.Game/**'
             - 'src/Worms.Armageddon.Gifs/**'
