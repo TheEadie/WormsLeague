@@ -63,19 +63,18 @@ jobs:
             - 'build/download-wa-game.sh'
           hub-common:
             - 'src/Directory.Build.props'
-            - '.github/workflows/hub-*.yml'
+            - '.github/workflows/zz-*-hub.yml'
             - 'build/docker/makefile'
             - 'build/*.sh'
           clis:
             - 'src/Worms.Cli/**'
-            - 'src/Worms.Cli.*/**'
-            - '!src/Worms.Cli.Tests/**'
+            - 'src/Worms.Cli.Resources/**'
             - 'src/Worms.Armageddon.Files/**'
             - 'src/Worms.Armageddon.Game/**'
             - 'src/Worms.Armageddon.Gifs/**'
             - 'src/Directory.Build.props'
             - 'build/cli/**'
-            - '.github/workflows/hub-*.yml'
+            - '.github/workflows/zz-*-cli.yml'
           web:
             - 'src/Worms.Hub.Web/**'
             - 'build/web/**'
@@ -89,4 +88,3 @@ jobs:
             - '.github/workflows/zz-build-*.yml'
             - '.github/workflows/zz-release-*.yml'
             - '.github/workflows/zz-detect-changes.yml'
-            - '.github/workflows/zz-inspections.yml'
