@@ -49,7 +49,7 @@ internal sealed class ReplayResourceBuilder
 
     public ReplayResource Build()
     {
-        var placements = PlacementCalculator.Calculate(_turns, _teams, _winner);
+        var placements = PlacementCalculator.Calculate(_teams, _winner);
         return new ReplayResource(_start, true, _winner, _turns, placements, _fullLog);
     }
 }
