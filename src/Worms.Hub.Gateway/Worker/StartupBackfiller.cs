@@ -16,6 +16,7 @@ internal sealed class StartupBackfiller(
     {
         await BackfillPlacements(cancellationToken);
         await BackfillRatings(cancellationToken);
+        await RerankAllGames(cancellationToken);
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types",
@@ -134,5 +135,86 @@ internal sealed class StartupBackfiller(
         }
 
         logger.LogInformation("Ratings backfill complete.");
+    }
+
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types",
+        Justification = "Re-rank continues with remaining replays/leagues even if one fails")]
+    private async Task RerankAllGames(CancellationToken _)
+    {
+        using var activity = Telemetry.Source.StartActivity("Winner-Takes-All Re-rank");
+
+        using var scope = serviceProvider.CreateScope();
+        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+        var connectionString = configuration.GetConnectionString("Database");
+        await using var connection = new NpgsqlConnection(connectionString);
+
+        // The data_fixes table ships in migration V0.10. The gateway may start against an
+        // older schema during a rollout (code deployed before the migration is applied), so
+        // skip gracefully rather than crashing — the re-rank runs on a later startup once the
+        // schema is current.
+        var tableExists = await connection.QuerySingleAsync<string?>(
+            "SELECT to_regclass('public.data_fixes')::text");
+        if (tableExists is null)
+        {
+            logger.LogInformation(
+                "data_fixes table does not exist yet — skipping winner-takes-all re-rank until the schema is migrated.");
+            return;
+        }
+
+        var markerCount = await connection.QuerySingleAsync<long>(
+            "SELECT COUNT(*) FROM data_fixes WHERE name = 'winner-takes-all-rerank'");
+        if (markerCount > 0)
+        {
+            logger.LogInformation("Winner-takes-all re-rank already applied — skipping.");
+            return;
+        }
+
+        logger.LogInformation("Starting winner-takes-all re-rank...");
+
+        var replayRepository = scope.ServiceProvider.GetRequiredService<IReplaysRepository>();
+        var replayTextReader = scope.ServiceProvider.GetRequiredService<IReplayTextReader>();
+        var leaguesRepository = scope.ServiceProvider.GetRequiredService<ILeaguesRepository>();
+        var ratingsCalculator = scope.ServiceProvider.GetRequiredService<RatingsCalculator>();
+
+        foreach (var replay in replayRepository.GetAll().Where(r => r.Status == "Processed"))
+        {
+            if (string.IsNullOrEmpty(replay.FullLog))
+            {
+                logger.LogDebug("Skipping replay {ReplayId} — no full log available.", replay.Id);
+                continue;
+            }
+
+            try
+            {
+                var replayModel = replayTextReader.GetModel(replay.FullLog);
+                var placements = replayModel.Placements
+                    .Select(p => new ReplayPlacement(p.Team.Machine, p.Team.Name, p.Position, null, null, null))
+                    .ToList();
+                replayRepository.Update(replay with { Placements = placements });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to re-rank placements for replay {ReplayId}.", replay.Id);
+            }
+        }
+
+        foreach (var leagueId in leaguesRepository.GetAll().Select(l => l.Id))
+        {
+            try
+            {
+                ratingsCalculator.Calculate(leagueId);
+                logger.LogInformation("Recalculated ELO ratings for league {LeagueId}.", leagueId);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to recalculate ELO ratings for league {LeagueId}.", leagueId);
+            }
+        }
+
+        await connection.ExecuteAsync(
+            "INSERT INTO data_fixes (name) VALUES ('winner-takes-all-rerank') ON CONFLICT (name) DO NOTHING");
+
+        logger.LogInformation("Winner-takes-all re-rank complete.");
     }
 }
