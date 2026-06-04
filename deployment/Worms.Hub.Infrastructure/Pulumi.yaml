@@ -6,4 +6,4 @@ config:
     worms-hub:domain: davideadie.dev
     worms-hub:gateway-image: theeadie/worms-hub-gateway:0.10.36
     worms-hub:wa-runner-image: theeadie/worms-hub-wa-runner:0.5.44
-    worms-hub:database-version: "0.9"
+    worms-hub:database-version: "0.10"
