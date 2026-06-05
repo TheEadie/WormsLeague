@@ -25,6 +25,7 @@ public static class ServiceRegistration
     public static IServiceCollection AddWormsCliResourcesServices(this IServiceCollection builder) =>
         builder.AddOsServices()
             .AddScoped<IFileSystem, FileSystem>()
+            .AddScoped<ICliInfoRetriever, CliInfoRetriever>()
             .AddScoped<IRandomSchemeGenerator, RandomSchemeGenerator>()
             .AddScoped<IResourceRetriever<LocalScheme>, LocalSchemesRetriever>()
             .AddScoped<IResourceCreator<LocalScheme, LocalSchemeCreateParameters>, LocalSchemeCreator>()

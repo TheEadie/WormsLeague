@@ -11,7 +11,6 @@ using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Game.Fake;
 using Worms.Armageddon.Gifs;
-using Worms.Cli.CommandLine;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Folders;
 using Worms.Cli.Resources.Local.Network;

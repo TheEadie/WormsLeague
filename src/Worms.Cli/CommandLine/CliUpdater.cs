@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
+using Worms.Cli.Resources;
 using Worms.Cli.Resources.Remote.Updates;
 
 namespace Worms.Cli.CommandLine;
@@ -16,7 +17,7 @@ internal sealed class CliUpdater(
     {
         logger.LogDebug("Starting update...");
 
-        var cliInfo = cliInfoRetriever.Get();
+        var cliInfo = cliInfoRetriever.GetCliInfo();
         logger.LogDebug("Current Version: {Info}", cliInfo.ToString());
 
         var latestCliVersion = await cliUpdateRetriever.GetLatestCliVersion();

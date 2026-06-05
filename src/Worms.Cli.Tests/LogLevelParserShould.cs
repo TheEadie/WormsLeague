@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Shouldly;
+using Worms.Cli.Resources;
 
 namespace Worms.Cli.Tests;
 

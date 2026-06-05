@@ -27,8 +27,12 @@ internal static class Program
 
         var configuration = new ConfigurationBuilder().AddEnvironmentVariables("WORMS_").Build();
 
+        var logLevel = LogLevelParser.GetLogLevel(args);
+        _ = span?.SetTag(Telemetry.Spans.Root.Verbose, logLevel == LogLevel.Debug);
+        _ = span?.SetTag(Telemetry.Spans.Root.Quiet, logLevel == LogLevel.Error);
+
         var serviceCollection = new ServiceCollection().AddHttpClient()
-            .AddWormsCliLogging(LogLevelParser.GetLogLevel(args))
+            .AddWormsCliLogging(logLevel)
             .AddWormsArmageddonFilesServices()
             .AddWormsArmageddonGameServices()
             .AddWormsArmageddonGifsServices()

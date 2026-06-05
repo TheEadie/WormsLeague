@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics;
 using Worms.Armageddon.Game;
-using Worms.Cli.CommandLine;
+using Worms.Cli.Resources;
 
 namespace Worms.Cli.Commands;
 
@@ -27,7 +27,7 @@ internal sealed class VersionHandler(IWormsArmageddon wormsArmageddon, ICliInfoR
 
     private (System.Version CliVersion, System.Version? GameVersion) GetVersions()
     {
-        var cliInfo = cliInfoRetriever.Get();
+        var cliInfo = cliInfoRetriever.GetCliInfo();
         var gameInfo = wormsArmageddon.FindInstallation();
         return (cliInfo.Version, gameInfo.IsInstalled ? gameInfo.Version : null);
     }

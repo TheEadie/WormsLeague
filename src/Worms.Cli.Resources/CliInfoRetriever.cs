@@ -3,12 +3,12 @@ using System.IO.Abstractions;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
 
-namespace Worms.Cli.CommandLine;
+namespace Worms.Cli.Resources;
 
 internal sealed class CliInfoRetriever(IFileSystem fileSystem, ILogger<CliInfoRetriever> logger)
     : ICliInfoRetriever
 {
-    public CliInfo Get()
+    public CliInfo GetCliInfo()
     {
         var assembly = Assembly.GetEntryAssembly();
         var version = assembly?.GetName().Version;
