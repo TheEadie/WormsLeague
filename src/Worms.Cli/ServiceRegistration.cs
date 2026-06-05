@@ -40,7 +40,6 @@ public static class ServiceRegistration
             .AddScoped<GetSchemeHandler>()
             .AddScoped<IFileSystem, FileSystem>()
             .AddScoped<CliUpdater>()
-            .AddScoped<CliInfoRetriever>()
             .AddScoped<LeagueUpdater>()
             .AddScoped<IResourcePrinter<LocalScheme>, SchemeTextPrinter>()
             .AddScoped<IResourcePrinter<LocalReplay>, ReplayTextPrinter>()

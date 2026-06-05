@@ -2,13 +2,13 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics;
 using Worms.Armageddon.Game;
-using Worms.Cli.CommandLine;
+using Worms.Cli.Resources;
 
 namespace Worms.Cli.Commands;
 
 internal sealed class Version() : Command("version", "Get the current version of the Worms CLI");
 
-internal sealed class VersionHandler(IWormsArmageddon wormsArmageddon, CliInfoRetriever cliInfoRetriever)
+internal sealed class VersionHandler(IWormsArmageddon wormsArmageddon, ICliInfoRetriever cliInfoRetriever)
     : AsynchronousCommandLineAction
 {
     public override Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
@@ -27,7 +27,7 @@ internal sealed class VersionHandler(IWormsArmageddon wormsArmageddon, CliInfoRe
 
     private (System.Version CliVersion, System.Version? GameVersion) GetVersions()
     {
-        var cliInfo = cliInfoRetriever.Get();
+        var cliInfo = cliInfoRetriever.GetCliInfo();
         var gameInfo = wormsArmageddon.FindInstallation();
         return (cliInfo.Version, gameInfo.IsInstalled ? gameInfo.Version : null);
     }
