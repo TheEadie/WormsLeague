@@ -5,6 +5,11 @@ permissions:
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   changes:
@@ -14,7 +19,7 @@ jobs:
   deploy-preview:
     name: Deploy Preview
     needs: changes
-    if: needs.changes.outputs.deployment == 'true' && github.ref != 'refs/heads/main'
+    if: needs.changes.outputs.deployment == 'true' && github.event_name == 'pull_request'
     uses: ./.github/workflows/zz-deploy-preview.yml
     secrets: inherit
 
@@ -22,7 +27,7 @@ jobs:
     name: Azure Infrastructure
     runs-on: ubuntu-latest
     needs: changes
-    if: needs.changes.outputs.deployment == 'true' && github.ref == 'refs/heads/main'
+    if: needs.changes.outputs.deployment == 'true' && github.event_name == 'push'
 
     steps:
       - name: Checkout
