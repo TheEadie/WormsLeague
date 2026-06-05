@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Shouldly;
+using Worms.Armageddon.Game.Fake;
 using Worms.Cli.Tests.Fakes;
 
 namespace Worms.Cli.Tests.Commands;
@@ -13,7 +14,7 @@ internal sealed class GetReplayShould
     public async Task PrintReplayWithMatchingLog(string alias)
     {
         using var host = new TestHost();
-        ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two", ReplayFixtures.MultiTurnLog);
+        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", Installed.MultiTurnLog);
 
         using var console = new ConsoleOutputScope();
         var exitCode = await host.Run("get", alias, "2024-01-02");
@@ -26,7 +27,7 @@ internal sealed class GetReplayShould
     public async Task PrintReplayEvenWhenNoLogPresent()
     {
         using var host = new TestHost();
-        ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
+        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
 
         using var console = new ConsoleOutputScope();
         var exitCode = await host.Run("get", "replay", "2024-01-02");
@@ -39,8 +40,8 @@ internal sealed class GetReplayShould
     public async Task OrderResultsByDateDescending()
     {
         using var host = new TestHost();
-        ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
-        ReplayFixtures.WriteReplay(host, "2024-02-15 12.00.00 [Offline] One, Two");
+        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
+        host.WormsArmageddon.WriteReplay("2024-02-15 12.00.00 [Offline] One, Two");
 
         using var console = new ConsoleOutputScope();
         var exitCode = await host.Run("get", "replay", "*");

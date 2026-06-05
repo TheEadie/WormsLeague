@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using Shouldly;
-using Worms.Cli.Tests.Fakes;
+using Worms.Armageddon.Game.Fake;
 
 namespace Worms.Cli.Tests.Commands;
 
@@ -11,7 +11,7 @@ internal sealed class ViewReplayShould
     public async Task LaunchTheReplayInWormsArmageddon()
     {
         using var host = new TestHost();
-        ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two", ReplayFixtures.MultiTurnLog);
+        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", Installed.MultiTurnLog);
 
         var exitCode = await host.Run("view", "replay", "2024-01-02");
 
@@ -26,7 +26,7 @@ internal sealed class ViewReplayShould
     public async Task LaunchTheReplayAtTheRequestedTurn()
     {
         using var host = new TestHost();
-        ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two", ReplayFixtures.MultiTurnLog);
+        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", Installed.MultiTurnLog);
 
         var exitCode = await host.Run("view", "replay", "2024-01-02", "--turn", "2");
 

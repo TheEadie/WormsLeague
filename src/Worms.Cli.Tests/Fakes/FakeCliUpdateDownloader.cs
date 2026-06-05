@@ -3,7 +3,7 @@ using Worms.Cli.Resources.Remote.Updates;
 
 namespace Worms.Cli.Tests.Fakes;
 
-internal sealed class RecordingCliUpdateDownloader(IFileSystem fileSystem, string executableFileName)
+internal sealed class FakeCliUpdateDownloader(IFileSystem fileSystem, string executableFileName)
     : ICliUpdateDownloader
 {
     public List<string> Calls { get; } = [];

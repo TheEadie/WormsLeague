@@ -1,9 +1,9 @@
 using System.Net;
 using Microsoft.Extensions.Logging;
+using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Cli.Resources.Local.Network;
-using Worms.Cli.Tests.Fakes;
 
 namespace Worms.Cli.Tests.Commands;
 
@@ -146,7 +146,8 @@ internal sealed class HostShould
     public async Task ReturnNonZeroWhenIpAddressNotFound()
     {
         using var host = new TestHost();
-        host.IpAddressLookup.Result = new IpAddressNotFound("No network adapter found for domain: red-gate.com");
+        host.IpAddressLookup.LookupForDomain(Arg.Any<string>())
+            .Returns(new IpAddressNotFound("No network adapter found for domain: red-gate.com"));
 
         var exitCode = await host.Run("host");
 
@@ -181,7 +182,7 @@ internal sealed class HostShould
     {
         using var host = new TestHost(hostCreatesReplay: false);
         // Write a replay from 2024 — it is always more than 1 hour old relative to the current date.
-        ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
+        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
 
         host.Http.EnqueueResponse(
             HttpStatusCode.OK,
