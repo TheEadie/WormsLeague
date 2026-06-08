@@ -39,6 +39,8 @@ internal sealed class TestHost : IDisposable
         Services.GetRequiredService<IWormsArmageddon>() as IRecordingWormsArmageddon
         ?? throw new InvalidOperationException("Worms Armageddon fake is not installed in this host");
 
+    public WormsArmageddonFakeSetup WormsArmageddonSetup => Services.GetRequiredService<WormsArmageddonFakeSetup>();
+
     public TestHost(bool wormsInstalled = true, bool hostCreatesReplay = true)
     {
         FileSystem = new MockFileSystem();

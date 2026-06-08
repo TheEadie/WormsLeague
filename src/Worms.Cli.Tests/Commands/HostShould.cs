@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
-using Worms.Armageddon.Game.Fake;
 using Worms.Cli.Resources.Local.Network;
 
 namespace Worms.Cli.Tests.Commands;
@@ -183,7 +182,7 @@ internal sealed class HostShould
     {
         using var host = new TestHost(hostCreatesReplay: false);
         // Write a replay from 2024 — it is always more than 1 hour old relative to the current date.
-        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
+        host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
 
         host.Http.EnqueueResponse(
             HttpStatusCode.OK,

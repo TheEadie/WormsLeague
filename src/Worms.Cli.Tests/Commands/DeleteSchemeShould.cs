@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using Shouldly;
-using Worms.Armageddon.Game.Fake;
 
 namespace Worms.Cli.Tests.Commands;
 
@@ -12,7 +11,7 @@ internal sealed class DeleteSchemeShould
     {
         using var host = new TestHost();
         var folder = host.WormsArmageddon.FindInstallation().SchemesFolder;
-        host.WormsArmageddon.WriteScheme("redgate");
+        host.WormsArmageddonSetup.WriteScheme("redgate");
 
         var exitCode = await host.Run("delete", "scheme", "redgate");
 
@@ -35,8 +34,8 @@ internal sealed class DeleteSchemeShould
     {
         using var host = new TestHost();
         var folder = host.WormsArmageddon.FindInstallation().SchemesFolder;
-        host.WormsArmageddon.WriteScheme("redgate");
-        host.WormsArmageddon.WriteScheme("redgate2");
+        host.WormsArmageddonSetup.WriteScheme("redgate");
+        host.WormsArmageddonSetup.WriteScheme("redgate2");
 
         var exitCode = await host.Run("delete", "scheme", "*");
 

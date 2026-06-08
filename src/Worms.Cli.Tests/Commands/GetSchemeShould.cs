@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using Shouldly;
-using Worms.Armageddon.Game.Fake;
 using Worms.Cli.Tests.Fakes;
 
 namespace Worms.Cli.Tests.Commands;
@@ -14,7 +13,7 @@ internal sealed class GetSchemeShould
     public async Task PrintSchemeDetailsForMatchingName(string alias)
     {
         using var host = new TestHost();
-        host.WormsArmageddon.WriteScheme("redgate");
+        host.WormsArmageddonSetup.WriteScheme("redgate");
 
         using var console = new ConsoleOutputScope();
         var exitCode = await host.Run("get", alias, "redgate");
@@ -37,8 +36,8 @@ internal sealed class GetSchemeShould
     public async Task PrintAllMatchingSchemesForWildcardPattern()
     {
         using var host = new TestHost();
-        host.WormsArmageddon.WriteScheme("redgate");
-        host.WormsArmageddon.WriteScheme("redgate2");
+        host.WormsArmageddonSetup.WriteScheme("redgate");
+        host.WormsArmageddonSetup.WriteScheme("redgate2");
 
         using var console = new ConsoleOutputScope();
         var exitCode = await host.Run("get", "scheme", "*");

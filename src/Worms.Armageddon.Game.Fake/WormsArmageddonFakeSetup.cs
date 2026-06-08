@@ -1,13 +1,15 @@
+using System.IO.Abstractions;
 using System.Reflection;
 
 namespace Worms.Armageddon.Game.Fake;
 
 /// <summary>
-/// Test-setup helpers for the installed fake. These seed the fake's on-disk layout so the code under test can
-/// discover replays and schemes; they are deliberately kept off <see cref="IWormsArmageddon"/> as they are not
-/// part of the production contract.
+/// Test-setup helper for the installed fake. Seeds the fake's on-disk layout so the code under test can discover
+/// replays and schemes. Kept off <see cref="IWormsArmageddon"/> as it is not part of the production contract, and
+/// injected with the same <see cref="IFileSystem"/> the fake uses so seeded files land where the fake reports its
+/// installation.
 /// </summary>
-public static class WormsArmageddonFakeExtensions
+public sealed class WormsArmageddonFakeSetup(IFileSystem fileSystem, IWormsArmageddon wormsArmageddon)
 {
     /// <summary>
     /// A replay log spanning two teams over multiple turns, for tests that parse replay details.
@@ -29,16 +31,15 @@ public static class WormsArmageddonFakeExtensions
     /// <summary>
     /// Writes an empty replay file (and optional .log) into the fake's replay folder so the CLI can discover it.
     /// </summary>
-    public static void WriteReplay(this IWormsArmageddon wormsArmageddon, string filenameNoExt, string? logContent = null)
+    public void WriteReplay(string filenameNoExt, string? logContent = null)
     {
-        var fake = AsInstalled(wormsArmageddon);
-        var info = fake.FindInstallation();
-        fake.FileSystem.File.WriteAllBytes(
-            fake.FileSystem.Path.Combine(info.ReplayFolder, filenameNoExt + ".WAgame"), []);
+        var info = wormsArmageddon.FindInstallation();
+        fileSystem.File.WriteAllBytes(fileSystem.Path.Combine(info.ReplayFolder, filenameNoExt + ".WAgame"), []);
         if (logContent is not null)
         {
-            fake.FileSystem.File.WriteAllText(
-                fake.FileSystem.Path.Combine(info.ReplayFolder, filenameNoExt + ".log"), logContent);
+            fileSystem.File.WriteAllText(
+                fileSystem.Path.Combine(info.ReplayFolder, filenameNoExt + ".log"),
+                logContent);
         }
     }
 
@@ -46,17 +47,12 @@ public static class WormsArmageddonFakeExtensions
     /// Writes a real sample scheme into the fake's schemes folder at &lt;SchemesFolder&gt;/&lt;schemeName&gt;.wsc so
     /// LocalSchemesRetriever can discover and parse it.
     /// </summary>
-    public static void WriteScheme(this IWormsArmageddon wormsArmageddon, string schemeName)
+    public void WriteScheme(string schemeName)
     {
-        var fake = AsInstalled(wormsArmageddon);
-        var info = fake.FindInstallation();
-        var path = fake.FileSystem.Path.Combine(info.SchemesFolder, schemeName + ".wsc");
-        fake.FileSystem.File.WriteAllBytes(path, SampleScheme.Value);
+        var info = wormsArmageddon.FindInstallation();
+        var path = fileSystem.Path.Combine(info.SchemesFolder, schemeName + ".wsc");
+        fileSystem.File.WriteAllBytes(path, SampleScheme.Value);
     }
-
-    private static Installed AsInstalled(IWormsArmageddon wormsArmageddon) =>
-        wormsArmageddon as Installed
-        ?? throw new InvalidOperationException("Fake setup helpers only apply to the installed Worms Armageddon fake.");
 
     private static byte[] LoadSampleScheme()
     {

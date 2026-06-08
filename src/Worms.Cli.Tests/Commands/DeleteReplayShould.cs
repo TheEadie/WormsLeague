@@ -12,7 +12,7 @@ internal sealed class DeleteReplayShould
     {
         using var host = new TestHost();
         var replayFolder = host.WormsArmageddon.FindInstallation().ReplayFolder;
-        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", WormsArmageddonFakeExtensions.MultiTurnReplayLog);
+        host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", WormsArmageddonFakeSetup.MultiTurnReplayLog);
 
         var exitCode = await host.Run("delete", "replay", "2024-01-02");
 
@@ -26,7 +26,7 @@ internal sealed class DeleteReplayShould
     {
         using var host = new TestHost();
         var replayFolder = host.WormsArmageddon.FindInstallation().ReplayFolder;
-        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
+        host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
 
         var exitCode = await host.Run("delete", "replay", "2024-01-02");
 
@@ -48,8 +48,8 @@ internal sealed class DeleteReplayShould
     {
         using var host = new TestHost();
         var replayFolder = host.WormsArmageddon.FindInstallation().ReplayFolder;
-        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
-        host.WormsArmageddon.WriteReplay("2024-02-15 12.00.00 [Offline] One, Two");
+        host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
+        host.WormsArmageddonSetup.WriteReplay("2024-02-15 12.00.00 [Offline] One, Two");
 
         var exitCode = await host.Run("delete", "replay", "*");
 

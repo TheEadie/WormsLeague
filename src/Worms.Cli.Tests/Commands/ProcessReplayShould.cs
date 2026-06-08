@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using Shouldly;
-using Worms.Armageddon.Game.Fake;
 
 namespace Worms.Cli.Tests.Commands;
 
@@ -12,7 +11,7 @@ internal sealed class ProcessReplayShould
     {
         using var host = new TestHost();
         var replayFolder = host.WormsArmageddon.FindInstallation().ReplayFolder;
-        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
+        host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
 
         var exitCode = await host.Run("process", "replay", "2024-01-02");
 
@@ -25,8 +24,8 @@ internal sealed class ProcessReplayShould
     {
         using var host = new TestHost();
         var replayFolder = host.WormsArmageddon.FindInstallation().ReplayFolder;
-        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
-        host.WormsArmageddon.WriteReplay("2024-02-15 12.00.00 [Offline] One, Two");
+        host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
+        host.WormsArmageddonSetup.WriteReplay("2024-02-15 12.00.00 [Offline] One, Two");
 
         var exitCode = await host.Run("process", "replay", "*");
 

@@ -13,7 +13,7 @@ internal sealed class Installed : IRecordingWormsArmageddon
     private readonly bool _hostCreatesReplay;
     private readonly List<PlayReplayCall> _playReplayCalls = [];
 
-    internal IFileSystem FileSystem { get; }
+    private readonly IFileSystem _fileSystem;
 
     public IReadOnlyList<PlayReplayCall> PlayReplayCalls => _playReplayCalls;
 
@@ -25,28 +25,28 @@ internal sealed class Installed : IRecordingWormsArmageddon
         Version? version = null,
         bool hostCreatesReplay = true)
     {
-        FileSystem = fileSystem;
+        _fileSystem = fileSystem;
         _hostCreatesReplay = hostCreatesReplay;
         _path = path ?? @"C:\Program Files (x86)\Steam\steamapps\common\Worms Armageddon";
         _version = version ?? new Version(1, 0, 0, 0);
 
-        _ = FileSystem.Directory.CreateDirectory(_path);
-        _ = FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(_path, "User"));
-        _ = FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(_path, "User", "Schemes"));
-        _ = FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(_path, "User", "Games"));
-        _ = FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(_path, "User", "Capture"));
-        FileSystem.File.WriteAllBytes(FileSystem.Path.Combine(_path, "WA.exe"), []);
+        _ = _fileSystem.Directory.CreateDirectory(_path);
+        _ = _fileSystem.Directory.CreateDirectory(_fileSystem.Path.Combine(_path, "User"));
+        _ = _fileSystem.Directory.CreateDirectory(_fileSystem.Path.Combine(_path, "User", "Schemes"));
+        _ = _fileSystem.Directory.CreateDirectory(_fileSystem.Path.Combine(_path, "User", "Games"));
+        _ = _fileSystem.Directory.CreateDirectory(_fileSystem.Path.Combine(_path, "User", "Capture"));
+        _fileSystem.File.WriteAllBytes(_fileSystem.Path.Combine(_path, "WA.exe"), []);
     }
 
     public GameInfo FindInstallation() =>
         new(
             true,
-            FileSystem.Path.Combine(_path, "WA.exe"),
+            _fileSystem.Path.Combine(_path, "WA.exe"),
             "WA",
             _version,
-            FileSystem.Path.Combine(_path, "User", "Schemes"),
-            FileSystem.Path.Combine(_path, "User", "Games"),
-            FileSystem.Path.Combine(_path, "User", "Capture"));
+            _fileSystem.Path.Combine(_path, "User", "Schemes"),
+            _fileSystem.Path.Combine(_path, "User", "Games"),
+            _fileSystem.Path.Combine(_path, "User", "Capture"));
 
     public Task Host()
     {
@@ -54,8 +54,8 @@ internal sealed class Installed : IRecordingWormsArmageddon
         if (_hostCreatesReplay)
         {
             var dateTime = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture);
-            FileSystem.File.WriteAllBytes(
-                FileSystem.Path.Combine(_path, "User", "Games", $"{dateTime} [Offline] 1-UP, 2-UP.WAGame"),
+            _fileSystem.File.WriteAllBytes(
+                _fileSystem.Path.Combine(_path, "User", "Games", $"{dateTime} [Offline] 1-UP, 2-UP.WAGame"),
                 []);
         }
 
@@ -64,9 +64,9 @@ internal sealed class Installed : IRecordingWormsArmageddon
 
     public Task GenerateReplayLog(string replayPath)
     {
-        if (FileSystem.File.Exists(replayPath))
+        if (_fileSystem.File.Exists(replayPath))
         {
-            FileSystem.File.WriteAllBytes(
+            _fileSystem.File.WriteAllBytes(
                 replayPath.Replace(".WAGame", ".log", StringComparison.InvariantCultureIgnoreCase),
                 []);
         }
@@ -94,25 +94,25 @@ internal sealed class Installed : IRecordingWormsArmageddon
         int xResolution = 640,
         int yResolution = 480)
     {
-        if (!FileSystem.File.Exists(replayPath))
+        if (!_fileSystem.File.Exists(replayPath))
         {
             return;
         }
 
         // WA strips the .WAGame extension when naming the capture folder, but keeps any other extension.
-        var fileName = FileSystem.Path.GetFileName(replayPath);
+        var fileName = _fileSystem.Path.GetFileName(replayPath);
         var captureFolderName = fileName.EndsWith(".WAGame", StringComparison.InvariantCultureIgnoreCase)
-            ? FileSystem.Path.GetFileNameWithoutExtension(fileName)
+            ? _fileSystem.Path.GetFileNameWithoutExtension(fileName)
             : fileName;
 
-        var framesFolder = FileSystem.Path.Combine(_path, "User", "Capture", captureFolderName);
-        _ = FileSystem.Directory.CreateDirectory(framesFolder);
+        var framesFolder = _fileSystem.Path.Combine(_path, "User", "Capture", captureFolderName);
+        _ = _fileSystem.Directory.CreateDirectory(framesFolder);
 
         var frames = (int)((endTime - startTime).TotalSeconds * fps);
         for (var i = 0; i < frames; i++)
         {
-            var framePath = FileSystem.Path.Combine(framesFolder, $"video_{i:D6}.png");
-            await FileSystem.File.WriteAllBytesAsync(framePath, FrameContent);
+            var framePath = _fileSystem.Path.Combine(framesFolder, $"video_{i:D6}.png");
+            await _fileSystem.File.WriteAllBytesAsync(framePath, FrameContent);
         }
     }
 

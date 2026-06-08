@@ -11,7 +11,7 @@ internal sealed class ViewReplayShould
     public async Task LaunchTheReplayInWormsArmageddon()
     {
         using var host = new TestHost();
-        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", WormsArmageddonFakeExtensions.MultiTurnReplayLog);
+        host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", WormsArmageddonFakeSetup.MultiTurnReplayLog);
 
         var exitCode = await host.Run("view", "replay", "2024-01-02");
 
@@ -26,7 +26,7 @@ internal sealed class ViewReplayShould
     public async Task LaunchTheReplayAtTheRequestedTurn()
     {
         using var host = new TestHost();
-        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", WormsArmageddonFakeExtensions.MultiTurnReplayLog);
+        host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", WormsArmageddonFakeSetup.MultiTurnReplayLog);
 
         var exitCode = await host.Run("view", "replay", "2024-01-02", "--turn", "2");
 
