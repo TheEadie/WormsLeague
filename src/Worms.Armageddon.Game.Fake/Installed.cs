@@ -4,14 +4,20 @@ using ImageMagick;
 
 namespace Worms.Armageddon.Game.Fake;
 
-internal sealed class Installed : IWormsArmageddon
+internal sealed class Installed : IRecordingWormsArmageddon
 {
     private static readonly byte[] FrameContent = BuildPngBytes();
 
     private readonly string _path;
     private readonly Version _version;
-    private readonly IFileSystem _fileSystem;
     private readonly bool _hostCreatesReplay;
+    private readonly List<PlayReplayCall> _playReplayCalls = [];
+
+    private readonly IFileSystem _fileSystem;
+
+    public IReadOnlyList<PlayReplayCall> PlayReplayCalls => _playReplayCalls;
+
+    public int HostCallCount { get; private set; }
 
     public Installed(
         IFileSystem fileSystem,
@@ -44,6 +50,7 @@ internal sealed class Installed : IWormsArmageddon
 
     public Task Host()
     {
+        HostCallCount++;
         if (_hostCreatesReplay)
         {
             var dateTime = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss", CultureInfo.InvariantCulture);
@@ -67,9 +74,17 @@ internal sealed class Installed : IWormsArmageddon
         return Task.CompletedTask;
     }
 
-    public Task PlayReplay(string replayPath) => Task.CompletedTask;
+    public Task PlayReplay(string replayPath)
+    {
+        _playReplayCalls.Add(new PlayReplayCall(replayPath, null));
+        return Task.CompletedTask;
+    }
 
-    public Task PlayReplay(string replayPath, TimeSpan startTime) => Task.CompletedTask;
+    public Task PlayReplay(string replayPath, TimeSpan startTime)
+    {
+        _playReplayCalls.Add(new PlayReplayCall(replayPath, startTime));
+        return Task.CompletedTask;
+    }
 
     public async Task ExtractReplayFrames(
         string replayPath,

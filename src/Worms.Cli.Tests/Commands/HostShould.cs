@@ -1,9 +1,9 @@
 using System.Net;
 using Microsoft.Extensions.Logging;
+using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Cli.Resources.Local.Network;
-using Worms.Cli.Tests.Fakes;
 
 namespace Worms.Cli.Tests.Commands;
 
@@ -36,7 +36,7 @@ internal sealed class HostShould
         var exitCode = await host.Run("host");
 
         exitCode.ShouldBe(0);
-        host.WormsArmageddon.HostWasCalled.ShouldBeTrue();
+        host.WormsArmageddon.HostCallCount.ShouldBe(1);
         host.Http.Requests.Count.ShouldBe(5);
         host.Http.Requests[0].RequestUri!.AbsolutePath.ShouldEndWith("/api/v1/leagues/redgate");
         host.Http.Requests[0].Method.ShouldBe(HttpMethod.Get);
@@ -61,7 +61,7 @@ internal sealed class HostShould
         var exitCode = await runTask;
 
         exitCode.ShouldBe(0);
-        host.WormsArmageddon.HostWasCalled.ShouldBeFalse();
+        host.WormsArmageddon.HostCallCount.ShouldBe(0);
         host.Http.Requests.ShouldBeEmpty();
     }
 
@@ -82,7 +82,7 @@ internal sealed class HostShould
         var exitCode = await host.Run("host", "--skip-scheme-download");
 
         exitCode.ShouldBe(0);
-        host.WormsArmageddon.HostWasCalled.ShouldBeTrue();
+        host.WormsArmageddon.HostCallCount.ShouldBe(1);
         host.Http.Requests.Count.ShouldBe(3);
         host.Http.Requests.ShouldAllBe(r =>
             !r.RequestUri!.AbsolutePath.Contains("leagues") &&
@@ -107,7 +107,7 @@ internal sealed class HostShould
         var exitCode = await host.Run("host", "--skip-upload");
 
         exitCode.ShouldBe(0);
-        host.WormsArmageddon.HostWasCalled.ShouldBeTrue();
+        host.WormsArmageddon.HostCallCount.ShouldBe(1);
         host.Http.Requests.ShouldAllBe(r => !r.RequestUri!.AbsolutePath.EndsWith("/api/v1/replays"));
     }
 
@@ -126,7 +126,7 @@ internal sealed class HostShould
         var exitCode = await host.Run("host", "--skip-announcement");
 
         exitCode.ShouldBe(0);
-        host.WormsArmageddon.HostWasCalled.ShouldBeTrue();
+        host.WormsArmageddon.HostCallCount.ShouldBe(1);
         host.Http.Requests.ShouldAllBe(r => !r.RequestUri!.AbsolutePath.EndsWith("/api/v1/games"));
         host.Http.Requests.ShouldContain(r => r.RequestUri!.AbsolutePath.EndsWith("/api/v1/replays"));
     }
@@ -146,7 +146,8 @@ internal sealed class HostShould
     public async Task ReturnNonZeroWhenIpAddressNotFound()
     {
         using var host = new TestHost();
-        host.IpAddressLookup.Result = new IpAddressNotFound("No network adapter found for domain: red-gate.com");
+        host.IpAddressLookup.LookupForDomain(Arg.Any<string>())
+            .Returns(new IpAddressNotFound("No network adapter found for domain: red-gate.com"));
 
         var exitCode = await host.Run("host");
 
@@ -181,7 +182,7 @@ internal sealed class HostShould
     {
         using var host = new TestHost(hostCreatesReplay: false);
         // Write a replay from 2024 — it is always more than 1 hour old relative to the current date.
-        ReplayFixtures.WriteReplay(host, "2024-01-02 10.00.00 [Offline] One, Two");
+        host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two");
 
         host.Http.EnqueueResponse(
             HttpStatusCode.OK,

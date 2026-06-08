@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
+using NSubstitute;
 using Worms.Armageddon.Files;
 using Worms.Armageddon.Game;
 using Worms.Armageddon.Game.Fake;
@@ -27,23 +28,29 @@ internal sealed class TestHost : IDisposable
     private Runner Runner { get; }
     public IFileSystem FileSystem { get; }
     public FakeTimeProvider Time { get; }
-    public RecordingBrowserLauncher Browser { get; }
+    public IBrowserLauncher Browser { get; }
     public RecordingHttpMessageHandler Http { get; }
     public CapturingLoggerProvider Logs { get; }
-    public RecordingWormsArmageddon WormsArmageddon { get; }
-    public RecordingFolderOpener FolderOpener { get; }
-    public StubIpAddressLookup IpAddressLookup { get; } = new();
-    private FakeCliInfoRetriever CliInfo { get; }
-    public RecordingCliUpdateDownloader CliUpdateDownloader { get; }
+    public IFolderOpener FolderOpener { get; }
+    public IIpAddressLookup IpAddressLookup { get; }
+    public FakeCliUpdateDownloader CliUpdateDownloader { get; }
+
+    public IRecordingWormsArmageddon WormsArmageddon =>
+        Services.GetRequiredService<IWormsArmageddon>() as IRecordingWormsArmageddon
+        ?? throw new InvalidOperationException("Worms Armageddon fake is not installed in this host");
+
+    public WormsArmageddonFakeSetup WormsArmageddonSetup => Services.GetRequiredService<WormsArmageddonFakeSetup>();
 
     public TestHost(bool wormsInstalled = true, bool hostCreatesReplay = true)
     {
         FileSystem = new MockFileSystem();
         Time = new FakeTimeProvider(DateTimeOffset.UtcNow);
-        Browser = new RecordingBrowserLauncher();
+        Browser = Substitute.For<IBrowserLauncher>();
         Http = new RecordingHttpMessageHandler();
         Logs = new CapturingLoggerProvider();
-        FolderOpener = new RecordingFolderOpener();
+        FolderOpener = Substitute.For<IFolderOpener>();
+        IpAddressLookup = Substitute.For<IIpAddressLookup>();
+        IpAddressLookup.LookupForDomain(Arg.Any<string>()).Returns(new IpAddressFound("10.0.0.1"));
 
         var configuration = new ConfigurationBuilder().Build();
 
@@ -65,49 +72,27 @@ internal sealed class TestHost : IDisposable
             services.AddFakeNotInstalledWormsArmageddonServices();
         }
 
-        // Wrap the registered IWormsArmageddon in a recording decorator.
-        var innerDescriptor = services.Single(d => d.ServiceType == typeof(IWormsArmageddon));
-        services.Remove(innerDescriptor);
-        services.AddScoped<IWormsArmageddon>(sp =>
-        {
-            IWormsArmageddon inner;
-            if (innerDescriptor.ImplementationInstance is not null)
-            {
-                inner = (IWormsArmageddon) innerDescriptor.ImplementationInstance;
-            }
-            else if (innerDescriptor.ImplementationFactory is not null)
-            {
-                inner = (IWormsArmageddon) innerDescriptor.ImplementationFactory(sp);
-            }
-            else
-            {
-                inner = (IWormsArmageddon) ActivatorUtilities.CreateInstance(
-                    sp, innerDescriptor.ImplementationType!);
-            }
-
-            return new RecordingWormsArmageddon(inner);
-        });
-
         services.RemoveAll<IFileSystem>();
         services.AddSingleton(FileSystem);
 
         services.RemoveAll<IFolderOpener>();
-        services.AddSingleton<IFolderOpener>(FolderOpener);
+        services.AddSingleton(FolderOpener);
 
         services.RemoveAll<IBrowserLauncher>();
-        services.AddSingleton<IBrowserLauncher>(Browser);
+        services.AddSingleton(Browser);
 
-        CliInfo = new FakeCliInfoRetriever();
+        var cliInfo = new CliInfo(new Version(1, 0, 0), "/cli", "worms");
+        var cliInfoRetriever = Substitute.For<ICliInfoRetriever>();
+        cliInfoRetriever.GetCliInfo().Returns(cliInfo);
         services.RemoveAll<ICliInfoRetriever>();
-        services.AddSingleton<ICliInfoRetriever>(CliInfo);
+        services.AddSingleton(cliInfoRetriever);
 
         // Seed a stub binary at the fake CLI's reported install path so
         // CliUpdater.InstallUpdate can move it to a .bak file.
-        FileSystem.Directory.CreateDirectory(CliInfo.Info.Folder);
-        FileSystem.File.WriteAllBytes(
-            FileSystem.Path.Combine(CliInfo.Info.Folder, CliInfo.Info.FileName), []);
+        FileSystem.Directory.CreateDirectory(cliInfo.Folder);
+        FileSystem.File.WriteAllBytes(FileSystem.Path.Combine(cliInfo.Folder, cliInfo.FileName), []);
 
-        CliUpdateDownloader = new RecordingCliUpdateDownloader(FileSystem, CliInfo.Info.FileName);
+        CliUpdateDownloader = new FakeCliUpdateDownloader(FileSystem, cliInfo.FileName);
         services.RemoveAll<ICliUpdateDownloader>();
         services.AddSingleton<ICliUpdateDownloader>(CliUpdateDownloader);
 
@@ -115,7 +100,7 @@ internal sealed class TestHost : IDisposable
         services.AddSingleton<TimeProvider>(Time);
 
         services.RemoveAll<IIpAddressLookup>();
-        services.AddSingleton<IIpAddressLookup>(IpAddressLookup);
+        services.AddSingleton(IpAddressLookup);
 
         services.AddHttpClient(Options.DefaultName)
             .ConfigurePrimaryHttpMessageHandler(_ => Http);
@@ -123,9 +108,6 @@ internal sealed class TestHost : IDisposable
         Services = services.BuildServiceProvider();
         RootCommand = CliStructure.BuildCommandLine(Services);
         Runner = Services.GetRequiredService<Runner>();
-
-        // Resolve once so WormsArmageddon is non-null before tests use it.
-        WormsArmageddon = (RecordingWormsArmageddon) Services.GetRequiredService<IWormsArmageddon>();
     }
 
     public Task<int> Run(params string[] args) =>

@@ -1,3 +1,4 @@
+using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
 
@@ -15,8 +16,7 @@ internal sealed class BrowseReplayShould
         var exitCode = await host.Run("browse", "replay");
 
         exitCode.ShouldBe(0);
-        host.FolderOpener.OpenedFolders.ShouldHaveSingleItem()
-            .ShouldBe(expectedFolder);
+        host.FolderOpener.Received(1).OpenFolder(expectedFolder);
     }
 
     [Test]
@@ -27,6 +27,6 @@ internal sealed class BrowseReplayShould
         var exitCode = await host.Run("browse", "replay");
 
         exitCode.ShouldBe(1);
-        host.FolderOpener.OpenedFolders.ShouldBeEmpty();
+        host.FolderOpener.DidNotReceive().OpenFolder(Arg.Any<string>());
     }
 }

@@ -15,4 +15,10 @@
     <ProjectReference Include="..\Worms.Armageddon.Game\Worms.Armageddon.Game.csproj"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\sample-data\schemes\redgate.wsc">
+      <LogicalName>Worms.Armageddon.Game.Fake.redgate.wsc</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

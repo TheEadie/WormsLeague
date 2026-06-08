@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Cli.Resources.Remote.Auth;
@@ -22,8 +23,8 @@ internal sealed class AuthShould
 
         exitCode.ShouldBe(0);
 
-        host.Browser.OpenedUrls.ShouldHaveSingleItem()
-            .OriginalString.ShouldBe("https://eadie.eu.auth0.com/activate?user_code=ABCD-EFGH");
+        host.Browser.Received(1).OpenBrowser(
+            Arg.Is<Uri>(u => u.OriginalString == "https://eadie.eu.auth0.com/activate?user_code=ABCD-EFGH"));
 
         host.Http.Requests.Count.ShouldBe(2);
 

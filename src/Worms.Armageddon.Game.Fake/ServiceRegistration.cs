@@ -13,7 +13,10 @@ public static class ServiceRegistration
         bool hostCreatesReplay = true)
     {
         var installed = new Installed(fileSystem, gamePath, version, hostCreatesReplay);
-        return builder.AddScoped<IFileSystem>(_ => fileSystem).AddScoped<IWormsArmageddon>(_ => installed);
+        return builder
+            .AddScoped<IFileSystem>(_ => fileSystem)
+            .AddScoped<IWormsArmageddon>(_ => installed)
+            .AddScoped<WormsArmageddonFakeSetup>();
     }
 
     public static IServiceCollection AddFakeNotInstalledWormsArmageddonServices(this IServiceCollection builder) =>
