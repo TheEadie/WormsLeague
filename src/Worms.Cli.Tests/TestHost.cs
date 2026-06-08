@@ -35,8 +35,8 @@ internal sealed class TestHost : IDisposable
     public IIpAddressLookup IpAddressLookup { get; }
     public FakeCliUpdateDownloader CliUpdateDownloader { get; }
 
-    public Installed WormsArmageddon =>
-        Services.GetRequiredService<IWormsArmageddon>() as Installed
+    public IRecordingWormsArmageddon WormsArmageddon =>
+        Services.GetRequiredService<IWormsArmageddon>() as IRecordingWormsArmageddon
         ?? throw new InvalidOperationException("Worms Armageddon fake is not installed in this host");
 
     public TestHost(bool wormsInstalled = true, bool hostCreatesReplay = true)

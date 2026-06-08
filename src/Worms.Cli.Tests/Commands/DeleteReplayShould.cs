@@ -12,7 +12,7 @@ internal sealed class DeleteReplayShould
     {
         using var host = new TestHost();
         var replayFolder = host.WormsArmageddon.FindInstallation().ReplayFolder;
-        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", Installed.MultiTurnLog);
+        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", WormsArmageddonFakeExtensions.MultiTurnReplayLog);
 
         var exitCode = await host.Run("delete", "replay", "2024-01-02");
 

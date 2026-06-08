@@ -14,7 +14,7 @@ internal sealed class GetReplayShould
     public async Task PrintReplayWithMatchingLog(string alias)
     {
         using var host = new TestHost();
-        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", Installed.MultiTurnLog);
+        host.WormsArmageddon.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", WormsArmageddonFakeExtensions.MultiTurnReplayLog);
 
         using var console = new ConsoleOutputScope();
         var exitCode = await host.Run("get", alias, "2024-01-02");

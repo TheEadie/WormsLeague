@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Shouldly;
+using Worms.Armageddon.Game.Fake;
 using Worms.Cli.Tests.Fakes;
 
 namespace Worms.Cli.Tests.Commands;
