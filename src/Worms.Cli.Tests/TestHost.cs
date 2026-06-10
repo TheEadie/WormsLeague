@@ -32,6 +32,7 @@ internal sealed class TestHost : IDisposable
     public RecordingHttpMessageHandler Http { get; }
     public CapturingLoggerProvider Logs { get; }
     public IFolderOpener FolderOpener { get; }
+    public IGifCreator GifCreator { get; }
     public IIpAddressLookup IpAddressLookup { get; }
     public FakeCliUpdateDownloader CliUpdateDownloader { get; }
 
@@ -49,6 +50,7 @@ internal sealed class TestHost : IDisposable
         Http = new RecordingHttpMessageHandler();
         Logs = new CapturingLoggerProvider();
         FolderOpener = Substitute.For<IFolderOpener>();
+        GifCreator = Substitute.For<IGifCreator>();
         IpAddressLookup = Substitute.For<IIpAddressLookup>();
         IpAddressLookup.LookupForDomain(Arg.Any<string>()).Returns(new IpAddressFound("10.0.0.1"));
 
@@ -77,6 +79,9 @@ internal sealed class TestHost : IDisposable
 
         services.RemoveAll<IFolderOpener>();
         services.AddSingleton(FolderOpener);
+
+        services.RemoveAll<IGifCreator>();
+        services.AddSingleton(GifCreator);
 
         services.RemoveAll<IBrowserLauncher>();
         services.AddSingleton(Browser);

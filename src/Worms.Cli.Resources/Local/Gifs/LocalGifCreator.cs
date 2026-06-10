@@ -3,7 +3,7 @@ using Worms.Armageddon.Gifs;
 
 namespace Worms.Cli.Resources.Local.Gifs;
 
-internal sealed class LocalGifCreator(GifCreator gifCreator, IWormsArmageddon wormsArmageddon)
+internal sealed class LocalGifCreator(IGifCreator gifCreator, IWormsArmageddon wormsArmageddon)
     : IResourceCreator<LocalGif, LocalGifCreateParameters>
 {
     public async Task<LocalGif> Create(LocalGifCreateParameters parameters, CancellationToken cancellationToken)

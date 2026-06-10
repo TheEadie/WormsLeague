@@ -12,7 +12,7 @@ internal sealed class Processor(
     IMessageQueue<ReplayToUpdateMessage> outputQueue,
     IWormsArmageddon wormsArmageddon,
     IReplayTextReader replayTextReader,
-    GifCreator gifCreator,
+    IGifCreator gifCreator,
     IConfiguration configuration,
     ILogger<Processor> logger)
 {
