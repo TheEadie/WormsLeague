@@ -14,6 +14,7 @@ using Worms.Armageddon.Game.Fake;
 using Worms.Armageddon.Gifs;
 using Worms.Cli.Resources;
 using Worms.Cli.Resources.Local.Folders;
+using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Resources.Local.Network;
 using Worms.Cli.Resources.Remote.Auth;
 using Worms.Cli.Resources.Remote.Updates;
@@ -32,6 +33,7 @@ internal sealed class TestHost : IDisposable
     public RecordingHttpMessageHandler Http { get; }
     public CapturingLoggerProvider Logs { get; }
     public IFolderOpener FolderOpener { get; }
+    public IResourceCreator<LocalGif, LocalGifCreateParameters> GifCreator { get; }
     public IIpAddressLookup IpAddressLookup { get; }
     public FakeCliUpdateDownloader CliUpdateDownloader { get; }
 
@@ -49,6 +51,7 @@ internal sealed class TestHost : IDisposable
         Http = new RecordingHttpMessageHandler();
         Logs = new CapturingLoggerProvider();
         FolderOpener = Substitute.For<IFolderOpener>();
+        GifCreator = Substitute.For<IResourceCreator<LocalGif, LocalGifCreateParameters>>();
         IpAddressLookup = Substitute.For<IIpAddressLookup>();
         IpAddressLookup.LookupForDomain(Arg.Any<string>()).Returns(new IpAddressFound("10.0.0.1"));
 
@@ -77,6 +80,9 @@ internal sealed class TestHost : IDisposable
 
         services.RemoveAll<IFolderOpener>();
         services.AddSingleton(FolderOpener);
+
+        services.RemoveAll<IResourceCreator<LocalGif, LocalGifCreateParameters>>();
+        services.AddSingleton(GifCreator);
 
         services.RemoveAll<IBrowserLauncher>();
         services.AddSingleton(Browser);
