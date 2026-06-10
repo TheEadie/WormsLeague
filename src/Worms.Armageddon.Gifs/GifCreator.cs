@@ -6,7 +6,7 @@ using Worms.Armageddon.Game;
 namespace Worms.Armageddon.Gifs;
 
 [PublicAPI]
-public sealed class GifCreator(IWormsArmageddon wormsArmageddon, IFileSystem fileSystem)
+public sealed class GifCreator(IWormsArmageddon wormsArmageddon, IFileSystem fileSystem) : IGifCreator
 {
     public async Task<string> CreateGif(
         string replayPath,

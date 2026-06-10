@@ -2,7 +2,6 @@ using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Armageddon.Game.Fake;
-using Worms.Cli.Resources.Local.Gifs;
 using Worms.Cli.Tests.Fakes;
 
 namespace Worms.Cli.Tests.Commands;
@@ -69,47 +68,64 @@ internal sealed class CreateGifShould
     }
 
     [Test]
-    public async Task CreateGifWithBoundOptionsWhenReplayHasTurns()
+    public async Task CreateGifForTheSelectedTurnWithBoundOptions()
     {
         using var host = new TestHost();
         host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", WormsArmageddonFakeSetup.MultiTurnReplayLog);
-        host.GifCreator.Create(Arg.Any<LocalGifCreateParameters>(), Arg.Any<CancellationToken>())
-            .Returns(new LocalGif("/captures/out.gif"));
+        var captureFolder = host.WormsArmageddon.FindInstallation().CaptureFolder;
+        StubGifCreator(host);
 
         using var console = new ConsoleOutputScope();
-        var exitCode = await host.Run("create", "gif", "-r", "2024-01-02", "-t", "3", "-fps", "10", "-s", "4", "-so", "1", "-eo", "2");
+        var exitCode = await host.Run("create", "gif", "-r", "2024-01-02", "-t", "2", "-fps", "10", "-s", "4", "-so", "1", "-eo", "2");
 
         exitCode.ShouldBe(0);
-        console.Output.ToString().ShouldContain("/captures/out.gif");
-        await host.GifCreator.Received(1).Create(
-            Arg.Is<LocalGifCreateParameters>(p =>
-                p.Turn == 3u &&
-                p.FramesPerSecond == 10u &&
-                p.SpeedMultiplier == 4u &&
-                p.StartOffset == TimeSpan.FromSeconds(1) &&
-                p.EndOffset == TimeSpan.FromSeconds(2)),
-            Arg.Any<CancellationToken>());
+        console.Output.ToString().Trim().ShouldBe(Path.Combine(captureFolder, "out.gif"));
+        await host.GifCreator.Received(1).CreateGif(
+            Arg.Is<string>(p => p.Contains("2024-01-02")),
+            new TimeSpan(0, 0, 9, 59, 80),    // turn 2 start: 00:09:59.08
+            new TimeSpan(0, 0, 11, 26, 600),  // turn 2 end:   00:11:26.60
+            2,
+            captureFolder,
+            10u,
+            4u,
+            TimeSpan.FromSeconds(1),
+            TimeSpan.FromSeconds(2));
     }
 
     [Test]
-    public async Task CreateGifWithDefaultOptionsWhenOnlyReplayAndTurnGiven()
+    public async Task CreateGifForTheSelectedTurnWithDefaultOptions()
     {
         using var host = new TestHost();
         host.WormsArmageddonSetup.WriteReplay("2024-01-02 10.00.00 [Offline] One, Two", WormsArmageddonFakeSetup.MultiTurnReplayLog);
-        host.GifCreator.Create(Arg.Any<LocalGifCreateParameters>(), Arg.Any<CancellationToken>())
-            .Returns(new LocalGif("/captures/out.gif"));
+        var captureFolder = host.WormsArmageddon.FindInstallation().CaptureFolder;
+        StubGifCreator(host);
 
         using var _ = new ConsoleOutputScope();
         var exitCode = await host.Run("create", "gif", "-r", "2024-01-02", "-t", "1");
 
         exitCode.ShouldBe(0);
-        await host.GifCreator.Received(1).Create(
-            Arg.Is<LocalGifCreateParameters>(p =>
-                p.Turn == 1u &&
-                p.FramesPerSecond == 5u &&
-                p.SpeedMultiplier == 2u &&
-                p.StartOffset == TimeSpan.Zero &&
-                p.EndOffset == TimeSpan.Zero),
-            Arg.Any<CancellationToken>());
+        await host.GifCreator.Received(1).CreateGif(
+            Arg.Is<string>(p => p.Contains("2024-01-02")),
+            new TimeSpan(0, 0, 6, 59, 80),    // turn 1 start: 00:06:59.08
+            new TimeSpan(0, 0, 7, 26, 600),   // turn 1 end:   00:07:26.60
+            1,
+            captureFolder,
+            5u,
+            2u,
+            TimeSpan.Zero,
+            TimeSpan.Zero);
     }
+
+    private static void StubGifCreator(TestHost host) =>
+        host.GifCreator.CreateGif(
+                Arg.Any<string>(),
+                Arg.Any<TimeSpan>(),
+                Arg.Any<TimeSpan>(),
+                Arg.Any<int>(),
+                Arg.Any<string>(),
+                Arg.Any<uint>(),
+                Arg.Any<uint>(),
+                Arg.Any<TimeSpan?>(),
+                Arg.Any<TimeSpan?>())
+            .Returns("out.gif");
 }
