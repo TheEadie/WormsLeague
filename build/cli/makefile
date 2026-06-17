@@ -33,7 +33,10 @@ cli.build.docker: cli.version
 cli.test: cli.test.unit
 
 cli.test.unit: cli.build.exe
-	@dotnet test --filter "Category!=Integration"
+	@dotnet test src/Worms.Cli.Tests --filter "Category!=Integration"
+	@dotnet test src/Worms.Armageddon.Files.Tests --filter "Category!=Integration"
+	@dotnet test src/Worms.Armageddon.Game.Tests --filter "Category!=Integration"
+	@dotnet test src/Worms.Armageddon.Gifs.Tests --filter "Category!=Integration"
 	@echo ""
 
 ## Package

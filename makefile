@@ -17,3 +17,9 @@ include build/docker/makefile
 include build/cli/makefile
 include build/web/makefile
 
+## Gateway unit tests
+
+gateway.test.unit:
+	@dotnet test src/Worms.Hub.Gateway.Tests -p:TreatWarningsAsErrors=true --filter "Category!=Integration"
+	@echo ""
+
