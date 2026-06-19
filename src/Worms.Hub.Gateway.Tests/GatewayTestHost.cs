@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using NSubstitute;
 using Worms.Hub.Gateway.Announcers;
+using Worms.Hub.Queues;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
 
@@ -13,9 +14,17 @@ namespace Worms.Hub.Gateway.Tests;
 
 internal sealed class GatewayTestHost : WebApplicationFactory<Program>
 {
+    private readonly string _tempReplayFolder =
+        Path.Combine(Path.GetTempPath(), "worms-gateway-tests", Guid.NewGuid().ToString("N"));
+
     internal IRepository<Game> GamesRepository { get; } = Substitute.For<IRepository<Game>>();
 
     internal IAnnouncer Announcer { get; } = Substitute.For<IAnnouncer>();
+
+    internal IReplaysRepository ReplaysRepository { get; } = Substitute.For<IReplaysRepository>();
+
+    internal IMessageQueue<ReplayToProcessMessage> ReplayProcessorQueue { get; } =
+        Substitute.For<IMessageQueue<ReplayToProcessMessage>>();
 
     public GatewayTestHost()
     {
@@ -24,6 +33,7 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
         Environment.SetEnvironmentVariable("WORMS_HUB_DISTRIBUTED", "true");
         Environment.SetEnvironmentVariable("WORMS_HUB_GATEWAY", "true");
         Environment.SetEnvironmentVariable("WORMS_HUB_WORKER", null);
+        Environment.SetEnvironmentVariable("WORMS_STORAGE__TEMPREPLAYFOLDER", _tempReplayFolder);
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -66,6 +76,12 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
 
             services.RemoveAll<IAnnouncer>();
             services.AddSingleton(Announcer);
+
+            services.RemoveAll<IReplaysRepository>();
+            services.AddSingleton(ReplaysRepository);
+
+            services.RemoveAll<IMessageQueue<ReplayToProcessMessage>>();
+            services.AddSingleton(ReplayProcessorQueue);
         });
     }
 
@@ -84,6 +100,15 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
         {
             Environment.SetEnvironmentVariable("WORMS_HUB_DISTRIBUTED", null);
             Environment.SetEnvironmentVariable("WORMS_HUB_GATEWAY", null);
+            Environment.SetEnvironmentVariable("WORMS_STORAGE__TEMPREPLAYFOLDER", null);
+            try
+            {
+                if (Directory.Exists(_tempReplayFolder))
+                {
+                    Directory.Delete(_tempReplayFolder, recursive: true);
+                }
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException) { /* best-effort cleanup */ }
         }
 
         base.Dispose(disposing);
