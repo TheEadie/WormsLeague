@@ -26,6 +26,13 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
     internal IMessageQueue<ReplayToProcessMessage> ReplayProcessorQueue { get; } =
         Substitute.For<IMessageQueue<ReplayToProcessMessage>>();
 
+    internal ILeaguesRepository LeaguesRepository { get; } = Substitute.For<ILeaguesRepository>();
+
+    internal IRatingsRepository RatingsRepository { get; } = Substitute.For<IRatingsRepository>();
+
+    internal string SchemesFolder { get; } =
+        Path.Combine(Path.GetTempPath(), "worms-gateway-tests-schemes", Guid.NewGuid().ToString("N"));
+
     public GatewayTestHost()
     {
         // Boot only the gateway (not the worker) so no hosted services are started
@@ -34,6 +41,8 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
         Environment.SetEnvironmentVariable("WORMS_HUB_GATEWAY", "true");
         Environment.SetEnvironmentVariable("WORMS_HUB_WORKER", null);
         Environment.SetEnvironmentVariable("WORMS_STORAGE__TEMPREPLAYFOLDER", _tempReplayFolder);
+        Directory.CreateDirectory(SchemesFolder);
+        Environment.SetEnvironmentVariable("WORMS_STORAGE__SCHEMESFOLDER", SchemesFolder);
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -82,6 +91,12 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
 
             services.RemoveAll<IMessageQueue<ReplayToProcessMessage>>();
             services.AddSingleton(ReplayProcessorQueue);
+
+            services.RemoveAll<ILeaguesRepository>();
+            services.AddSingleton(LeaguesRepository);
+
+            services.RemoveAll<IRatingsRepository>();
+            services.AddSingleton(RatingsRepository);
         });
     }
 
@@ -101,16 +116,23 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
             Environment.SetEnvironmentVariable("WORMS_HUB_DISTRIBUTED", null);
             Environment.SetEnvironmentVariable("WORMS_HUB_GATEWAY", null);
             Environment.SetEnvironmentVariable("WORMS_STORAGE__TEMPREPLAYFOLDER", null);
-            try
-            {
-                if (Directory.Exists(_tempReplayFolder))
-                {
-                    Directory.Delete(_tempReplayFolder, recursive: true);
-                }
-            }
-            catch (Exception e) when (e is IOException or UnauthorizedAccessException) { /* best-effort cleanup */ }
+            Environment.SetEnvironmentVariable("WORMS_STORAGE__SCHEMESFOLDER", null);
+            TryDeleteFolder(_tempReplayFolder);
+            TryDeleteFolder(SchemesFolder);
         }
 
         base.Dispose(disposing);
+    }
+
+    private static void TryDeleteFolder(string path)
+    {
+        try
+        {
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, recursive: true);
+            }
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { /* best-effort cleanup */ }
     }
 }
