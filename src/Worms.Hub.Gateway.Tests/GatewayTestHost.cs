@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using NSubstitute;
 using Worms.Hub.Gateway.Announcers;
+using Worms.Hub.Gateway.Ratings;
 using Worms.Hub.Queues;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
@@ -29,6 +30,12 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
     internal ILeaguesRepository LeaguesRepository { get; } = Substitute.For<ILeaguesRepository>();
 
     internal IRatingsRepository RatingsRepository { get; } = Substitute.For<IRatingsRepository>();
+
+    internal ITeamsRepository TeamsRepository { get; } = Substitute.For<ITeamsRepository>();
+
+    internal IPlayersRepository PlayersRepository { get; } = Substitute.For<IPlayersRepository>();
+
+    internal IRatingsCalculator RatingsCalculator { get; } = Substitute.For<IRatingsCalculator>();
 
     internal string SchemesFolder { get; } =
         Path.Combine(Path.GetTempPath(), "worms-gateway-tests-schemes", Guid.NewGuid().ToString("N"));
@@ -97,6 +104,15 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
 
             services.RemoveAll<IRatingsRepository>();
             services.AddSingleton(RatingsRepository);
+
+            services.RemoveAll<ITeamsRepository>();
+            services.AddSingleton(TeamsRepository);
+
+            services.RemoveAll<IPlayersRepository>();
+            services.AddSingleton(PlayersRepository);
+
+            services.RemoveAll<IRatingsCalculator>();
+            services.AddSingleton(RatingsCalculator);
         });
     }
 
