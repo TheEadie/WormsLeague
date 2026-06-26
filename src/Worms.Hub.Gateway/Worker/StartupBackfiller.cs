@@ -79,7 +79,7 @@ internal sealed class StartupBackfiller(
         await using var connection = new NpgsqlConnection(connectionString);
 
         var leaguesRepository = scope.ServiceProvider.GetRequiredService<ILeaguesRepository>();
-        var ratingsCalculator = scope.ServiceProvider.GetRequiredService<RatingsCalculator>();
+        var ratingsCalculator = scope.ServiceProvider.GetRequiredService<IRatingsCalculator>();
 
         var ratingsCount = await connection.QuerySingleAsync<long>("SELECT COUNT(*) FROM player_ratings");
 
@@ -175,7 +175,7 @@ internal sealed class StartupBackfiller(
         var replayRepository = scope.ServiceProvider.GetRequiredService<IReplaysRepository>();
         var replayTextReader = scope.ServiceProvider.GetRequiredService<IReplayTextReader>();
         var leaguesRepository = scope.ServiceProvider.GetRequiredService<ILeaguesRepository>();
-        var ratingsCalculator = scope.ServiceProvider.GetRequiredService<RatingsCalculator>();
+        var ratingsCalculator = scope.ServiceProvider.GetRequiredService<IRatingsCalculator>();
 
         foreach (var replay in replayRepository.GetAll().Where(r => r.Status == "Processed"))
         {

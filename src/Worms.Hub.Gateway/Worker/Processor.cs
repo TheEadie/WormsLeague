@@ -17,7 +17,7 @@ internal sealed class Processor(
     ReplayFiles replayFiles,
     IAnnouncer announcer,
     IReplayTextReader replayTextReader,
-    RatingsCalculator ratingsCalculator,
+    IRatingsCalculator ratingsCalculator,
     ILogger<Processor> logger)
 {
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "ELO calculation failure must not block replay processing")]

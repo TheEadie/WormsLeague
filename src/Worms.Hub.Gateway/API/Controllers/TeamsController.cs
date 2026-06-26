@@ -10,7 +10,7 @@ namespace Worms.Hub.Gateway.API.Controllers;
 internal sealed class TeamsController(
     ITeamsRepository teamsRepository,
     IPlayersRepository playersRepository,
-    RatingsCalculator ratingsCalculator) : V1ApiController
+    IRatingsCalculator ratingsCalculator) : V1ApiController
 {
     [HttpGet]
     public ActionResult<IReadOnlyList<TeamDto>> GetAll()

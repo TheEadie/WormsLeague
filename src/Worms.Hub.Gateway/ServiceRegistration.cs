@@ -19,7 +19,7 @@ internal static class ServiceRegistration
             .AddScoped<IAnnouncer, Announcer>()
             .AddScoped<ReplayFileValidator>()
             .AddScoped<CliFileValidator>();
-        builder.TryAddScoped<RatingsCalculator>();
+        builder.TryAddScoped<IRatingsCalculator, RatingsCalculator>();
         return builder;
     }
 
@@ -32,7 +32,7 @@ internal static class ServiceRegistration
             .AddScoped<Processor>()
             .AddScoped<IAnnouncer, Announcer>()
             .AddSingleton<StartupBackfiller>();
-        builder.TryAddScoped<RatingsCalculator>();
+        builder.TryAddScoped<IRatingsCalculator, RatingsCalculator>();
         return builder;
     }
 }
