@@ -11,7 +11,7 @@ internal sealed class RatingsCalculator(
     IReplaysRepository replaysRepository,
     ITeamsRepository teamsRepository,
     IRatingsRepository ratingsRepository,
-    ILogger<RatingsCalculator> logger)
+    ILogger<RatingsCalculator> logger) : IRatingsCalculator
 {
     private sealed record Selection(string AuthSubject, string Machine, string TeamName);
 
