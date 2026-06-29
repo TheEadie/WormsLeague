@@ -29,6 +29,12 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
     internal string SchemesFolder { get; } =
         Path.Combine(Path.GetTempPath(), "worms-gateway-tests-schemes", Guid.NewGuid().ToString("N"));
 
+    internal string CliFolder { get; } =
+        Path.Combine(Path.GetTempPath(), "worms-gateway-tests-cli", Guid.NewGuid().ToString("N"));
+
+    internal string GameFolder { get; } =
+        Path.Combine(Path.GetTempPath(), "worms-gateway-tests-game", Guid.NewGuid().ToString("N"));
+
     public GatewayTestHost()
     {
         // Boot only the gateway (not the worker) so no hosted services are started
@@ -39,6 +45,10 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
         Environment.SetEnvironmentVariable("WORMS_STORAGE__TEMPREPLAYFOLDER", _tempReplayFolder);
         Directory.CreateDirectory(SchemesFolder);
         Environment.SetEnvironmentVariable("WORMS_STORAGE__SCHEMESFOLDER", SchemesFolder);
+        Directory.CreateDirectory(CliFolder);
+        Environment.SetEnvironmentVariable("WORMS_STORAGE__CLIFOLDER", CliFolder);
+        Directory.CreateDirectory(GameFolder);
+        Environment.SetEnvironmentVariable("WORMS_STORAGE__GAMEFOLDER", GameFolder);
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -104,8 +114,12 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
             Environment.SetEnvironmentVariable("WORMS_HUB_GATEWAY", null);
             Environment.SetEnvironmentVariable("WORMS_STORAGE__TEMPREPLAYFOLDER", null);
             Environment.SetEnvironmentVariable("WORMS_STORAGE__SCHEMESFOLDER", null);
+            Environment.SetEnvironmentVariable("WORMS_STORAGE__CLIFOLDER", null);
+            Environment.SetEnvironmentVariable("WORMS_STORAGE__GAMEFOLDER", null);
             TryDeleteFolder(_tempReplayFolder);
             TryDeleteFolder(SchemesFolder);
+            TryDeleteFolder(CliFolder);
+            TryDeleteFolder(GameFolder);
         }
 
         base.Dispose(disposing);

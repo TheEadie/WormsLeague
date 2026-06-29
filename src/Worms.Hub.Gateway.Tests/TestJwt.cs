@@ -54,6 +54,22 @@ internal static class TestJwt
     internal static string WithoutAccessRole() =>
         Mint([new Claim(NameIdentifierClaimType, "test-user"), new Claim("permissions", "other")]);
 
+    /// <summary>Mint a token with both 'access' and 'write:cli' roles.</summary>
+    internal static string WithCliWriteRole() =>
+        Mint([
+            new Claim(NameIdentifierClaimType, "test-user"),
+            new Claim("permissions", "access"),
+            new Claim("permissions", "write:cli")
+        ]);
+
+    /// <summary>Mint a token with both 'access' and 'download:game' roles.</summary>
+    internal static string WithGameDownloadRole() =>
+        Mint([
+            new Claim(NameIdentifierClaimType, "test-user"),
+            new Claim("permissions", "access"),
+            new Claim("permissions", "download:game")
+        ]);
+
     private static string Mint(IEnumerable<Claim> claims)
     {
         var descriptor = new SecurityTokenDescriptor
