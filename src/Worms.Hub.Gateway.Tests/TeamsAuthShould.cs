@@ -1,10 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Headers;
-using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
-using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Gateway.Tests;
 
@@ -20,7 +18,7 @@ internal sealed class TeamsAuthShould
     public void SetUp()
     {
         _host = new GatewayTestHost();
-        _host.TeamsRepository.GetAll().Returns(Array.Empty<Team>());
+        // Fake returns empty by default — no arrange needed for auth tests
     }
 
     [TearDown]

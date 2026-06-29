@@ -1,10 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Headers;
-using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
-using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Gateway.Tests;
 
@@ -71,8 +69,7 @@ internal sealed class ReplaysAuthShould
     [Test]
     public async Task Return200WhenTokenHasAccessRole()
     {
-        var created = new Replay("1", "Game", "Pending", "file.dat", null, "redgate", null, null, null, null);
-        _host.ReplaysRepository.Create(Arg.Any<Replay>()).Returns(created);
+        // Fake handles Create automatically — no stub needed
 
         using var client = _host.CreateClient(TestJwt.WithAccessRole());
         using var content = BuildUpload("Game", ValidReplayBytes, "game.WAGame");

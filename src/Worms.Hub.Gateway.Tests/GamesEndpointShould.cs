@@ -33,7 +33,7 @@ internal sealed class GamesEndpointShould
     [Test]
     public async Task ReturnEmptyListWhenNoGamesExist()
     {
-        _host.GamesRepository.GetAll().Returns([]);
+        // Fake returns empty by default — no arrange needed
 
         var response = await _client.GetAsync(new Uri(GamesUrl, UriKind.Relative));
 
@@ -48,7 +48,7 @@ internal sealed class GamesEndpointShould
     {
         var gameA = new Game("1", "Pending", "HOST-A");
         var gameB = new Game("2", "Complete", "HOST-B");
-        _host.GamesRepository.GetAll().Returns([gameA, gameB]);
+        _host.Storage.Games.Seed(gameA, gameB);
 
         var response = await _client.GetAsync(new Uri(GamesUrl, UriKind.Relative));
 
@@ -64,7 +64,7 @@ internal sealed class GamesEndpointShould
     public async Task ReturnGameByIdWhenItExists()
     {
         var game = new Game("42", "Pending", "HOST-1");
-        _host.GamesRepository.GetAll().Returns([game]);
+        _host.Storage.Games.Seed(game);
 
         var response = await _client.GetAsync(new Uri($"{GamesUrl}/42", UriKind.Relative));
 
@@ -79,7 +79,7 @@ internal sealed class GamesEndpointShould
     [Test]
     public async Task Return404WhenGameByIdDoesNotExist()
     {
-        _host.GamesRepository.GetAll().Returns([]);
+        // Fake returns empty by default — no arrange needed
 
         var response = await _client.GetAsync(new Uri($"{GamesUrl}/999", UriKind.Relative));
 
@@ -89,45 +89,43 @@ internal sealed class GamesEndpointShould
     [Test]
     public async Task CreateGameAndAnnounceGameStarting()
     {
-        var createdGame = new Game("42", "Pending", "HOST-1");
-        _host.GamesRepository
-            .Create(Arg.Any<Game>())
-            .Returns(createdGame);
+        // The fake assigns an id and stores the game automatically
 
         var response = await _client.PostAsJsonAsync(GamesUrl, new CreateGameDto("HOST-1"));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var dto = await response.Content.ReadFromJsonAsync<GameDto>();
         dto.ShouldNotBeNull();
-        dto.Id.ShouldBe("42");
         dto.Status.ShouldBe("Pending");
         dto.HostMachine.ShouldBe("HOST-1");
+        dto.Id.ShouldNotBeNullOrEmpty();
+
+        var stored = _host.Storage.Games.GetAll();
+        stored.Count.ShouldBe(1);
+        stored.ShouldContain(g => g.HostMachine == "HOST-1" && g.Status == "Pending");
 
         await _host.Announcer.Received(1).AnnounceGameStarting("HOST-1");
-        _host.GamesRepository.Received(1).Create(
-            Arg.Is<Game>(g => g.HostMachine == "HOST-1" && g.Status == "Pending" && g.Id == "0"));
     }
 
     [Test]
     public async Task UpdateGameWhenItExists()
     {
-        var existing = new Game("7", "Pending", "HOST-X");
-        _host.GamesRepository.GetAll().Returns([existing]);
+        _host.Storage.Games.Seed(new Game("7", "Pending", "HOST-X"));
 
         var response = await _client.PutAsJsonAsync(GamesUrl, new GameDto("7", "Complete", "HOST-X"));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        _host.GamesRepository.Received(1).Update(Arg.Is<Game>(g => g.Id == "7"));
+        _host.Storage.Games.GetAll().Single(g => g.Id == "7").Status.ShouldBe("Complete");
     }
 
     [Test]
     public async Task Return404WhenUpdatingGameThatDoesNotExist()
     {
-        _host.GamesRepository.GetAll().Returns([]);
+        // Fake is empty — no arrange needed
 
         var response = await _client.PutAsJsonAsync(GamesUrl, new GameDto("999", "Complete", "HOST-X"));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-        _host.GamesRepository.DidNotReceive().Update(Arg.Any<Game>());
+        _host.Storage.Games.GetAll().ShouldBeEmpty();
     }
 }

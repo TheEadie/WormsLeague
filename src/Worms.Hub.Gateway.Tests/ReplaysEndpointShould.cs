@@ -6,7 +6,6 @@ using NUnit.Framework;
 using Shouldly;
 using Worms.Hub.Gateway.API.DTOs;
 using Worms.Hub.Queues;
-using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Gateway.Tests;
 
@@ -47,8 +46,7 @@ internal sealed class ReplaysEndpointShould
     [Test]
     public async Task AcceptAValidReplayUpload()
     {
-        var created = new Replay("99", "My Game", "Pending", "temp-file.dat", null, "redgate", null, null, null, null);
-        _host.ReplaysRepository.Create(Arg.Any<Replay>()).Returns(created);
+        // Fake assigns the id and stores the replay automatically
 
         using var content = BuildUpload("My Game", ValidReplayBytes, "game.WAGame");
         var response = await _client.PostAsync(new Uri(ReplaysUrl, UriKind.Relative), content);
@@ -57,19 +55,17 @@ internal sealed class ReplaysEndpointShould
 
         var dto = await response.Content.ReadFromJsonAsync<ReplayDto>();
         dto.ShouldNotBeNull();
-        dto.Id.ShouldBe("99");
         dto.Name.ShouldBe("My Game");
         dto.Status.ShouldBe("Pending");
+        dto.Id.ShouldNotBeNullOrEmpty();
 
-        _host.ReplaysRepository.Received(1).Create(
-            Arg.Is<Replay>(r =>
-                r.Name == "My Game" &&
-                r.Status == "Pending" &&
-                r.Id == "0" &&
-                r.LeagueId == "redgate"));
+        var stored = _host.Storage.Replays.GetAll().Single();
+        stored.Name.ShouldBe("My Game");
+        stored.Status.ShouldBe("Pending");
+        stored.LeagueId.ShouldBe("redgate");
 
         await _host.ReplayProcessorQueue.Received(1).EnqueueMessage(
-            Arg.Is<ReplayToProcessMessage>(m => m.ReplayFileName == created.Filename));
+            Arg.Is<ReplayToProcessMessage>(m => m.ReplayFileName == stored.Filename));
     }
 
     [Test]
@@ -80,7 +76,7 @@ internal sealed class ReplaysEndpointShould
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
-        _host.ReplaysRepository.DidNotReceive().Create(Arg.Any<Replay>());
+        _host.Storage.Replays.GetAll().ShouldBeEmpty();
         await _host.ReplayProcessorQueue.DidNotReceive().EnqueueMessage(Arg.Any<ReplayToProcessMessage>());
     }
 
@@ -92,7 +88,7 @@ internal sealed class ReplaysEndpointShould
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
-        _host.ReplaysRepository.DidNotReceive().Create(Arg.Any<Replay>());
+        _host.Storage.Replays.GetAll().ShouldBeEmpty();
         await _host.ReplayProcessorQueue.DidNotReceive().EnqueueMessage(Arg.Any<ReplayToProcessMessage>());
     }
 
