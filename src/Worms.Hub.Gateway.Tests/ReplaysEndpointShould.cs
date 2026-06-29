@@ -46,8 +46,6 @@ internal sealed class ReplaysEndpointShould
     [Test]
     public async Task AcceptAValidReplayUpload()
     {
-        // Fake assigns the id and stores the replay automatically
-
         using var content = BuildUpload("My Game", ValidReplayBytes, "game.WAGame");
         var response = await _client.PostAsync(new Uri(ReplaysUrl, UriKind.Relative), content);
 

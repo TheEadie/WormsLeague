@@ -36,8 +36,6 @@ internal sealed class TeamsEndpointShould
     [Test]
     public async Task ReturnEmptyListWhenNoTeamsExist()
     {
-        // Fake returns empty by default — no arrange needed
-
         var response = await _client.GetAsync(new Uri(TeamsUrl, UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -104,8 +102,6 @@ internal sealed class TeamsEndpointShould
     [Test]
     public async Task Return404WhenTeamDoesNotExist()
     {
-        // Team 999 not seeded — fake returns null for GetById(999)
-
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(999, true, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -118,7 +114,6 @@ internal sealed class TeamsEndpointShould
     public async Task CreatePlayerAndClaimWhenUnclaimedAndNoPlayerExists_BodyDisplayName()
     {
         _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
-        // No player seeded for "test-user"
 
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, true, "Body Name"));
 
@@ -133,7 +128,6 @@ internal sealed class TeamsEndpointShould
     public async Task FallsBackToNicknameClaim()
     {
         _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
-        // No player seeded
 
         using var client = _host.CreateClient(TestJwt.WithAccessRole(nickname: "NickFromToken"));
 
@@ -149,7 +143,6 @@ internal sealed class TeamsEndpointShould
     public async Task FallsBackToNameClaimWhenNoNickname()
     {
         _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
-        // No player seeded
 
         using var client = _host.CreateClient(TestJwt.WithAccessRole(name: "NameFromToken"));
 
@@ -165,7 +158,6 @@ internal sealed class TeamsEndpointShould
     public async Task FallsBackToSubjectWhenNoNicknameOrName()
     {
         _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
-        // No player seeded for "subject-xyz"
 
         using var client = _host.CreateClient(TestJwt.WithAccessRole(subject: "subject-xyz"));
 
@@ -182,7 +174,6 @@ internal sealed class TeamsEndpointShould
     public async Task FallsBackToUnknownWhenNoClaimsPresent()
     {
         _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
-        // No player seeded; token has null subject
 
         using var client = _host.CreateClient(TestJwt.WithAccessRole(subject: null));
 
@@ -204,7 +195,6 @@ internal sealed class TeamsEndpointShould
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, true, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        // Only the one seeded player — no second player created
         _host.Storage.Players.All.Count.ShouldBe(1);
         _host.Storage.Players.All.Single().DisplayName.ShouldBe("Existing");
         _host.Storage.Teams.GetById(1)!.ClaimedByAuthSubject.ShouldBe("test-user");

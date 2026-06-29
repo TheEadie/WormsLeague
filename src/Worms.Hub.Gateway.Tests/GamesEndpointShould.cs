@@ -33,8 +33,6 @@ internal sealed class GamesEndpointShould
     [Test]
     public async Task ReturnEmptyListWhenNoGamesExist()
     {
-        // Fake returns empty by default — no arrange needed
-
         var response = await _client.GetAsync(new Uri(GamesUrl, UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -79,8 +77,6 @@ internal sealed class GamesEndpointShould
     [Test]
     public async Task Return404WhenGameByIdDoesNotExist()
     {
-        // Fake returns empty by default — no arrange needed
-
         var response = await _client.GetAsync(new Uri($"{GamesUrl}/999", UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -89,8 +85,6 @@ internal sealed class GamesEndpointShould
     [Test]
     public async Task CreateGameAndAnnounceGameStarting()
     {
-        // The fake assigns an id and stores the game automatically
-
         var response = await _client.PostAsJsonAsync(GamesUrl, new CreateGameDto("HOST-1"));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -121,8 +115,6 @@ internal sealed class GamesEndpointShould
     [Test]
     public async Task Return404WhenUpdatingGameThatDoesNotExist()
     {
-        // Fake is empty — no arrange needed
-
         var response = await _client.PutAsJsonAsync(GamesUrl, new GameDto("999", "Complete", "HOST-X"));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);

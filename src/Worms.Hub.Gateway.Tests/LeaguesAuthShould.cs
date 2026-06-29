@@ -18,7 +18,6 @@ internal sealed class LeaguesAuthShould
     public void SetUp()
     {
         _host = new GatewayTestHost();
-        // Fake returns empty by default — no arrange needed for auth tests
     }
 
     [TearDown]

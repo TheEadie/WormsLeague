@@ -16,7 +16,6 @@ public sealed class FakePlayersRepository : IPlayersRepository
         _store.AddRange(players);
     }
 
-    /// <summary>Test-only snapshot of all seeded/created players.</summary>
     [PublicAPI]
     public IReadOnlyCollection<Player> All => [.. _store];
 
@@ -26,7 +25,6 @@ public sealed class FakePlayersRepository : IPlayersRepository
     public Player Create(Player player)
     {
         ArgumentNullException.ThrowIfNull(player);
-        // Replace any existing player with the same subject, or append
         var index = _store.FindIndex(p => p.AuthSubject == player.AuthSubject);
         if (index >= 0)
         {

@@ -69,8 +69,6 @@ internal sealed class ReplaysAuthShould
     [Test]
     public async Task Return200WhenTokenHasAccessRole()
     {
-        // Fake handles Create automatically — no stub needed
-
         using var client = _host.CreateClient(TestJwt.WithAccessRole());
         using var content = BuildUpload("Game", ValidReplayBytes, "game.WAGame");
 

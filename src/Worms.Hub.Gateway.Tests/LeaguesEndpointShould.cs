@@ -39,8 +39,6 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task ReturnEmptyListWhenNoLeaguesExist()
     {
-        // Fake returns empty by default — no arrange needed
-
         var response = await _client.GetAsync(new Uri(LeaguesUrl, UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -58,7 +56,6 @@ internal sealed class LeaguesEndpointShould
         _host.Storage.Ratings.Seed("redgate",
             new PlayerRating("sub1", "Alice", "redgate", 1500, 10),
             new PlayerRating("sub2", "Bob", "redgate", 1400, 8));
-        // "other" has no ratings seeded — empty by default
 
         var response = await _client.GetAsync(new Uri(LeaguesUrl, UriKind.Relative));
 
@@ -78,7 +75,6 @@ internal sealed class LeaguesEndpointShould
     public async Task ReturnNullVersionAndSchemeUrlWhenNoVersionFileExists()
     {
         _host.Storage.Leagues.Seed(new LeagueDb("redgate", "Red Gate"));
-        // no ratings seeded — empty by default
 
         var response = await _client.GetAsync(new Uri(LeaguesUrl, UriKind.Relative));
 
@@ -95,7 +91,6 @@ internal sealed class LeaguesEndpointShould
     public async Task ReturnVersionAndSchemeUrlWhenVersionFileExists()
     {
         _host.Storage.Leagues.Seed(new LeagueDb("redgate", "Red Gate"));
-        // no ratings seeded — empty by default
         WriteVersionFile("redgate", "1.2.3");
 
         var response = await _client.GetAsync(new Uri(LeaguesUrl, UriKind.Relative));
@@ -137,8 +132,6 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task Return404WhenLeagueByIdDoesNotExist()
     {
-        // "missing" league not seeded — fake returns null for GetById
-
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/missing", UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -150,7 +143,6 @@ internal sealed class LeaguesEndpointShould
     public async Task ReturnEmptyReplaysWhenLeagueHasNone()
     {
         _host.Storage.Leagues.Seed(new LeagueDb("redgate", "Red Gate"));
-        // no replays seeded for "redgate" — fake GetByLeagueId returns empty
 
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/redgate/replays", UriKind.Relative));
 
@@ -182,8 +174,6 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task Return404ForReplaysWhenLeagueIdIsUnknown()
     {
-        // "missing" league not seeded
-
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/missing/replays", UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -209,8 +199,6 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task Return404ForReplayWhenLeagueIdIsUnknown()
     {
-        // "missing" league not seeded
-
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/missing/replays/99", UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);

@@ -76,7 +76,6 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
                     };
                 });
 
-            // ── Fake the seams ────────────────────────────────────────────────
             services.AddFakeHubStorageServices();
 
             services.RemoveAll<IAnnouncer>();
@@ -90,7 +89,6 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
         });
     }
 
-    /// <summary>Create an <see cref="HttpClient"/> that sends <paramref name="bearerToken"/> on every request.</summary>
     internal HttpClient CreateClient(string bearerToken)
     {
         var client = CreateClient();
