@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Hub.Gateway.API.DTOs;
@@ -40,8 +39,6 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task ReturnEmptyListWhenNoLeaguesExist()
     {
-        _host.LeaguesRepository.GetAll().Returns([]);
-
         var response = await _client.GetAsync(new Uri(LeaguesUrl, UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -53,17 +50,12 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task ReturnAllLeaguesWithStandings()
     {
-        _host.LeaguesRepository.GetAll().Returns(
-        [
+        _host.Storage.Leagues.Seed(
             new LeagueDb("redgate", "Red Gate"),
-            new LeagueDb("other", "Other")
-        ]);
-        _host.RatingsRepository.GetByLeagueId("redgate").Returns(
-        [
+            new LeagueDb("other", "Other"));
+        _host.Storage.Ratings.Seed("redgate",
             new PlayerRating("sub1", "Alice", "redgate", 1500, 10),
-            new PlayerRating("sub2", "Bob", "redgate", 1400, 8)
-        ]);
-        _host.RatingsRepository.GetByLeagueId("other").Returns([]);
+            new PlayerRating("sub2", "Bob", "redgate", 1400, 8));
 
         var response = await _client.GetAsync(new Uri(LeaguesUrl, UriKind.Relative));
 
@@ -82,8 +74,7 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task ReturnNullVersionAndSchemeUrlWhenNoVersionFileExists()
     {
-        _host.LeaguesRepository.GetAll().Returns([new LeagueDb("redgate", "Red Gate")]);
-        _host.RatingsRepository.GetByLeagueId("redgate").Returns([]);
+        _host.Storage.Leagues.Seed(new LeagueDb("redgate", "Red Gate"));
 
         var response = await _client.GetAsync(new Uri(LeaguesUrl, UriKind.Relative));
 
@@ -99,8 +90,7 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task ReturnVersionAndSchemeUrlWhenVersionFileExists()
     {
-        _host.LeaguesRepository.GetAll().Returns([new LeagueDb("redgate", "Red Gate")]);
-        _host.RatingsRepository.GetByLeagueId("redgate").Returns([]);
+        _host.Storage.Leagues.Seed(new LeagueDb("redgate", "Red Gate"));
         WriteVersionFile("redgate", "1.2.3");
 
         var response = await _client.GetAsync(new Uri(LeaguesUrl, UriKind.Relative));
@@ -121,11 +111,9 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task ReturnLeagueByIdWhenItExists()
     {
-        _host.LeaguesRepository.GetById("redgate").Returns(new LeagueDb("redgate", "Red Gate"));
-        _host.RatingsRepository.GetByLeagueId("redgate").Returns(
-        [
-            new PlayerRating("sub1", "Alice", "redgate", 1500, 10)
-        ]);
+        _host.Storage.Leagues.Seed(new LeagueDb("redgate", "Red Gate"));
+        _host.Storage.Ratings.Seed("redgate",
+            new PlayerRating("sub1", "Alice", "redgate", 1500, 10));
         WriteVersionFile("redgate", "1.0.0");
 
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/redgate", UriKind.Relative));
@@ -144,8 +132,6 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task Return404WhenLeagueByIdDoesNotExist()
     {
-        _host.LeaguesRepository.GetById("missing").Returns((LeagueDb?)null);
-
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/missing", UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -156,8 +142,7 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task ReturnEmptyReplaysWhenLeagueHasNone()
     {
-        _host.LeaguesRepository.GetById("redgate").Returns(new LeagueDb("redgate", "Red Gate"));
-        _host.ReplaysRepository.GetByLeagueId("redgate").Returns([]);
+        _host.Storage.Leagues.Seed(new LeagueDb("redgate", "Red Gate"));
 
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/redgate/replays", UriKind.Relative));
 
@@ -170,11 +155,9 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task ReturnReplaysWhenLeagueHasThem()
     {
-        _host.LeaguesRepository.GetById("redgate").Returns(new LeagueDb("redgate", "Red Gate"));
-        _host.ReplaysRepository.GetByLeagueId("redgate").Returns(
-        [
-            new Replay("99", "My Game", "Processed", "file.dat", null, "redgate", null, null, null, null)
-        ]);
+        _host.Storage.Leagues.Seed(new LeagueDb("redgate", "Red Gate"));
+        _host.Storage.Replays.Seed(
+            new Replay("99", "My Game", "Processed", "file.dat", null, "redgate", null, null, null, null));
 
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/redgate/replays", UriKind.Relative));
 
@@ -191,8 +174,6 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task Return404ForReplaysWhenLeagueIdIsUnknown()
     {
-        _host.LeaguesRepository.GetById("missing").Returns((LeagueDb?)null);
-
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/missing/replays", UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -203,11 +184,9 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task ReturnReplayWhenLeagueAndReplayExist()
     {
-        _host.LeaguesRepository.GetById("redgate").Returns(new LeagueDb("redgate", "Red Gate"));
-        _host.ReplaysRepository.GetByLeagueId("redgate").Returns(
-        [
-            new Replay("99", "My Game", "Processed", "file.dat", null, "redgate", null, null, null, null)
-        ]);
+        _host.Storage.Leagues.Seed(new LeagueDb("redgate", "Red Gate"));
+        _host.Storage.Replays.Seed(
+            new Replay("99", "My Game", "Processed", "file.dat", null, "redgate", null, null, null, null));
 
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/redgate/replays/99", UriKind.Relative));
 
@@ -220,8 +199,6 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task Return404ForReplayWhenLeagueIdIsUnknown()
     {
-        _host.LeaguesRepository.GetById("missing").Returns((LeagueDb?)null);
-
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/missing/replays/99", UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -230,11 +207,9 @@ internal sealed class LeaguesEndpointShould
     [Test]
     public async Task Return404ForReplayWhenReplayIdIsNotFound()
     {
-        _host.LeaguesRepository.GetById("redgate").Returns(new LeagueDb("redgate", "Red Gate"));
-        _host.ReplaysRepository.GetByLeagueId("redgate").Returns(
-        [
-            new Replay("99", "My Game", "Processed", "file.dat", null, "redgate", null, null, null, null)
-        ]);
+        _host.Storage.Leagues.Seed(new LeagueDb("redgate", "Red Gate"));
+        _host.Storage.Replays.Seed(
+            new Replay("99", "My Game", "Processed", "file.dat", null, "redgate", null, null, null, null));
 
         var response = await _client.GetAsync(new Uri($"{LeaguesUrl}/redgate/replays/123", UriKind.Relative));
 

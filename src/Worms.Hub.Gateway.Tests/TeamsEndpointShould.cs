@@ -36,8 +36,6 @@ internal sealed class TeamsEndpointShould
     [Test]
     public async Task ReturnEmptyListWhenNoTeamsExist()
     {
-        _host.TeamsRepository.GetAll().Returns([]);
-
         var response = await _client.GetAsync(new Uri(TeamsUrl, UriKind.Relative));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -49,12 +47,10 @@ internal sealed class TeamsEndpointShould
     [Test]
     public async Task ReturnAllTeamsMappingFields()
     {
-        _host.TeamsRepository.GetAll().Returns(
-        [
+        _host.Storage.Teams.Seed(
             new Team(1, "Machine1", "TeamA", null, null),
             new Team(2, "Machine2", "TeamB", "Alice", "test-user"),
-            new Team(3, "Machine3", "TeamC", "Bob", "other-user")
-        ]);
+            new Team(3, "Machine3", "TeamC", "Bob", "other-user"));
 
         var response = await _client.GetAsync(new Uri(TeamsUrl, UriKind.Relative));
 
@@ -85,12 +81,10 @@ internal sealed class TeamsEndpointShould
     [Test]
     public async Task SetIsMyTeamTrueOnlyForTeamsClaimedByCaller()
     {
-        _host.TeamsRepository.GetAll().Returns(
-        [
+        _host.Storage.Teams.Seed(
             new Team(1, "M1", "T1", null, null),
             new Team(2, "M2", "T2", "Alice", "test-user"),
-            new Team(3, "M3", "T3", "Bob", "other-user")
-        ]);
+            new Team(3, "M3", "T3", "Bob", "other-user"));
 
         var response = await _client.GetAsync(new Uri(TeamsUrl, UriKind.Relative));
 
@@ -108,155 +102,145 @@ internal sealed class TeamsEndpointShould
     [Test]
     public async Task Return404WhenTeamDoesNotExist()
     {
-        _host.TeamsRepository.GetById(999).Returns((Team?)null);
-
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(999, true, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-        _host.PlayersRepository.DidNotReceive().Create(Arg.Any<Player>());
-        _host.TeamsRepository.DidNotReceive().SetPlayerClaim(Arg.Any<int>(), Arg.Any<string?>());
+        _host.Storage.Players.GetByAuthSubject("test-user").ShouldBeNull();
+        _host.Storage.Teams.GetById(999).ShouldBeNull();
         _host.RatingsCalculator.DidNotReceive().CalculateForTeam(Arg.Any<string>(), Arg.Any<string>());
     }
 
     [Test]
     public async Task CreatePlayerAndClaimWhenUnclaimedAndNoPlayerExists_BodyDisplayName()
     {
-        _host.TeamsRepository.GetById(1).Returns(new Team(1, "M1", "T1", null, null));
-        _host.PlayersRepository.GetByAuthSubject("test-user").Returns((Player?)null);
-        _host.PlayersRepository.Create(Arg.Any<Player>()).Returns(ci => ci.Arg<Player>());
+        _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
 
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, true, "Body Name"));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        _host.PlayersRepository.Received()
-            .Create(Arg.Is<Player>(p => p.AuthSubject == "test-user" && p.DisplayName == "Body Name"));
-        _host.TeamsRepository.Received().SetPlayerClaim(1, "test-user");
+        var player = _host.Storage.Players.GetByAuthSubject("test-user");
+        player.ShouldNotBeNull();
+        player.DisplayName.ShouldBe("Body Name");
+        _host.Storage.Teams.GetById(1)!.ClaimedByAuthSubject.ShouldBe("test-user");
     }
 
     [Test]
     public async Task FallsBackToNicknameClaim()
     {
-        _host.TeamsRepository.GetById(1).Returns(new Team(1, "M1", "T1", null, null));
-        _host.PlayersRepository.GetByAuthSubject("test-user").Returns((Player?)null);
-        _host.PlayersRepository.Create(Arg.Any<Player>()).Returns(ci => ci.Arg<Player>());
+        _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
 
         using var client = _host.CreateClient(TestJwt.WithAccessRole(nickname: "NickFromToken"));
 
         var response = await client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, true, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        _host.PlayersRepository.Received()
-            .Create(Arg.Is<Player>(p => p.AuthSubject == "test-user" && p.DisplayName == "NickFromToken"));
+        var player = _host.Storage.Players.GetByAuthSubject("test-user");
+        player.ShouldNotBeNull();
+        player.DisplayName.ShouldBe("NickFromToken");
     }
 
     [Test]
     public async Task FallsBackToNameClaimWhenNoNickname()
     {
-        _host.TeamsRepository.GetById(1).Returns(new Team(1, "M1", "T1", null, null));
-        _host.PlayersRepository.GetByAuthSubject("test-user").Returns((Player?)null);
-        _host.PlayersRepository.Create(Arg.Any<Player>()).Returns(ci => ci.Arg<Player>());
+        _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
 
         using var client = _host.CreateClient(TestJwt.WithAccessRole(name: "NameFromToken"));
 
         var response = await client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, true, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        _host.PlayersRepository.Received()
-            .Create(Arg.Is<Player>(p => p.AuthSubject == "test-user" && p.DisplayName == "NameFromToken"));
+        var player = _host.Storage.Players.GetByAuthSubject("test-user");
+        player.ShouldNotBeNull();
+        player.DisplayName.ShouldBe("NameFromToken");
     }
 
     [Test]
     public async Task FallsBackToSubjectWhenNoNicknameOrName()
     {
-        _host.TeamsRepository.GetById(1).Returns(new Team(1, "M1", "T1", null, null));
-        _host.PlayersRepository.GetByAuthSubject("subject-xyz").Returns((Player?)null);
-        _host.PlayersRepository.Create(Arg.Any<Player>()).Returns(ci => ci.Arg<Player>());
+        _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
 
         using var client = _host.CreateClient(TestJwt.WithAccessRole(subject: "subject-xyz"));
 
         var response = await client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, true, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        _host.PlayersRepository.Received()
-            .Create(Arg.Is<Player>(p => p.AuthSubject == "subject-xyz" && p.DisplayName == "subject-xyz"));
-        _host.TeamsRepository.Received().SetPlayerClaim(1, "subject-xyz");
+        var player = _host.Storage.Players.GetByAuthSubject("subject-xyz");
+        player.ShouldNotBeNull();
+        player.DisplayName.ShouldBe("subject-xyz");
+        _host.Storage.Teams.GetById(1)!.ClaimedByAuthSubject.ShouldBe("subject-xyz");
     }
 
     [Test]
     public async Task FallsBackToUnknownWhenNoClaimsPresent()
     {
-        _host.TeamsRepository.GetById(1).Returns(new Team(1, "M1", "T1", null, null));
-        _host.PlayersRepository.GetByAuthSubject(Arg.Any<string>()).Returns((Player?)null);
-        _host.PlayersRepository.Create(Arg.Any<Player>()).Returns(ci => ci.Arg<Player>());
+        _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
 
         using var client = _host.CreateClient(TestJwt.WithAccessRole(subject: null));
 
         var response = await client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, true, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        _host.PlayersRepository.Received()
-            .Create(Arg.Is<Player>(p => p.DisplayName == "Unknown"));
+        // Assert via snapshot — subject is null so we can't key into the player store
+        var allPlayers = _host.Storage.Players.All;
+        allPlayers.Count.ShouldBe(1);
+        allPlayers.Single().DisplayName.ShouldBe("Unknown");
     }
 
     [Test]
     public async Task UseExistingPlayerWhenOneAlreadyExists()
     {
-        _host.TeamsRepository.GetById(1).Returns(new Team(1, "M1", "T1", null, null));
-        _host.PlayersRepository.GetByAuthSubject("test-user")
-            .Returns(new Player("test-user", "Existing"));
+        _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
+        _host.Storage.Players.Seed(new Player("test-user", "Existing"));
 
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, true, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        _host.PlayersRepository.DidNotReceive().Create(Arg.Any<Player>());
-        _host.TeamsRepository.Received().SetPlayerClaim(1, "test-user");
+        _host.Storage.Players.All.Count.ShouldBe(1);
+        _host.Storage.Players.All.Single().DisplayName.ShouldBe("Existing");
+        _host.Storage.Teams.GetById(1)!.ClaimedByAuthSubject.ShouldBe("test-user");
     }
 
     [Test]
     public async Task Return409WhenTeamClaimedByAnotherUser_OnClaim()
     {
-        _host.TeamsRepository.GetById(1)
-            .Returns(new Team(1, "M1", "T1", "Bob", "other-user"));
+        _host.Storage.Teams.Seed(new Team(1, "M1", "T1", "Bob", "other-user"));
 
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, true, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
-        _host.PlayersRepository.DidNotReceive().Create(Arg.Any<Player>());
-        _host.TeamsRepository.DidNotReceive().SetPlayerClaim(Arg.Any<int>(), Arg.Any<string?>());
+        _host.Storage.Players.All.ShouldBeEmpty();
+        _host.Storage.Teams.GetById(1)!.ClaimedByAuthSubject.ShouldBe("other-user");
         _host.RatingsCalculator.DidNotReceive().CalculateForTeam(Arg.Any<string>(), Arg.Any<string>());
     }
 
     [Test]
     public async Task ClearClaimWhenUnclaimedByOwner()
     {
-        _host.TeamsRepository.GetById(1)
-            .Returns(new Team(1, "M1", "T1", "Alice", "test-user"));
+        _host.Storage.Teams.Seed(new Team(1, "M1", "T1", "Alice", "test-user"));
 
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, false, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        _host.TeamsRepository.Received().SetPlayerClaim(1, null);
+        _host.Storage.Teams.GetById(1)!.ClaimedByAuthSubject.ShouldBeNull();
     }
 
     [Test]
     public async Task Return403WhenUnclaimingTeamClaimedByAnother()
     {
-        _host.TeamsRepository.GetById(1)
-            .Returns(new Team(1, "M1", "T1", "Bob", "other-user"));
+        _host.Storage.Teams.Seed(new Team(1, "M1", "T1", "Bob", "other-user"));
 
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, false, null));
 
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
-        _host.TeamsRepository.DidNotReceive().SetPlayerClaim(Arg.Any<int>(), Arg.Any<string?>());
+        _host.Storage.Teams.GetById(1)!.ClaimedByAuthSubject.ShouldBe("other-user");
         _host.RatingsCalculator.DidNotReceive().CalculateForTeam(Arg.Any<string>(), Arg.Any<string>());
     }
 
     [Test]
     public async Task TriggerRecalculationOnSuccessfulClaim()
     {
-        _host.TeamsRepository.GetById(1).Returns(new Team(1, "M1", "T1", null, null));
-        _host.PlayersRepository.GetByAuthSubject("test-user")
-            .Returns(new Player("test-user", "Alice"));
+        _host.Storage.Teams.Seed(new Team(1, "M1", "T1", null, null));
+        _host.Storage.Players.Seed(new Player("test-user", "Alice"));
 
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, true, null));
 
@@ -267,8 +251,7 @@ internal sealed class TeamsEndpointShould
     [Test]
     public async Task TriggerRecalculationOnSuccessfulUnclaim()
     {
-        _host.TeamsRepository.GetById(1)
-            .Returns(new Team(1, "M2", "T2", "Alice", "test-user"));
+        _host.Storage.Teams.Seed(new Team(1, "M2", "T2", "Alice", "test-user"));
 
         var response = await _client.PutAsJsonAsync(TeamsUrl, new ClaimTeamDto(1, false, null));
 

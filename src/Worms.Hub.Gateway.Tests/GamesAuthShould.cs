@@ -1,9 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using NUnit.Framework;
-using NSubstitute;
 using Shouldly;
-using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Gateway.Tests;
 
@@ -19,8 +17,6 @@ internal sealed class GamesAuthShould
     public void SetUp()
     {
         _host = new GatewayTestHost();
-        // Always return an empty list so auth tests that reach the endpoint get 200
-        _host.GamesRepository.GetAll().Returns(Array.Empty<Game>());
     }
 
     [TearDown]

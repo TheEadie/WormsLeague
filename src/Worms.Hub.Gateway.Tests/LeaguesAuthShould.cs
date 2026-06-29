@@ -1,10 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Headers;
-using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
-using Worms.Hub.Storage.Database;
 
 namespace Worms.Hub.Gateway.Tests;
 
@@ -20,7 +18,6 @@ internal sealed class LeaguesAuthShould
     public void SetUp()
     {
         _host = new GatewayTestHost();
-        _host.LeaguesRepository.GetAll().Returns(Array.Empty<LeagueDb>());
     }
 
     [TearDown]

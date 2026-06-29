@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Worms.Hub.Gateway\Worms.Hub.Gateway.csproj"/>
     <ProjectReference Include="..\Worms.Hub.Storage\Worms.Hub.Storage.csproj"/>
+    <ProjectReference Include="..\Worms.Hub.Storage.Fake\Worms.Hub.Storage.Fake.csproj"/>
   </ItemGroup>
 
 </Project>
