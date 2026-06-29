@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -8,8 +9,7 @@ using NSubstitute;
 using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Gateway.Ratings;
 using Worms.Hub.Queues;
-using Worms.Hub.Storage.Database;
-using Worms.Hub.Storage.Domain;
+using Worms.Hub.Storage.Fake;
 
 namespace Worms.Hub.Gateway.Tests;
 
@@ -18,24 +18,14 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
     private readonly string _tempReplayFolder =
         Path.Combine(Path.GetTempPath(), "worms-gateway-tests", Guid.NewGuid().ToString("N"));
 
-    internal IRepository<Game> GamesRepository { get; } = Substitute.For<IRepository<Game>>();
-
     internal IAnnouncer Announcer { get; } = Substitute.For<IAnnouncer>();
-
-    internal IReplaysRepository ReplaysRepository { get; } = Substitute.For<IReplaysRepository>();
 
     internal IMessageQueue<ReplayToProcessMessage> ReplayProcessorQueue { get; } =
         Substitute.For<IMessageQueue<ReplayToProcessMessage>>();
 
-    internal ILeaguesRepository LeaguesRepository { get; } = Substitute.For<ILeaguesRepository>();
-
-    internal IRatingsRepository RatingsRepository { get; } = Substitute.For<IRatingsRepository>();
-
-    internal ITeamsRepository TeamsRepository { get; } = Substitute.For<ITeamsRepository>();
-
-    internal IPlayersRepository PlayersRepository { get; } = Substitute.For<IPlayersRepository>();
-
     internal IRatingsCalculator RatingsCalculator { get; } = Substitute.For<IRatingsCalculator>();
+
+    internal FakeHubStorage Storage => Services.GetRequiredService<FakeHubStorage>();
 
     internal string SchemesFolder { get; } =
         Path.Combine(Path.GetTempPath(), "worms-gateway-tests-schemes", Guid.NewGuid().ToString("N"));
@@ -87,29 +77,13 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
                 });
 
             // ── Fake the seams ────────────────────────────────────────────────
-            services.RemoveAll<IRepository<Game>>();
-            services.AddSingleton(GamesRepository);
+            services.AddFakeHubStorageServices();
 
             services.RemoveAll<IAnnouncer>();
             services.AddSingleton(Announcer);
 
-            services.RemoveAll<IReplaysRepository>();
-            services.AddSingleton(ReplaysRepository);
-
             services.RemoveAll<IMessageQueue<ReplayToProcessMessage>>();
             services.AddSingleton(ReplayProcessorQueue);
-
-            services.RemoveAll<ILeaguesRepository>();
-            services.AddSingleton(LeaguesRepository);
-
-            services.RemoveAll<IRatingsRepository>();
-            services.AddSingleton(RatingsRepository);
-
-            services.RemoveAll<ITeamsRepository>();
-            services.AddSingleton(TeamsRepository);
-
-            services.RemoveAll<IPlayersRepository>();
-            services.AddSingleton(PlayersRepository);
 
             services.RemoveAll<IRatingsCalculator>();
             services.AddSingleton(RatingsCalculator);
