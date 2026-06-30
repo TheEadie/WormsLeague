@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO.Abstractions;
 using Worms.Armageddon.Files.Replays.Text;
 using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Gateway.Ratings;
@@ -15,6 +16,7 @@ internal sealed class Processor(
     IReplaysRepository replayRepository,
     ITeamsRepository teamsRepository,
     ReplayFiles replayFiles,
+    IFileSystem fileSystem,
     IAnnouncer announcer,
     IReplayTextReader replayTextReader,
     IRatingsCalculator ratingsCalculator,
@@ -40,7 +42,7 @@ internal sealed class Processor(
 
         // Check replay is in the folder
         var replayPath = replayFiles.GetReplayPath(message.ReplayFileName);
-        if (!File.Exists(replayPath))
+        if (!fileSystem.File.Exists(replayPath))
         {
             logger.LogError("Replay not found on disk: {ReplayPath}", replayPath);
             return;
@@ -48,7 +50,7 @@ internal sealed class Processor(
 
         // Check replay has a log file generated
         var logPath = replayFiles.GetLogPath(message.ReplayFileName);
-        if (!File.Exists(logPath))
+        if (!fileSystem.File.Exists(logPath))
         {
             logger.LogError("Log file not found: {LogPath}", logPath);
             return;
@@ -62,7 +64,7 @@ internal sealed class Processor(
             return;
         }
 
-        var replayLog = await File.ReadAllTextAsync(logPath);
+        var replayLog = await fileSystem.File.ReadAllTextAsync(logPath);
 
         // Parse the replay log
         var replayModel = replayTextReader.GetModel(replayLog);
