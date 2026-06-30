@@ -64,6 +64,10 @@ internal sealed class ReplaysEndpointShould
 
         await _host.ReplayProcessorQueue.Received(1).EnqueueMessage(
             Arg.Is<ReplayToProcessMessage>(m => m.ReplayFileName == stored.Filename));
+
+        var savedBytes = await _host.FileSystem.File.ReadAllBytesAsync(
+            Path.Combine(_host.TempReplayFolder, stored.Filename));
+        savedBytes.ShouldBe(ValidReplayBytes);
     }
 
     [Test]

@@ -1,8 +1,9 @@
+using System.IO.Abstractions;
 using Microsoft.Extensions.Configuration;
 
 namespace Worms.Hub.Storage.Files;
 
-public class ReplayFiles(IConfiguration configuration)
+public class ReplayFiles(IConfiguration configuration, IFileSystem fileSystem)
 {
     public string GetReplayPath(string replayFileName)
     {
@@ -18,7 +19,7 @@ public class ReplayFiles(IConfiguration configuration)
             : replayFileName;
 
         var logPath = Path.Combine(GetReplayFolderPath(), $"{fileName}.log");
-        return File.Exists(logPath) ? logPath : null;
+        return fileSystem.File.Exists(logPath) ? logPath : null;
     }
 
     public async Task<string> SaveFileContents(Stream fileContentsStream)
@@ -28,14 +29,14 @@ public class ReplayFiles(IConfiguration configuration)
         var generatedFileName = Path.GetRandomFileName();
         var tempReplayFolderPath = GetReplayFolderPath();
 
-        if (!Path.Exists(tempReplayFolderPath))
+        if (!fileSystem.Directory.Exists(tempReplayFolderPath))
         {
-            _ = Directory.CreateDirectory(tempReplayFolderPath);
+            _ = fileSystem.Directory.CreateDirectory(tempReplayFolderPath);
         }
 
         var saveFilePath = Path.Combine(tempReplayFolderPath, generatedFileName);
 
-        var fileStream = File.Create(saveFilePath);
+        var fileStream = fileSystem.File.Create(saveFilePath);
         await using var stream = fileStream;
         await fileContentsStream.CopyToAsync(fileStream);
         await fileStream.DisposeAsync();
