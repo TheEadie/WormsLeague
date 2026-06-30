@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.IO.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Worms.Hub.Gateway.API.DTOs;
 using Worms.Hub.Storage.Files;
@@ -6,8 +7,10 @@ using Worms.Hub.Storage.Files;
 namespace Worms.Hub.Gateway.API.Controllers;
 
 [Route("~/api/v{version:apiVersion}/files/schemes")]
-internal sealed class SchemeFilesController(SchemeFiles schemeFiles, ILogger<SchemeFilesController> logger)
-    : V1ApiController
+internal sealed class SchemeFilesController(
+    SchemeFiles schemeFiles,
+    IFileSystem fileSystem,
+    ILogger<SchemeFilesController> logger) : V1ApiController
 {
     [HttpGet("{id}")]
     [SuppressMessage(
@@ -29,7 +32,7 @@ internal sealed class SchemeFilesController(SchemeFiles schemeFiles, ILogger<Sch
         }
 
         var latestDetails = await schemeFiles.GetLatestDetails(id);
-        if (latestDetails is null || !System.IO.File.Exists(latestDetails.SchemePath))
+        if (latestDetails is null || !fileSystem.File.Exists(latestDetails.SchemePath))
         {
             logger.Log(LogLevel.Information, "Scheme file {Name} not found", id);
             return NotFound("Scheme file not found");

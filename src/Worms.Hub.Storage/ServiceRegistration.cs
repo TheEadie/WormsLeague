@@ -1,4 +1,6 @@
+using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Worms.Hub.Storage.Database;
 using Worms.Hub.Storage.Domain;
 using JetBrains.Annotations;
@@ -9,8 +11,10 @@ namespace Worms.Hub.Storage;
 [PublicAPI]
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddHubStorageServices(this IServiceCollection builder) =>
-        builder.AddScoped<IRepository<Game>, GamesRepository>()
+    public static IServiceCollection AddHubStorageServices(this IServiceCollection builder)
+    {
+        builder.TryAddSingleton<IFileSystem, FileSystem>();
+        return builder.AddScoped<IRepository<Game>, GamesRepository>()
             .AddScoped<IReplaysRepository, ReplaysRepositoryV05>()
             .AddScoped<ILeaguesRepository, LeaguesRepository>()
             .AddScoped<CliFiles>()
@@ -20,4 +24,5 @@ public static class ServiceRegistration
             .AddScoped<IPlayersRepository, PlayersRepository>()
             .AddScoped<ITeamsRepository, TeamsRepository>()
             .AddScoped<IRatingsRepository, RatingsRepository>();
+    }
 }

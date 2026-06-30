@@ -1,9 +1,10 @@
+using System.IO.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Storage.Files;
 
-public sealed class CliFiles(IConfiguration configuration)
+public sealed class CliFiles(IConfiguration configuration, IFileSystem fileSystem)
 {
     private const string WindowsFilename = "worms-cli-windows.zip";
     private const string LinuxFilename = "worms-cli-linux.tar.gz";
@@ -12,13 +13,13 @@ public sealed class CliFiles(IConfiguration configuration)
     public async Task<CliInfo> GetLatestDetails()
     {
         var (latest, platformFilePaths) = GetFilesPaths();
-        var versionContent = await File.ReadAllTextAsync(latest);
+        var versionContent = await fileSystem.File.ReadAllTextAsync(latest);
 
         var version = Version.TryParse(versionContent, out var parsedVersion)
             ? parsedVersion
             : throw new ArgumentException($"Invalid version found in {VersionFilename}");
 
-        var foundPlatformFiles = platformFilePaths.Where(x => File.Exists(x.Value))
+        var foundPlatformFiles = platformFilePaths.Where(x => fileSystem.File.Exists(x.Value))
             .ToDictionary(x => x.Key, x => Path.GetFileName(x.Value));
 
         return new CliInfo(version, foundPlatformFiles);
@@ -29,7 +30,7 @@ public sealed class CliFiles(IConfiguration configuration)
         var (_, platformFilePaths) = GetFilesPaths();
         var filePath = platformFilePaths[platform];
 
-        return new FileStream(filePath, FileMode.Open);
+        return fileSystem.FileStream.New(filePath, FileMode.Open);
     }
 
     public async Task SaveFileContents(Stream fileContentsStream, Platform platform)
@@ -39,7 +40,7 @@ public sealed class CliFiles(IConfiguration configuration)
         var (_, platformFilePaths) = GetFilesPaths();
         var filePath = platformFilePaths[platform];
 
-        var fileStream = new FileStream(filePath, FileMode.Create);
+        var fileStream = fileSystem.FileStream.New(filePath, FileMode.Create);
         await fileContentsStream.CopyToAsync(fileStream);
         await fileStream.DisposeAsync();
     }
@@ -48,7 +49,7 @@ public sealed class CliFiles(IConfiguration configuration)
     {
         _ = version ?? throw new ArgumentNullException(nameof(version));
         var (filePath, _) = GetFilesPaths();
-        await File.WriteAllTextAsync(filePath, version.ToString());
+        await fileSystem.File.WriteAllTextAsync(filePath, version.ToString());
     }
 
     private (string versionFilePath, IDictionary<Platform, string> platformFilePaths) GetFilesPaths()
