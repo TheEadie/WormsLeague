@@ -32,7 +32,7 @@ internal sealed class LeaguesEndpointShould
     }
 
     private void WriteVersionFile(string leagueId, string version) =>
-        File.WriteAllText(Path.Combine(_host.SchemesFolder, $"{leagueId}-version.txt"), version);
+        _host.FileSystem.File.WriteAllText(Path.Combine(_host.SchemesFolder, $"{leagueId}-version.txt"), version);
 
     // GET /api/v1/leagues
 

@@ -32,7 +32,7 @@ internal sealed class GameFilesEndpointShould
     public async Task ReturnZipArchiveWhenGameFolderExists()
     {
         // ReSharper disable once UseUtf8StringLiteral
-        File.WriteAllBytes(Path.Combine(_host.GameFolder, "game.exe"), [0x4D, 0x5A]);
+        _host.FileSystem.File.WriteAllBytes(Path.Combine(_host.GameFolder, "game.exe"), [0x4D, 0x5A]);
 
         var response = await _client.GetAsync(GameUri);
 
@@ -48,7 +48,7 @@ internal sealed class GameFilesEndpointShould
     [Test]
     public async Task Return404WhenGameFolderMissing()
     {
-        Directory.Delete(_host.GameFolder, recursive: true);
+        _host.FileSystem.Directory.Delete(_host.GameFolder, recursive: true);
 
         var response = await _client.GetAsync(GameUri);
 

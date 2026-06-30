@@ -47,7 +47,7 @@ internal sealed class GameFilesAuthShould
     public async Task Return200WhenTokenHasDownloadGame()
     {
         // Seed a file so the folder zips successfully
-        File.WriteAllBytes(Path.Combine(_host.GameFolder, "game.exe"), [0x00]);
+        _host.FileSystem.File.WriteAllBytes(Path.Combine(_host.GameFolder, "game.exe"), [0x00]);
 
         using var client = _host.CreateClient(TestJwt.WithGameDownloadRole());
         var response = await client.GetAsync(GameUri);

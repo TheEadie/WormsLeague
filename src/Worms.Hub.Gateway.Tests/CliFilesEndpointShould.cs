@@ -33,8 +33,10 @@ internal sealed class CliFilesEndpointShould
     [Test]
     public async Task ReturnLatestVersionAndPlatformsOnGet()
     {
-        await File.WriteAllTextAsync(Path.Combine(_host.CliFolder, "version.txt"), "1.2.3");
-        await File.WriteAllBytesAsync(Path.Combine(_host.CliFolder, "worms-cli-linux.tar.gz"), [0x00]);
+        await _host.FileSystem.File.WriteAllTextAsync(Path.Combine(_host.CliFolder, "version.txt"), "1.2.3");
+        await _host.FileSystem.File.WriteAllBytesAsync(
+            Path.Combine(_host.CliFolder, "worms-cli-linux.tar.gz"),
+            [0x00]);
 
         var response = await _client.GetAsync(CliUri);
 
@@ -48,9 +50,11 @@ internal sealed class CliFilesEndpointShould
     [Test]
     public async Task ReturnFileStreamForKnownPlatform()
     {
-        await File.WriteAllTextAsync(Path.Combine(_host.CliFolder, "version.txt"), "1.2.3");
+        await _host.FileSystem.File.WriteAllTextAsync(Path.Combine(_host.CliFolder, "version.txt"), "1.2.3");
         // ReSharper disable once UseUtf8StringLiteral
-        await File.WriteAllBytesAsync(Path.Combine(_host.CliFolder, "worms-cli-windows.zip"), [0x50, 0x4B]);
+        await _host.FileSystem.File.WriteAllBytesAsync(
+            Path.Combine(_host.CliFolder, "worms-cli-windows.zip"),
+            [0x50, 0x4B]);
 
         var response = await _client.GetAsync(new Uri("api/v1/files/cli/windows", UriKind.Relative));
 
@@ -67,7 +71,7 @@ internal sealed class CliFilesEndpointShould
     public async Task Return404ForUnknownPlatform()
     {
         // version.txt must exist because GetLatestDetails reads it before the platform check
-        await File.WriteAllTextAsync(Path.Combine(_host.CliFolder, "version.txt"), "1.0.0");
+        await _host.FileSystem.File.WriteAllTextAsync(Path.Combine(_host.CliFolder, "version.txt"), "1.0.0");
 
         var response = await _client.GetAsync(new Uri("api/v1/files/cli/unknownplatform", UriKind.Relative));
 
@@ -77,8 +81,10 @@ internal sealed class CliFilesEndpointShould
     [Test]
     public async Task Return404WhenPlatformFileMissing()
     {
-        await File.WriteAllTextAsync(Path.Combine(_host.CliFolder, "version.txt"), "1.0.0");
-        await File.WriteAllBytesAsync(Path.Combine(_host.CliFolder, "worms-cli-linux.tar.gz"), [0x00]);
+        await _host.FileSystem.File.WriteAllTextAsync(Path.Combine(_host.CliFolder, "version.txt"), "1.0.0");
+        await _host.FileSystem.File.WriteAllBytesAsync(
+            Path.Combine(_host.CliFolder, "worms-cli-linux.tar.gz"),
+            [0x00]);
         // No windows file
 
         var response = await _client.GetAsync(new Uri("api/v1/files/cli/windows", UriKind.Relative));

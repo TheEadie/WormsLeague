@@ -38,8 +38,10 @@ internal sealed class SchemeFilesAuthShould
     [Test]
     public async Task Return200WhenTokenHasAccessRole()
     {
-        await File.WriteAllTextAsync(Path.Combine(_host.SchemesFolder, "redgate-version.txt"), "1.2.3");
-        await File.WriteAllBytesAsync(Path.Combine(_host.SchemesFolder, "redgate.wsc"), [0x00]);
+        await _host.FileSystem.File.WriteAllTextAsync(
+            Path.Combine(_host.SchemesFolder, "redgate-version.txt"),
+            "1.2.3");
+        await _host.FileSystem.File.WriteAllBytesAsync(Path.Combine(_host.SchemesFolder, "redgate.wsc"), [0x00]);
 
         using var client = _host.CreateClient(TestJwt.WithAccessRole());
         var response = await client.GetAsync(SchemeRedgateUri);

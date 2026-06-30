@@ -20,9 +20,9 @@ internal sealed class CliFilesAuthShould
     {
         _host = new GatewayTestHost();
         // Seed a valid version.txt and a platform file so anonymous GET endpoints return 200
-        File.WriteAllText(Path.Combine(_host.CliFolder, "version.txt"), "1.0.0");
-        File.WriteAllBytes(Path.Combine(_host.CliFolder, "worms-cli-linux.tar.gz"), [0x00]);
-        File.WriteAllBytes(Path.Combine(_host.CliFolder, "worms-cli-windows.zip"), [0x00]);
+        _host.FileSystem.File.WriteAllText(Path.Combine(_host.CliFolder, "version.txt"), "1.0.0");
+        _host.FileSystem.File.WriteAllBytes(Path.Combine(_host.CliFolder, "worms-cli-linux.tar.gz"), [0x00]);
+        _host.FileSystem.File.WriteAllBytes(Path.Combine(_host.CliFolder, "worms-cli-windows.zip"), [0x00]);
     }
 
     [TearDown]

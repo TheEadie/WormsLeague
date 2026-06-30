@@ -1,3 +1,5 @@
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -26,6 +28,8 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
 
     internal FakeHubStorage Storage => Services.GetRequiredService<FakeHubStorage>();
 
+    internal MockFileSystem FileSystem { get; } = new();
+
     internal string SchemesFolder { get; } =
         Path.Combine(Path.GetTempPath(), "worms-gateway-tests-schemes", Guid.NewGuid().ToString("N"));
 
@@ -43,11 +47,11 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
         Environment.SetEnvironmentVariable("WORMS_HUB_GATEWAY", "true");
         Environment.SetEnvironmentVariable("WORMS_HUB_WORKER", null);
         Environment.SetEnvironmentVariable("WORMS_STORAGE__TEMPREPLAYFOLDER", _tempReplayFolder);
-        Directory.CreateDirectory(SchemesFolder);
+        FileSystem.AddDirectory(SchemesFolder);
         Environment.SetEnvironmentVariable("WORMS_STORAGE__SCHEMESFOLDER", SchemesFolder);
-        Directory.CreateDirectory(CliFolder);
+        FileSystem.AddDirectory(CliFolder);
         Environment.SetEnvironmentVariable("WORMS_STORAGE__CLIFOLDER", CliFolder);
-        Directory.CreateDirectory(GameFolder);
+        FileSystem.AddDirectory(GameFolder);
         Environment.SetEnvironmentVariable("WORMS_STORAGE__GAMEFOLDER", GameFolder);
     }
 
@@ -87,6 +91,9 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
 
             services.AddFakeHubStorageServices();
 
+            services.RemoveAll<IFileSystem>();
+            services.AddSingleton<IFileSystem>(FileSystem);
+
             services.RemoveAll<IAnnouncer>();
             services.AddSingleton(Announcer);
 
@@ -117,9 +124,6 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
             Environment.SetEnvironmentVariable("WORMS_STORAGE__CLIFOLDER", null);
             Environment.SetEnvironmentVariable("WORMS_STORAGE__GAMEFOLDER", null);
             TryDeleteFolder(_tempReplayFolder);
-            TryDeleteFolder(SchemesFolder);
-            TryDeleteFolder(CliFolder);
-            TryDeleteFolder(GameFolder);
         }
 
         base.Dispose(disposing);

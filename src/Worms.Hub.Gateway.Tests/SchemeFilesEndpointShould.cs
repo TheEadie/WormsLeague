@@ -29,8 +29,10 @@ internal sealed class SchemeFilesEndpointShould
     [Test]
     public async Task ReturnSchemeFileStreamForKnownScheme()
     {
-        await File.WriteAllTextAsync(Path.Combine(_host.SchemesFolder, "redgate-version.txt"), "1.2.3");
-        await File.WriteAllBytesAsync(Path.Combine(_host.SchemesFolder, "redgate.wsc"), [0x00]);
+        await _host.FileSystem.File.WriteAllTextAsync(
+            Path.Combine(_host.SchemesFolder, "redgate-version.txt"),
+            "1.2.3");
+        await _host.FileSystem.File.WriteAllBytesAsync(Path.Combine(_host.SchemesFolder, "redgate.wsc"), [0x00]);
 
         var response = await _client.GetAsync(new Uri("api/v1/files/schemes/redgate", UriKind.Relative));
 
@@ -54,7 +56,9 @@ internal sealed class SchemeFilesEndpointShould
     public async Task Return404WhenSchemeFileMissing()
     {
         // Version file present but no .wsc file
-        await File.WriteAllTextAsync(Path.Combine(_host.SchemesFolder, "redgate-version.txt"), "1.2.3");
+        await _host.FileSystem.File.WriteAllTextAsync(
+            Path.Combine(_host.SchemesFolder, "redgate-version.txt"),
+            "1.2.3");
 
         var response = await _client.GetAsync(new Uri("api/v1/files/schemes/redgate", UriKind.Relative));
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
