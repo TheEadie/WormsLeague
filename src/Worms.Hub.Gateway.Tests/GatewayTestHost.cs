@@ -16,9 +16,6 @@ namespace Worms.Hub.Gateway.Tests;
 
 internal sealed class GatewayTestHost : WebApplicationFactory<Program>
 {
-    private readonly string _tempReplayFolder =
-        Path.Combine(Path.GetTempPath(), "worms-gateway-tests", Guid.NewGuid().ToString("N"));
-
     internal IAnnouncer Announcer { get; } = Substitute.For<IAnnouncer>();
 
     internal IMessageQueue<ReplayToProcessMessage> ReplayProcessorQueue { get; } =
@@ -39,6 +36,9 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
     internal string GameFolder { get; } =
         Path.Combine(Path.GetTempPath(), "worms-gateway-tests-game", Guid.NewGuid().ToString("N"));
 
+    internal string TempReplayFolder { get; } =
+        Path.Combine(Path.GetTempPath(), "worms-gateway-tests-replays", Guid.NewGuid().ToString("N"));
+
     public GatewayTestHost()
     {
         // Boot only the gateway (not the worker) so no hosted services are started
@@ -46,7 +46,8 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
         Environment.SetEnvironmentVariable("WORMS_HUB_DISTRIBUTED", "true");
         Environment.SetEnvironmentVariable("WORMS_HUB_GATEWAY", "true");
         Environment.SetEnvironmentVariable("WORMS_HUB_WORKER", null);
-        Environment.SetEnvironmentVariable("WORMS_STORAGE__TEMPREPLAYFOLDER", _tempReplayFolder);
+        FileSystem.AddDirectory(TempReplayFolder);
+        Environment.SetEnvironmentVariable("WORMS_STORAGE__TEMPREPLAYFOLDER", TempReplayFolder);
         FileSystem.AddDirectory(SchemesFolder);
         Environment.SetEnvironmentVariable("WORMS_STORAGE__SCHEMESFOLDER", SchemesFolder);
         FileSystem.AddDirectory(CliFolder);
@@ -123,21 +124,8 @@ internal sealed class GatewayTestHost : WebApplicationFactory<Program>
             Environment.SetEnvironmentVariable("WORMS_STORAGE__SCHEMESFOLDER", null);
             Environment.SetEnvironmentVariable("WORMS_STORAGE__CLIFOLDER", null);
             Environment.SetEnvironmentVariable("WORMS_STORAGE__GAMEFOLDER", null);
-            TryDeleteFolder(_tempReplayFolder);
         }
 
         base.Dispose(disposing);
-    }
-
-    private static void TryDeleteFolder(string path)
-    {
-        try
-        {
-            if (Directory.Exists(path))
-            {
-                Directory.Delete(path, recursive: true);
-            }
-        }
-        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { /* best-effort cleanup */ }
     }
 }
