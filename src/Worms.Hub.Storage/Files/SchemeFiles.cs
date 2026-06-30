@@ -1,21 +1,22 @@
+using System.IO.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Worms.Hub.Storage.Domain;
 
 namespace Worms.Hub.Storage.Files;
 
-public sealed class SchemeFiles(IConfiguration configuration)
+public sealed class SchemeFiles(IConfiguration configuration, IFileSystem fileSystem)
 {
     private const string VersionFilename = "version.txt";
 
     public async Task<League?> GetLatestDetails(string id)
     {
         var (versionPath, schemePath) = GetFilesPaths(id);
-        if (!File.Exists(versionPath))
+        if (!fileSystem.File.Exists(versionPath))
         {
             return null;
         }
 
-        var versionContent = await File.ReadAllTextAsync(versionPath);
+        var versionContent = await fileSystem.File.ReadAllTextAsync(versionPath);
 
         var version = Version.TryParse(versionContent, out var parsedVersion)
             ? parsedVersion
@@ -27,7 +28,7 @@ public sealed class SchemeFiles(IConfiguration configuration)
     public Stream GetFileContents(string id)
     {
         var (_, filePath) = GetFilesPaths(id);
-        return new FileStream(filePath, FileMode.Open);
+        return fileSystem.FileStream.New(filePath, FileMode.Open);
     }
 
     private (string versionFilePath, string schemeFilePath) GetFilesPaths(string name)
