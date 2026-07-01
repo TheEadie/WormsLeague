@@ -53,7 +53,7 @@ jobs:
           version=$(python3 -c "import yaml; c=yaml.safe_load(open('deployment/Worms.Hub.Infrastructure/Pulumi.yaml')); print(c['config']['worms-hub:database-version'])")
           echo "version=$version" >> $GITHUB_OUTPUT
       - name: Run Flyway Report
-        uses: docker://redgate/flyway:12.9
+        uses: docker://redgate/flyway:12.10
         with:
           args: >-
             check -changes -drift
