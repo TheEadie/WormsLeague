@@ -38,6 +38,15 @@
         "theeadie/worms-hub-gateway",
         "theeadie/worms-hub-wa-runner"
       ]
+    },
+    {
+      "groupName": "React",
+      "matchPackageNames": [
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom"
+      ]
     }
   ],
   "dependencyDashboard": true
