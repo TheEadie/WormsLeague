@@ -29,7 +29,8 @@
         "System.IO.Abstractions",
         "System.IO.Abstractions.TestingHelpers",
         "TestableIO.System.IO.Abstractions",
-        "TestableIO.System.IO.Abstractions.TestingHelpers"
+        "TestableIO.System.IO.Abstractions.TestingHelpers",
+        "TestableIO.System.IO.Abstractions.Wrappers"
       ]
     },
     {
