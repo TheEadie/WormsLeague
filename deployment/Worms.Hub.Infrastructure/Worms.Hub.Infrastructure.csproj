@@ -11,7 +11,7 @@
       <PackageReference Include="Pulumi.AzureNative" Version="3.2*" />
       <PackageReference Include="Pulumi.Cloudflare" Version="6.18.0" />
       <PackageReference Include="Pulumi.Command" Version="1.2.1" />
-      <PackageReference Include="Pulumi.Random" Version="4.21.0" />
+      <PackageReference Include="Pulumi.Random" Version="4.21.1" />
   </ItemGroup>
 
 </Project>
