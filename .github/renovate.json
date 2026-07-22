@@ -29,14 +29,62 @@
         "System.IO.Abstractions",
         "System.IO.Abstractions.TestingHelpers",
         "TestableIO.System.IO.Abstractions",
-        "TestableIO.System.IO.Abstractions.TestingHelpers"
+        "TestableIO.System.IO.Abstractions.TestingHelpers",
+        "TestableIO.System.IO.Abstractions.Wrappers"
       ]
+    },
+    {
+      "extends": [
+        "monorepo:opentelemetry-dotnet",
+        "monorepo:opentelemetry-dotnet-contrib"
+      ],
+      "groupName": "OpenTelemetry"
     },
     {
       "groupName": "Worms Hub - Docker Images",
       "matchPackageNames": [
         "theeadie/worms-hub-gateway",
         "theeadie/worms-hub-wa-runner"
+      ]
+    },
+    {
+      "groupName": "React",
+      "matchPackageNames": [
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom"
+      ]
+    },
+    {
+      "groupName": "MUI",
+      "matchPackageNames": [
+        "@mui/material",
+        "@mui/icons-material"
+      ]
+    },
+    {
+      "groupName": "Emotion",
+      "matchPackageNames": [
+        "@emotion/react",
+        "@emotion/styled"
+      ]
+    },
+    {
+      "groupName": "ESLint",
+      "matchPackageNames": [
+        "eslint",
+        "@eslint/js",
+        "eslint-plugin-react-hooks",
+        "eslint-plugin-react-refresh",
+        "typescript-eslint"
+      ]
+    },
+    {
+      "groupName": "Testing Library",
+      "matchPackageNames": [
+        "@testing-library/jest-dom",
+        "@testing-library/react"
       ]
     }
   ],
