@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.86"/>
+    <PackageReference Include="Dapper" Version="2.1.89"/>
     <PackageReference Include="PlayerRank" Version="6.0.3"/>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12"/>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0"/>
