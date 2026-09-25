@@ -35,8 +35,8 @@ The CLI uses the shared Armageddon libraries directly when it needs to launch th
 The hub is one service that can run as a monolith or be split across multiple containers, plus a separate runner that hosts the actual game.
 
 - **Hub Gateway** — the ASP.NET Core HTTP API and the queue-consuming worker. Same binary, mode chosen by environment variables. The gateway is the only inbound HTTP surface for the CLI and is the component that announces results to Slack.
-- **Hub Storage** — repositories for the Postgres database and abstractions over Azure Blob Storage / local files. Used by everything in the hub that needs to persist or read state.
-- **Hub Queues** — Azure Storage Queue abstractions for the messages that flow between the gateway and the runner. Shared by both ends.
+- **Hub Storage** — repositories for the Postgres database and abstractions over Azure Blob Storage / local files. Used by everything in the hub that needs to persist or read state. Has a `Fake` sibling project with in-memory repositories for tests.
+- **Hub Queues** — Azure Storage Queue abstractions for the messages that flow between the gateway and the runner. Shared by both ends. Has a `Fake` sibling project with an in-memory queue for tests.
 - **WA Runner** — a worker service that runs Worms Armageddon inside a Docker image (under Wine on Linux) to replay games headlessly. It consumes work from a queue, calls the shared Armageddon Game and Gifs libraries to extract logs and GIFs, then publishes results back via another queue.
 
 ### Infrastructure

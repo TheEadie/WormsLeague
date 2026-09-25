@@ -13,11 +13,18 @@ Fast, in-process tests with no external dependencies. The test projects that exi
 - File-format parsing and serialisation in the Armageddon Files library
 - Game-discovery and runner logic in the Armageddon Game library (with `NSubstitute` for OS-specific seams like the registry)
 - The Armageddon Gifs assembly logic, exercised against fixtures
+- CLI commands, driven end-to-end in-process through `Worms.Cli.Tests`' `TestHost`
+- Hub Gateway endpoints (via `WebApplicationFactory` in `GatewayTestHost`) and the worker's replay-update `Processor`, in `Worms.Hub.Gateway.Tests`
 - React components in the Web UI (Vitest + React Testing Library; run via `make web.test`)
 
 Unit tests for .NET use **NUnit** with **Shouldly** for assertions. They are the default `dotnet test` run and gate every PR via `make cli.test.unit` / equivalent. Web unit tests run independently via `make web.test`.
 
-The hub gateway, queues, and storage projects do not currently have dedicated unit-test projects — behaviour at those layers is exercised indirectly via the integration tier and the libraries above. When adding meaningful logic at those layers, prefer adding a new `<Project>.Tests` rather than retrofitting the integration test.
+The hub queues and storage projects have no dedicated unit-test projects of their own. They are thin infrastructure wrappers, exercised through their fakes in the gateway tests and through the integration tier. When adding meaningful logic at those layers, prefer adding a new `<Project>.Tests` rather than retrofitting the integration test.
+
+### Test doubles
+
+- Reusable fakes of public abstractions that other projects consume live in a sibling `<Project>.Fake` project (`Worms.Armageddon.Game.Fake`, `Worms.Hub.Storage.Fake`, `Worms.Hub.Queues.Fake`). Each exposes an `Add…Services()` helper that swaps the real registrations for the fakes (`RemoveAll<>` + `AddSingleton`). Extend the existing fake rather than writing a one-off copy in a test project.
+- Small interfaces internal to the project under test (e.g. the gateway's `IAnnouncer`, `IRatingsCalculator`, or the CLI's `ICliInfoRetriever`) are mocked with **NSubstitute** and asserted with `Received` / `DidNotReceive` and `Arg` matchers.
 
 When a slice introduces non-trivial logic into the Gateway — calculators, formatters, ranking, leaderboard builders — the slice creates the gateway test project rather than deferring. An acceptance criterion that calls for unit tests cannot be discharged by pointing at the absence of a test project; the slice that introduces the logic introduces the project.
 
