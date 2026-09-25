@@ -1,6 +1,6 @@
 # Hub Storage Component
 
-Project: `Worms.Hub.Storage`
+Projects: `Worms.Hub.Storage`, `Worms.Hub.Storage.Fake`
 
 ## Domain models
 
@@ -48,6 +48,10 @@ File abstractions in `Files/` wrap filesystem operations and derive their paths 
 ## Service registration
 
 `AddHubStorageServices()` registers all repositories and file classes as `Scoped`.
+
+## Worms.Hub.Storage.Fake
+
+In-memory fakes of the repository interfaces (`FakeGamesRepository`, `FakeReplaysRepository`, `FakeLeaguesRepository`, `FakeRatingsRepository`, `FakeTeamsRepository`, `FakePlayersRepository`), grouped under `FakeHubStorage`. Each fake has a `Seed(...)` helper for arranging state. Tests either construct `FakeHubStorage` directly (e.g. the worker `ProcessorShould` tests) or call `AddFakeHubStorageServices()`, which replaces the real repositories via `RemoveAll<>` + `AddSingleton` and also registers the `FakeHubStorage` instance so tests can resolve it (as `GatewayTestHost` does). When a new repository interface is added, add its fake here too.
 
 ## Adding a new domain object
 
