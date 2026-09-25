@@ -51,7 +51,7 @@ File abstractions in `Files/` wrap filesystem operations and derive their paths 
 
 ## Worms.Hub.Storage.Fake
 
-In-memory fakes of the repository interfaces (`FakeGamesRepository`, `FakeReplaysRepository`, `FakeLeaguesRepository`, `FakeRatingsRepository`, `FakeTeamsRepository`, `FakePlayersRepository`), grouped under `FakeHubStorage`. Each fake has a `Seed(...)` helper for arranging state. Tests either construct `FakeHubStorage` directly (e.g. the worker `ProcessorShould` tests) or call `AddFakeHubStorageServices()`, which replaces the real repositories via `RemoveAll<>` + `AddSingleton` and also registers the `FakeHubStorage` instance so tests can resolve it (as `GatewayTestHost` does). When a new repository interface is added, add its fake here too.
+In-memory fakes of the repository interfaces (`FakeGamesRepository`, `FakeReplaysRepository`, `FakeLeaguesRepository`, `FakeRatingsRepository`, `FakeTeamsRepository`, `FakePlayersRepository`), grouped under `FakeHubStorage`. Each fake has a `Seed(...)` helper for arranging state. Tests call `AddFakeHubStorageServices()` after the real registrations, which replaces the real repositories via `RemoveAll<>` + `AddSingleton` and also registers the `FakeHubStorage` instance so tests can resolve it (as `GatewayTestHost` and the worker `ProcessorShould` tests do). When a new repository interface is added, add its fake here too.
 
 ## Adding a new domain object
 

@@ -1,11 +1,10 @@
+using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 using Shouldly;
-using Worms.Armageddon.Files;
-using Worms.Armageddon.Files.Replays.Text;
 using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Gateway.Ratings;
 using Worms.Hub.Gateway.Worker;
@@ -13,7 +12,6 @@ using Worms.Hub.Queues;
 using Worms.Hub.Queues.Fake;
 using Worms.Hub.Storage.Domain;
 using Worms.Hub.Storage.Fake;
-using Worms.Hub.Storage.Files;
 
 namespace Worms.Hub.Gateway.Tests.Worker;
 
@@ -81,13 +79,12 @@ internal sealed class ProcessorShould
     private IAnnouncer _announcer = null!;
     private IRatingsCalculator _ratingsCalculator = null!;
     private ServiceProvider _serviceProvider = null!;
+    private IServiceScope _scope = null!;
     private Processor _processor = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _storage = new FakeHubStorage();
-        _queue = new FakeMessageQueue<ReplayToUpdateMessage>();
         _fileSystem = new MockFileSystem();
         _fileSystem.AddDirectory(TempReplayFolder);
         _announcer = Substitute.For<IAnnouncer>();
@@ -99,24 +96,37 @@ internal sealed class ProcessorShould
                 new Dictionary<string, string?> { ["Storage:TempReplayFolder"] = TempReplayFolder })
             .Build();
 
-        _serviceProvider = new ServiceCollection()
-            .AddWormsArmageddonFilesServices()
-            .BuildServiceProvider();
+        var services = new ServiceCollection()
+            .AddSingleton<IConfiguration>(configuration)
+            .AddLogging()
+            .AddWorkerServices()
+            .AddFakeHubStorageServices()
+            .AddFakeQueueServices();
 
-        _processor = new Processor(
-            _queue,
-            _storage.Replays,
-            _storage.Teams,
-            new ReplayFiles(configuration, _fileSystem),
-            _fileSystem,
-            _announcer,
-            _serviceProvider.GetRequiredService<IReplayTextReader>(),
-            _ratingsCalculator,
-            NullLogger<Processor>.Instance);
+        services.RemoveAll<IFileSystem>();
+        services.AddSingleton<IFileSystem>(_fileSystem);
+
+        services.RemoveAll<IAnnouncer>();
+        services.AddSingleton(_announcer);
+
+        services.RemoveAll<IRatingsCalculator>();
+        services.AddSingleton(_ratingsCalculator);
+
+        _serviceProvider = services.BuildServiceProvider(
+            new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+        _scope = _serviceProvider.CreateScope();
+
+        _storage = _scope.ServiceProvider.GetRequiredService<FakeHubStorage>();
+        _queue = _scope.ServiceProvider.GetRequiredService<FakeMessageQueue<ReplayToUpdateMessage>>();
+        _processor = _scope.ServiceProvider.GetRequiredService<Processor>();
     }
 
     [TearDown]
-    public void TearDown() => _serviceProvider.Dispose();
+    public void TearDown()
+    {
+        _scope.Dispose();
+        _serviceProvider.Dispose();
+    }
 
     [Test]
     public async Task MarkTheReplayAsProcessed()
