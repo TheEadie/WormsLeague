@@ -1,5 +1,7 @@
 using System.IO.Abstractions.TestingHelpers;
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 using Shouldly;
 using Worms.Armageddon.Files;
@@ -8,6 +10,7 @@ using Worms.Hub.Gateway.Announcers;
 using Worms.Hub.Gateway.Ratings;
 using Worms.Hub.Gateway.Worker;
 using Worms.Hub.Queues;
+using Worms.Hub.Queues.Fake;
 using Worms.Hub.Storage.Domain;
 using Worms.Hub.Storage.Fake;
 using Worms.Hub.Storage.Files;
@@ -70,11 +73,13 @@ internal sealed class ProcessorShould
         null,
         null);
 
+    private static readonly ReplayToUpdateMessage QueuedMessage = new(ReplayFileName);
+
     private FakeHubStorage _storage = null!;
-    private FakeReplaysToUpdateQueue _queue = null!;
+    private FakeMessageQueue<ReplayToUpdateMessage> _queue = null!;
     private MockFileSystem _fileSystem = null!;
-    private FakeAnnouncer _announcer = null!;
-    private FakeRatingsCalculator _ratingsCalculator = null!;
+    private IAnnouncer _announcer = null!;
+    private IRatingsCalculator _ratingsCalculator = null!;
     private ServiceProvider _serviceProvider = null!;
     private Processor _processor = null!;
 
@@ -82,11 +87,12 @@ internal sealed class ProcessorShould
     public void SetUp()
     {
         _storage = new FakeHubStorage();
-        _queue = new FakeReplaysToUpdateQueue();
+        _queue = new FakeMessageQueue<ReplayToUpdateMessage>();
         _fileSystem = new MockFileSystem();
         _fileSystem.AddDirectory(TempReplayFolder);
-        _announcer = new FakeAnnouncer();
-        _ratingsCalculator = new FakeRatingsCalculator();
+        _announcer = Substitute.For<IAnnouncer>();
+        _ratingsCalculator = Substitute.For<IRatingsCalculator>();
+        _ = _ratingsCalculator.Calculate(Arg.Any<string>()).Returns(new LeagueRatingsChange([], []));
 
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(
@@ -209,9 +215,12 @@ internal sealed class ProcessorShould
 
         await _processor.UpdateReplay();
 
-        var announcement = _announcer.GameCompleteAnnouncements.ShouldHaveSingleItem();
-        announcement.Winner.ShouldBe("Alice Team");
-        announcement.Placements.ShouldBe([new PlacementInfo("Alice Team", 1), new PlacementInfo("Bob Team", 2)]);
+        await ShouldHaveAnnouncedGameCompleteOnce();
+        await _announcer.Received(1).AnnounceGameComplete(
+            "Alice Team",
+            SequenceOf(new PlacementInfo("Alice Team", 1), new PlacementInfo("Bob Team", 2)),
+            Arg.Any<IReadOnlyList<LeaderboardEntry>?>(),
+            Arg.Any<string?>());
     }
 
     [Test]
@@ -221,14 +230,15 @@ internal sealed class ProcessorShould
 
         await _processor.UpdateReplay();
 
-        _queue.Deleted.ShouldBe([_queue.PendingMessageDetails!]);
+        _queue.Deleted.ShouldBe([QueuedMessage]);
+        _queue.Pending.ShouldBeEmpty();
     }
 
     [Test]
     public async Task AnnounceEachPlayersEloAndRankChangeForALeagueReplay()
     {
         await GivenAQueuedReplay(TwoTeamLogWithWinner);
-        _ratingsCalculator.Result = new LeagueRatingsChange(
+        _ = _ratingsCalculator.Calculate(LeagueId).Returns(new LeagueRatingsChange(
             [
                 new PlayerStanding("auth|alice", "Alice", 2, 1000),
                 new PlayerStanding("auth|bob", "Bob", 1, 1010)
@@ -236,25 +246,27 @@ internal sealed class ProcessorShould
             [
                 new PlayerStanding("auth|alice", "Alice", 1, 1016),
                 new PlayerStanding("auth|bob", "Bob", 2, 994)
-            ]);
+            ]));
 
         await _processor.UpdateReplay();
 
-        _ratingsCalculator.CalculatedLeagues.ShouldBe([LeagueId]);
-        var announcement = _announcer.GameCompleteAnnouncements.ShouldHaveSingleItem();
-        announcement.Leaderboard.ShouldBe(
-        [
-            new LeaderboardEntry(1, 1016, "Alice", 16, -1),
-            new LeaderboardEntry(2, 994, "Bob", -16, 1)
-        ]);
-        announcement.LeaderboardFailureNote.ShouldBeNull();
+        _ = _ratingsCalculator.Received(1).Calculate(Arg.Any<string>());
+        _ = _ratingsCalculator.Received(1).Calculate(LeagueId);
+        await ShouldHaveAnnouncedGameCompleteOnce();
+        await _announcer.Received(1).AnnounceGameComplete(
+            Arg.Any<string>(),
+            Arg.Any<IReadOnlyList<PlacementInfo>?>(),
+            SequenceOf(
+                new LeaderboardEntry(1, 1016, "Alice", 16, -1),
+                new LeaderboardEntry(2, 994, "Bob", -16, 1)),
+            Arg.Is<string?>(value: null));
     }
 
     [Test]
     public async Task LeaveChangesBlankForAPlayerWhoseRatingAndRankAreUnchanged()
     {
         await GivenAQueuedReplay(TwoTeamLogWithWinner);
-        _ratingsCalculator.Result = new LeagueRatingsChange(
+        _ = _ratingsCalculator.Calculate(LeagueId).Returns(new LeagueRatingsChange(
             [
                 new PlayerStanding("auth|alice", "Alice", 2, 1000),
                 new PlayerStanding("auth|bob", "Bob", 1, 1010),
@@ -264,52 +276,63 @@ internal sealed class ProcessorShould
                 new PlayerStanding("auth|alice", "Alice", 1, 1016),
                 new PlayerStanding("auth|bob", "Bob", 2, 994),
                 new PlayerStanding("auth|carol", "Carol", 3, 990)
-            ]);
+            ]));
 
         await _processor.UpdateReplay();
 
-        var announcement = _announcer.GameCompleteAnnouncements.ShouldHaveSingleItem();
-        var carol = announcement.Leaderboard.ShouldNotBeNull().Single(e => e.DisplayName == "Carol");
-        carol.EloDelta.ShouldBeNull();
-        carol.PositionChange.ShouldBeNull();
+        await ShouldHaveAnnouncedGameCompleteOnce();
+        await _announcer.Received(1).AnnounceGameComplete(
+            Arg.Any<string>(),
+            Arg.Any<IReadOnlyList<PlacementInfo>?>(),
+            Arg.Is<IReadOnlyList<LeaderboardEntry>?>(leaderboard =>
+                leaderboard != null
+                && leaderboard.Any(e => e.DisplayName == "Carol" && e.EloDelta == null && e.PositionChange == null)),
+            Arg.Any<string?>());
     }
 
     [Test]
     public async Task SendNoLeaderboardWhenTheCalculatorReturnsNoPlayers()
     {
         await GivenAQueuedReplay(TwoTeamLogWithWinner);
-        _ratingsCalculator.Result = new LeagueRatingsChange([], []);
+        _ = _ratingsCalculator.Calculate(LeagueId).Returns(new LeagueRatingsChange([], []));
 
         await _processor.UpdateReplay();
 
-        var announcement = _announcer.GameCompleteAnnouncements.ShouldHaveSingleItem();
-        announcement.Leaderboard.ShouldBeNull();
-        announcement.LeaderboardFailureNote.ShouldBeNull();
+        await ShouldHaveAnnouncedGameCompleteOnce();
+        await _announcer.Received(1).AnnounceGameComplete(
+            Arg.Any<string>(),
+            Arg.Any<IReadOnlyList<PlacementInfo>?>(),
+            Arg.Is<IReadOnlyList<LeaderboardEntry>?>(value: null),
+            Arg.Is<string?>(value: null));
     }
 
     [Test]
     public async Task SendAFailureNoteInsteadOfALeaderboardWhenTheCalculatorThrows()
     {
         await GivenAQueuedReplay(TwoTeamLogWithWinner);
-        _ratingsCalculator.ExceptionToThrow = new InvalidOperationException("Ratings failed");
+        _ = _ratingsCalculator.Calculate(LeagueId).Throws(new InvalidOperationException("Ratings failed"));
 
         await _processor.UpdateReplay();
 
-        var announcement = _announcer.GameCompleteAnnouncements.ShouldHaveSingleItem();
-        announcement.Leaderboard.ShouldBeNull();
-        announcement.LeaderboardFailureNote.ShouldBe("ELO leaderboard unavailable.");
+        await ShouldHaveAnnouncedGameCompleteOnce();
+        await _announcer.Received(1).AnnounceGameComplete(
+            Arg.Any<string>(),
+            Arg.Any<IReadOnlyList<PlacementInfo>?>(),
+            Arg.Is<IReadOnlyList<LeaderboardEntry>?>(value: null),
+            "ELO leaderboard unavailable.");
     }
 
     [Test]
     public async Task StillUpdateTheReplayAndDeleteTheMessageWhenTheCalculatorThrows()
     {
         await GivenAQueuedReplay(TwoTeamLogWithWinner);
-        _ratingsCalculator.ExceptionToThrow = new InvalidOperationException("Ratings failed");
+        _ = _ratingsCalculator.Calculate(LeagueId).Throws(new InvalidOperationException("Ratings failed"));
 
         await _processor.UpdateReplay();
 
         StoredReplay().Status.ShouldBe("Processed");
-        _queue.Deleted.ShouldBe([_queue.PendingMessageDetails!]);
+        _queue.Deleted.ShouldBe([QueuedMessage]);
+        _queue.Pending.ShouldBeEmpty();
     }
 
     [Test]
@@ -319,10 +342,13 @@ internal sealed class ProcessorShould
 
         await _processor.UpdateReplay();
 
-        _ratingsCalculator.CalculatedLeagues.ShouldBeEmpty();
-        var announcement = _announcer.GameCompleteAnnouncements.ShouldHaveSingleItem();
-        announcement.Leaderboard.ShouldBeNull();
-        announcement.LeaderboardFailureNote.ShouldBeNull();
+        _ = _ratingsCalculator.DidNotReceive().Calculate(Arg.Any<string>());
+        await ShouldHaveAnnouncedGameCompleteOnce();
+        await _announcer.Received(1).AnnounceGameComplete(
+            Arg.Any<string>(),
+            Arg.Any<IReadOnlyList<PlacementInfo>?>(),
+            Arg.Is<IReadOnlyList<LeaderboardEntry>?>(value: null),
+            Arg.Is<string?>(value: null));
     }
 
     [Test]
@@ -355,8 +381,12 @@ internal sealed class ProcessorShould
             new ReplayPlacement("alice", "Alice Team", 1, null, null, null),
             new ReplayPlacement("bob", "Bob Team", 1, null, null, null)
         ]);
-        _announcer.GameCompleteAnnouncements.ShouldHaveSingleItem().Placements.ShouldBe(
-            [new PlacementInfo("Alice Team", 1), new PlacementInfo("Bob Team", 1)]);
+        await ShouldHaveAnnouncedGameCompleteOnce();
+        await _announcer.Received(1).AnnounceGameComplete(
+            Arg.Any<string>(),
+            SequenceOf(new PlacementInfo("Alice Team", 1), new PlacementInfo("Bob Team", 1)),
+            Arg.Any<IReadOnlyList<LeaderboardEntry>?>(),
+            Arg.Any<string?>());
     }
 
     [Test]
@@ -378,7 +408,7 @@ internal sealed class ProcessorShould
 
         await _processor.UpdateReplay();
 
-        _announcer.GameCompleteAnnouncements.ShouldHaveSingleItem().Placements.ShouldBeNull();
+        await ShouldHaveAnnouncedNoPlacementsOnce();
     }
 
     [Test]
@@ -410,7 +440,7 @@ internal sealed class ProcessorShould
 
         await _processor.UpdateReplay();
 
-        _announcer.GameCompleteAnnouncements.ShouldHaveSingleItem().Placements.ShouldBeNull();
+        await ShouldHaveAnnouncedNoPlacementsOnce();
     }
 
     [Test]
@@ -432,7 +462,7 @@ internal sealed class ProcessorShould
 
         await _processor.UpdateReplay();
 
-        ShouldNotHaveProcessedTheReplay();
+        await ShouldNotHaveProcessedTheReplay();
     }
 
     [Test]
@@ -440,11 +470,11 @@ internal sealed class ProcessorShould
     {
         _storage.Replays.Seed(SeededReplay);
         AddLogFile(TwoTeamLogWithWinner);
-        await _queue.EnqueueMessage(new ReplayToUpdateMessage(ReplayFileName));
+        await _queue.EnqueueMessage(QueuedMessage);
 
         await _processor.UpdateReplay();
 
-        ShouldNotHaveProcessedTheReplay();
+        await ShouldNotHaveProcessedTheReplay();
     }
 
     [Test]
@@ -452,11 +482,11 @@ internal sealed class ProcessorShould
     {
         _storage.Replays.Seed(SeededReplay);
         AddReplayFile();
-        await _queue.EnqueueMessage(new ReplayToUpdateMessage(ReplayFileName));
+        await _queue.EnqueueMessage(QueuedMessage);
 
         await _processor.UpdateReplay();
 
-        ShouldNotHaveProcessedTheReplay();
+        await ShouldNotHaveProcessedTheReplay();
     }
 
     [Test]
@@ -465,14 +495,13 @@ internal sealed class ProcessorShould
         _storage.Replays.Seed(SeededReplay with { Filename = "some other replay.WAgame" });
         AddReplayFile();
         AddLogFile(TwoTeamLogWithWinner);
-        await _queue.EnqueueMessage(new ReplayToUpdateMessage(ReplayFileName));
+        await _queue.EnqueueMessage(QueuedMessage);
 
         await _processor.UpdateReplay();
 
         _storage.Replays.GetAll().ShouldHaveSingleItem().Status.ShouldBe("Pending");
         _storage.Teams.GetAll().ShouldBeEmpty();
-        _announcer.GameCompleteAnnouncements.ShouldBeEmpty();
-        _announcer.GameStartingAnnouncements.ShouldBeEmpty();
+        await ShouldNotHaveAnnouncedAnything();
         _queue.Deleted.ShouldBeEmpty();
     }
 
@@ -481,8 +510,11 @@ internal sealed class ProcessorShould
         _storage.Replays.Seed(SeededReplay with { LeagueId = leagueId });
         AddReplayFile();
         AddLogFile(log);
-        await _queue.EnqueueMessage(new ReplayToUpdateMessage(ReplayFileName));
+        await _queue.EnqueueMessage(QueuedMessage);
     }
+
+    private static IReadOnlyList<T>? SequenceOf<T>(params T[] expected) =>
+        Arg.Is<IReadOnlyList<T>?>(actual => actual != null && actual.SequenceEqual(expected));
 
     private void AddReplayFile() =>
         _fileSystem.AddFile(Path.Combine(TempReplayFolder, ReplayFileName), new MockFileData(string.Empty));
@@ -492,12 +524,34 @@ internal sealed class ProcessorShould
 
     private Replay StoredReplay() => _storage.Replays.GetAll().Single(r => r.Id == SeededReplay.Id);
 
-    private void ShouldNotHaveProcessedTheReplay()
+    private Task ShouldHaveAnnouncedGameCompleteOnce() =>
+        _announcer.Received(1).AnnounceGameComplete(
+            Arg.Any<string>(),
+            Arg.Any<IReadOnlyList<PlacementInfo>?>(),
+            Arg.Any<IReadOnlyList<LeaderboardEntry>?>(),
+            Arg.Any<string?>());
+
+    private async Task ShouldHaveAnnouncedNoPlacementsOnce()
+    {
+        await ShouldHaveAnnouncedGameCompleteOnce();
+        await _announcer.Received(1).AnnounceGameComplete(
+            Arg.Any<string>(),
+            Arg.Is<IReadOnlyList<PlacementInfo>?>(value: null),
+            Arg.Any<IReadOnlyList<LeaderboardEntry>?>(),
+            Arg.Any<string?>());
+    }
+
+    private async Task ShouldNotHaveAnnouncedAnything()
+    {
+        await _announcer.DidNotReceiveWithAnyArgs().AnnounceGameComplete(null!);
+        await _announcer.DidNotReceiveWithAnyArgs().AnnounceGameStarting(null!);
+    }
+
+    private async Task ShouldNotHaveProcessedTheReplay()
     {
         StoredReplay().ShouldBe(SeededReplay);
         _storage.Teams.GetAll().ShouldBeEmpty();
-        _announcer.GameCompleteAnnouncements.ShouldBeEmpty();
-        _announcer.GameStartingAnnouncements.ShouldBeEmpty();
+        await ShouldNotHaveAnnouncedAnything();
         _queue.Deleted.ShouldBeEmpty();
     }
 }
