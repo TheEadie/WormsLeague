@@ -9,6 +9,9 @@ on:
       wa-runner-test:
         type: string
         required: true
+      gateway-integration-test:
+        type: string
+        required: true
 
 jobs:
   test-gateway:
@@ -25,6 +28,23 @@ jobs:
           dotnet-version: 10.0.x
       - name: Run tests
         run: make gateway.test.unit
+
+  test-gateway-integration:
+    name: Gateway - Integration Tests
+    if: ${{ inputs.gateway-integration-test == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - name: Run tests
+        run: make gateway.test.integration
 
   build-gateway:
     name: Gateway

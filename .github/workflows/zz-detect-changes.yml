@@ -12,6 +12,8 @@ on:
         value: ${{ jobs.changes.outputs.wa-runner-release }}
       wa-runner-test:
         value: ${{ jobs.changes.outputs.wa-runner-test }}
+      gateway-integration-test:
+        value: ${{ jobs.changes.outputs.gateway-integration-test }}
       clis-release:
         value: ${{ jobs.changes.outputs.clis-release }}
       web-build:
@@ -29,6 +31,7 @@ jobs:
       gateway-release: ${{ steps.filter.outputs.gateway == 'true' || steps.filter.outputs.hub-common == 'true' }}
       wa-runner-release: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.hub-common == 'true' }}
       wa-runner-test: ${{ steps.filter.outputs.wa-runner == 'true' || steps.filter.outputs.wa-runner-test == 'true' || steps.filter.outputs.hub-common == 'true' }}
+      gateway-integration-test: ${{ steps.filter.outputs.gateway-integration-test == 'true' || steps.filter.outputs.hub-common == 'true' }}
       clis-release: ${{ steps.filter.outputs.clis == 'true' }}
       web-build: ${{ steps.filter.outputs.web == 'true' }}
       deployment: ${{ steps.filter.outputs.deployment == 'true' }}
@@ -61,6 +64,15 @@ jobs:
           wa-runner-test:
             - 'src/Worms.Hub.Armageddon.Runner.Tests/**'
             - 'build/download-wa-game.sh'
+          gateway-integration-test:
+            - 'src/Worms.Hub.Storage/**'
+            - 'src/Worms.Hub.Storage.Tests/**'
+            - 'src/database/migrations/**'
+            - 'src/database/local-dev/**'
+            - 'src/database/flyway.toml'
+            - 'docker-compose.yaml'
+            - 'Directory.Build.props'
+            - 'makefile'
           hub-common:
             - 'src/Directory.Build.props'
             - '.github/workflows/zz-*-hub.yml'

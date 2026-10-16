@@ -15,10 +15,11 @@ jobs:
   build-hub:
     name: Build - Hub
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.code == 'true' || needs.changes.outputs.gateway-integration-test == 'true'
     uses: ./.github/workflows/zz-build-hub.yml
     with:
       wa-runner-test: ${{ needs.changes.outputs.wa-runner-test }}
+      gateway-integration-test: ${{ needs.changes.outputs.gateway-integration-test }}
     secrets: inherit
 
   build-cli:
