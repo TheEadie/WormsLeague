@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Storage.Fake", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Queues.Fake", "src\Worms.Hub.Queues.Fake\Worms.Hub.Queues.Fake.csproj", "{9FD9A84C-C5FE-445A-B742-A2ADE41558DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worms.Hub.Storage.Tests", "src\Worms.Hub.Storage.Tests\Worms.Hub.Storage.Tests.csproj", "{B41DF884-3B25-472B-A1FE-AEE28634FF46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -281,6 +283,18 @@ Global
 		{9FD9A84C-C5FE-445A-B742-A2ADE41558DB}.Release|x64.Build.0 = Release|Any CPU
 		{9FD9A84C-C5FE-445A-B742-A2ADE41558DB}.Release|x86.ActiveCfg = Release|Any CPU
 		{9FD9A84C-C5FE-445A-B742-A2ADE41558DB}.Release|x86.Build.0 = Release|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Debug|x64.Build.0 = Debug|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Debug|x86.Build.0 = Debug|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Release|x64.ActiveCfg = Release|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Release|x64.Build.0 = Release|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Release|x86.ActiveCfg = Release|Any CPU
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -293,5 +307,6 @@ Global
 		{5028A683-AF04-4503-8321-562CA5469267} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{DB544DBD-65B4-42AD-9150-07B467267767} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{9FD9A84C-C5FE-445A-B742-A2ADE41558DB} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{B41DF884-3B25-472B-A1FE-AEE28634FF46} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal
