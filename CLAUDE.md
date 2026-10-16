@@ -72,8 +72,8 @@ Detailed practices for each component are in `.claude/docs/components/`. Load th
 |---|---|---|
 | CLI | [.claude/docs/components/cli.md](.claude/docs/components/cli.md) | `Worms.Cli`, `Worms.Cli.Resources` |
 | Hub Gateway | [.claude/docs/components/hub-gateway.md](.claude/docs/components/hub-gateway.md) | `Worms.Hub.Gateway` |
-| Hub Storage | [.claude/docs/components/hub-storage.md](.claude/docs/components/hub-storage.md) | `Worms.Hub.Storage` |
-| Hub Queues | [.claude/docs/components/hub-queues.md](.claude/docs/components/hub-queues.md) | `Worms.Hub.Queues` |
+| Hub Storage | [.claude/docs/components/hub-storage.md](.claude/docs/components/hub-storage.md) | `Worms.Hub.Storage`, `*.Fake` |
+| Hub Queues | [.claude/docs/components/hub-queues.md](.claude/docs/components/hub-queues.md) | `Worms.Hub.Queues`, `*.Fake` |
 | WA Runner | [.claude/docs/components/wa-runner.md](.claude/docs/components/wa-runner.md) | `Worms.Hub.Armageddon.Runner` |
 | Armageddon Files | [.claude/docs/components/armageddon-files.md](.claude/docs/components/armageddon-files.md) | `Worms.Armageddon.Files` |
 | Armageddon Game | [.claude/docs/components/armageddon-game.md](.claude/docs/components/armageddon-game.md) | `Worms.Armageddon.Game`, `*.Fake` |

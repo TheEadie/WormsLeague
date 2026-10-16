@@ -74,7 +74,7 @@ CLI unit tests live in `src/Worms.Cli.Tests` (NUnit + Shouldly). Tests drive the
 
 Two further seams are wired through `TestHost`:
 
-- `ICliInfoRetriever` — `FakeCliInfoRetriever` returns a fixed `CliInfo` (`Version=1.0.0`, `Folder=/cli`, `FileName=worms`). Accessible as `host.CliInfo`. Tests that need a different version can reassign `host.CliInfo.Info` before calling `host.Run(...)`. `TestHost` also seeds the `MockFileSystem` with a stub binary at the reported install path so `CliUpdater.InstallUpdate` can move it to a `.bak` file.
-- `ICliUpdateDownloader` — `RecordingCliUpdateDownloader` records each `DownloadLatestCli` call in `host.CliUpdateDownloader.Calls` and writes a stub binary into the update folder (via `IFileSystem`) so the subsequent file-move in `InstallUpdate` succeeds.
+- `ICliInfoRetriever` — an NSubstitute mock (`Substitute.For<ICliInfoRetriever>()`) whose `GetCliInfo()` returns a fixed `CliInfo` (`Version=1.0.0`, `Folder=/cli`, `FileName=worms`). It is not exposed on `TestHost`; a test needing a different version would have to add that seam. `TestHost` also seeds the `MockFileSystem` with a stub binary at the reported install path so `CliUpdater.InstallUpdate` can move it to a `.bak` file.
+- `ICliUpdateDownloader` — `FakeCliUpdateDownloader` records each `DownloadLatestCli` call in `host.CliUpdateDownloader.Calls` and writes a stub binary into the update folder (via `IFileSystem`) so the subsequent file-move in `InstallUpdate` succeeds.
 
 When adding tests for a new command, extend this project rather than creating a new one. Test classes follow the `<TypeUnderTest>Should` convention; test methods describe a behaviour.

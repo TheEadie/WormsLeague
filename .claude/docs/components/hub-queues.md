@@ -1,6 +1,6 @@
 # Hub Queues Component
 
-Project: `Worms.Hub.Queues`
+Projects: `Worms.Hub.Queues`, `Worms.Hub.Queues.Fake`
 
 ## IMessageQueue<T>
 
@@ -29,6 +29,11 @@ Task DeleteMessage(MessageDetails messageDetails);
 1. Add a `record` message type in `Worms.Hub.Queues`.
 2. Create a concrete `MessageQueue<T>` subclass that passes the queue name (e.g. `internal sealed class ReplaysToUpdate(IConfiguration configuration) : MessageQueue<ReplayToUpdateMessage>("replays-to-update", configuration);`).
 3. Register the new `IMessageQueue<NewMessage>` in `ServiceRegistration.AddQueueServices()`.
+4. Register a `FakeMessageQueue<NewMessage>` in `Worms.Hub.Queues.Fake`'s `AddFakeQueueServices()`.
+
+## Worms.Hub.Queues.Fake
+
+`FakeMessageQueue<T>` is an in-memory `IMessageQueue<T>` for unit tests. `EnqueueMessage` adds to `Pending`. `DequeueMessage` returns the oldest pending message (or `(null, null, default)` when empty) and leaves it pending, like a real queue before the visibility timeout. `DeleteMessage` moves it to `Deleted`, so it is not returned again, and throws if the token doesn't match a pending message. Tests can construct it directly or call `AddFakeQueueServices()` (as the worker `ProcessorShould` tests do, on top of the production `AddWorkerServices()`), which replaces both `IMessageQueue<ReplayToProcessMessage>` and `IMessageQueue<ReplayToUpdateMessage>` via `RemoveAll<>` + `AddSingleton` and also registers each concrete `FakeMessageQueue<T>` so tests can resolve it.
 
 ## Wire format
 
