@@ -15,6 +15,15 @@ This means a component's build is validated on every push regardless of what cha
 
 When adding a new component to CI, wire its build job unconditionally and add the change detection `if:` to the corresponding release/deploy job only.
 
+### Exception: integration test jobs
+
+Slow integration test jobs that need Docker (or other provisioned infrastructure) may be gated on a dedicated per-component test change-detection output, rather than always running. Examples:
+
+- `wa-runner-test` gates "WA Runner - Integration Tests"
+- `gateway-integration-test` gates "Gateway - Integration Tests" (the Storage repository contract tests)
+
+The test output combines the component's source paths, its test project path, any infrastructure the tests depend on (e.g. `src/database/migrations/**`, `docker-compose.yaml`), and `hub-common`. It is passed into `zz-build-hub.yml` as an input and used in the job's `if:`. A skipped job does not fail the overall build gate; a failed one does. Test-only paths are never added to release/deploy filters.
+
 ## Linting belongs in Code Scanning, not the build
 
 Linting and static analysis (ESLint, Prettier, `tsc --noEmit`, Roslyn analysers) belong in `code-scanning.yml` as SARIF uploads. They are not build steps.
