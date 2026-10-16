@@ -12,7 +12,7 @@
       <PackageReference Include="Pulumi.Cloudflare" Version="6.22.1" />
       <PackageReference Include="Pulumi.Command" Version="1.2.1" />
       <PackageReference Include="Pulumi.Random" Version="4.21.2" />
-      <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.19.1" />
+      <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.20.0" />
   </ItemGroup>
 
 </Project>
