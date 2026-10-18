@@ -95,6 +95,9 @@ jobs:
           code:
             - 'src/**'
             - 'build/**'
+            - 'Directory.Build.props'
+            - 'makefile'
+            - 'docker-compose.yaml'
             - '.github/workflows/code-*.yml'
             - '.github/workflows/zz-build-*.yml'
             - '.github/workflows/zz-release-*.yml'
