@@ -23,3 +23,11 @@ gateway.test.unit:
 	@dotnet test src/Worms.Hub.Gateway.Tests -p:TreatWarningsAsErrors=true --filter "Category!=Integration"
 	@echo ""
 
+## Gateway integration tests (requires Docker)
+
+test:: gateway.test.integration
+
+gateway.test.integration:
+	@dotnet test src/Worms.Hub.Storage.Tests -p:TreatWarningsAsErrors=true --filter "Category=Integration"
+	@echo ""
+
