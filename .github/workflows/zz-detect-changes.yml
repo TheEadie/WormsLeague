@@ -71,10 +71,9 @@ jobs:
             - 'src/database/local-dev/**'
             - 'src/database/flyway.toml'
             - 'docker-compose.yaml'
+          hub-common:
             - 'Directory.Build.props'
             - 'makefile'
-          hub-common:
-            - 'src/Directory.Build.props'
             - '.github/workflows/zz-*-hub.yml'
             - 'build/docker/makefile'
             - 'build/*.sh'
@@ -84,7 +83,7 @@ jobs:
             - 'src/Worms.Armageddon.Files/**'
             - 'src/Worms.Armageddon.Game/**'
             - 'src/Worms.Armageddon.Gifs/**'
-            - 'src/Directory.Build.props'
+            - 'Directory.Build.props'
             - 'build/cli/**'
             - '.github/workflows/zz-*-cli.yml'
           web:
