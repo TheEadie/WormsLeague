@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using NUnit.Framework;
 
@@ -14,6 +16,19 @@ internal sealed class ComposeDatabase
 
     private static readonly TimeSpan ComposeTimeout = TimeSpan.FromMinutes(3);
     private static readonly TimeSpan ConnectionTimeout = TimeSpan.FromSeconds(30);
+
+    public static ServiceProvider CreateHubStorageServices() =>
+        new ServiceCollection()
+            .AddSingleton<IConfiguration>(
+                new ConfigurationBuilder()
+                    .AddInMemoryCollection(
+                        new Dictionary<string, string?>
+                        {
+                            ["ConnectionStrings:Database"] = ConnectionString
+                        })
+                    .Build())
+            .AddHubStorageServices()
+            .BuildServiceProvider();
 
     [OneTimeSetUp]
     public async Task StartDatabaseWithMigrations()

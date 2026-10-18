@@ -1,5 +1,4 @@
 using System.Globalization;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;
@@ -20,17 +19,7 @@ internal sealed class GamesRepositoryShould
     [OneTimeSetUp]
     public void CreateRepository()
     {
-        _services = new ServiceCollection()
-            .AddSingleton<IConfiguration>(
-                new ConfigurationBuilder()
-                    .AddInMemoryCollection(
-                        new Dictionary<string, string?>
-                        {
-                            ["ConnectionStrings:Database"] = ComposeDatabase.ConnectionString
-                        })
-                    .Build())
-            .AddHubStorageServices()
-            .BuildServiceProvider();
+        _services = ComposeDatabase.CreateHubStorageServices();
         _repository = _services.GetRequiredService<IRepository<Game>>();
     }
 
