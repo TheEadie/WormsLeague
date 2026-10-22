@@ -42,6 +42,10 @@ RUN apt-get update \
   libicu-dev \
   && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends --only-upgrade ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
 # Add Wine repo key and source
 RUN mkdir -p /etc/apt/keyrings \
   && wget -nc https://dl.winehq.org/wine-builds/winehq.key -O /etc/apt/keyrings/winehq.asc \
