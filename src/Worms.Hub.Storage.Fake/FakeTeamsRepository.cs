@@ -83,6 +83,11 @@ public sealed class FakeTeamsRepository : ITeamsRepository
             return;
         }
 
+        if (authSubject is not null && _players.GetByAuthSubject(authSubject) is null)
+        {
+            throw new InvalidOperationException($"No player with auth subject '{authSubject}' exists");
+        }
+
         entry.ClaimedByAuthSubject = authSubject;
         // Clear the seeded name so subsequent reads resolve from the players store
         entry.SeededClaimedByPlayerName = null;
