@@ -11,7 +11,7 @@ namespace Worms.Hub.Storage.Tests;
 [SetUpFixture]
 internal sealed class ComposeDatabase
 {
-    public const string ConnectionString =
+    private const string ConnectionString =
         "Host=127.0.0.1;Port=5432;Database=worms;Username=worms;Password=worms;Timeout=5";
 
     private static readonly TimeSpan ComposeTimeout = TimeSpan.FromMinutes(3);
