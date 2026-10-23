@@ -13,7 +13,10 @@ public sealed class FakePlayersRepository : IPlayersRepository
     public void Seed(params Player[] players)
     {
         ArgumentNullException.ThrowIfNull(players);
-        _store.AddRange(players);
+        foreach (var player in players)
+        {
+            _ = Create(player);
+        }
     }
 
     [PublicAPI]
@@ -25,16 +28,12 @@ public sealed class FakePlayersRepository : IPlayersRepository
     public Player Create(Player player)
     {
         ArgumentNullException.ThrowIfNull(player);
-        var index = _store.FindIndex(p => p.AuthSubject == player.AuthSubject);
-        if (index >= 0)
+        if (_store.Exists(p => p.AuthSubject == player.AuthSubject))
         {
-            _store[index] = player;
-        }
-        else
-        {
-            _store.Add(player);
+            throw new InvalidOperationException($"A player with auth subject '{player.AuthSubject}' already exists");
         }
 
+        _store.Add(player);
         return player;
     }
 }

@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using NUnit.Framework;
 
@@ -9,11 +11,24 @@ namespace Worms.Hub.Storage.Tests;
 [SetUpFixture]
 internal sealed class ComposeDatabase
 {
-    public const string ConnectionString =
+    private const string ConnectionString =
         "Host=127.0.0.1;Port=5432;Database=worms;Username=worms;Password=worms;Timeout=5";
 
     private static readonly TimeSpan ComposeTimeout = TimeSpan.FromMinutes(3);
     private static readonly TimeSpan ConnectionTimeout = TimeSpan.FromSeconds(30);
+
+    public static ServiceProvider CreateHubStorageServices() =>
+        new ServiceCollection()
+            .AddSingleton<IConfiguration>(
+                new ConfigurationBuilder()
+                    .AddInMemoryCollection(
+                        new Dictionary<string, string?>
+                        {
+                            ["ConnectionStrings:Database"] = ConnectionString
+                        })
+                    .Build())
+            .AddHubStorageServices()
+            .BuildServiceProvider();
 
     [OneTimeSetUp]
     public async Task StartDatabaseWithMigrations()
