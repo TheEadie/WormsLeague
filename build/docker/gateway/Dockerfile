@@ -9,7 +9,7 @@ COPY src/Worms.Hub.Web/. src/Worms.Hub.Web/
 RUN cd src/Worms.Hub.Web && VITE_GATEWAY_URL= npx vite build
 
 #### Build ####
-FROM mcr.microsoft.com/dotnet/sdk:10.0.402@sha256:0d99ebf1ccad15037b5c98c9fe8979d6b8dbac23812feae2277a0b277b5c5ffa AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.404@sha256:fe0fd4e93bd2fbb47c883b7a6369e5c8d3db8bf01cdc5981f6ee35fbdf3ff4fb AS build
 WORKDIR /app
 
 COPY Directory.Build.props .
@@ -40,7 +40,7 @@ FROM build AS test
 RUN dotnet test --no-restore --no-build --verbosity normal
 
 #### Runtime ####
-FROM mcr.microsoft.com/dotnet/aspnet:10.0.13@sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.15@sha256:bfd912c83295ce66d4b706ebb8541b9f14259b0e76fbb88b2751f58ce2399d2e
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends --only-upgrade ca-certificates \
